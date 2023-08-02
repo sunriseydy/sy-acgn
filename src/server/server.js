@@ -1,8 +1,11 @@
 import express from "express";
 import ViteExpress from "vite-express";
+import rssApi from "./rss/api/index.js";
+
 
 const app = express();
 
+app.use('/rss', rssApi);
 app.get("/", (_, res) => res.json("Hello from express!"));
 
 ViteExpress.listen(app, 9390, () =>
