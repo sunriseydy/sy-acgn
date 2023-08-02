@@ -2,7 +2,6 @@ import express from "express";
 import ViteExpress from "vite-express";
 import rssApi from "./rss/api/index.js";
 
-
 const app = express();
 
 app.use('/rss', rssApi);
