@@ -3,7 +3,7 @@ import ViteExpress from "vite-express";
 
 const app = express();
 
-app.get("/", (_, res) => res.send("Hello from express!"));
+app.get("/", (_, res) => res.json("Hello from express!"));
 
 ViteExpress.listen(app, 9390, () =>
     console.log(`
