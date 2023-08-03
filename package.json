@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "client": "vite",
-    "server": "nodemon -w src/server src/server/server.js",
+    "server": "nodemon -w src/server src/server/main.js",
     "build": "vite build",
     "preview": "vite preview"
   },
