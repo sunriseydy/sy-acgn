@@ -1,6 +1,6 @@
 import express from "express";
-import rssHttp from "../rssHttp.js";
-import {responseWithError} from "../../utils.js";
+import rssHttp from "./rssHttp.js";
+import {responseWithError} from "../utils.js";
 
 const router = express.Router();
 
