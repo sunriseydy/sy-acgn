@@ -7,7 +7,9 @@ import prisma from "../dbClient.js";
 const rssParser = new RssParser()
 const router = express.Router();
 
-router.get('/subscription', async (req, res) => {
+const rssSubscriptionPath = '/subscription'
+
+router.get(rssSubscriptionPath, async (req, res) => {
     try {
         const page = req.query.page || 1
         const size = req.query.size || 10
@@ -24,7 +26,7 @@ router.get('/subscription', async (req, res) => {
     }
 });
 
-router.post('/subscription', async (req, res) => {
+router.post(rssSubscriptionPath, async (req, res) => {
     try {
         const {link} = req.body
         console.info('link:', link)
@@ -62,8 +64,28 @@ router.post('/subscription', async (req, res) => {
     }
 })
 
-router.get('/download', (req, res) => {
-    rssClient.downloadTorrentInFile('http://127.0.0.1/tmp.torrent', '/tmp/tmp.torrent', res)
+router.delete(`${rssSubscriptionPath}/:id`, async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id) {
+            throw '[id]参数不存在'
+        }
+        // 先查询数据是否存在
+        const exist = await prisma.rssSubscription.findUnique({
+            where: {id: Number(id)}
+        })
+        if (!exist) {
+            throw `该数据[${id}]不存在`
+        }
+        const result = await prisma.rssSubscription.delete({
+            where: {
+                id: Number(id),
+            },
+        })
+        responseWithSuccess(res, null, result)
+    } catch (error) {
+        responseWithError(res, error);
+    }
 })
 
 export default router;
