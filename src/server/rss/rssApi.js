@@ -9,6 +9,9 @@ const router = express.Router();
 
 const rssSubscriptionPath = '/subscription'
 
+/**
+ * 查询 rss 订阅
+ */
 router.get(rssSubscriptionPath, async (req, res) => {
     try {
         const page = req.query.page || 1
@@ -26,6 +29,9 @@ router.get(rssSubscriptionPath, async (req, res) => {
     }
 });
 
+/**
+ * 新增 rss 订阅
+ */
 router.post(rssSubscriptionPath, async (req, res) => {
     try {
         const {link} = req.body
@@ -64,6 +70,41 @@ router.post(rssSubscriptionPath, async (req, res) => {
     }
 })
 
+/**
+ * 修改 rss 订阅
+ */
+router.put(`${rssSubscriptionPath}/:id`, async (req, res) => {
+    try {
+        const { id } = req.params
+        const {title, ttl} = req.body
+        if (!id) {
+            throw '[id]参数不存在'
+        }
+        // 先查询数据是否存在
+        const exist = await prisma.rssSubscription.findUnique({
+            where: {id: Number(id)}
+        })
+        if (!exist) {
+            throw `该数据[${id}]不存在`
+        }
+        const result = await prisma.rssSubscription.update({
+            where: {
+                id: Number(id)
+            },
+            data: {
+                title: title || undefined,
+                ttl: ttl ? Number(ttl) : undefined
+            }
+        })
+        responseWithSuccess(res, null, result)
+    } catch (error) {
+        responseWithError(res, error);
+    }
+})
+
+/**
+ * 删除 rss 订阅
+ */
 router.delete(`${rssSubscriptionPath}/:id`, async (req, res) => {
     try {
         const { id } = req.params
