@@ -8,12 +8,32 @@ datasource db {
 }
 
 model RssSubscription {
-  id          Int      @id @default(autoincrement())
-  link        String   @unique
-  ttl         Int
-  lastFetchAt DateTime
+  id          Int                   @id @default(autoincrement())
+  link        String                @unique
+  ttl         Int?
+  lastFetchAt DateTime?
   title       String
-  description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  description String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  items       RssSubscriptionItem[]
+}
+
+model RssSubscriptionItem {
+  id                String          @id @default(uuid())
+  rssSubscriptionId Int
+  rssSubscription   RssSubscription @relation(fields: [rssSubscriptionId], references: [id])
+  title             String
+  link              String
+  guid              String
+  pubDate           DateTime
+  content           String?
+  isRead            Boolean         @default(false)
+  torrentLink       String
+  rawJson           String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@unique([rssSubscriptionId, guid])
+  @@index([pubDate(sort: Desc)])
 }
