@@ -1,15 +1,15 @@
-import express from "express";
-import ViteExpress from "vite-express";
-import rssApi from "./rss/rssApi.js";
+import express from 'express'
+import ViteExpress from 'vite-express'
+import rssApi from './rss/rssApi.js'
 
-const app = express();
+const app = express()
 app.use(express.json())
 
-app.use('/rss', rssApi);
-app.get("/", (_, res) => res.json("Hello from express!"));
+app.use('/rss', rssApi)
+app.get('/', (_, res) => res.json('Hello from express!'))
 
 ViteExpress.listen(app, 9390, () =>
-    console.log(`
+  console.log(`
 🚀 Server ready at: http://localhost:9390
 ⭐️ See sample requests: http://pris.ly/e/js/rest-express#3-using-the-rest-api`),
-);
+)

@@ -1,10 +1,10 @@
 <script setup>
-import {ref, onUpdated, onMounted, onUnmounted} from 'vue'
+import { ref, onUpdated, onMounted, onUnmounted } from 'vue'
 
 const tab = ref('option-1')
-const rssSubscriptions = ref([
-  {id: 1, title: '1'},
-  {id: 2, title: '2'},
+ref([
+  { id: 1, title: '1' },
+  { id: 2, title: '2' },
 ])
 const count = ref(12)
 function increment() {
@@ -14,9 +14,7 @@ function increment() {
 function sub() {
   count.value--
 }
-
-const rssCard3Height = ref(800)
-
+ref(800)
 function updateHeight() {
   const aEl = document.querySelector('#rss-card-1')
   const bEl = document.querySelector('#rss-card-2')
@@ -42,11 +40,13 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateHeight)
 })
-
 </script>
 
 <template>
-  <v-card id="rss-card-1" class="h-screen d-flex">
+  <v-card
+    id="rss-card-1"
+    class="h-screen d-flex"
+  >
     <v-row no-gutters>
       <v-col cols="3">
         <v-card>
@@ -55,30 +55,37 @@ onUnmounted(() => {
               <v-toolbar>
                 <v-toolbar-title>RSS 订阅</v-toolbar-title>
                 <v-spacer />
-                <v-toolbar-items >
-                  <v-btn @click="increment" text="添加" />
-                  <v-btn @click="sub" text="删除" />
+                <v-toolbar-items>
+                  <v-btn
+                    @click="increment"
+                    text="添加"
+                  />
+                  <v-btn
+                    @click="sub"
+                    text="删除"
+                  />
                   <v-btn text="更新" />
                   <v-btn text="已读" />
                 </v-toolbar-items>
               </v-toolbar>
             </v-card-title>
           </v-card-item>
-          <v-card-text id="rss-card-3" class="overflow-y-auto">
+          <v-card-text
+            id="rss-card-3"
+            class="overflow-y-auto"
+          >
             <v-row
-                dense
-                v-for="rssSubscription in count"
-                :key="rssSubscription"
+              dense
+              v-for="rssSubscription in count"
+              :key="rssSubscription"
             >
               <v-col>
                 <v-card variant="tonal">
                   <v-card-item>
                     <v-card-title style="white-space: normal">
-                      {{String(rssSubscription).repeat(100)}}
+                      {{ String(rssSubscription).repeat(100) }}
                     </v-card-title>
-                    <v-card-subtitle>
-                      总数：100；未读：10
-                    </v-card-subtitle>
+                    <v-card-subtitle> 总数：100；未读：10 </v-card-subtitle>
                   </v-card-item>
                 </v-card>
               </v-col>
@@ -92,24 +99,18 @@ onUnmounted(() => {
             <v-window-item value="option-1">
               <v-card>
                 <v-card-text>
-                  <p>
-                    1
-                  </p>
+                  <p>1</p>
                 </v-card-text>
               </v-card>
             </v-window-item>
             <v-window-item value="option-2">
               <v-card>
-                <v-card-text>
-                  2
-                </v-card-text>
+                <v-card-text> 2 </v-card-text>
               </v-card>
             </v-window-item>
             <v-window-item value="option-3">
               <v-card>
-                <v-card-text>
-                  3
-                </v-card-text>
+                <v-card-text> 3 </v-card-text>
               </v-card>
             </v-window-item>
           </v-window>
@@ -119,6 +120,4 @@ onUnmounted(() => {
   </v-card>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

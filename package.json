@@ -8,6 +8,8 @@
     "server": "nodemon -w src/server src/server/main.js",
     "build": "vite build",
     "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js --fix --ignore-path .gitignore",
+    "format": "prettier --write src/",
     "db:push": "prisma db push"
   },
   "dependencies": {
@@ -22,7 +24,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "eslint": "^8.47.0",
+    "eslint-plugin-vue": "^9.17.0",
     "nodemon": "^3.0.1",
+    "prettier": "^3.0.1",
     "prisma": "^5.1.1",
     "vite": "^4.4.5"
   }
