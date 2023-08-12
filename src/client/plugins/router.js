@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import rss from "@/client/route/rss.js";
+import rss from "@/client/routes/rss.js";
 
 const router = createRouter({
     history: createWebHashHistory(),
