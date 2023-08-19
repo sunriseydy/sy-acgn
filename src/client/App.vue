@@ -14,12 +14,3 @@
 <script setup>
 import AppNavigationDrawer from '@/client/components/AppNavigationDrawer.vue'
 </script>
-<style>
-#app {
-  max-width: unset;
-  width: 100%;
-  margin: unset;
-  padding: unset;
-  text-align: start;
-}
-</style>
