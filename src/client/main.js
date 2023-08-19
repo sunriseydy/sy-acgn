@@ -3,6 +3,7 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify.js'
 import router from './plugins/router.js'
 import http from '@/client/plugins/axios.js'
+import { toast } from 'vuetify-sonner'
 
 // 设置响应拦截器
 http.interceptors.response.use(
@@ -21,12 +22,30 @@ http.interceptors.response.use(
     console.log(error.toJSON())
     if (error.response) {
       // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
+      toast('Error', {
+        description: `${error.response.data.message || '请求失败'}`,
+        cardProps: {
+          color: 'error',
+        },
+      })
     } else if (error.request) {
       // 请求已经成功发起，但没有收到响应
       // `error.request` 在浏览器中是 XMLHttpRequest 的实例，
       // 而在node.js中是 http.ClientRequest 的实例
+      toast('Error', {
+        description: `${error.message || '请求失败'}`,
+        cardProps: {
+          color: 'error',
+        },
+      })
     } else {
       // 发送请求时出了点问题
+      toast('Error', {
+        description: `${error.message || '请求失败'}`,
+        cardProps: {
+          color: 'error',
+        },
+      })
     }
     return Promise.reject(error)
   },
