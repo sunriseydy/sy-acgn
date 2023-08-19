@@ -140,6 +140,11 @@ router.delete(`${rssSubscriptionPath}/:id`, async (req, res) => {
 router.get(rssSubscriptionItemPath, async (req, res) => {
   try {
     const { rssSubscriptionId } = req.params
+    const page = req.query.page || 1
+    const size = req.query.size || 10
+    if (page <= 0 || size <= 0) {
+      throw '[page]和[size]参数不能小于等于0'
+    }
     if (!rssSubscriptionId) {
       throw '[rssSubscriptionId]参数不存在'
     }
@@ -152,6 +157,8 @@ router.get(rssSubscriptionItemPath, async (req, res) => {
           pubDate: 'desc',
         },
       ],
+      take: Number(size),
+      skip: Number(page - 1) * Number(size),
     })
     responseWithSuccess(res, null, results)
   } catch (error) {
