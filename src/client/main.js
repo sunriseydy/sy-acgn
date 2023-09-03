@@ -4,6 +4,7 @@ import vuetify from './plugins/vuetify.js'
 import router from './plugins/router.js'
 import http from '@/client/plugins/axios.js'
 import { toast } from 'vuetify-sonner'
+import VuetifyUseDialog from 'vuetify-use-dialog'
 
 // 设置响应拦截器
 http.interceptors.response.use(
@@ -51,4 +52,4 @@ http.interceptors.response.use(
   },
 )
 
-createApp(App).use(router).use(vuetify).mount('#app')
+createApp(App).use(router).use(vuetify).use(VuetifyUseDialog).mount('#app')
