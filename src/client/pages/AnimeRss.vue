@@ -5,6 +5,7 @@ import { mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
 
 const tab = ref('option-1')
 const unread = ref({
+  id: 0,
   title: '未读',
 })
 const rssSubscriptionList = ref([unread.value])
