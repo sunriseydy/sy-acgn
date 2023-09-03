@@ -22,7 +22,8 @@
     "vue": "^3.3.4",
     "vue-router": "^4.2.4",
     "vuetify": "^3.3.12",
-    "vuetify-sonner": "^0.3.2"
+    "vuetify-sonner": "^0.3.2",
+    "vuetify-use-dialog": "^0.6.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
