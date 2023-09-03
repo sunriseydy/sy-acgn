@@ -4,6 +4,8 @@ import rssApi from '@/client/api/rssApi.js'
 
 const tab = ref('option-1')
 const rssSubscriptionList = ref([])
+const addLink = ref('')
+const addRssDialog = ref(false)
 
 function updateHeight() {
   const aEl = document.querySelector('#rss-card-1')
@@ -20,6 +22,18 @@ function updateHeight() {
 
 const getRssSubscriptionList = async (page, size) => {
   rssApi.queryRssSubscription(page, size).then((res) => {
+    rssSubscriptionList.value = rssSubscriptionList.value.concat(res.data.data)
+  })
+}
+
+function openAddRssSubscriptionDialog() {
+  addLink.value = ''
+  addRssDialog.value = true
+}
+
+function addRssSubscription() {
+  rssApi.addRssSubscription(addLink.value).then((res) => {
+    addRssDialog.value = false
     rssSubscriptionList.value = rssSubscriptionList.value.concat(res.data.data)
   })
 }
@@ -44,6 +58,38 @@ onUnmounted(() => {
     id="rss-card-1"
     class="h-screen d-flex"
   >
+    <v-dialog
+      v-model="addRssDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-text>
+          <v-text-field
+            v-model="addLink"
+            label="订阅地址"
+            variant="outlined"
+            :rules="[(v) => !!v || '请输入订阅地址']"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            variant="text"
+            @click="addRssDialog = false"
+          >
+            取消
+          </v-btn>
+          <v-btn
+            color="primary"
+            variant="text"
+            @click="addRssSubscription"
+          >
+            保存
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-row no-gutters>
       <v-col cols="4">
         <v-card>
@@ -53,7 +99,10 @@ onUnmounted(() => {
                 <v-toolbar-title>RSS 订阅</v-toolbar-title>
                 <v-spacer />
                 <v-toolbar-items>
-                  <v-btn text="添加" />
+                  <v-btn
+                    text="添加"
+                    @click="openAddRssSubscriptionDialog"
+                  />
                   <v-btn text="删除" />
                   <v-btn text="更新" />
                   <v-btn text="已读" />
