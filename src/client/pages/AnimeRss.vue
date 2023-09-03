@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onUpdated, onMounted, onUnmounted } from 'vue'
 import rssApi from '@/client/api/rssApi.js'
+import { mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
 
 const tab = ref('option-1')
 const rssSubscriptionList = ref([])
@@ -98,15 +99,33 @@ onUnmounted(() => {
               <v-toolbar>
                 <v-toolbar-title>RSS 订阅</v-toolbar-title>
                 <v-spacer />
-                <v-toolbar-items>
-                  <v-btn
-                    text="添加"
-                    @click="openAddRssSubscriptionDialog"
-                  />
-                  <v-btn text="删除" />
-                  <v-btn text="更新" />
-                  <v-btn text="已读" />
-                </v-toolbar-items>
+                <v-btn
+                  :icon="mdiPlus"
+                  @click="openAddRssSubscriptionDialog"
+                >
+                  <v-icon :icon="mdiPlus" />
+                  <v-tooltip
+                    activator="parent"
+                    location="bottom"
+                    >添加订阅
+                  </v-tooltip>
+                </v-btn>
+                <v-btn :icon="mdiUpdate">
+                  <v-icon :icon="mdiUpdate" />
+                  <v-tooltip
+                    activator="parent"
+                    location="bottom"
+                    >全部更新
+                  </v-tooltip>
+                </v-btn>
+                <v-btn :icon="mdiRead">
+                  <v-icon :icon="mdiRead" />
+                  <v-tooltip
+                    activator="parent"
+                    location="bottom"
+                    >全部已读
+                  </v-tooltip>
+                </v-btn>
               </v-toolbar>
             </v-card-title>
           </v-card-item>
