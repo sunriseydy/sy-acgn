@@ -20,7 +20,7 @@ function updateHeight() {
 
 const getRssSubscriptionList = async (page, size) => {
   rssApi.queryRssSubscription(page, size).then((res) => {
-    rssSubscriptionList.value.push(res.data.data)
+    rssSubscriptionList.value = rssSubscriptionList.value.concat(res.data.data)
   })
 }
 
