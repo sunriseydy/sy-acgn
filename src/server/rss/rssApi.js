@@ -47,7 +47,7 @@ router.post(rssSubscriptionPath, async (req, res) => {
       },
     })
     if (exist) {
-      throw `该订阅[%{link}]已存在`
+      throw `该订阅[${link}]已存在`
     }
     // 下载订阅
     const response = await rssClient.fetchRss(link)
