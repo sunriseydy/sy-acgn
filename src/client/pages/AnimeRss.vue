@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onUpdated, onMounted, onUnmounted } from 'vue'
 import rssApi from '@/client/api/rssApi.js'
-import { mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
+import { mdiDelete, mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
 
 const tab = ref('option-1')
 const unread = ref({
@@ -148,11 +148,46 @@ onUnmounted(() => {
                     <v-card-title style="white-space: normal">
                       {{ rssSubscription.title }}
                     </v-card-title>
-                    <v-card-subtitle> 总数：100；未读：10 </v-card-subtitle>
+                    <v-card-subtitle> 总数：100；未读：10</v-card-subtitle>
                   </v-card-item>
                   <v-card-text v-if="rssSubscription.link">
                     {{ rssSubscription.link }}
                   </v-card-text>
+                  <v-card-actions>
+                    <v-btn
+                      density="compact"
+                      :icon="mdiDelete"
+                    >
+                      <v-icon :icon="mdiDelete" />
+                      <v-tooltip
+                        activator="parent"
+                        location="bottom"
+                        >删除
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      density="compact"
+                      :icon="mdiUpdate"
+                    >
+                      <v-icon :icon="mdiUpdate" />
+                      <v-tooltip
+                        activator="parent"
+                        location="bottom"
+                        >更新
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      density="compact"
+                      :icon="mdiRead"
+                    >
+                      <v-icon :icon="mdiRead" />
+                      <v-tooltip
+                        activator="parent"
+                        location="bottom"
+                        >已读
+                      </v-tooltip>
+                    </v-btn>
+                  </v-card-actions>
                 </v-card>
               </v-col>
             </v-row>
