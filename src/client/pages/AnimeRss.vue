@@ -74,7 +74,7 @@ onUnmounted(() => {
                 <v-card variant="tonal">
                   <v-card-item>
                     <v-card-title style="white-space: normal">
-                      {{ String(rssSubscription.title).repeat(100) }}
+                      {{ rssSubscription.title }}
                     </v-card-title>
                     <v-card-subtitle> 总数：100；未读：10</v-card-subtitle>
                   </v-card-item>
