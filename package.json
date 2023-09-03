@@ -26,6 +26,7 @@
     "vuetify-use-dialog": "^0.6.2"
   },
   "devDependencies": {
+    "@mdi/js": "^7.2.96",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^8.0.0",
     "eslint": "^8.47.0",
