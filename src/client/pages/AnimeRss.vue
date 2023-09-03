@@ -4,7 +4,10 @@ import rssApi from '@/client/api/rssApi.js'
 import { mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
 
 const tab = ref('option-1')
-const rssSubscriptionList = ref([])
+const unread = ref({
+  title: '未读',
+})
+const rssSubscriptionList = ref([unread.value])
 const addLink = ref('')
 const addRssDialog = ref(false)
 
@@ -144,12 +147,11 @@ onUnmounted(() => {
                     <v-card-title style="white-space: normal">
                       {{ rssSubscription.title }}
                     </v-card-title>
-                    <v-card-subtitle>
-                      {{ rssSubscription.link }}
-                      <br />
-                      总数：100；未读：10
-                    </v-card-subtitle>
+                    <v-card-subtitle> 总数：100；未读：10 </v-card-subtitle>
                   </v-card-item>
+                  <v-card-text v-if="rssSubscription.link">
+                    {{ rssSubscription.link }}
+                  </v-card-text>
                 </v-card>
               </v-col>
             </v-row>
