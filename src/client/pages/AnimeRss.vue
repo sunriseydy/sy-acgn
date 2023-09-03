@@ -76,7 +76,11 @@ onUnmounted(() => {
                     <v-card-title style="white-space: normal">
                       {{ rssSubscription.title }}
                     </v-card-title>
-                    <v-card-subtitle> 总数：100；未读：10</v-card-subtitle>
+                    <v-card-subtitle>
+                      {{ rssSubscription.link }}
+                      <br />
+                      总数：100；未读：10
+                    </v-card-subtitle>
                   </v-card-item>
                 </v-card>
               </v-col>
