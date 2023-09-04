@@ -135,6 +135,23 @@ router.delete(`${rssSubscriptionPath}/:id`, async (req, res) => {
 })
 
 /**
+ * 标记订阅为已读
+ */
+router.put(`${rssSubscriptionPath}/:id/read`, async (req, res) => {
+  try {
+    const { id } = req.params
+    if (!id) {
+      throw '[id]参数不存在'
+    }
+    const result =
+      await prisma.$executeRaw`update RssSubscriptionItem set isRead = true, updatedAt = current_timestamp where rssSubscriptionId = ${Number(id)} and isRead = false`
+    responseWithSuccess(res, null, result)
+  } catch (error) {
+    responseWithError(res, error)
+  }
+})
+
+/**
  * 获取订阅内容
  */
 router.get(rssSubscriptionItemPath, async (req, res) => {
