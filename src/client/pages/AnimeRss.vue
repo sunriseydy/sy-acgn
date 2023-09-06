@@ -196,7 +196,6 @@ onUnmounted(() => {
                     <v-btn
                       density="compact"
                       :icon="mdiUpdate"
-                      @click="markRssSubscriptionRead(rssSubscription.id)"
                     >
                       <v-icon :icon="mdiUpdate" />
                       <v-tooltip
@@ -208,6 +207,7 @@ onUnmounted(() => {
                     <v-btn
                       density="compact"
                       :icon="mdiRead"
+                      @click="markRssSubscriptionRead(rssSubscription.id)"
                     >
                       <v-icon :icon="mdiRead" />
                       <v-tooltip
