@@ -12,6 +12,8 @@ const unread = ref({
 const rssSubscriptionList = ref([unread.value])
 const addLink = ref('')
 const addRssDialog = ref(false)
+const editRssDialog = ref(false)
+const editRss = ref({})
 
 function updateHeight() {
   const aEl = document.querySelector('#rss-card-1')
@@ -69,6 +71,24 @@ function markRssSubscriptionRead(rssSubscriptionId) {
 
 function updateRssSubscriptionItem(rssSubscriptionId) {
   rssApi.updateRssSubscriptionItem(rssSubscriptionId)
+}
+
+function openEditRssSubscriptionDialog(editRss) {
+  editRss.value = editRss
+  editRssDialog.value = true
+}
+
+function editRssSubscription(editRss) {
+  const { id, title, ttl } = editRss
+  rssApi.editRssSubscription(id, title, ttl).then((res) => {
+    editRssDialog.value = false
+    rssSubscriptionList.value = rssSubscriptionList.value.map((rssSubscription) => {
+      if (rssSubscription.id === id) {
+        return res.data.data
+      }
+      return rssSubscription
+    })
+  })
 }
 
 onUpdated(() => {

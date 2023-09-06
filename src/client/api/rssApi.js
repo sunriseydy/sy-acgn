@@ -18,7 +18,7 @@ const rssApi = {
     })
   },
   // 修改 rss 订阅
-  async updateRssSubscription(rssSubscriptionId, title, ttl) {
+  async editRssSubscription(rssSubscriptionId, title, ttl) {
     return http.put(`/rss/subscription/${rssSubscriptionId}`, {
       title: title,
       ttl: ttl,
