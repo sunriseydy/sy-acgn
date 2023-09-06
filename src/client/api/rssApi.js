@@ -45,6 +45,10 @@ const rssApi = {
   async markRssSubscriptionItemRead(rssSubscriptionId, rssSubscriptionItemId) {
     return http.put(`/rss/subscription/${rssSubscriptionId}/item/${rssSubscriptionItemId}/read`)
   },
+  // 更新订阅内容
+  async updateRssSubscriptionItem(rssSubscriptionId) {
+    return http.post(`/rss/subscription/${rssSubscriptionId}/item`)
+  },
 }
 
 export default rssApi

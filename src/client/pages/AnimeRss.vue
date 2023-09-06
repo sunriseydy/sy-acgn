@@ -67,6 +67,10 @@ function markRssSubscriptionRead(rssSubscriptionId) {
   rssApi.markRssSubscriptionRead(rssSubscriptionId)
 }
 
+function updateRssSubscriptionItem(rssSubscriptionId) {
+  rssApi.updateRssSubscriptionItem(rssSubscriptionId)
+}
+
 onUpdated(() => {
   updateHeight()
 })
@@ -196,6 +200,7 @@ onUnmounted(() => {
                     <v-btn
                       density="compact"
                       :icon="mdiUpdate"
+                      @click="updateRssSubscriptionItem(rssSubscription.id)"
                     >
                       <v-icon :icon="mdiUpdate" />
                       <v-tooltip
