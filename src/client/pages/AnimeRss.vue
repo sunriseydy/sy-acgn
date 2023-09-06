@@ -2,6 +2,7 @@
 import { ref, onUpdated, onMounted, onUnmounted } from 'vue'
 import rssApi from '@/client/api/rssApi.js'
 import { mdiDelete, mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
+import { createConfirm, createSnackbar } from 'vuetify-use-dialog'
 
 const tab = ref('option-1')
 const unread = ref({
@@ -40,6 +41,19 @@ function addRssSubscription() {
   rssApi.addRssSubscription(addLink.value).then((res) => {
     addRssDialog.value = false
     rssSubscriptionList.value = rssSubscriptionList.value.concat(res.data.data)
+  })
+}
+
+function deleteRssSubscription(rssSubscriptionId) {
+  createConfirm({ content: '确定删除当前订阅？' }).then((res) => {
+    if (!res) return
+    rssApi.deleteRssSubscription(rssSubscriptionId).then(() => {
+      // 删除后从列表中移除
+      rssSubscriptionList.value = rssSubscriptionList.value.filter(
+        (rssSubscription) => rssSubscription.id !== rssSubscriptionId,
+      )
+      createSnackbar({ text: '删除成功!' })
+    })
   })
 }
 
@@ -170,6 +184,7 @@ onUnmounted(() => {
                     <v-btn
                       density="compact"
                       :icon="mdiDelete"
+                      @click="deleteRssSubscription(rssSubscription.id)"
                     >
                       <v-icon :icon="mdiDelete" />
                       <v-tooltip
