@@ -28,6 +28,10 @@ const rssApi = {
   async deleteRssSubscription(rssSubscriptionId) {
     return http.delete(`/rss/subscription/${rssSubscriptionId}`)
   },
+  // 标记订阅为已读
+  async markRssSubscriptionRead(rssSubscriptionId) {
+    return http.put(`/rss/subscription/${rssSubscriptionId}/read`)
+  },
   // 查询 rss 订阅的条目
   async queryRssSubscriptionItem(rssSubscriptionId, page, size) {
     return http.get(`/rss/subscription/${rssSubscriptionId}/item`, {

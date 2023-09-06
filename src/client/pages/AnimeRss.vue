@@ -43,6 +43,16 @@ function addRssSubscription() {
   })
 }
 
+function markAllRssSubscriptionRead() {
+  rssSubscriptionList.value.forEach((rssSubscription) => {
+    rssApi.markRssSubscriptionRead(rssSubscription.id)
+  })
+}
+
+function markRssSubscriptionRead(rssSubscriptionId) {
+  rssApi.markRssSubscriptionRead(rssSubscriptionId)
+}
+
 onUpdated(() => {
   updateHeight()
 })
@@ -122,7 +132,10 @@ onUnmounted(() => {
                     >全部更新
                   </v-tooltip>
                 </v-btn>
-                <v-btn :icon="mdiRead">
+                <v-btn
+                  :icon="mdiRead"
+                  @click="markAllRssSubscriptionRead"
+                >
                   <v-icon :icon="mdiRead" />
                   <v-tooltip
                     activator="parent"
@@ -168,6 +181,7 @@ onUnmounted(() => {
                     <v-btn
                       density="compact"
                       :icon="mdiUpdate"
+                      @click="markRssSubscriptionRead(rssSubscription.id)"
                     >
                       <v-icon :icon="mdiUpdate" />
                       <v-tooltip
