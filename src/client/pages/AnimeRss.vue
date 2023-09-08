@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onUpdated, onMounted, onUnmounted } from 'vue'
 import rssApi from '@/client/api/rssApi.js'
-import { mdiDelete, mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
-import { createConfirm, createSnackbar } from 'vuetify-use-dialog'
+import { mdiDelete, mdiPencil, mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
+import { useConfirm, useSnackbar } from 'vuetify-use-dialog'
 
 const tab = ref('option-1')
 const unread = ref({
@@ -14,6 +14,9 @@ const addLink = ref('')
 const addRssDialog = ref(false)
 const editRssDialog = ref(false)
 const editRss = ref({})
+
+const createConfirm = useConfirm()
+const createSnackbar = useSnackbar()
 
 function updateHeight() {
   const aEl = document.querySelector('#rss-card-1')
@@ -47,7 +50,14 @@ function addRssSubscription() {
 }
 
 function deleteRssSubscription(rssSubscriptionId) {
-  createConfirm({ content: '确定删除当前订阅？' }).then((res) => {
+  createConfirm({
+    title: '确定删除当前订阅？',
+    confirmationText: '确定',
+    cancellationText: '取消',
+    dialogProps: {
+      width: 500,
+    },
+  }).then((res) => {
     if (!res) return
     rssApi.deleteRssSubscription(rssSubscriptionId).then(() => {
       // 删除后从列表中移除
