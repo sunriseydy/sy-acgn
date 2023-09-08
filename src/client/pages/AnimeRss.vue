@@ -73,23 +73,26 @@ function markAllRssSubscriptionRead() {
   rssSubscriptionList.value.forEach((rssSubscription) => {
     rssApi.markRssSubscriptionRead(rssSubscription.id)
   })
+  // ydy todo 刷新
 }
 
 function markRssSubscriptionRead(rssSubscriptionId) {
   rssApi.markRssSubscriptionRead(rssSubscriptionId)
+  // ydy todo 刷新
 }
 
 function updateRssSubscriptionItem(rssSubscriptionId) {
   rssApi.updateRssSubscriptionItem(rssSubscriptionId)
+  // ydy todo 刷新
 }
 
-function openEditRssSubscriptionDialog(editRss) {
-  editRss.value = editRss
+function openEditRssSubscriptionDialog(v) {
+  editRss.value = { ...v }
   editRssDialog.value = true
 }
 
-function editRssSubscription(editRss) {
-  const { id, title, ttl } = editRss
+function editRssSubscription() {
+  const { id, title, ttl } = editRss.value
   rssApi.editRssSubscription(id, title, ttl).then((res) => {
     editRssDialog.value = false
     rssSubscriptionList.value = rssSubscriptionList.value.map((rssSubscription) => {
@@ -147,6 +150,40 @@ onUnmounted(() => {
             color="primary"
             variant="text"
             @click="addRssSubscription"
+          >
+            保存
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="editRssDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="editRss.title"
+              label="订阅标题"
+              variant="outlined"
+              :rules="[(v) => !!v || '请输入订阅标题']"
+            />
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            variant="text"
+            @click="editRssDialog = false"
+          >
+            取消
+          </v-btn>
+          <v-btn
+            color="primary"
+            variant="text"
+            @click="editRssSubscription"
           >
             保存
           </v-btn>
@@ -249,6 +286,18 @@ onUnmounted(() => {
                         activator="parent"
                         location="bottom"
                         >已读
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      density="compact"
+                      :icon="mdiPencil"
+                      @click="openEditRssSubscriptionDialog(rssSubscription)"
+                    >
+                      <v-icon :icon="mdiPencil" />
+                      <v-tooltip
+                        activator="parent"
+                        location="bottom"
+                        >编辑
                       </v-tooltip>
                     </v-btn>
                   </v-card-actions>
