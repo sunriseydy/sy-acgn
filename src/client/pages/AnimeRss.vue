@@ -7,7 +7,7 @@ import { useConfirm, useSnackbar } from 'vuetify-use-dialog'
 const tab = ref('option-1')
 const unread = ref({
   id: 0,
-  title: '未读',
+  title: '所有未读',
 })
 const rssSubscriptionList = ref([unread.value])
 const addLink = ref('')
@@ -70,27 +70,39 @@ function deleteRssSubscription(rssSubscriptionId) {
 }
 
 function markAllRssSubscriptionRead() {
-  rssSubscriptionList.value.forEach((rssSubscription) => {
-    rssApi.markRssSubscriptionRead(rssSubscription.id)
-  })
+  rssSubscriptionList.value
+    .filter((rssSubscription) => rssSubscription.id !== 0)
+    .forEach((rssSubscription) => {
+      rssApi.markRssSubscriptionRead(rssSubscription.id)
+    })
   // ydy todo 刷新
 }
 
 function markRssSubscriptionRead(rssSubscriptionId) {
-  rssApi.markRssSubscriptionRead(rssSubscriptionId)
-  // ydy todo 刷新
+  if (rssSubscriptionId === 0) {
+    markAllRssSubscriptionRead()
+  } else {
+    rssApi.markRssSubscriptionRead(rssSubscriptionId)
+    // ydy todo 刷新
+  }
 }
 
 function updateAllRssSubscriptionsItem() {
-  rssSubscriptionList.value.forEach((rssSubscription) => {
-    rssApi.updateRssSubscriptionItem(rssSubscription.id)
-  })
+  rssSubscriptionList.value
+    .filter((rssSubscription) => rssSubscription.id !== 0)
+    .forEach((rssSubscription) => {
+      rssApi.updateRssSubscriptionItem(rssSubscription.id)
+    })
   // ydy todo 刷新
 }
 
 function updateRssSubscriptionItem(rssSubscriptionId) {
-  rssApi.updateRssSubscriptionItem(rssSubscriptionId)
-  // ydy todo 刷新
+  if (rssSubscriptionId === 0) {
+    updateAllRssSubscriptionsItem()
+  } else {
+    rssApi.updateRssSubscriptionItem(rssSubscriptionId)
+    // ydy todo 刷新
+  }
 }
 
 function openEditRssSubscriptionDialog(v) {
@@ -264,8 +276,22 @@ onUnmounted(() => {
                   <v-card-actions>
                     <v-btn
                       density="compact"
+                      :icon="mdiPencil"
+                      @click="openEditRssSubscriptionDialog(rssSubscription)"
+                      v-if="rssSubscription.id !== 0"
+                    >
+                      <v-icon :icon="mdiPencil" />
+                      <v-tooltip
+                        activator="parent"
+                        location="bottom"
+                        >编辑
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      density="compact"
                       :icon="mdiDelete"
                       @click="deleteRssSubscription(rssSubscription.id)"
+                      v-if="rssSubscription.id !== 0"
                     >
                       <v-icon :icon="mdiDelete" />
                       <v-tooltip
@@ -296,18 +322,6 @@ onUnmounted(() => {
                         activator="parent"
                         location="bottom"
                         >已读
-                      </v-tooltip>
-                    </v-btn>
-                    <v-btn
-                      density="compact"
-                      :icon="mdiPencil"
-                      @click="openEditRssSubscriptionDialog(rssSubscription)"
-                    >
-                      <v-icon :icon="mdiPencil" />
-                      <v-tooltip
-                        activator="parent"
-                        location="bottom"
-                        >编辑
                       </v-tooltip>
                     </v-btn>
                   </v-card-actions>
