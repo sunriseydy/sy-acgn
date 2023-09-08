@@ -81,6 +81,13 @@ function markRssSubscriptionRead(rssSubscriptionId) {
   // ydy todo 刷新
 }
 
+function updateAllRssSubscriptionsItem() {
+  rssSubscriptionList.value.forEach((rssSubscription) => {
+    rssApi.updateRssSubscriptionItem(rssSubscription.id)
+  })
+  // ydy todo 刷新
+}
+
 function updateRssSubscriptionItem(rssSubscriptionId) {
   rssApi.updateRssSubscriptionItem(rssSubscriptionId)
   // ydy todo 刷新
@@ -209,7 +216,10 @@ onUnmounted(() => {
                     >添加订阅
                   </v-tooltip>
                 </v-btn>
-                <v-btn :icon="mdiUpdate">
+                <v-btn
+                  :icon="mdiUpdate"
+                  @click="updateAllRssSubscriptionsItem"
+                >
                   <v-icon :icon="mdiUpdate" />
                   <v-tooltip
                     activator="parent"
