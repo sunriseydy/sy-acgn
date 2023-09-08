@@ -4,7 +4,6 @@ import rssApi from '@/client/api/rssApi.js'
 import { mdiDelete, mdiPencil, mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
 import { useConfirm, useSnackbar } from 'vuetify-use-dialog'
 
-const tab = ref('option-1')
 const unread = ref({
   id: 0,
   title: '所有未读',
@@ -14,6 +13,7 @@ const addLink = ref('')
 const addRssDialog = ref(false)
 const editRssDialog = ref(false)
 const editRss = ref({})
+const currentRss = ref({})
 
 const createConfirm = useConfirm()
 const createSnackbar = useSnackbar()
@@ -123,92 +123,84 @@ function editRssSubscription() {
   })
 }
 
-onUpdated(() => {
-  updateHeight()
-})
-
 onMounted(() => {
   updateHeight()
-  window.addEventListener('resize', updateHeight)
   getRssSubscriptionList(1, 10)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateHeight)
 })
 </script>
 
 <template>
+  <v-dialog
+    v-model="addRssDialog"
+    width="500"
+  >
+    <v-card>
+      <v-card-text>
+        <v-text-field
+          v-model="addLink"
+          label="订阅地址"
+          variant="outlined"
+          :rules="[(v) => !!v || '请输入订阅地址']"
+        />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          variant="text"
+          @click="addRssDialog = false"
+        >
+          取消
+        </v-btn>
+        <v-btn
+          color="primary"
+          variant="text"
+          @click="addRssSubscription"
+        >
+          保存
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-dialog
+    v-model="editRssDialog"
+    width="500"
+  >
+    <v-card>
+      <v-card-text>
+        <v-form>
+          <v-text-field
+            v-model="editRss.title"
+            label="订阅标题"
+            variant="outlined"
+            :rules="[(v) => !!v || '请输入订阅标题']"
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          variant="text"
+          @click="editRssDialog = false"
+        >
+          取消
+        </v-btn>
+        <v-btn
+          color="primary"
+          variant="text"
+          @click="editRssSubscription"
+        >
+          保存
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card
     id="rss-card-1"
     class="h-screen d-flex"
+    v-resize="updateHeight"
   >
-    <v-dialog
-      v-model="addRssDialog"
-      width="500"
-    >
-      <v-card>
-        <v-card-text>
-          <v-text-field
-            v-model="addLink"
-            label="订阅地址"
-            variant="outlined"
-            :rules="[(v) => !!v || '请输入订阅地址']"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="addRssDialog = false"
-          >
-            取消
-          </v-btn>
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="addRssSubscription"
-          >
-            保存
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog
-      v-model="editRssDialog"
-      width="500"
-    >
-      <v-card>
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              v-model="editRss.title"
-              label="订阅标题"
-              variant="outlined"
-              :rules="[(v) => !!v || '请输入订阅标题']"
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="editRssDialog = false"
-          >
-            取消
-          </v-btn>
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="editRssSubscription"
-          >
-            保存
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-row no-gutters>
       <v-col cols="4">
         <v-card>
@@ -332,27 +324,9 @@ onUnmounted(() => {
         </v-card>
       </v-col>
       <v-col cols="8">
-        <v-sheet>
-          <v-window v-model="tab">
-            <v-window-item value="option-1">
-              <v-card>
-                <v-card-text>
-                  <p>1</p>
-                </v-card-text>
-              </v-card>
-            </v-window-item>
-            <v-window-item value="option-2">
-              <v-card>
-                <v-card-text> 2</v-card-text>
-              </v-card>
-            </v-window-item>
-            <v-window-item value="option-3">
-              <v-card>
-                <v-card-text> 3</v-card-text>
-              </v-card>
-            </v-window-item>
-          </v-window>
-        </v-sheet>
+        <v-card>
+          <v-card-text> 111 </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </v-card>
