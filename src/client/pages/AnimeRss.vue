@@ -139,7 +139,7 @@ function onCurrentRsschange(rssSubscription) {
 }
 
 onMounted(() => {
-  getRssSubscriptionList(1, 10)
+  getRssSubscriptionList(0, 0)
 })
 </script>
 
