@@ -1,6 +1,6 @@
 import express from 'express'
 import rssClient from './rssClient.js'
-import { responseWithError, responseWithSuccess } from '../utils.js'
+import { responseWithError, responseWithSuccess, parsePageParams } from '../utils.js'
 import RssParser from 'rss-parser'
 import prisma from '../dbClient.js'
 
@@ -15,14 +15,10 @@ const rssSubscriptionItemPath = `${rssSubscriptionPath}/:rssSubscriptionId/item`
  */
 router.get(rssSubscriptionPath, async (req, res) => {
   try {
-    const page = req.query.page || 1
-    const size = req.query.size || 10
-    if (page <= 0 || size <= 0) {
-      throw '[page]和[size]参数不能小于等于0'
-    }
+    const { take, skip } = parsePageParams(req)
     const results = await prisma.rssSubscription.findMany({
-      take: Number(size),
-      skip: Number(page - 1) * Number(size),
+      take: take,
+      skip: skip,
     })
     responseWithSuccess(res, null, results)
   } catch (error) {
@@ -144,7 +140,9 @@ router.put(`${rssSubscriptionPath}/:id/read`, async (req, res) => {
       throw '[id]参数不存在'
     }
     const result =
-      await prisma.$executeRaw`update RssSubscriptionItem set isRead = true, updatedAt = current_timestamp where rssSubscriptionId = ${Number(id)} and isRead = false`
+      await prisma.$executeRaw`update RssSubscriptionItem set isRead = true, updatedAt = current_timestamp where rssSubscriptionId = ${Number(
+        id,
+      )} and isRead = false`
     responseWithSuccess(res, null, result)
   } catch (error) {
     responseWithError(res, error)
@@ -157,15 +155,15 @@ router.put(`${rssSubscriptionPath}/:id/read`, async (req, res) => {
 router.get(rssSubscriptionItemPath, async (req, res) => {
   try {
     const { rssSubscriptionId } = req.params
-    const page = req.query.page || 1
-    const size = req.query.size || 10
-    if (page <= 0 || size <= 0) {
-      throw '[page]和[size]参数不能小于等于0'
-    }
+    const { take, skip } = parsePageParams(req)
     if (!rssSubscriptionId) {
       throw '[rssSubscriptionId]参数不存在'
     }
     const results = await prisma.rssSubscriptionItem.findMany({
+      select: {
+        rawJson: false,
+        content: false,
+      },
       where: {
         rssSubscriptionId: Number(rssSubscriptionId),
       },
@@ -174,8 +172,8 @@ router.get(rssSubscriptionItemPath, async (req, res) => {
           pubDate: 'desc',
         },
       ],
-      take: Number(size),
-      skip: Number(page - 1) * Number(size),
+      take: take,
+      skip: skip,
     })
     responseWithSuccess(res, null, results)
   } catch (error) {
