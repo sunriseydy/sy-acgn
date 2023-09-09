@@ -161,11 +161,16 @@ router.get(rssSubscriptionItemPath, async (req, res) => {
     }
     const results = await prisma.rssSubscriptionItem.findMany({
       select: {
-        rawJson: false,
-        content: false,
+        id: true,
+        title: true,
+        link: true,
+        pubDate: true,
+        isRead: true,
+        torrentLink: true,
       },
       where: {
-        rssSubscriptionId: Number(rssSubscriptionId),
+        rssSubscriptionId: rssSubscriptionId === '0' ? undefined : Number(rssSubscriptionId),
+        isRead: rssSubscriptionId === '0' ? false : undefined,
       },
       orderBy: [
         {
