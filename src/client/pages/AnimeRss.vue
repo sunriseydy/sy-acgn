@@ -129,10 +129,15 @@ function editRssSubscription() {
   })
 }
 
-function onCurrentRsschange(rssSubscription) {
+function onCurrentRssChange(rssSubscription) {
   console.log(rssSubscription)
   if (rssSubscription) {
-    currentRss.value = rssSubscription
+    rssApi.queryRssSubscriptionItem(rssSubscription.id, 0, 0).then((res) => {
+      currentRss.value = {
+        ...rssSubscription,
+        items: res.data.data,
+      }
+    })
   } else {
     currentRss.value = nullRss
   }
@@ -265,7 +270,7 @@ onMounted(() => {
           >
             <v-item-group
               selected-class="text-primary"
-              @update:model-value="onCurrentRsschange"
+              @update:model-value="onCurrentRssChange"
             >
               <v-row
                 dense
