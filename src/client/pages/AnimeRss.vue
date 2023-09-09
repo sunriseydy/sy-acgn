@@ -302,7 +302,7 @@ onMounted(() => {
                         <v-btn
                           density="compact"
                           :icon="mdiPencil"
-                          @click="openEditRssSubscriptionDialog(rssSubscription)"
+                          @click.stop="openEditRssSubscriptionDialog(rssSubscription)"
                           v-if="rssSubscription.id !== 0"
                         >
                           <v-icon :icon="mdiPencil" />
@@ -315,7 +315,7 @@ onMounted(() => {
                         <v-btn
                           density="compact"
                           :icon="mdiDelete"
-                          @click="deleteRssSubscription(rssSubscription.id)"
+                          @click.stop="deleteRssSubscription(rssSubscription.id)"
                           v-if="rssSubscription.id !== 0"
                         >
                           <v-icon :icon="mdiDelete" />
@@ -328,7 +328,7 @@ onMounted(() => {
                         <v-btn
                           density="compact"
                           :icon="mdiUpdate"
-                          @click="updateRssSubscriptionItem(rssSubscription.id)"
+                          @click.stop="updateRssSubscriptionItem(rssSubscription.id)"
                         >
                           <v-icon :icon="mdiUpdate" />
                           <v-tooltip
@@ -340,7 +340,7 @@ onMounted(() => {
                         <v-btn
                           density="compact"
                           :icon="mdiRead"
-                          @click="markRssSubscriptionRead(rssSubscription.id)"
+                          @click.stop="markRssSubscriptionRead(rssSubscription.id)"
                         >
                           <v-icon :icon="mdiRead" />
                           <v-tooltip
