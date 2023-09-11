@@ -24,23 +24,14 @@ const currentRss = ref(nullRss)
 const createConfirm = useConfirm()
 const createSnackbar = useSnackbar()
 
-function updateHeight() {
-  const aEl = document.querySelector('#rss-card-1')
-  const bEl = document.querySelector('#rss-card-2')
-
-  const aHeight = aEl.clientHeight
-  const bHeight = bEl.clientHeight
-
-  const cHeight = aHeight - bHeight
-
-  document.querySelector('#rss-card-3').style.height = `${cHeight}px`
-  console.log(aHeight, bHeight, cHeight)
-}
-
 const getRssSubscriptionList = async (page, size) => {
   rssApi.queryRssSubscription(page, size).then((res) => {
     rssSubscriptionList.value = rssSubscriptionList.value.concat(res.data.data)
   })
+}
+
+function getRssSubscriptionById(id) {
+  return rssSubscriptionList.value.find((rssSubscription) => rssSubscription.id === id)
 }
 
 function openAddRssSubscriptionDialog() {
@@ -93,21 +84,25 @@ function markRssSubscriptionRead(rssSubscriptionId) {
   }
 }
 
-function updateAllRssSubscriptionsItem() {
-  rssSubscriptionList.value
-    .filter((rssSubscription) => rssSubscription.id !== 0)
-    .forEach((rssSubscription) => {
-      rssApi.updateRssSubscriptionItem(rssSubscription.id)
-    })
-  // ydy todo 刷新
+async function updateAllRssSubscriptionsItem() {
+  for (const rssSubscription of rssSubscriptionList.value.filter((v) => v.id !== 0)) {
+    await rssApi.updateRssSubscriptionItem(rssSubscription.id)
+  }
+  if (currentRss.value.id !== null) {
+    getRssSubscriptionItem(currentRss.value.id)
+  }
 }
 
-function updateRssSubscriptionItem(rssSubscriptionId) {
+async function updateRssSubscriptionItem(rssSubscriptionId) {
   if (rssSubscriptionId === 0) {
-    updateAllRssSubscriptionsItem()
+    for (const rssSubscription of rssSubscriptionList.value.filter((v) => v.id !== 0)) {
+      await rssApi.updateRssSubscriptionItem(rssSubscription.id)
+    }
   } else {
-    rssApi.updateRssSubscriptionItem(rssSubscriptionId)
-    // ydy todo 刷新
+    await rssApi.updateRssSubscriptionItem(rssSubscriptionId)
+  }
+  if (currentRss.value.id === rssSubscriptionId) {
+    getRssSubscriptionItem(rssSubscriptionId)
   }
 }
 
@@ -129,12 +124,12 @@ function editRssSubscription() {
   })
 }
 
-function onCurrentRssChange(rssSubscription) {
-  console.log(rssSubscription)
-  if (rssSubscription) {
-    rssApi.queryRssSubscriptionItem(rssSubscription.id, 0, 0).then((res) => {
+function getRssSubscriptionItem(rssSubscriptionId) {
+  console.log(rssSubscriptionId)
+  if (rssSubscriptionId !== undefined) {
+    rssApi.queryRssSubscriptionItem(rssSubscriptionId, 0, 0).then((res) => {
       currentRss.value = {
-        ...rssSubscription,
+        ...getRssSubscriptionById(rssSubscriptionId),
         items: res.data.data,
       }
     })
@@ -215,16 +210,12 @@ onMounted(() => {
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-card
-    id="rss-card-1"
-    class="h-screen d-flex"
-    v-resize="updateHeight"
-  >
+  <v-card>
     <v-row no-gutters>
       <v-col cols="4">
         <v-card>
-          <v-card-item id="rss-card-2">
-            <v-card-title>
+          <v-card-title>
+            <div class="mr-1">
               <v-toolbar>
                 <v-toolbar-title>RSS 订阅</v-toolbar-title>
                 <v-spacer />
@@ -262,106 +253,150 @@ onMounted(() => {
                   </v-tooltip>
                 </v-btn>
               </v-toolbar>
-            </v-card-title>
-          </v-card-item>
-          <v-card-text
-            id="rss-card-3"
-            class="overflow-y-auto"
-          >
+            </div>
+          </v-card-title>
+          <v-card-text>
             <v-item-group
               selected-class="text-primary"
-              @update:model-value="onCurrentRssChange"
+              @update:model-value="getRssSubscriptionItem"
             >
-              <v-row
-                dense
-                v-for="rssSubscription in rssSubscriptionList"
-                :key="rssSubscription.id"
+              <v-virtual-scroll
+                :items="rssSubscriptionList"
+                style="height: calc(100dvh - 64px - 16px)"
               >
-                <v-col>
-                  <v-item
-                    :value="rssSubscription"
-                    v-slot="{ selectedClass, toggle }"
+                <template #default="{ item }">
+                  <v-row
+                    no-gutters
+                    class="mb-1 mr-1"
+                    :key="item.id"
                   >
-                    <v-card
-                      @click="toggle"
-                      variant="tonal"
-                    >
-                      <v-card-item>
-                        <v-card-title
-                          :class="selectedClass"
-                          style="white-space: normal"
+                    <v-col>
+                      <v-item
+                        :value="item.id"
+                        v-slot="{ selectedClass, toggle }"
+                      >
+                        <v-card
+                          @click="toggle"
+                          variant="tonal"
                         >
-                          {{ rssSubscription.title }}
-                        </v-card-title>
-                        <v-card-subtitle> 总数：100；未读：10</v-card-subtitle>
-                      </v-card-item>
-                      <v-card-text v-if="rssSubscription.link">
-                        {{ rssSubscription.link }}
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-btn
-                          density="compact"
-                          :icon="mdiPencil"
-                          @click.stop="openEditRssSubscriptionDialog(rssSubscription)"
-                          v-if="rssSubscription.id !== 0"
-                        >
-                          <v-icon :icon="mdiPencil" />
-                          <v-tooltip
-                            activator="parent"
-                            location="bottom"
-                            >编辑
-                          </v-tooltip>
-                        </v-btn>
-                        <v-btn
-                          density="compact"
-                          :icon="mdiDelete"
-                          @click.stop="deleteRssSubscription(rssSubscription.id)"
-                          v-if="rssSubscription.id !== 0"
-                        >
-                          <v-icon :icon="mdiDelete" />
-                          <v-tooltip
-                            activator="parent"
-                            location="bottom"
-                            >删除
-                          </v-tooltip>
-                        </v-btn>
-                        <v-btn
-                          density="compact"
-                          :icon="mdiUpdate"
-                          @click.stop="updateRssSubscriptionItem(rssSubscription.id)"
-                        >
-                          <v-icon :icon="mdiUpdate" />
-                          <v-tooltip
-                            activator="parent"
-                            location="bottom"
-                            >更新
-                          </v-tooltip>
-                        </v-btn>
-                        <v-btn
-                          density="compact"
-                          :icon="mdiRead"
-                          @click.stop="markRssSubscriptionRead(rssSubscription.id)"
-                        >
-                          <v-icon :icon="mdiRead" />
-                          <v-tooltip
-                            activator="parent"
-                            location="bottom"
-                            >已读
-                          </v-tooltip>
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-item>
-                </v-col>
-              </v-row>
+                          <v-card-item>
+                            <v-card-title
+                              :class="selectedClass"
+                              style="white-space: normal"
+                            >
+                              {{ item.title }}
+                            </v-card-title>
+                            <v-card-subtitle> 总数：100；未读：10</v-card-subtitle>
+                          </v-card-item>
+                          <v-card-text v-if="item.link">
+                            {{ item.link }}
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-btn
+                              density="compact"
+                              :icon="mdiPencil"
+                              @click.stop="openEditRssSubscriptionDialog(item)"
+                              v-if="item.id !== 0"
+                            >
+                              <v-icon :icon="mdiPencil" />
+                              <v-tooltip
+                                activator="parent"
+                                location="bottom"
+                                >编辑
+                              </v-tooltip>
+                            </v-btn>
+                            <v-btn
+                              density="compact"
+                              :icon="mdiDelete"
+                              @click.stop="deleteRssSubscription(item.id)"
+                              v-if="item.id !== 0"
+                            >
+                              <v-icon :icon="mdiDelete" />
+                              <v-tooltip
+                                activator="parent"
+                                location="bottom"
+                                >删除
+                              </v-tooltip>
+                            </v-btn>
+                            <v-btn
+                              density="compact"
+                              :icon="mdiUpdate"
+                              @click.stop="updateRssSubscriptionItem(item.id)"
+                            >
+                              <v-icon :icon="mdiUpdate" />
+                              <v-tooltip
+                                activator="parent"
+                                location="bottom"
+                                >更新
+                              </v-tooltip>
+                            </v-btn>
+                            <v-btn
+                              density="compact"
+                              :icon="mdiRead"
+                              @click.stop="markRssSubscriptionRead(item.id)"
+                            >
+                              <v-icon :icon="mdiRead" />
+                              <v-tooltip
+                                activator="parent"
+                                location="bottom"
+                                >已读
+                              </v-tooltip>
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-item>
+                    </v-col>
+                  </v-row>
+                </template>
+              </v-virtual-scroll>
             </v-item-group>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="8">
-        <v-card>
-          <v-card-text> 111</v-card-text>
-        </v-card>
+        <v-sheet class="mt-2">
+          <v-item-group selected-class="text-primary">
+            <v-virtual-scroll
+              :items="currentRss.items"
+              style="height: calc(100dvh - 8px)"
+            >
+              <template #default="{ item }">
+                <v-row
+                  no-gutters
+                  class="mb-1 mr-1"
+                  :key="item.id"
+                >
+                  <v-col>
+                    <v-item
+                      :value="item.id"
+                      v-slot="{ isSelected, selectedClass, toggle }"
+                    >
+                      <v-card
+                        @click="toggle"
+                        variant="tonal"
+                      >
+                        <v-card-item>
+                          <v-card-title
+                            :class="[
+                              isSelected ? selectedClass : item.isRead ? '' : 'text-secondary',
+                            ]"
+                            style="white-space: normal"
+                          >
+                            {{ item.title }}
+                          </v-card-title>
+                          <v-card-subtitle>{{ item.pubDate }}</v-card-subtitle>
+                        </v-card-item>
+                        <v-card-text v-if="item.link">
+                          {{ item.link }}
+                        </v-card-text>
+                      </v-card>
+                    </v-item>
+                  </v-col>
+                </v-row>
+              </template>
+            </v-virtual-scroll>
+          </v-item-group>
+        </v-sheet>
       </v-col>
     </v-row>
   </v-card>
