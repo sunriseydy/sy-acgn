@@ -66,21 +66,27 @@ function deleteRssSubscription(rssSubscriptionId) {
   })
 }
 
-function markAllRssSubscriptionRead() {
-  rssSubscriptionList.value
-    .filter((rssSubscription) => rssSubscription.id !== 0)
-    .forEach((rssSubscription) => {
-      rssApi.markRssSubscriptionRead(rssSubscription.id)
-    })
-  // ydy todo 刷新
+async function markAllRssSubscriptionRead() {
+  for (const rssSubscription of rssSubscriptionList.value.filter((v) => v.id !== 0)) {
+    await rssApi.markRssSubscriptionRead(rssSubscription.id)
+  }
+  // 刷新当前订阅
+  if (currentRss.value.id !== null) {
+    getRssSubscriptionItem(currentRss.value.id)
+  }
 }
 
-function markRssSubscriptionRead(rssSubscriptionId) {
+async function markRssSubscriptionRead(rssSubscriptionId) {
   if (rssSubscriptionId === 0) {
-    markAllRssSubscriptionRead()
+    for (const rssSubscription of rssSubscriptionList.value.filter((v) => v.id !== 0)) {
+      await rssApi.markRssSubscriptionRead(rssSubscription.id)
+    }
   } else {
-    rssApi.markRssSubscriptionRead(rssSubscriptionId)
-    // ydy todo 刷新
+    await rssApi.markRssSubscriptionRead(rssSubscriptionId)
+  }
+  // 刷新当前订阅
+  if (currentRss.value.id === rssSubscriptionId) {
+    getRssSubscriptionItem(rssSubscriptionId)
   }
 }
 
@@ -88,6 +94,7 @@ async function updateAllRssSubscriptionsItem() {
   for (const rssSubscription of rssSubscriptionList.value.filter((v) => v.id !== 0)) {
     await rssApi.updateRssSubscriptionItem(rssSubscription.id)
   }
+  // 刷新当前订阅
   if (currentRss.value.id !== null) {
     getRssSubscriptionItem(currentRss.value.id)
   }
@@ -101,6 +108,7 @@ async function updateRssSubscriptionItem(rssSubscriptionId) {
   } else {
     await rssApi.updateRssSubscriptionItem(rssSubscriptionId)
   }
+  // 刷新当前订阅
   if (currentRss.value.id === rssSubscriptionId) {
     getRssSubscriptionItem(rssSubscriptionId)
   }
