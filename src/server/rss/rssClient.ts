@@ -1,13 +1,14 @@
 import axios from 'axios'
 import fs from 'fs'
-import { responseWithError, responseWithSuccess } from '../utils.js'
+import { Response } from 'express'
+import { responseWithError, responseWithSuccess } from '../utils'
 
 const rssHttp = axios.create({
   timeout: 5000,
   responseType: 'text',
 })
 
-const downloadTorrentInFile = async (link, path, res) => {
+const downloadTorrentInFile = async (link: string, path: string, res: Response) => {
   try {
     const response = await rssHttp.get(link, { responseType: 'stream' })
     const writer = fs.createWriteStream(path)
@@ -18,7 +19,7 @@ const downloadTorrentInFile = async (link, path, res) => {
   }
 }
 
-const fetchRss = (link) => {
+const fetchRss = (link: string) => {
   return rssHttp.get(link)
 }
 

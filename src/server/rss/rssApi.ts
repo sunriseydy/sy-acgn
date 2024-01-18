@@ -1,8 +1,8 @@
 import express from 'express'
-import rssClient from './rssClient.js'
-import { responseWithError, responseWithSuccess, parsePageParams } from '../utils.js'
+import rssClient from './rssClient'
+import { responseWithError, responseWithSuccess, parsePageParams } from '../utils'
 import RssParser from 'rss-parser'
-import prisma from '../dbClient.js'
+import prisma from '../dbClient'
 
 const rssParser = new RssParser()
 const router = express.Router()
@@ -56,7 +56,7 @@ router.post(rssSubscriptionPath, async (req, res) => {
     exist = await prisma.rssSubscription.create({
       data: {
         link: link,
-        title: feed.title,
+        title: feed.title || '',
         description: feed.description,
         ttl: Number(feed.ttl),
         lastFetchAt: new Date(),
@@ -215,18 +215,18 @@ router.post(rssSubscriptionItemPath, async (req, res) => {
         item.guid &&
         item.link &&
         item.title &&
-        item.enclosure.type === 'application/x-bittorrent' &&
-        item.enclosure.url
+        item.enclosure?.type === 'application/x-bittorrent' &&
+        item.enclosure?.url
       )
     })
-    const insertItems = []
+    const insertItems: any[] = []
     for (const item of items) {
       // 先查询该内容是否存在
       const exist = await prisma.rssSubscriptionItem.findUnique({
         where: {
           rssSubscriptionId_guid: {
             rssSubscriptionId: Number(rssSubscriptionId),
-            guid: item.guid,
+            guid: item.guid || '',
           },
         },
       })
@@ -239,7 +239,7 @@ router.post(rssSubscriptionItemPath, async (req, res) => {
           pubDate: item.isoDate,
           rssSubscriptionId: Number(rssSubscriptionId),
           isRead: false,
-          torrentLink: item.enclosure.url,
+          torrentLink: item.enclosure?.url,
           rawJson: JSON.stringify(item),
         })
       }

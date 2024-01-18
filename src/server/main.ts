@@ -1,6 +1,6 @@
 import express from 'express'
 import ViteExpress from 'vite-express'
-import rssApi from './rss/rssApi.js'
+import rssApi from './rss/rssApi'
 import cors from 'cors'
 
 const app = express()
