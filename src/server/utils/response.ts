@@ -1,4 +1,4 @@
-import { Response, Request } from 'express'
+import { Response } from 'express'
 
 export const responseWithError = (res: Response, error?: any) => {
   res.status(500).json({
