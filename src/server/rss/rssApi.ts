@@ -1,8 +1,9 @@
 import express from 'express'
 import rssClient from './rssClient'
-import { responseWithError, responseWithSuccess, parsePageParams } from '../utils'
+import { responseWithError, responseWithSuccess } from '@server/utils/response'
+import { parsePageParams } from '@server/utils/request'
 import RssParser from 'rss-parser'
-import prisma from '../dbClient'
+import prisma from '@server/dbClient'
 
 const rssParser = new RssParser()
 const router = express.Router()

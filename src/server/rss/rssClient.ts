@@ -1,7 +1,7 @@
 import axios from 'axios'
 import fs from 'fs'
 import { Response } from 'express'
-import { responseWithError, responseWithSuccess } from '../utils'
+import { responseWithError, responseWithSuccess } from '@server/utils/response'
 
 const rssHttp = axios.create({
   timeout: 5000,
