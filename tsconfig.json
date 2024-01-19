@@ -12,6 +12,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "verbatimModuleSyntax": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "lib": ["ESNext", "DOM"],
     "baseUrl": ".",
     "paths": {
