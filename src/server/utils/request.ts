@@ -8,3 +8,7 @@ export const parsePageParams = (req: Request) => {
     skip: page === 0 ? undefined : (Number(page) - 1) * Number(size),
   }
 }
+
+export const logRequest = (request: Request) => {
+  console.log(request.method, request.originalUrl, request.query, request.body)
+}

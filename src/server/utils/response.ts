@@ -15,3 +15,23 @@ export const responseWithSuccess = (res: Response, message?: any, data?: any) =>
     data: data,
   })
 }
+
+export class Result {
+  success: boolean
+  message: string
+  data?: any
+
+  constructor(success: boolean, message: string, data?: any) {
+    this.success = success
+    this.message = message
+    this.data = data
+  }
+
+  static ok(data?: any) {
+    return new Result(true, '成功', data)
+  }
+
+  static error(error: any = '失败') {
+    return new Result(false, error.message || error, null)
+  }
+}
