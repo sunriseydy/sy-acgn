@@ -1,52 +1,63 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import rssApi from '@/client/api/rssApi.js'
+import rssApi from '@client/api/anime/rssApi'
 import { mdiDelete, mdiPencil, mdiPlus, mdiRead, mdiUpdate } from '@mdi/js'
 import { useConfirm, useSnackbar } from 'vuetify-use-dialog'
 
 const unreadRss = ref({
   id: 0,
   title: '所有未读',
+  link: '',
+  ttl: undefined,
 })
 const rssSubscriptionList = ref([unreadRss.value])
-const addLink = ref('')
-const addRssDialog = ref(false)
-const editRssDialog = ref(false)
-const editRss = ref({})
+const addLinkRef = ref('')
+const addRssDialogRef = ref(false)
+const editRssDialogRef = ref(false)
 const nullRss = {
-  id: null,
-  title: null,
-  link: null,
-  items: [],
+  id: -1,
+  title: '',
+  link: '',
+  ttl: undefined,
+  items: [
+    {
+      id: 0,
+      title: '',
+      link: '',
+      isRead: false,
+      pubDate: undefined,
+    },
+  ],
 }
-const currentRss = ref(nullRss)
+const editRssRef = ref(nullRss)
+const currentRssRef = ref(nullRss)
 
 const createConfirm = useConfirm()
 const createSnackbar = useSnackbar()
 
-const getRssSubscriptionList = async (page, size) => {
+const getRssSubscriptionList = async (page: number, size: number) => {
   rssApi.queryRssSubscription(page, size).then((res) => {
     rssSubscriptionList.value = rssSubscriptionList.value.concat(res.data.data)
   })
 }
 
-function getRssSubscriptionById(id) {
+function getRssSubscriptionById(id: number) {
   return rssSubscriptionList.value.find((rssSubscription) => rssSubscription.id === id)
 }
 
 function openAddRssSubscriptionDialog() {
-  addLink.value = ''
-  addRssDialog.value = true
+  addLinkRef.value = ''
+  addRssDialogRef.value = true
 }
 
 function addRssSubscription() {
-  rssApi.addRssSubscription(addLink.value).then((res) => {
-    addRssDialog.value = false
+  rssApi.addRssSubscription(addLinkRef.value).then((res) => {
+    addRssDialogRef.value = false
     rssSubscriptionList.value = rssSubscriptionList.value.concat(res.data.data)
   })
 }
 
-function deleteRssSubscription(rssSubscriptionId) {
+function deleteRssSubscription(rssSubscriptionId: number) {
   createConfirm({
     title: '确定删除当前订阅？',
     confirmationText: '确定',
@@ -71,12 +82,12 @@ async function markAllRssSubscriptionRead() {
     await rssApi.markRssSubscriptionRead(rssSubscription.id)
   }
   // 刷新当前订阅
-  if (currentRss.value.id !== null) {
-    getRssSubscriptionItem(currentRss.value.id)
+  if (currentRssRef.value.id !== -1) {
+    getRssSubscriptionItem(currentRssRef.value.id)
   }
 }
 
-async function markRssSubscriptionRead(rssSubscriptionId) {
+async function markRssSubscriptionRead(rssSubscriptionId: number) {
   if (rssSubscriptionId === 0) {
     for (const rssSubscription of rssSubscriptionList.value.filter((v) => v.id !== 0)) {
       await rssApi.markRssSubscriptionRead(rssSubscription.id)
@@ -85,7 +96,7 @@ async function markRssSubscriptionRead(rssSubscriptionId) {
     await rssApi.markRssSubscriptionRead(rssSubscriptionId)
   }
   // 刷新当前订阅
-  if (currentRss.value.id === rssSubscriptionId) {
+  if (currentRssRef.value.id === rssSubscriptionId) {
     getRssSubscriptionItem(rssSubscriptionId)
   }
 }
@@ -95,12 +106,12 @@ async function updateAllRssSubscriptionsItem() {
     await rssApi.updateRssSubscriptionItem(rssSubscription.id)
   }
   // 刷新当前订阅
-  if (currentRss.value.id !== null) {
-    getRssSubscriptionItem(currentRss.value.id)
+  if (currentRssRef.value.id !== -1) {
+    getRssSubscriptionItem(currentRssRef.value.id)
   }
 }
 
-async function updateRssSubscriptionItem(rssSubscriptionId) {
+async function updateRssSubscriptionItem(rssSubscriptionId: number) {
   if (rssSubscriptionId === 0) {
     for (const rssSubscription of rssSubscriptionList.value.filter((v) => v.id !== 0)) {
       await rssApi.updateRssSubscriptionItem(rssSubscription.id)
@@ -109,20 +120,20 @@ async function updateRssSubscriptionItem(rssSubscriptionId) {
     await rssApi.updateRssSubscriptionItem(rssSubscriptionId)
   }
   // 刷新当前订阅
-  if (currentRss.value.id === rssSubscriptionId) {
+  if (currentRssRef.value.id === rssSubscriptionId) {
     getRssSubscriptionItem(rssSubscriptionId)
   }
 }
 
-function openEditRssSubscriptionDialog(v) {
-  editRss.value = { ...v }
-  editRssDialog.value = true
+function openEditRssSubscriptionDialog(v: any) {
+  editRssRef.value = { ...v }
+  editRssDialogRef.value = true
 }
 
 function editRssSubscription() {
-  const { id, title, ttl } = editRss.value
+  const { id, title, ttl } = editRssRef.value
   rssApi.editRssSubscription(id, title, ttl).then((res) => {
-    editRssDialog.value = false
+    editRssDialogRef.value = false
     rssSubscriptionList.value = rssSubscriptionList.value.map((rssSubscription) => {
       if (rssSubscription.id === id) {
         return res.data.data
@@ -132,17 +143,22 @@ function editRssSubscription() {
   })
 }
 
-function getRssSubscriptionItem(rssSubscriptionId) {
+function getRssSubscriptionItem(rssSubscriptionId: number) {
   console.log(rssSubscriptionId)
-  if (rssSubscriptionId !== undefined) {
-    rssApi.queryRssSubscriptionItem(rssSubscriptionId, 0, 0).then((res) => {
-      currentRss.value = {
-        ...getRssSubscriptionById(rssSubscriptionId),
-        items: res.data.data,
-      }
-    })
+  if (rssSubscriptionId !== -1) {
+    const currentRss = getRssSubscriptionById(rssSubscriptionId)
+    if (!currentRss) {
+      currentRssRef.value = nullRss
+    } else {
+      rssApi.queryRssSubscriptionItem(rssSubscriptionId, 0, 0).then((res) => {
+        currentRssRef.value = {
+          ...currentRss,
+          items: res.data.data,
+        }
+      })
+    }
   } else {
-    currentRss.value = nullRss
+    currentRssRef.value = nullRss
   }
 }
 
@@ -153,13 +169,13 @@ onMounted(() => {
 
 <template>
   <v-dialog
-    v-model="addRssDialog"
+    v-model="addRssDialogRef"
     width="500"
   >
     <v-card>
       <v-card-text>
         <v-text-field
-          v-model="addLink"
+          v-model="addLinkRef"
           label="订阅地址"
           variant="outlined"
           :rules="[(v) => !!v || '请输入订阅地址']"
@@ -170,7 +186,7 @@ onMounted(() => {
         <v-btn
           color="primary"
           variant="text"
-          @click="addRssDialog = false"
+          @click="addRssDialogRef = false"
         >
           取消
         </v-btn>
@@ -185,14 +201,14 @@ onMounted(() => {
     </v-card>
   </v-dialog>
   <v-dialog
-    v-model="editRssDialog"
+    v-model="editRssDialogRef"
     width="500"
   >
     <v-card>
       <v-card-text>
         <v-form>
           <v-text-field
-            v-model="editRss.title"
+            v-model="editRssRef.title"
             label="订阅标题"
             variant="outlined"
             :rules="[(v) => !!v || '请输入订阅标题']"
@@ -204,7 +220,7 @@ onMounted(() => {
         <v-btn
           color="primary"
           variant="text"
-          @click="editRssDialog = false"
+          @click="editRssDialogRef = false"
         >
           取消
         </v-btn>
@@ -365,7 +381,7 @@ onMounted(() => {
         <v-sheet class="mt-2">
           <v-item-group selected-class="text-primary">
             <v-virtual-scroll
-              :items="currentRss.items"
+              :items="currentRssRef.items"
               style="height: calc(100dvh - 8px)"
             >
               <template #default="{ item }">

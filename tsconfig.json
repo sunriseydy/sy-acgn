@@ -19,6 +19,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@server/*": ["src/server/*"],
+      "@client/*": ["src/client/*"],
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]

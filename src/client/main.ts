@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import vuetify from './plugins/vuetify.js'
-import router from './plugins/router.js'
-import http from '@/client/plugins/axios.js'
+import vuetify from './plugins/vuetify'
+import router from './plugins/router'
+import http from './plugins/axios'
 import { toast } from 'vuetify-sonner'
 import VuetifyUseDialog from 'vuetify-use-dialog'
 
@@ -17,6 +17,7 @@ http.interceptors.response.use(
     if (response && response.data && !response.data.success) {
       return Promise.reject(response.data.message)
     }
+    return response
   },
   (error) => {
     // 超出 2xx 范围的状态码都会触发该函数。

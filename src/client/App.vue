@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import AppNavigationDrawer from '@client/components/AppNavigationDrawer.vue'
+import { VSonner } from 'vuetify-sonner'
+</script>
+
 <template>
   <v-app id="inspire">
     <app-navigation-drawer />
@@ -12,7 +17,3 @@
     <VSonner position="bottom-right" />
   </v-app>
 </template>
-<script setup>
-import AppNavigationDrawer from '@/client/components/AppNavigationDrawer.vue'
-import { VSonner } from 'vuetify-sonner'
-</script>

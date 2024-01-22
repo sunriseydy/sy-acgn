@@ -1,8 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import rss from '@/client/routes/rss.js'
+import anime from '@client/routes/anime'
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: [...rss],
+  routes: [...anime],
 })
 export default router

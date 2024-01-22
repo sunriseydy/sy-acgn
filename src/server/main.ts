@@ -3,7 +3,6 @@ import 'module-alias/register'
 import { logRequest } from '@server/utils/request'
 import 'reflect-metadata'
 import express from 'express'
-// @ts-ignore
 import {
   ExpressErrorMiddlewareInterface,
   ExpressMiddlewareInterface,
@@ -11,8 +10,11 @@ import {
   useExpressServer,
 } from 'routing-controllers'
 import { Result } from '@server/utils/response'
+import cors from 'cors'
 
 const app = express()
+
+app.use(cors())
 
 // 请求日志中间件
 @Middleware({ type: 'before' })

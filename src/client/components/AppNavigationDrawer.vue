@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const items = [{ title: 'RSS 订阅', icon: 'mdi-folder', to: '/rss' }]
 </script>
 

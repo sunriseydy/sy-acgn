@@ -112,7 +112,7 @@ export default class RssService {
    * 获取订阅内容
    */
   getRssSubscribeItemList(rssSubscriptionId: number, pageParams: PageParams): any {
-    if (!rssSubscriptionId) {
+    if (!rssSubscriptionId && rssSubscriptionId !== 0) {
       throw '[id]参数不存在'
     }
     return prisma.rssSubscriptionItem.findMany({
