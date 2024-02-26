@@ -1,6 +1,6 @@
 import { PageParams } from '@server/utils/request'
-import prisma from '@server/dbClient'
-import RssClient from '@server/anime/tools/rssClient'
+import prisma from '@server/DbClient'
+import RssClient from '@server/anime/tools/RssClient'
 import RssParser from 'rss-parser'
 
 export default class RssService {
