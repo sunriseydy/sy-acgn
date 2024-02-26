@@ -1,5 +1,5 @@
 import { PageParams } from '@server/utils/request'
-import prisma from '@server/DbClient'
+import prisma from '@server/anime/tools/DbClient'
 import RssClient from '@server/anime/tools/RssClient'
 import RssParser from 'rss-parser'
 
