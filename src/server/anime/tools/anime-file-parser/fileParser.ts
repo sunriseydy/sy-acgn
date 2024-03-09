@@ -9,6 +9,7 @@ import dict from './assets/tagsDict'
 interface AnimeInfo {
   animeTitle: string
   animeYear: number | null
+  season: number | null
   episode: number
   extensionName: ExtensionName
   fileName: string
@@ -57,6 +58,7 @@ export default function parseFileName(fileName: string): AnimeInfo {
   const parseResult = {
     animeTitle: null,
     animeYear: null,
+    season: null,
     episode: null,
     extensionName: null,
     fileName: fileName, // 原始文件名
@@ -142,13 +144,27 @@ export default function parseFileName(fileName: string): AnimeInfo {
   // 移除上一个 for 产生的空字符串
   nameNoFirstBlock = tidyStringArray(nameNoFirstBlock)
 
+  let seasonBreak = NaN
+
+  // 处理季数
+  for (const i in nameNoFirstBlock) {
+    const isSeason = dict.season.some((regex) => nameNoFirstBlock[i].match(regex))
+    if (isSeason) {
+      seasonBreak = i
+      parseResult.season = parseFloat(nameNoFirstBlock[i].replace(/.*(\d+).*/, '$1'))
+    }
+  }
+
   // 1. 第一次尝试：利用 aniep 找到的集数找出可能的标题文本
-  if (parseResult.animeTitle === null && parseResult.episode !== null) {
+  if (parseResult.animeTitle === null && (parseResult.episode !== null || !isNaN(seasonBreak))) {
     for (const i in nameNoFirstBlock) {
       // 找到集数的位置
       if (
         parseFloat(nameNoFirstBlock[i]) == parseResult.episode ||
-        chineseParseInt(nameNoFirstBlock[i]) == parseResult.episode
+        chineseParseInt(nameNoFirstBlock[i]) == parseResult.episode ||
+        nameNoFirstBlock[i] == parseResult.episode || // 如果集数是 1-12
+        nameNoFirstBlock[i] == `0${parseResult.episode}` || // 如果集数是 01-12
+        i == seasonBreak // 如果是季数
       ) {
         let title = ''
         // 将发布组后，集数前的部分进行遍历
@@ -218,13 +234,15 @@ export default function parseFileName(fileName: string): AnimeInfo {
   if (parseResult.animeTitle === null) {
     // 先检查一下 nameNoFirstBlock 中有没有 Object，如果没有，说明没有任何词典匹配成功，这个文件名很可能不是一个番剧视频名
     let hasObj = false
+    const hasGroup = parseResult.groups.length > 0
     for (const ob of nameNoFirstBlock) {
       if (typeof ob == 'object') {
         hasObj = true
       }
     }
     // tag 匹配结果中有 Object，才使用下面的逻辑计算文件名
-    if (hasObj) {
+    // 如果有发布组，说明是番剧视频名
+    if (hasObj || hasGroup) {
       // 从第一个 [] 之后开始向后遍历
       for (const word of nameNoFirstBlock) {
         // 遇到 Object 停止遍历, 通常是因为遇到了资源标识，说明标题已经结束
