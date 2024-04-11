@@ -7,7 +7,7 @@ export default class MovieDbTool {
   private readonly anime_genre_id = 16
 
   constructor(tmdbKey?: string) {
-    this.movieDb = new MovieDb(tmdbKey || config.anime.tmdbKey || '')
+    this.movieDb = new MovieDb(tmdbKey || config.integration.tmdbKey || '')
   }
 
   private searchTv(query: string, page?: number) {
