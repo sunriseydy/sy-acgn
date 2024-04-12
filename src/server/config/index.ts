@@ -5,26 +5,31 @@ interface NetworkProxyConfig extends AxiosProxyConfig {
 }
 
 function getEnvValue(name: string) {
-  return process.env[name]
+  return process.env[name] || ''
 }
 
 const config = {
   network: {
     proxy: {
       enabled: getEnvValue('PROXY_ENABLED') === 'true' || false,
-      host: getEnvValue('PROXY_HOST') || '',
+      host: getEnvValue('PROXY_HOST'),
       port: getEnvValue('PROXY_PORT') || 0,
-      protocol: getEnvValue('PROXY_PROTOCOL') || '',
+      protocol: getEnvValue('PROXY_PROTOCOL'),
       auth: getEnvValue('PROXY_USERNAME') &&
         getEnvValue('PROXY_PASSWORD') && {
-          username: getEnvValue('PROXY_USERNAME') || '',
-          password: getEnvValue('PROXY_PASSWORD') || '',
+          username: getEnvValue('PROXY_USERNAME'),
+          password: getEnvValue('PROXY_PASSWORD'),
         },
     } as NetworkProxyConfig,
   },
   integration: {
-    tmdbKey: getEnvValue('TMDB_KEY') || '',
+    tmdbKey: getEnvValue('TMDB_KEY'),
   },
-  anime: {},
+  anime: {
+    path: {
+      downloadPath: getEnvValue('DOWNLOAD_PATH'),
+      targetPath: getEnvValue('TARGET_PATH'),
+    },
+  },
 }
 export default config

@@ -9,6 +9,7 @@ const rssHttp = axios.create({
 })
 
 export default class RssClient {
+  // @ts-ignore
   async downloadTorrentInFile(link: string, path: string, res: Response): Promise<any> {
     try {
       const response = await rssHttp.get(link, { responseType: 'stream' })

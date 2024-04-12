@@ -5,48 +5,7 @@ import chineseParseInt from 'chinese-parseint'
 import path from 'path'
 
 import dict from './assets/tagsDict'
-
-interface AnimeInfo {
-  animeTitle: string
-  animeYear: number | null
-  season: number | null
-  episode: number
-  extensionName: ExtensionName
-  fileName: string
-  groups: Group[]
-  videoSource: string[]
-  videoQuality: VideoQuality[]
-  videoSubtitle: string[]
-  otherInfo: string[]
-  tagedName: string[] | Group[] | VideoQuality[] | Subtitle[]
-  noBrowser: boolean
-}
-
-interface ExtensionName {
-  result: string
-  type: string
-  raw: string
-  trueName: string
-}
-
-interface Group {
-  result: string
-  raw: string
-  type: string
-}
-
-interface VideoQuality {
-  result: string
-  raw: string
-  type: string
-}
-
-interface Subtitle {
-  result: string
-  raw: string
-  type: string
-}
-
+import { AnimeInfo } from './assets/AnimeInfo'
 /**
  * 传入文件名，传出对此文件的解析结果
  * @param {String} fileName
