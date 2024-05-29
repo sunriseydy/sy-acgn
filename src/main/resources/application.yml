@@ -1,0 +1,9 @@
+server:
+  port: 9390
+spring:
+  application:
+    name: sy-acgn
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/sy_acgn}
+    username: ${SPRING_DATASOURCE_USERNAME:sunriseydy}
+    password: ${SPRING_DATASOURCE_PASSWORD:sunriseydy}
