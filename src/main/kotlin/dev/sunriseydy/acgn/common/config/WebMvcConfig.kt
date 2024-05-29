@@ -13,6 +13,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @EnableWebMvc
 class WebMvcConfig : WebMvcConfigurer {
 
+    /**
+     * 跨域配置 https://docs.spring.io/spring-framework/reference/web/webmvc-cors.html
+     */
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/api/**")
             .allowedOrigins("*")
