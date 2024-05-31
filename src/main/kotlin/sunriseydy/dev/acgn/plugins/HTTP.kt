@@ -19,12 +19,12 @@ fun Application.configureHTTP() {
     install(XForwardedHeaders) // WARNING: for security, do not include this if not behind a reverse proxy
     install(CORS) {
         allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Delete)
-        allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
+        allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
         anyHost()
+        allowCredentials = true
     }
 }
