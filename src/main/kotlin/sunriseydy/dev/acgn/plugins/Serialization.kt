@@ -15,12 +15,4 @@ fun Application.configureSerialization() {
                 enable(SerializationFeature.INDENT_OUTPUT)
             }
     }
-    routing {
-        get("/json/kotlinx-serialization") {
-                call.respond(mapOf("hello" to "world"))
-            }
-        get("/json/jackson") {
-                call.respond(mapOf("hello" to "world"))
-            }
-    }
 }
