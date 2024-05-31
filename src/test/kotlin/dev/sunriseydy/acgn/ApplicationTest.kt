@@ -1,11 +1,11 @@
-package sunriseydy.dev.acgn
+package dev.sunriseydy.acgn
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlin.test.*
-import sunriseydy.dev.plugins.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test

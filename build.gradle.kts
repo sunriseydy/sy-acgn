@@ -13,7 +13,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
 }
 
-group = "sunriseydy.dev"
+group = "dev.sunriseydy"
 version = "0.0.1"
 
 application {
@@ -21,6 +21,12 @@ application {
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("${rootProject.name}.jar")
+    }
 }
 
 java {
@@ -50,6 +56,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("io.ktor:ktor-serialization-jackson-jvm")
     implementation("io.ktor:ktor-server-call-logging-jvm")
+    implementation("io.ktor:ktor-server-call-id")
     implementation("io.ktor:ktor-server-forwarded-header-jvm")
     implementation("io.ktor:ktor-server-cors-jvm")
     implementation("io.ktor:ktor-server-host-common-jvm")

@@ -1,7 +1,7 @@
-package sunriseydy.dev.acgn
+package dev.sunriseydy.acgn
 
+import dev.sunriseydy.acgn.plugins.*
 import io.ktor.server.application.*
-import sunriseydy.dev.acgn.plugins.*
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)

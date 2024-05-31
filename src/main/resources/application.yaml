@@ -1,7 +1,7 @@
 ktor:
     application:
         modules:
-            - sunriseydy.dev.acgn.ApplicationKt.module
+            - dev.sunriseydy.acgn.ApplicationKt.module
     deployment:
         port: 9390
     development: true
