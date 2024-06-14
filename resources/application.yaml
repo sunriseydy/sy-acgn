@@ -4,10 +4,13 @@ ktor:
             - dev.sunriseydy.acgn.ApplicationKt.module
     deployment:
         port: 9390
+        host: 127.0.0.1
     development: true
 
 acgn:
     postgres:
-        url: "jdbc:postgresql://localhost:5432/sy_acgn"
-        user: "sy_acgn"
-        password: "sy_acgn"
+        host: localhost
+        port: 5432
+        database: sy_acgn
+        user: sy_acgn
+        password: sy_acgn

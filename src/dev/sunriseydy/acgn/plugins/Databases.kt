@@ -10,9 +10,11 @@ fun Application.configureDatabases() {
 
 fun Application.connectToPostgres(): Connection {
     Class.forName("org.postgresql.Driver")
-    val url = environment.config.property("acgn.postgres.url").getString()
     val user = environment.config.property("acgn.postgres.user").getString()
     val password = environment.config.property("acgn.postgres.password").getString()
+    val host = environment.config.property("acgn.postgres.host").getString()
+    val port = environment.config.property("acgn.postgres.port").getString()
+    val database = environment.config.property("acgn.postgres.database").getString()
 
-    return DriverManager.getConnection(url, user, password)
+    return DriverManager.getConnection("jdbc:postgresql://$host:$port/$database", user, password)
 }
