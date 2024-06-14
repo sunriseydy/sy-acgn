@@ -1,0 +1,33 @@
+product: jvm/app
+module:
+  layout: default
+dependencies:
+  - io.ktor:ktor-server-core-jvm:2.3.11
+  - io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.11
+  - io.ktor:ktor-server-content-negotiation-jvm:2.3.11
+  - io.ktor:ktor-serialization-jackson-jvm:2.3.11
+  - io.ktor:ktor-server-call-logging-jvm:2.3.11
+  - io.ktor:ktor-server-call-id:2.3.11
+  - io.ktor:ktor-server-forwarded-header-jvm:2.3.11
+  - io.ktor:ktor-server-cors-jvm:2.3.11
+  - io.ktor:ktor-server-host-common-jvm:2.3.11
+  - io.ktor:ktor-server-status-pages-jvm:2.3.11
+  - io.ktor:ktor-server-resources:2.3.11
+  - io.ktor:ktor-server-netty-jvm:2.3.11
+  - io.ktor:ktor-server-config-yaml:2.3.11
+  - org.postgresql:postgresql:42.7.3
+  - org.jetbrains.exposed:exposed-core:0.51.1
+  - org.jetbrains.exposed:exposed-jdbc:0.51.1
+  - ch.qos.logback:logback-classic:1.4.14
+test-dependencies:
+  - io.ktor:ktor-server-tests-jvm:2.3.11
+  - org.jetbrains.kotlin:kotlin-test-junit:2.0.0
+repositories:
+  - https://maven.aliyun.com/nexus/content/groups/public
+settings:
+  kotlin:
+    languageVersion: 2.0
+    serialization: json
+  jvm:
+    target: 17
+    mainClass: io.ktor.server.netty.EngineMain
