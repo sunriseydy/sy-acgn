@@ -1,3 +1,11 @@
 product:
     type: lib
-    platforms: [linuxX64]
+    platforms: [jvm, linuxX64]
+
+dependencies:
+    - $compose.foundation
+    - $compose.material3
+    - $compose.desktop.currentOs
+
+settings:
+    compose: enabled

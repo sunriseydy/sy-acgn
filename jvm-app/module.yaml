@@ -4,6 +4,7 @@ dependencies:
     - $compose.foundation
     - $compose.material3
     - $compose.desktop.currentOs
+    - ../lib
 
 settings:
     compose: enabled
