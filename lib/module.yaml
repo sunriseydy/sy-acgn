@@ -1,6 +1,6 @@
 product:
   type: lib
-  platforms: [jvm, wasm]
+  platforms: [jvm, linuxX64]
 
 repositories:
   - 'https://maven.aliyun.com/repository/public'
