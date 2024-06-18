@@ -1,0 +1,24 @@
+package dev.sunriseydy.acgn.ui
+
+import androidx.compose.runtime.Composable
+import androidx.compose.foundation.text.BasicText
+import dev.sunriseydy.acgn.getPlatform
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+
+@Composable
+fun App() {
+    MaterialTheme {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            BasicText("Hello World! ${getPlatform().name}")
+        }
+    }
+}

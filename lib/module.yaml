@@ -9,8 +9,6 @@ repositories:
 dependencies:
   - $compose.foundation
   - $compose.material3
-
-dependencies@jvm:
   - $compose.desktop.currentOs
 
 settings:
