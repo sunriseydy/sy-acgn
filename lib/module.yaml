@@ -2,14 +2,15 @@ product:
   type: lib
   platforms: [jvm, linuxX64]
 
+apply:
+  - ../compose.module-template.yaml
+
 repositories:
   - 'https://maven.aliyun.com/repository/public'
   - 'https://maven.aliyun.com/repository/google'
 
 dependencies:
-  - $compose.foundation
-  - $compose.material3
-  - $compose.desktop.currentOs
-
-settings:
-  compose: enabled
+  - $compose.foundation: exported
+  - $compose.material3: exported
+dependencies@jvm:
+  - $compose.desktop.currentOs: exported

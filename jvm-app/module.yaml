@@ -1,15 +1,14 @@
 product: jvm/app
 
+apply:
+  - ../app.module-template.yaml
+  - ../compose.module-template.yaml
+
 repositories:
   - 'https://maven.aliyun.com/repository/public'
   - 'https://maven.aliyun.com/repository/google'
 
-dependencies:
-  - $compose.desktop.currentOs
-  - ../lib
-
 settings:
-  compose: enabled
   kotlin:
     languageVersion: 2.0
     serialization: json
