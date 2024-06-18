@@ -1,16 +1,16 @@
 product: jvm/app
 
 dependencies:
-    - $compose.foundation
-    - $compose.material3
-    - $compose.desktop.currentOs
-    - ../lib
+  - $compose.foundation
+  - $compose.material3
+  - $compose.desktop.currentOs
+  - ../lib
 
 settings:
-    compose: enabled
-    kotlin:
-        languageVersion: 2.0
-        serialization: json
-    jvm:
-        release: 17
-        mainClass: mainKt
+  compose: enabled
+  kotlin:
+    languageVersion: 2.0
+    serialization: json
+  jvm:
+    release: 17
+    mainClass: mainKt
