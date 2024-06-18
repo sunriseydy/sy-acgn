@@ -21,7 +21,7 @@ test-dependencies:
   - io.ktor:ktor-server-tests-jvm:2.3.11
   - $kotlin-test-junit
 repositories:
-  - https://maven.aliyun.com/nexus/content/groups/public
+  - https://maven.aliyun.com/repository/public
 settings:
   kotlin:
     languageVersion: 2.0

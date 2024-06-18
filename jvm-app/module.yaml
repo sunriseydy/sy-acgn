@@ -1,5 +1,9 @@
 product: jvm/app
 
+repositories:
+  - 'https://maven.aliyun.com/repository/public'
+  - 'https://maven.aliyun.com/repository/google'
+
 dependencies:
   - $compose.foundation
   - $compose.material3

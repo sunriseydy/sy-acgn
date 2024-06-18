@@ -2,9 +2,15 @@ product:
   type: lib
   platforms: [jvm, linuxX64]
 
+repositories:
+  - 'https://maven.aliyun.com/repository/public'
+  - 'https://maven.aliyun.com/repository/google'
+
 dependencies:
   - $compose.foundation
   - $compose.material3
+
+dependencies@jvm:
   - $compose.desktop.currentOs
 
 settings:
