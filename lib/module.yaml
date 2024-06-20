@@ -4,6 +4,7 @@ product:
 
 apply:
   - ../compose.module-template.yaml
+  - ../jvm.module-template.yaml
 
 repositories:
   - 'https://maven.aliyun.com/repository/public'

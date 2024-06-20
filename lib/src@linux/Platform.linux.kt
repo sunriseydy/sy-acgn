@@ -1,7 +1,7 @@
 package dev.sunriseydy.acgn
 
-class LinuxPlatform: Platform {
+class LinuxPlatform(
     override val name: String = "Linux"
-}
+): Platform
 
 actual fun getPlatform(): Platform = LinuxPlatform()

@@ -1,4 +1,6 @@
 product: jvm/app
+apply:
+  - ../jvm.module-template.yaml
 dependencies:
   - io.ktor:ktor-server-core-jvm:2.3.11
   - io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.11
@@ -23,9 +25,5 @@ test-dependencies:
 repositories:
   - https://maven.aliyun.com/repository/public
 settings:
-  kotlin:
-    languageVersion: 2.0
-    serialization: json
   jvm:
-    release: 17
     mainClass: dev.sunriseydy.acgn.ApplicationKt

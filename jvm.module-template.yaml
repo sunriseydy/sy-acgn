@@ -1,0 +1,6 @@
+settings:
+  kotlin:
+    languageVersion: 2.0
+    serialization: json
+  jvm:
+    release: 17
