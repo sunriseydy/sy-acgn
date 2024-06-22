@@ -1,7 +1,13 @@
-package dev.sunriseydy.acgn
+package dev.sunriseydy.acgn.ui
 
-import dev.sunriseydy.acgn.ui.uiMain
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
 
-fun main() {
-    uiMain()
+fun main() = application {
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "SY ACGN"
+    ) {
+        App()
+    }
 }

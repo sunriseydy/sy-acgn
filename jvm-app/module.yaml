@@ -5,3 +5,6 @@ apply:
   - ../compose.module-template.yaml
   - ../jvm.module-template.yaml
   - ../maven.module-template.yaml
+settings:
+  jvm:
+    mainClass: dev.sunriseydy.acgn.ui.UIMainKt
