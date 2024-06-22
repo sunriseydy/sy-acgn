@@ -2,6 +2,7 @@ product: jvm/app
 apply:
   - ../jvm.module-template.yaml
   - ../maven.module-template.yaml
+  - ../app.module-template.yaml
 dependencies:
   - io.ktor:ktor-server-core-jvm:3.0.0-beta-1
   - io.ktor:ktor-serialization-kotlinx-json-jvm:3.0.0-beta-1
