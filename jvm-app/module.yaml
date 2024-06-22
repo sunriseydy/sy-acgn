@@ -7,4 +7,4 @@ apply:
   - ../maven.module-template.yaml
 settings:
   jvm:
-    mainClass: dev.sunriseydy.acgn.ui.UIMainKt
+    mainClass: dev.sunriseydy.acgn.ui.JvmUIMainKt
