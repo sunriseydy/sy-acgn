@@ -4,7 +4,4 @@ apply:
   - ../app.module-template.yaml
   - ../compose.module-template.yaml
   - ../jvm.module-template.yaml
-
-repositories:
-  - 'https://maven.aliyun.com/repository/public'
-  - 'https://maven.aliyun.com/repository/google'
+  - ../maven.module-template.yaml

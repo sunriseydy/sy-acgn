@@ -1,9 +1,6 @@
-package dev.sunriseydy.acgn
+package dev.sunriseydy.acgn.plugins
 
-import dev.sunriseydy.acgn.plugins.*
-import io.ktor.server.application.*
-
-fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
+import io.ktor.server.application.Application
 
 @Suppress("unused")
 fun Application.module() {
