@@ -9,5 +9,4 @@ fun Application.module() {
     configureMonitoring()
     configureHTTP()
     configureRouting()
-    configureVue()
 }
