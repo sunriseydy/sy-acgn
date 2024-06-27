@@ -1,7 +1,10 @@
 package dev.sunriseydy.acgn.plugins
 
 import io.ktor.server.application.*
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 fun Application.configureDatabases() {
     connectToPostgres()
@@ -21,3 +24,10 @@ fun Application.connectToPostgres() {
         password = password
     )
 }
+
+/**
+ * takes a block of code and runs it within a database transaction, through the IO Dispatcher.
+ * This is designed to offload blocking jobs of work onto a thread pool
+ */
+suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
+    newSuspendedTransaction(Dispatchers.IO, statement = block)
