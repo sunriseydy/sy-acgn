@@ -1,14 +1,13 @@
 package dev.sunriseydy.acgn.plugins
 
 import io.ktor.server.application.*
-import java.sql.Connection
-import java.sql.DriverManager
+import org.jetbrains.exposed.sql.Database
 
 fun Application.configureDatabases() {
-    val dbConnection: Connection = connectToPostgres()
+    connectToPostgres()
 }
 
-fun Application.connectToPostgres(): Connection {
+fun Application.connectToPostgres() {
     Class.forName("org.postgresql.Driver")
     val user = environment.config.property("acgn.postgres.user").getString()
     val password = environment.config.property("acgn.postgres.password").getString()
@@ -16,5 +15,9 @@ fun Application.connectToPostgres(): Connection {
     val port = environment.config.property("acgn.postgres.port").getString()
     val database = environment.config.property("acgn.postgres.database").getString()
 
-    return DriverManager.getConnection("jdbc:postgresql://$host:$port/$database", user, password)
+    Database.connect(
+        url = "jdbc:postgresql://$host:$port/$database",
+        user = user,
+        password = password
+    )
 }
