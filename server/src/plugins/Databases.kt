@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.plugins
 
+import dev.sunriseydy.acgn.config.DatabaseKey
 import dev.sunriseydy.acgn.db.anime.*
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
@@ -16,11 +17,11 @@ fun Application.configureDatabases() {
 }
 
 fun Application.connectToPostgres() {
-    val user = environment.config.property("acgn.postgres.user").getString()
-    val password = environment.config.property("acgn.postgres.password").getString()
-    val host = environment.config.property("acgn.postgres.host").getString()
-    val port = environment.config.property("acgn.postgres.port").getString()
-    val database = environment.config.property("acgn.postgres.database").getString()
+    val user = environment.config.property(DatabaseKey.USER).getString()
+    val password = environment.config.property(DatabaseKey.PASSWORD).getString()
+    val host = environment.config.property(DatabaseKey.HOST).getString()
+    val port = environment.config.property(DatabaseKey.PORT).getString()
+    val database = environment.config.property(DatabaseKey.DATABASE).getString()
 
     Database.connect(
         url = "jdbc:postgresql://$host:$port/$database",
@@ -30,7 +31,7 @@ fun Application.connectToPostgres() {
 }
 
 fun Application.initializeDatabase() {
-    val database = environment.config.property("acgn.postgres.database").getString()
+    val database = environment.config.property(DatabaseKey.DATABASE).getString()
 
     transaction {
         // create database if not exists
