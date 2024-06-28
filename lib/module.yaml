@@ -10,5 +10,6 @@ apply:
 dependencies:
   - $compose.foundation: exported
   - $compose.material3: exported
+  - org.jetbrains.kotlinx:kotlinx-datetime:0.6.0
 dependencies@jvm:
   - $compose.desktop.currentOs: exported

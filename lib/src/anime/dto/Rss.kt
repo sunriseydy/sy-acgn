@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.anime.dto
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 /**
@@ -7,14 +8,15 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Rss(
-    val id: Long,
+    val id: ULong,
     val link: String,
     val title: String,
-    val description: String,
+    val description: String?,
     val ttl: Int,
-    val lastFetchAt: String,
-    val createdAt: String,
-    val updatedAt: String,
+    val lastFetchAt: LocalDateTime,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
+    val version: Int,
 )
 
 /**
@@ -30,6 +32,7 @@ data class RssItem(
     val content: String,
     val torrent: String,
     val isRead: Boolean,
-    val createdAt: String,
-    val updatedAt: String,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
+    val version: Int,
 )
