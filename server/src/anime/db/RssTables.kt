@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.db.anime
+package dev.sunriseydy.acgn.anime.db
 
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
@@ -11,7 +11,7 @@ import org.jetbrains.exposed.dao.id.ULongIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
-import java.util.UUID
+import java.util.*
 
 /**
  * @author SunriseYDY

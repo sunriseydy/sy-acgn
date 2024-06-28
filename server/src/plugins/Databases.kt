@@ -1,14 +1,11 @@
 package dev.sunriseydy.acgn.plugins
 
+import dev.sunriseydy.acgn.anime.db.RssItemTable
+import dev.sunriseydy.acgn.anime.db.RssTable
 import dev.sunriseydy.acgn.config.DatabaseKey
-import dev.sunriseydy.acgn.db.anime.*
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -51,4 +48,7 @@ fun Application.initializeDatabase() {
  * This is designed to offload blocking jobs of work onto a thread pool
  */
 suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
-    newSuspendedTransaction(Dispatchers.IO, statement = block)
+    newSuspendedTransaction(Dispatchers.IO, statement = {
+        addLogger(StdOutSqlLogger)
+        block()
+    })
