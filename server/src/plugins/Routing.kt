@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.plugins
 
+import dev.sunriseydy.acgn.anime.routes.configureAnimeModuleRoutes
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
@@ -15,8 +16,11 @@ fun Application.configureRouting() {
     }
     install(Resources)
     routing {
-        get("/api/") {
-            call.respondText("Hello World!")
+        route("/api") {
+            get {
+                call.respond(Pair("SY ACGN", "Hello, World!"))
+            }
+            configureAnimeModuleRoutes()
         }
     }
 }

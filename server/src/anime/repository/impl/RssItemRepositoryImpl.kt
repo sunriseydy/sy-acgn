@@ -25,10 +25,10 @@ class RssItemRepositoryImpl : RssItemRepository {
         }.sortedByDescending{ it.createdAt }
     }.map(RssItemDAO::toDTO)
 
-    override suspend fun queryByRssIdAndIsRead(rssId: Long?, isRead: Boolean): List<RssItem> = suspendTransaction {
+    override suspend fun queryByRssIdAndIsRead(rssId: Long?, isRead: Boolean?): List<RssItem> = suspendTransaction {
         RssItemDAO.find {
             (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and
-                    (RssItemTable.isRead eq isRead)
+                    (isRead?.let { RssItemTable.isRead eq it } ?: Op.TRUE)
         }.sortedByDescending{ it.createdAt }
     }.map(RssItemDAO::toDTO)
 

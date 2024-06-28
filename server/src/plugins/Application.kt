@@ -1,6 +1,6 @@
 package dev.sunriseydy.acgn.plugins
 
-import io.ktor.server.application.Application
+import io.ktor.server.application.*
 
 @Suppress("unused")
 fun Application.module() {
