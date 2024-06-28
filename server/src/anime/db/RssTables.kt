@@ -22,7 +22,7 @@ object RssTable : ULongIdTable("anime_rss") {
     val title = varchar("title", 255)
     val description = text("description").nullable()
     val ttl = integer("ttl")
-    val lastFetchAt = datetime("lastFetchAt")
+    val lastFetchAt = datetime("lastFetchAt").nullable()
     val createdAt = datetime("createdAt").defaultExpression(CurrentDateTime)
     val updatedAt = datetime("updatedAt").defaultExpression(CurrentDateTime)
     val version = integer("version").default(0)

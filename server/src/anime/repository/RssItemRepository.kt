@@ -8,11 +8,15 @@ import java.util.*
  * @date 2024-06-28 21:10
  */
 interface RssItemRepository {
-    fun queryAll(): List<RssItem>
-    fun queryByRssId(rssId: Long): List<RssItem>
-    fun queryByRssIdAndIsRead(rssId: Long, isRead: Boolean): List<RssItem>
-    fun queryById(id: UUID): RssItem?
-    fun insert(rssItem: RssItem): RssItem
-    fun update(rssItem: RssItem): RssItem
-    fun delete(id: UUID): Boolean
+    suspend fun queryAll(): List<RssItem>
+    suspend fun queryByRssId(rssId: Long): List<RssItem>
+
+    /**
+     * 如果 rssId 为 null，则仅根据 isRead 查询
+     */
+    suspend fun queryByRssIdAndIsRead(rssId: Long?, isRead: Boolean): List<RssItem>
+    suspend fun queryById(id: UUID): RssItem
+    suspend fun insert(rssItem: RssItem): RssItem
+    suspend fun update(rssItem: RssItem): RssItem
+    suspend fun delete(id: UUID)
 }

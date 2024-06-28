@@ -13,7 +13,7 @@ data class Rss(
     val title: String,
     val description: String?,
     val ttl: Int,
-    val lastFetchAt: LocalDateTime,
+    val lastFetchAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val version: Int,

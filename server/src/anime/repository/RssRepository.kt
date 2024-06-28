@@ -7,9 +7,9 @@ import dev.sunriseydy.acgn.anime.dto.Rss
  * @date 2024-06-28 21:06
  */
 interface RssRepository {
-    fun queryAll(): List<Rss>
-    fun queryById(id: ULong): Rss?
-    fun insert(rss: Rss): Rss
-    fun update(rss: Rss): Rss
-    fun delete(id: ULong): Boolean
+    suspend fun queryAll(): List<Rss>
+    suspend fun queryById(id: ULong): Rss
+    suspend fun insert(rss: Rss): Rss
+    suspend fun update(rss: Rss): Rss
+    suspend fun delete(id: ULong)
 }
