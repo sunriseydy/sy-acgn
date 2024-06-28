@@ -1,12 +1,17 @@
 package dev.sunriseydy.acgn.db.anime
 
 import dev.sunriseydy.acgn.anime.dto.Rss
+import dev.sunriseydy.acgn.anime.dto.RssItem
 import org.jetbrains.exposed.dao.ULongEntity
 import org.jetbrains.exposed.dao.ULongEntityClass
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.ULongIdTable
+import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
+import java.util.UUID
 
 /**
  * @author SunriseYDY
@@ -46,6 +51,50 @@ class RssDAO(id: EntityID<ULong>) : ULongEntity(id) {
             createdAt = createdAt,
             updatedAt = updatedAt,
             version = version,
+        )
+    }
+}
+
+object RssItemTable : UUIDTable("anime_rss_item", "uuid") {
+    val rssId = long("rss_id")
+    val link = varchar("link", 255)
+    val title = varchar("title", 255)
+    val description = text("description").nullable()
+    val content = text("content").nullable()
+    val torrent = varchar("torrent", 255)
+    val isRead = bool("is_read")
+    val createdAt = datetime("createdAt").defaultExpression(CurrentDateTime)
+    val updatedAt = datetime("updatedAt").defaultExpression(CurrentDateTime)
+    val version = integer("version").default(0)
+}
+
+class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<RssItemDAO>(RssItemTable)
+
+    var rssId by RssItemTable.rssId
+    var link by RssItemTable.link
+    var title by RssItemTable.title
+    var description by RssItemTable.description
+    var content by RssItemTable.content
+    var torrent by RssItemTable.torrent
+    var isRead by RssItemTable.isRead
+    var createdAt by RssItemTable.createdAt
+    var updatedAt by RssItemTable.updatedAt
+    var version by RssItemTable.version
+
+    fun toDTO(): RssItem {
+        return RssItem(
+            uuid = id.value.toString(),
+            rssId = rssId,
+            link = link,
+            title = title,
+            description = description.toString(),
+            content = content.toString(),
+            torrent = torrent,
+            isRead = isRead,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            version = version
         )
     }
 }

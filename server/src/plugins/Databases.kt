@@ -41,7 +41,7 @@ fun Application.initializeDatabase() {
         addLogger(StdOutSqlLogger)
         // create tables
         SchemaUtils.createMissingTablesAndColumns(
-            RssTable
+            RssTable, RssItemTable
         )
     }
 }
