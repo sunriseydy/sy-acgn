@@ -17,10 +17,10 @@ dependencies:
   - io.ktor:ktor-server-cio:3.0.0-beta-1
   - io.ktor:ktor-server-config-yaml:3.0.0-beta-1
   - org.postgresql:postgresql:42.7.3
-  - org.jetbrains.exposed:exposed-core:0.51.1
-  - org.jetbrains.exposed:exposed-jdbc:0.51.1
-  - org.jetbrains.exposed:exposed-java-time:0.51.1
-  - org.jetbrains.exposed:exposed-json:0.51.1
+  - org.jetbrains.exposed:exposed-core:0.52.0
+  - org.jetbrains.exposed:exposed-jdbc:0.52.0
+  - org.jetbrains.exposed:exposed-kotlin-datetime:0.52.0
+  - org.jetbrains.exposed:exposed-json:0.52.0
   - ch.qos.logback:logback-classic:1.4.14
 test-dependencies:
   - io.ktor:ktor-server-tests-jvm:3.0.0-beta-1
