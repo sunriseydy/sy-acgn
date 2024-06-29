@@ -14,12 +14,13 @@ import org.jetbrains.exposed.sql.and
  */
 class RssRepositoryImpl : RssRepository {
     override suspend fun queryAll(): List<Rss> = suspendTransaction {
-        RssDAO.all()
-    }.map(RssDAO::toDTO)
+        RssDAO.all().map(RssDAO::toDTO)
+    }
 
     override suspend fun queryById(id: ULong): Rss = suspendTransaction {
-        RssDAO.findById(id)
-    }?.toDTO() ?: throw NoSuchElementException()
+        RssDAO.findById(id)?.toDTO()
+            ?: throw NoSuchElementException()
+    }
 
     override suspend fun insert(rss: Rss): Rss = suspendTransaction {
         RssDAO.new {
@@ -28,8 +29,8 @@ class RssRepositoryImpl : RssRepository {
             this.description = rss.description
             this.ttl = rss.ttl
             this.lastFetchAt = rss.lastFetchAt
-        }
-    }.toDTO()
+        }.toDTO()
+    }
 
     override suspend fun update(rss: Rss): Rss = suspendTransaction {
         RssDAO.findSingleByAndUpdate(
@@ -42,8 +43,8 @@ class RssRepositoryImpl : RssRepository {
             it.ttl = rss.ttl
             it.lastFetchAt = rss.lastFetchAt
             it.version = rss.version + 1
-        }
-    }?.toDTO() ?: throw NoSuchElementException()
+        }?.toDTO() ?: throw NoSuchElementException()
+    }
 
     override suspend fun delete(id: ULong): Unit = suspendTransaction {
         RssDAO.findById(id)?.delete() ?: throw NoSuchElementException()

@@ -16,25 +16,28 @@ import java.util.*
  */
 class RssItemRepositoryImpl : RssItemRepository {
     override suspend fun queryAll(): List<RssItem> = suspendTransaction {
-        RssItemDAO.all().sortedByDescending{ it.createdAt }
-    }.map(RssItemDAO::toDTO)
+        RssItemDAO.all().sortedByDescending{ it.createdAt }.map(RssItemDAO::toDTO)
+    }
 
     override suspend fun queryByRssId(rssId: Long): List<RssItem> = suspendTransaction {
         RssItemDAO.find {
             RssItemTable.rssId eq rssId
         }.sortedByDescending{ it.createdAt }
-    }.map(RssItemDAO::toDTO)
+        .map(RssItemDAO::toDTO)
+    }
 
     override suspend fun queryByRssIdAndIsRead(rssId: Long?, isRead: Boolean?): List<RssItem> = suspendTransaction {
         RssItemDAO.find {
             (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and
                     (isRead?.let { RssItemTable.isRead eq it } ?: Op.TRUE)
         }.sortedByDescending{ it.createdAt }
-    }.map(RssItemDAO::toDTO)
+        .map(RssItemDAO::toDTO)
+    }
 
     override suspend fun queryById(id: UUID): RssItem = suspendTransaction {
-        RssItemDAO.findById(id)
-    }?.toDTO() ?: throw NoSuchElementException()
+        RssItemDAO.findById(id)?.toDTO()
+            ?: throw NoSuchElementException()
+    }
 
     override suspend fun insert(rssItem: RssItem): RssItem = suspendTransaction {
         RssItemDAO.new {
@@ -45,8 +48,8 @@ class RssItemRepositoryImpl : RssItemRepository {
             this.content = rssItem.content
             this.torrent = rssItem.torrent
             this.isRead = rssItem.isRead
-        }
-    }.toDTO()
+        }.toDTO()
+    }
 
     override suspend fun update(rssItem: RssItem): RssItem = suspendTransaction {
         RssItemDAO.findSingleByAndUpdate(
@@ -61,8 +64,9 @@ class RssItemRepositoryImpl : RssItemRepository {
             it.torrent = rssItem.torrent
             it.isRead = rssItem.isRead
             it.version = rssItem.version + 1
-       }
-    }?.toDTO() ?: throw NoSuchElementException()
+       }?.toDTO()
+            ?: throw NoSuchElementException()
+    }
 
     override suspend fun delete(id: UUID): Unit = suspendTransaction {
         RssItemDAO.findById(id)?.delete() ?: throw NoSuchElementException()

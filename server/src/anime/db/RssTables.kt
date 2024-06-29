@@ -22,9 +22,9 @@ object RssTable : ULongIdTable("anime_rss") {
     val title = varchar("title", 255)
     val description = text("description", eagerLoading = true).nullable()
     val ttl = integer("ttl")
-    val lastFetchAt = datetime("lastFetchAt").nullable()
-    val createdAt = datetime("createdAt").defaultExpression(CurrentDateTime)
-    val updatedAt = datetime("updatedAt").defaultExpression(CurrentDateTime)
+    val lastFetchAt = datetime("last_fetch_at").nullable()
+    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
+    val updatedAt = datetime("updated_at").defaultExpression(CurrentDateTime)
     val version = integer("version").default(0)
 }
 
@@ -40,19 +40,17 @@ class RssDAO(id: EntityID<ULong>) : ULongEntity(id) {
     var updatedAt by RssTable.updatedAt
     var version by RssTable.version
 
-    fun toDTO(): Rss {
-        return Rss(
-            id = id.value,
-            link = link,
-            title = title,
-            description = description,
-            ttl = ttl,
-            lastFetchAt = lastFetchAt,
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-            version = version,
-        )
-    }
+    fun toDTO(): Rss = Rss(
+        id = id.value,
+        link = link,
+        title = title,
+        description = description,
+        ttl = ttl,
+        lastFetchAt = lastFetchAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        version = version,
+    )
 }
 
 object RssItemTable : UUIDTable("anime_rss_item", "uuid") {
@@ -63,8 +61,8 @@ object RssItemTable : UUIDTable("anime_rss_item", "uuid") {
     val content = text("content", eagerLoading = true).nullable()
     val torrent = varchar("torrent", 255)
     val isRead = bool("is_read")
-    val createdAt = datetime("createdAt").defaultExpression(CurrentDateTime)
-    val updatedAt = datetime("updatedAt").defaultExpression(CurrentDateTime)
+    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
+    val updatedAt = datetime("updated_at").defaultExpression(CurrentDateTime)
     val version = integer("version").default(0)
 }
 
@@ -82,19 +80,17 @@ class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var updatedAt by RssItemTable.updatedAt
     var version by RssItemTable.version
 
-    fun toDTO(): RssItem {
-        return RssItem(
-            uuid = id.value.toString(),
-            rssId = rssId,
-            link = link,
-            title = title,
-            description = description.toString(),
-            content = content.toString(),
-            torrent = torrent,
-            isRead = isRead,
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-            version = version
-        )
-    }
+    fun toDTO(): RssItem = RssItem(
+        uuid = id.value.toString(),
+        rssId = rssId,
+        link = link,
+        title = title,
+        description = description.toString(),
+        content = content.toString(),
+        torrent = torrent,
+        isRead = isRead,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        version = version
+    )
 }
