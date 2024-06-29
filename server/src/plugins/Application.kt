@@ -7,7 +7,7 @@ fun Application.module() {
     configureSerialization()
     configureMonitoring()
     configureHTTP()
-    configureRouting()
     configureDatabases()
     initializeDatabase()
+    configureRouting()
 }

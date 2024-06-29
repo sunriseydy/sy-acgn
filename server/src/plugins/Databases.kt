@@ -5,22 +5,24 @@ import dev.sunriseydy.acgn.anime.db.RssTable
 import dev.sunriseydy.acgn.config.DatabaseKey
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureDatabases() {
-    connectToPostgres()
+    val db = connectToPostgres()
+    TransactionManager.defaultDatabase = db
 }
 
-fun Application.connectToPostgres() {
+fun Application.connectToPostgres() : Database {
     val user = environment.config.property(DatabaseKey.USER).getString()
     val password = environment.config.property(DatabaseKey.PASSWORD).getString()
     val host = environment.config.property(DatabaseKey.HOST).getString()
     val port = environment.config.property(DatabaseKey.PORT).getString()
     val database = environment.config.property(DatabaseKey.DATABASE).getString()
 
-    Database.connect(
+    return Database.connect(
         url = "jdbc:postgresql://$host:$port/$database",
         user = user,
         password = password
@@ -30,16 +32,17 @@ fun Application.connectToPostgres() {
 fun Application.initializeDatabase() {
     val database = environment.config.property(DatabaseKey.DATABASE).getString()
 
-    transaction {
-        // create database if not exists
-        SchemaUtils.listDatabases().firstOrNull { it == database } ?: run {
-            SchemaUtils.createDatabase(database)
+    runBlocking {
+        suspendTransaction {
+            // create database if not exists
+            SchemaUtils.listDatabases().firstOrNull { it == database } ?: run {
+                SchemaUtils.createDatabase(database)
+            }
+            // create tables
+            SchemaUtils.createMissingTablesAndColumns(
+                RssTable, RssItemTable
+            )
         }
-        addLogger(StdOutSqlLogger)
-        // create tables
-        SchemaUtils.createMissingTablesAndColumns(
-            RssTable, RssItemTable
-        )
     }
 }
 
@@ -49,6 +52,7 @@ fun Application.initializeDatabase() {
  */
 suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
     newSuspendedTransaction(Dispatchers.IO, statement = {
-        addLogger(StdOutSqlLogger)
+        println("Transaction # ${this.id}")
+        addLogger(Slf4jSqlDebugLogger)
         block()
     })
