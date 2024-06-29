@@ -6,7 +6,9 @@ import dev.sunriseydy.acgn.config.DatabaseKey
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
@@ -51,8 +53,4 @@ fun Application.initializeDatabase() {
  * This is designed to offload blocking jobs of work onto a thread pool
  */
 suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
-    newSuspendedTransaction(Dispatchers.IO, statement = {
-        println("Transaction # ${this.id}")
-        addLogger(Slf4jSqlDebugLogger)
-        block()
-    })
+    newSuspendedTransaction(Dispatchers.IO, statement = block)
