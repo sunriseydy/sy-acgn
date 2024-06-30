@@ -1,6 +1,6 @@
 product:
   type: lib
-  platforms: [jvm, linuxX64]
+  platforms: [jvm]
 
 apply:
   - ../compose.module-template.yaml
@@ -10,6 +10,11 @@ apply:
 dependencies:
   - $compose.foundation: exported
   - $compose.material3: exported
-  - org.jetbrains.kotlinx:kotlinx-datetime:0.6.0
-dependencies@jvm:
   - $compose.desktop.currentOs: exported
+  - org.jetbrains.kotlinx:kotlinx-datetime:0.6.0
+  - io.ktor:ktor-client-core:3.0.0-beta-1: exported
+  - io.ktor:ktor-client-cio:3.0.0-beta-1: exported
+  - io.ktor:ktor-client-logging:3.0.0-beta-1: exported
+  - io.ktor:ktor-client-content-negotiation:3.0.0-beta-1: exported
+  - io.ktor:ktor-serialization-kotlinx-json:3.0.0-beta-1: exported
+  - io.ktor:ktor-serialization-kotlinx-xml:3.0.0-beta-1: exported

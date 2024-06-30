@@ -4,4 +4,8 @@ interface Platform {
     val name: String
 }
 
-expect fun getPlatform(): Platform
+class JVMPlatform(
+    override val name: String = "Java ${System.getProperty("java.version")}"
+): Platform
+
+fun getPlatform(): Platform = JVMPlatform()
