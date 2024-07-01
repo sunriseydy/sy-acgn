@@ -6,10 +6,13 @@ import dev.sunriseydy.acgn.anime.db.RssItemTable
 import dev.sunriseydy.acgn.anime.db.RssTable
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
+import dev.sunriseydy.acgn.anime.tools.RssTool
 import dev.sunriseydy.acgn.plugins.suspendTransaction
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
 /**
@@ -21,12 +24,30 @@ class RssService {
         RssDAO.all().map(RssDAO::toDTO)
     }
 
-    suspend fun getRssById(id: ULong): Rss = suspendTransaction {
-        RssDAO.findById(id)?.toDTO()
-            ?: throw NoSuchElementException()
+    suspend fun createRss(link: String): Rss {
+        // 1. 从 url 中获取 rss
+        var rss = RssTool().use{ it.fetchRss(link) }
+        var rssItems = rss.items
+        // 2. 插入 rss
+        rss = this.insertRss(rss)
+        // 3. 插入 rss item
+        rssItems?.forEach { rssItem ->
+            rssItem.rssId = rss.id!!
+            this.insertRssItem(rssItem)
+        }
+        return rss
     }
 
-    suspend fun createRss(rss: Rss): Rss = suspendTransaction {
+    suspend fun saveRss(rss: Rss) {
+        rss.id?.let { this.updateRss(rss) }
+    }
+
+    suspend fun removeRss(id: ULong) {
+        this.deleteRss(id)
+        this.deleteRssItemByRssId(id)
+    }
+
+    suspend fun insertRss(rss: Rss): Rss = suspendTransaction {
         RssDAO.new {
             this.link = rss.link
             this.title = rss.title
@@ -36,39 +57,28 @@ class RssService {
         }.toDTO()
     }
 
-    suspend fun updateRss(rss: Rss): Rss = suspendTransaction {
+    suspend fun updateRss(rss: Rss) = suspendTransaction {
         RssDAO.findSingleByAndUpdate(
             (RssTable.id eq rss.id!!) and
                     (RssTable.version eq rss.version!!)
         ) {
-            it.link = rss.link
             it.title = rss.title
             it.description = rss.description
             it.ttl = rss.ttl
-            it.lastFetchAt = rss.lastFetchAt
             it.version = rss.version!! + 1
         }?.toDTO() ?: throw NoSuchElementException()
     }
 
-    suspend fun getRssItemList(): List<RssItem> = suspendTransaction {
-        RssItemDAO.all().sortedByDescending { it.publishedAt }.map(RssItemDAO::toDTO)
+    suspend fun deleteRss(id: ULong): Unit = suspendTransaction {
+        RssDAO.findById(id)?.delete() ?: throw NoSuchElementException()
     }
 
-    suspend fun getByRssIdAndIsRead(rssId: Long?, isRead: Boolean?): List<RssItem> = suspendTransaction {
+    suspend fun selectRssItemByRssIdOrIsRead(rssId: ULong?, isRead: Boolean?) = suspendTransaction {
         RssItemDAO.find {
             (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and
                     (isRead?.let { RssItemTable.isRead eq it } ?: Op.TRUE)
         }.sortedByDescending { it.publishedAt }
             .map(RssItemDAO::toDTO)
-    }
-
-    suspend fun getRssItemById(id: UUID): RssItem = suspendTransaction {
-        RssItemDAO.findById(id)?.toDTO()
-            ?: throw NoSuchElementException()
-    }
-
-    suspend fun deleteRss(id: ULong): Unit = suspendTransaction {
-        RssDAO.findById(id)?.delete() ?: throw NoSuchElementException()
     }
 
     suspend fun insertRssItem(rssItem: RssItem): RssItem = suspendTransaction {
@@ -85,7 +95,17 @@ class RssService {
         }.toDTO()
     }
 
-    suspend fun deleteRssItem(id: UUID): Unit = suspendTransaction {
-        RssItemDAO.findById(id)?.delete() ?: throw NoSuchElementException()
+    suspend fun updateRssItemReadByIdOrRssId(id: UUID?, rssId: ULong?) = suspendTransaction {
+        RssItemTable.update({
+            (id?.let { RssItemTable.id eq it } ?: Op.TRUE) and
+                    (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and
+                    (RssItemTable.isRead eq false)
+        }) {
+            it[isRead] = true
+        }
+    }
+
+    suspend fun deleteRssItemByRssId(rssId: ULong): Unit = suspendTransaction {
+        RssItemTable.deleteWhere { RssItemTable.rssId eq rssId }
     }
 }

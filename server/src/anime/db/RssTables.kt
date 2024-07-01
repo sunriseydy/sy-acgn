@@ -19,7 +19,7 @@ import java.util.*
  */
 object RssTable : ULongIdTable("anime_rss") {
     val link = varchar("link", 1024).uniqueIndex()
-    val title = varchar("title", 255)
+    val title = varchar("title", 255).nullable()
     val description = text("description", eagerLoading = true).nullable()
     val ttl = integer("ttl").nullable()
     val lastFetchAt = timestamp("last_fetch_at").nullable()
@@ -53,8 +53,8 @@ class RssDAO(id: EntityID<ULong>) : ULongEntity(id) {
     )
 }
 
-object RssItemTable : UUIDTable("anime_rss_item", "uuid") {
-    val rssId = long("rss_id")
+object RssItemTable : UUIDTable("anime_rss_item") {
+    val rssId = ulong("rss_id")
     val link = varchar("link", 1024)
     val guid = varchar("guid", 1024)
     val title = varchar("title", 255)
@@ -86,7 +86,7 @@ class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var version by RssItemTable.version
 
     fun toDTO(): RssItem = RssItem(
-        uuid = id.value.toString(),
+        id = id.value.toString(),
         rssId = rssId,
         link = link,
         guid = guid,

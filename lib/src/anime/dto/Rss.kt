@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 data class Rss(
     var id: ULong?,
     var link: String,
-    var title: String,
+    var title: String?,
     var description: String?,
     var ttl: Int?,
     var lastFetchAt: Instant?,
@@ -38,8 +38,8 @@ data class Rss(
  */
 @Serializable
 data class RssItem(
-    var uuid: String?,
-    var rssId: Long?,
+    var id: String?,
+    var rssId: ULong?,
     var link: String,
     var guid: String,
     var title: String,
@@ -53,7 +53,7 @@ data class RssItem(
     var version: Int?,
 ) {
     constructor() : this(
-        uuid = null,
+        id = null,
         rssId = null,
         link = "",
         guid = "",

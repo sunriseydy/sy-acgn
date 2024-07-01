@@ -5,6 +5,7 @@ import dev.sunriseydy.acgn.anime.service.RssService
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.util.UUID
 
 fun Route.rssRoutes() {
     val rssService = RssService()
@@ -12,14 +13,28 @@ fun Route.rssRoutes() {
         get {
             call.respond(rssService.getRssList())
         }
-        get("/{id}") {
-            call.respond(rssService.getRssById(call.parameters["id"]!!.toULong()))
-        }
         put("/{id}") {
-            call.respond(rssService.updateRss(call.receive<Rss>()))
+            call.respond(rssService.saveRss(call.receive<Rss>().apply { id = call.parameters["id"]!!.toULong() }))
         }
         post {
-            call.respond(rssService.createRss(call.receive<Rss>()))
+            call.respond(rssService.createRss(call.receive<Rss>().link))
+        }
+        delete("/{id}") {
+            call.respond(rssService.removeRss(call.parameters["id"]!!.toULong()))
+        }
+        route("/item") {
+            get {
+                call.respond(rssService.selectRssItemByRssIdOrIsRead(
+                    rssId = call.parameters["rssId"]?.toULong(),
+                    isRead = call.parameters["isRead"]?.toBoolean(),
+                ))
+            }
+            put {
+                call.respond(rssService.updateRssItemReadByIdOrRssId(
+                    id = call.parameters["id"]?.let { UUID.fromString(it) },
+                    rssId = call.parameters["rssId"]?.toULong(),
+                ))
+            }
         }
     }
 }
