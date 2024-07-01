@@ -18,7 +18,7 @@ import java.util.*
  * @date 2024-06-28 00:11
  */
 object RssTable : ULongIdTable("anime_rss") {
-    val link = varchar("link", 255)
+    val link = varchar("link", 1024).uniqueIndex()
     val title = varchar("title", 255)
     val description = text("description", eagerLoading = true).nullable()
     val ttl = integer("ttl")
@@ -55,7 +55,7 @@ class RssDAO(id: EntityID<ULong>) : ULongEntity(id) {
 
 object RssItemTable : UUIDTable("anime_rss_item", "uuid") {
     val rssId = long("rss_id")
-    val link = varchar("link", 255)
+    val link = varchar("link", 1024)
     val title = varchar("title", 255)
     val description = text("description", eagerLoading = true).nullable()
     val content = text("content", eagerLoading = true).nullable()
