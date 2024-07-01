@@ -32,6 +32,7 @@ data class RssItem(
     val content: String,
     val torrent: String,
     val isRead: Boolean,
+    val publishedAt: LocalDateTime,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val version: Int,

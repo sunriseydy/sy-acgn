@@ -61,6 +61,7 @@ object RssItemTable : UUIDTable("anime_rss_item", "uuid") {
     val content = text("content", eagerLoading = true).nullable()
     val torrent = varchar("torrent", 255)
     val isRead = bool("is_read")
+    val publishedAt = datetime("published_at").defaultExpression(CurrentDateTime).index()
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
     val updatedAt = datetime("updated_at").defaultExpression(CurrentDateTime)
     val version = integer("version").default(0)
@@ -76,6 +77,7 @@ class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var content by RssItemTable.content
     var torrent by RssItemTable.torrent
     var isRead by RssItemTable.isRead
+    var publishedAt by RssItemTable.publishedAt
     var createdAt by RssItemTable.createdAt
     var updatedAt by RssItemTable.updatedAt
     var version by RssItemTable.version
@@ -89,6 +91,7 @@ class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         content = content.toString(),
         torrent = torrent,
         isRead = isRead,
+        publishedAt = publishedAt,
         createdAt = createdAt,
         updatedAt = updatedAt,
         version = version
