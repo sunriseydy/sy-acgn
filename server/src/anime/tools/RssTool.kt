@@ -5,6 +5,8 @@ import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.client.httpClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.utils.io.core.Closeable
 import kotlinx.serialization.SerialName
@@ -16,7 +18,11 @@ import nl.adaptivity.xmlutil.serialization.XmlElement
  * @date 2024-07-01 14:17
  */
 class RssTool: Closeable {
-    private val httpClient: HttpClient = httpClient()
+    private val httpClient: HttpClient = httpClient() {
+        Logging {
+            level = LogLevel.INFO
+        }
+    }
 
     override fun close() {
         httpClient.close()
@@ -27,7 +33,7 @@ class RssTool: Closeable {
         return convertRss(rss)
     }
 
-    fun convertRss(rssXml: RssXml): Rss {
+    private fun convertRss(rssXml: RssXml): Rss {
         val channel = rssXml.channel
 
         return Rss().apply {
