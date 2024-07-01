@@ -34,15 +34,15 @@ class RssRepositoryImpl : RssRepository {
 
     override suspend fun update(rss: Rss): Rss = suspendTransaction {
         RssDAO.findSingleByAndUpdate(
-            (RssTable.id eq rss.id) and
-                    (RssTable.version eq rss.version)
+            (RssTable.id eq rss.id!!) and
+                    (RssTable.version eq rss.version!!)
         ) {
             it.link = rss.link
             it.title = rss.title
             it.description = rss.description
             it.ttl = rss.ttl
             it.lastFetchAt = rss.lastFetchAt
-            it.version = rss.version + 1
+            it.version = rss.version!! + 1
         }?.toDTO() ?: throw NoSuchElementException()
     }
 

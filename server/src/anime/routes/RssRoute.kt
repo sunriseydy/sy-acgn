@@ -17,7 +17,7 @@ fun Route.rssRoutes() {
             call.respond(rssService.getRss(call.parameters["id"]!!.toULong()))
         }
         put("/{id}") {
-            call.respond(rssService.updateRss(call.receive<Rss>().copy(id = call.parameters["id"]!!.toULong())))
+            call.respond(rssService.updateRss(call.receive<Rss>()))
         }
         post {
             call.respond(rssService.createRss(call.receive<Rss>()))

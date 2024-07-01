@@ -16,22 +16,22 @@ import java.util.*
  */
 class RssItemRepositoryImpl : RssItemRepository {
     override suspend fun queryAll(): List<RssItem> = suspendTransaction {
-        RssItemDAO.all().sortedByDescending{ it.publishedAt }.map(RssItemDAO::toDTO)
+        RssItemDAO.all().sortedByDescending { it.publishedAt }.map(RssItemDAO::toDTO)
     }
 
     override suspend fun queryByRssId(rssId: Long): List<RssItem> = suspendTransaction {
         RssItemDAO.find {
             RssItemTable.rssId eq rssId
-        }.sortedByDescending{ it.publishedAt }
-        .map(RssItemDAO::toDTO)
+        }.sortedByDescending { it.publishedAt }
+            .map(RssItemDAO::toDTO)
     }
 
     override suspend fun queryByRssIdAndIsRead(rssId: Long?, isRead: Boolean?): List<RssItem> = suspendTransaction {
         RssItemDAO.find {
             (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and
                     (isRead?.let { RssItemTable.isRead eq it } ?: Op.TRUE)
-        }.sortedByDescending{ it.publishedAt }
-        .map(RssItemDAO::toDTO)
+        }.sortedByDescending { it.publishedAt }
+            .map(RssItemDAO::toDTO)
     }
 
     override suspend fun queryById(id: UUID): RssItem = suspendTransaction {
@@ -41,8 +41,9 @@ class RssItemRepositoryImpl : RssItemRepository {
 
     override suspend fun insert(rssItem: RssItem): RssItem = suspendTransaction {
         RssItemDAO.new {
-            this.rssId = rssItem.rssId
+            this.rssId = rssItem.rssId!!
             this.link = rssItem.link
+            this.guid = rssItem.guid
             this.title = rssItem.title
             this.description = rssItem.description
             this.content = rssItem.content
@@ -54,19 +55,20 @@ class RssItemRepositoryImpl : RssItemRepository {
 
     override suspend fun update(rssItem: RssItem): RssItem = suspendTransaction {
         RssItemDAO.findSingleByAndUpdate(
-            (RssItemTable.id eq UUID.fromString(rssItem.uuid)) and
-                    (RssItemTable.version eq rssItem.version)
+            (RssItemTable.id eq UUID.fromString(rssItem.uuid!!)) and
+                    (RssItemTable.version eq rssItem.version!!)
         ) {
-            it.rssId = rssItem.rssId
+            it.rssId = rssItem.rssId!!
             it.link = rssItem.link
+            it.guid = rssItem.guid
             it.title = rssItem.title
             it.description = rssItem.description
             it.content = rssItem.content
             it.torrent = rssItem.torrent
             it.isRead = rssItem.isRead
             it.publishedAt = rssItem.publishedAt
-            it.version = rssItem.version + 1
-       }?.toDTO()
+            it.version = rssItem.version!! + 1
+        }?.toDTO()
             ?: throw NoSuchElementException()
     }
 
