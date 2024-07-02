@@ -81,7 +81,7 @@ class RssService {
             .map(RssItemDAO::toDTO)
     }
 
-    suspend fun insertRssItem(rssItem: RssItem): RssItem = suspendTransaction {
+    suspend fun insertRssItem(rssItem: RssItem) = suspendTransaction {
         RssItemDAO.new {
             this.rssId = rssItem.rssId!!
             this.link = rssItem.link
@@ -92,7 +92,7 @@ class RssService {
             this.torrent = rssItem.torrent
             this.isRead = rssItem.isRead
             this.publishedAt = rssItem.publishedAt
-        }.toDTO()
+        }.id
     }
 
     suspend fun updateRssItemReadByIdOrRssId(id: UUID?, rssId: ULong?) = suspendTransaction {

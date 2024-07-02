@@ -60,7 +60,7 @@ object RssItemTable : UUIDTable("anime_rss_item") {
     val title = varchar("title", 255)
     val description = text("description", eagerLoading = true).nullable()
     val content = text("content", eagerLoading = true).nullable()
-    val torrent = varchar("torrent", 255)
+    val torrent = text("torrent", eagerLoading = true)
     val isRead = bool("is_read")
     val publishedAt = timestamp("published_at").defaultExpression(CurrentTimestamp).index()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)

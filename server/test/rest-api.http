@@ -1,0 +1,20 @@
+# @no-log
+# @no-cookie-jar
+### home
+GET http://localhost:9390/api
+Accept: application/json
+
+### create rss
+# @no-log
+POST http://localhost:9390/api/anime/rss?link=http://localhost:3000/rss.xml
+Accept: application/json
+
+### get rss list
+# @no-log
+GET http://localhost:9390/api/anime/rss
+Accept: application/json
+
+### delete rss
+# @no-log
+DELETE http://localhost:9390/api/anime/rss/6
+Accept: application/json

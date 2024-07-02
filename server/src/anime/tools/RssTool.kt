@@ -9,6 +9,8 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.utils.io.core.Closeable
+import kotlinx.datetime.Clock
+import kotlinx.datetime.format.DateTimeComponents.Formats.RFC_1123
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.adaptivity.xmlutil.serialization.XmlElement
@@ -41,12 +43,14 @@ class RssTool: Closeable {
             title = channel.title
             description = channel.description
             ttl = channel.ttl
+            lastFetchAt = Clock.System.now()
             items = channel.item?.map {
                 RssItem().apply {
                     title = it.title
                     link = it.link
                     description = it.description
                     guid = it.guid
+                    publishedAt = RFC_1123.parse(it.pubDate).toInstantUsingOffset()
                     torrent = it.enclosure.first {
                         it.type == "application/x-bittorrent"
                     }.url
@@ -86,7 +90,7 @@ class RssTool: Closeable {
         @XmlElement(true)
         val description: String?,
         @XmlElement(true)
-        val pubDate: String?,
+        val pubDate: String,
         @XmlElement(true)
         val guid: String,
         val enclosure: List<Enclosure>,

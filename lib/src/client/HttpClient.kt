@@ -6,6 +6,7 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.xml.xml
+import kotlinx.serialization.json.Json
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.XML
 import nl.adaptivity.xmlutil.serialization.XmlConfig
@@ -14,7 +15,10 @@ import nl.adaptivity.xmlutil.serialization.XmlConfig
 fun httpClient(config: HttpClientConfig<*>.() -> Unit = {}): HttpClient = HttpClient {
     expectSuccess = true
     install(ContentNegotiation) {
-        json()
+        json(Json {
+            ignoreUnknownKeys = false
+            isLenient = true
+        })
         xml(format = XML {
             defaultPolicy {
                 unknownChildHandler = XmlConfig.IGNORING_UNKNOWN_CHILD_HANDLER
