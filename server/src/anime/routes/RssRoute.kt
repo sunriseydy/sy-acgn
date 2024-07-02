@@ -30,6 +30,8 @@ fun Route.rssRoutes() {
                 call.respond(rssService.selectRssItemByRssIdOrIsRead(
                     rssId = call.parameters["rssId"]?.toULong(),
                     isRead = call.parameters["isRead"]?.toBoolean(),
+                    page = call.parameters["page"]?.toLong() ?: 0,
+                    size = call.parameters["size"]?.toInt() ?: 10,
                 ))
             }
             put("/read") {

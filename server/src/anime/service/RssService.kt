@@ -101,13 +101,17 @@ class RssService {
         RssDAO.findById(id)?.delete() ?: throw NoSuchElementException()
     }
 
-    suspend fun selectRssItemByRssIdOrIsRead(rssId: ULong?, isRead: Boolean?) = suspendTransaction {
-        RssItemDAO.find {
-            (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and
-                    (isRead?.let { RssItemTable.isRead eq it } ?: Op.TRUE)
-        }.sortedByDescending { it.publishedAt }
-            .map(RssItemDAO::toDTO)
-    }
+    suspend fun selectRssItemByRssIdOrIsRead(rssId: ULong?, isRead: Boolean?, page: Long = 0, size: Int = 10) =
+        suspendTransaction {
+            RssItemDAO.find {
+                (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and
+                        (isRead?.let { RssItemTable.isRead eq it } ?: Op.TRUE)
+            }.also {
+                if (page > 0) {
+                    it.limit(size, (page - 1) * size)
+                }
+            }.sortedByDescending { it.publishedAt }.map(RssItemDAO::toDTO)
+        }
 
     suspend fun selectRssItemByRssIdAndGuid(rssId: ULong, guid: String) = suspendTransaction {
         RssItemDAO.find {
