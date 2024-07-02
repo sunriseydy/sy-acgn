@@ -25,7 +25,6 @@ object RssTable : ULongIdTable("anime_rss") {
     val lastFetchAt = timestamp("last_fetch_at").nullable()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
-    val version = integer("version").default(0)
 }
 
 class RssDAO(id: EntityID<ULong>) : ULongEntity(id) {
@@ -38,7 +37,6 @@ class RssDAO(id: EntityID<ULong>) : ULongEntity(id) {
     var lastFetchAt by RssTable.lastFetchAt
     var createdAt by RssTable.createdAt
     var updatedAt by RssTable.updatedAt
-    var version by RssTable.version
 
     fun toDTO(): Rss = Rss(
         id = id.value,
@@ -49,7 +47,6 @@ class RssDAO(id: EntityID<ULong>) : ULongEntity(id) {
         lastFetchAt = lastFetchAt,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        version = version,
     )
 }
 
@@ -65,7 +62,6 @@ object RssItemTable : UUIDTable("anime_rss_item") {
     val publishedAt = timestamp("published_at").defaultExpression(CurrentTimestamp).index()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
-    val version = integer("version").default(0)
     val u1 = index(isUnique = true, rssId, guid)
 }
 
@@ -83,7 +79,6 @@ class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var publishedAt by RssItemTable.publishedAt
     var createdAt by RssItemTable.createdAt
     var updatedAt by RssItemTable.updatedAt
-    var version by RssItemTable.version
 
     fun toDTO(): RssItem = RssItem(
         id = id.value.toString(),
@@ -98,6 +93,5 @@ class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         publishedAt = publishedAt,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        version = version
     )
 }

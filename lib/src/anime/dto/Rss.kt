@@ -17,7 +17,6 @@ data class Rss(
     var lastFetchAt: Instant?,
     var createdAt: Instant?,
     var updatedAt: Instant?,
-    var version: Int?,
     var items: List<RssItem>? = null
 ) {
     constructor() : this(
@@ -29,7 +28,6 @@ data class Rss(
         lastFetchAt = null,
         createdAt = null,
         updatedAt = null,
-        version = null,
     )
 }
 
@@ -50,7 +48,6 @@ data class RssItem(
     var publishedAt: Instant,
     var createdAt: Instant?,
     var updatedAt: Instant?,
-    var version: Int?,
 ) {
     constructor() : this(
         id = null,
@@ -65,6 +62,5 @@ data class RssItem(
         publishedAt = Clock.System.now(),
         createdAt = null,
         updatedAt = null,
-        version = null,
     )
 }

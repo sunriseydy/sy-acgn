@@ -3,7 +3,6 @@ package dev.sunriseydy.acgn.anime.service
 import dev.sunriseydy.acgn.anime.db.RssDAO
 import dev.sunriseydy.acgn.anime.db.RssItemDAO
 import dev.sunriseydy.acgn.anime.db.RssItemTable
-import dev.sunriseydy.acgn.anime.db.RssTable
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.anime.tools.RssTool
@@ -90,15 +89,11 @@ class RssService {
     }
 
     suspend fun updateRss(rss: Rss) = suspendTransaction {
-        RssDAO.findSingleByAndUpdate(
-            (RssTable.id eq rss.id!!) and
-                    (RssTable.version eq rss.version!!)
-        ) {
+        RssDAO.findByIdAndUpdate(rss.id!!) {
             it.title = rss.title ?: it.title
             it.description = rss.description ?: it.description
             it.ttl = rss.ttl ?: it.ttl
             it.lastFetchAt = rss.lastFetchAt ?: it.lastFetchAt
-            it.version++
         }?.toDTO() ?: throw NoSuchElementException()
     }
 
