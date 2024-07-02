@@ -26,5 +26,5 @@ Accept: application/json
 
 ### mark rss item as read
 # @no-log
-PUT http://localhost:9390/api/anime/rss/item?id=b34916b7-c3d4-46e9-941e-a081486eb0f1
+PUT http://localhost:9390/api/anime/rss/item/read?id=b34916b7-c3d4-46e9-941e-a081486eb0f1
 Accept: application/json

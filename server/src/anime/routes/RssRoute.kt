@@ -29,7 +29,7 @@ fun Route.rssRoutes() {
                     isRead = call.parameters["isRead"]?.toBoolean(),
                 ))
             }
-            put {
+            put("/read") {
                 call.respond(rssService.updateRssItemReadByIdOrRssId(
                     id = call.parameters["id"]?.let { UUID.fromString(it) },
                     rssId = call.parameters["rssId"]?.toULong(),
