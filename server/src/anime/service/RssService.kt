@@ -27,7 +27,7 @@ class RssService {
         var rss = this.fetchRssFromLink(link)
         var rssItems = rss.items
         // 2. 插入 rss
-        rss = this.insertRss(rss)
+        rss = this.insertRss(rss.apply { this.link = link })
         rss.id!!
         // 3. 插入 rss item
         rssItems?.forEach { rssItem ->
