@@ -23,7 +23,7 @@ data class Rss(
     constructor() : this(
         id = null,
         link = "",
-        title = "",
+        title = null,
         description = null,
         ttl = null,
         lastFetchAt = null,

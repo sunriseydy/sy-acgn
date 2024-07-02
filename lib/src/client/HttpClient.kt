@@ -6,18 +6,20 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.xml.xml
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.XML
 import nl.adaptivity.xmlutil.serialization.XmlConfig
 
-@OptIn(ExperimentalXmlUtilApi::class)
+@OptIn(ExperimentalXmlUtilApi::class, ExperimentalSerializationApi::class)
 fun httpClient(config: HttpClientConfig<*>.() -> Unit = {}): HttpClient = HttpClient {
     expectSuccess = true
     install(ContentNegotiation) {
         json(Json {
             ignoreUnknownKeys = false
             isLenient = true
+            explicitNulls = false
         })
         xml(format = XML {
             defaultPolicy {

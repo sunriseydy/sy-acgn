@@ -6,8 +6,13 @@ Accept: application/json
 
 ### create rss
 # @no-log
-POST http://localhost:9390/api/anime/rss?link=http://localhost:3000/rss.xml
+POST http://localhost:9390/api/anime/rss
 Accept: application/json
+Content-Type: application/json
+
+{
+  "link": "http://localhost:3000/rss.xml"
+}
 
 ### get rss list
 # @no-log
