@@ -39,7 +39,6 @@ class RssTool: Closeable {
         val channel = rssXml.channel
 
         return Rss().apply {
-            link = channel.link
             title = channel.title
             description = channel.description
             ttl = channel.ttl

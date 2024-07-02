@@ -8,6 +8,7 @@ import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.anime.tools.RssTool
 import dev.sunriseydy.acgn.plugins.suspendTransaction
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
@@ -20,19 +21,17 @@ import java.util.UUID
  * @date 2024-06-29 00:50
  */
 class RssService {
-    suspend fun getRssList(): List<Rss> = suspendTransaction {
-        RssDAO.all().map(RssDAO::toDTO)
-    }
 
     suspend fun createRss(link: String): Rss {
         // 1. 从 url 中获取 rss
-        var rss = RssTool().use{ it.fetchRss(link) }
+        var rss = this.fetchRssFromLink(link)
         var rssItems = rss.items
         // 2. 插入 rss
         rss = this.insertRss(rss)
+        rss.id!!
         // 3. 插入 rss item
         rssItems?.forEach { rssItem ->
-            rssItem.rssId = rss.id!!
+            rssItem.rssId = rss.id
             this.insertRssItem(rssItem)
         }
         return rss
@@ -42,9 +41,42 @@ class RssService {
         rss.id?.let { this.updateRss(rss) }
     }
 
+    suspend fun fetchRssFromLink(link: String) = RssTool().use { it.fetchRss(link) }
+
+    suspend fun fetchRss(rssId: ULong?) = rssId?.let { this.fetchRssByRssId(rssId) } ?: this.fetchAllRss()
+
+    suspend fun fetchAllRss() {
+        this.selectAllRss().forEach {
+            this.fetchRssByRss(it)
+        }
+    }
+
+    suspend fun fetchRssByRssId(rssId: ULong) {
+        this.selectRssById(rssId).let {
+            this.fetchRssByRss(it)
+        }
+    }
+
+    suspend fun fetchRssByRss(rss: Rss) = this.fetchRssFromLink(rss.link).items?.forEach {
+        // 先查询是否已存在，不存在则插入
+        selectRssItemByRssIdAndGuid(rss.id!!, it.guid) ?: this.insertRssItem(it)
+    }.also {
+        // 更新 rss 的 lastFetchAt
+        rss.lastFetchAt = Clock.System.now()
+        this.updateRss(rss)
+    }
+
     suspend fun removeRss(id: ULong) {
         this.deleteRss(id)
         this.deleteRssItemByRssId(id)
+    }
+
+    suspend fun selectAllRss(): List<Rss> = suspendTransaction {
+        RssDAO.all().map(RssDAO::toDTO)
+    }
+
+    suspend fun selectRssById(id: ULong) = suspendTransaction {
+        RssDAO.findById(id)?.toDTO() ?: throw NoSuchElementException()
     }
 
     suspend fun insertRss(rss: Rss): Rss = suspendTransaction {
@@ -62,10 +94,11 @@ class RssService {
             (RssTable.id eq rss.id!!) and
                     (RssTable.version eq rss.version!!)
         ) {
-            it.title = rss.title
-            it.description = rss.description
-            it.ttl = rss.ttl
-            it.version = rss.version!! + 1
+            it.title = rss.title ?: it.title
+            it.description = rss.description ?: it.description
+            it.ttl = rss.ttl ?: it.ttl
+            it.lastFetchAt = rss.lastFetchAt ?: it.lastFetchAt
+            it.version++
         }?.toDTO() ?: throw NoSuchElementException()
     }
 
@@ -79,6 +112,13 @@ class RssService {
                     (isRead?.let { RssItemTable.isRead eq it } ?: Op.TRUE)
         }.sortedByDescending { it.publishedAt }
             .map(RssItemDAO::toDTO)
+    }
+
+    suspend fun selectRssItemByRssIdAndGuid(rssId: ULong, guid: String) = suspendTransaction {
+        RssItemDAO.find {
+            (RssItemTable.rssId eq rssId) and
+                    (RssItemTable.guid eq guid)
+        }.firstOrNull()?.toDTO()
     }
 
     suspend fun insertRssItem(rssItem: RssItem) = suspendTransaction {

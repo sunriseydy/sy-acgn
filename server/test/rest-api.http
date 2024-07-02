@@ -24,6 +24,11 @@ Accept: application/json
 DELETE http://localhost:9390/api/anime/rss/6
 Accept: application/json
 
+### fetch rss
+# @no-log
+PUT http://localhost:9390/api/anime/rss/fetch
+Accept: application/json
+
 ### get rss items
 # @no-log
 GET http://localhost:9390/api/anime/rss/item?rssId=7&isRead=true

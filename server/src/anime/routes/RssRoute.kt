@@ -11,10 +11,13 @@ fun Route.rssRoutes() {
     val rssService = RssService()
     route("/rss") {
         get {
-            call.respond(rssService.getRssList())
+            call.respond(rssService.selectAllRss())
         }
         put("/{id}") {
             call.respond(rssService.saveRss(call.receive<Rss>().apply { id = call.parameters["id"]!!.toULong() }))
+        }
+        put("/fetch") {
+            call.respond(rssService.fetchRss(call.parameters["rssId"]?.toULong()))
         }
         post {
             call.respond(rssService.createRss(call.receive<Rss>().link))
