@@ -1,5 +1,9 @@
 package dev.sunriseydy.acgn.plugins
 
+import dev.sunriseydy.acgn.anime.db.AnimeAdditionTable
+import dev.sunriseydy.acgn.anime.db.AnimeEpisodeTable
+import dev.sunriseydy.acgn.anime.db.AnimeSeasonTable
+import dev.sunriseydy.acgn.anime.db.AnimeTable
 import dev.sunriseydy.acgn.anime.db.RssItemTable
 import dev.sunriseydy.acgn.anime.db.RssTable
 import dev.sunriseydy.acgn.config.DatabaseKey
@@ -42,7 +46,12 @@ fun Application.initializeDatabase() {
             }
             // create tables
             SchemaUtils.createMissingTablesAndColumns(
-                RssTable, RssItemTable
+                RssTable,
+                RssItemTable,
+                AnimeTable,
+                AnimeSeasonTable,
+                AnimeEpisodeTable,
+                AnimeAdditionTable,
             )
         }
     }
