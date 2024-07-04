@@ -8,12 +8,12 @@ import kotlinx.serialization.json.jsonObject
 
 @Serializable
 data class Anime(
-    var id: ULong? = null,
-    var name: String,
-    var originalName: String? = null,
-    var description: String? = null,
-    var createdAt: Instant? = null,
-    var updatedAt: Instant? = null,
+    val id: ULong,
+    val name: String,
+    val originalName: String? = null,
+    val description: String? = null,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 ) {
     var animeSeasons: List<AnimeSeason> = emptyList()
     var additions: List<AnimeAddition> = emptyList()
@@ -23,18 +23,18 @@ data class Anime(
 
 @Serializable
 data class AnimeSeason(
-    var id: ULong? = null,
-    var animeId: ULong? = null,
-    var name: String,
-    var originalName: String? = null,
-    var description: String? = null,
-    var season: Int,
-    var year: Int,
-    var month: Int,
-    var startedAt: Instant? = null,
-    var endedAt: Instant? = null,
-    var createdAt: Instant? = null,
-    var updatedAt: Instant? = null,
+    val id: ULong,
+    val animeId: ULong,
+    val name: String,
+    val originalName: String? = null,
+    val description: String? = null,
+    val season: Int,
+    val year: Int,
+    val month: Int,
+    val startedAt: Instant? = null,
+    val endedAt: Instant? = null,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 ) {
     var animeEpisodes: List<AnimeEpisode> = emptyList()
     var additions: List<AnimeAddition> = emptyList()
@@ -42,42 +42,42 @@ data class AnimeSeason(
 
 @Serializable
 data class AnimeEpisode(
-    var id: ULong? = null,
-    var animeId: ULong? = null,
-    var animeSeasonId: ULong? = null,
-    var name: String,
-    var originalName: String? = null,
-    var description: String? = null,
-    var episode: Int,
-    var publishedAt: Instant? = null,
-    var createdAt: Instant? = null,
-    var updatedAt: Instant? = null,
+    val id: ULong,
+    val animeId: ULong,
+    val animeSeasonId: ULong,
+    val name: String,
+    val originalName: String? = null,
+    val description: String? = null,
+    val episode: Int,
+    val publishedAt: Instant? = null,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 ) {
     var additions: List<AnimeAddition> = emptyList()
 }
 
 @Serializable
 data class AnimeMovie(
-    var id: ULong? = null,
-    var name: String,
-    var originalName: String? = null,
-    var description: String? = null,
-    var publishedAt: Instant? = null,
-    var createdAt: Instant? = null,
-    var updatedAt: Instant? = null,
+    val id: ULong,
+    val name: String,
+    val originalName: String? = null,
+    val description: String? = null,
+    val publishedAt: Instant? = null,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 ) {
     var additions: List<AnimeAddition> = emptyList()
 }
 
 @Serializable
 data class AnimeAddition(
-    var id: String? = null,
-    var associatedId: ULong,
-    var associatedType: AnimeAssociatedType,
-    var additionalType: AnimeAdditionType,
-    var value: String,
-    var createdAt: Instant? = null,
-    var updatedAt: Instant? = null,
+    val id: String,
+    val associatedId: ULong,
+    val associatedType: AnimeAssociatedType,
+    val additionalType: AnimeAdditionType,
+    val value: String,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 )
 
 enum class AnimeAssociatedType() {

@@ -9,7 +9,6 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.utils.io.core.Closeable
-import kotlinx.datetime.Clock
 import kotlinx.datetime.format.DateTimeComponents.Formats.RFC_1123
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -32,28 +31,32 @@ class RssTool: Closeable {
 
     suspend fun fetchRss(url: String): Rss {
         val rss: RssXml = httpClient.get(url).body()
-        return convertRss(rss)
+        return convertRss(rss, url)
     }
 
-    private fun convertRss(rssXml: RssXml): Rss {
+    private fun convertRss(rssXml: RssXml, url: String): Rss {
         val channel = rssXml.channel
 
-        return Rss().apply {
-            title = channel.title
-            description = channel.description
-            ttl = channel.ttl
-            lastFetchAt = Clock.System.now()
-            items = channel.item?.map {
-                RssItem().apply {
-                    title = it.title
-                    link = it.link
-                    description = it.description
-                    guid = it.guid
-                    publishedAt = RFC_1123.parse(it.pubDate).toInstantUsingOffset()
+        return Rss(
+            id = 0u,
+            link = url,
+            title = channel.title,
+            description = channel.description,
+            ttl = channel.ttl ?: 1800,
+        ).apply {
+            items = channel.item.map {
+                RssItem(
+                    id = "",
+                    rssId = 0u,
+                    link = it.link,
+                    guid = it.guid,
+                    title = it.title,
+                    description = it.description,
                     torrent = it.enclosure.first {
                         it.type == "application/x-bittorrent"
-                    }.url
-                }
+                    }.url,
+                    publishedAt = RFC_1123.parse(it.pubDate).toInstantUsingOffset()
+                )
             }
         }
     }
@@ -76,7 +79,7 @@ class RssTool: Closeable {
         val link: String,
         @XmlElement(true)
         val ttl: Int?,
-        val item: List<Item>?,
+        val item: List<Item> = emptyList(),
     )
 
     @Serializable

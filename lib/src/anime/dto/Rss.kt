@@ -9,19 +9,16 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Rss(
-    var id: ULong? = null,
-    var link: String,
-    var title: String? = null,
-    var description: String? = null,
-    var ttl: Int? = 1800,
-    var lastFetchAt: Instant? = null,
-    var createdAt: Instant? = null,
-    var updatedAt: Instant? = null,
-    var items: List<RssItem>? = null
+    val id: ULong,
+    val link: String,
+    val title: String,
+    val description: String? = null,
+    val ttl: Int = 3600,
+    val lastFetchAt: Instant = Clock.System.now(),
+    val createdAt: Instant = Clock.System.now(),
+    val updatedAt: Instant = Clock.System.now(),
 ) {
-    constructor() : this(
-        link = "",
-    )
+    var items: List<RssItem> = emptyList()
 }
 
 /**
@@ -29,23 +26,16 @@ data class Rss(
  */
 @Serializable
 data class RssItem(
-    var id: String? = null,
-    var rssId: ULong? = null,
-    var link: String,
-    var guid: String,
-    var title: String,
-    var description: String? = null,
-    var content: String? = null,
-    var torrent: String,
-    var isRead: Boolean = false,
-    var publishedAt: Instant = Clock.System.now(),
-    var createdAt: Instant? = null,
-    var updatedAt: Instant? = null,
-) {
-    constructor() : this(
-        link = "",
-        guid = "",
-        title = "",
-        torrent = "",
-    )
-}
+    val id: String,
+    val rssId: ULong,
+    val link: String,
+    val guid: String,
+    val title: String,
+    val description: String? = null,
+    val content: String? = null,
+    val torrent: String,
+    val isRead: Boolean = false,
+    val publishedAt: Instant,
+    val createdAt: Instant = Clock.System.now(),
+    val updatedAt: Instant = Clock.System.now(),
+)

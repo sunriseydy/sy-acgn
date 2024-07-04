@@ -26,18 +26,16 @@ class RssService {
         var rss = this.fetchRssFromLink(link)
         var rssItems = rss.items
         // 2. 插入 rss
-        rss = this.insertRss(rss.apply { this.link = link })
-        rss.id!!
+        rss = this.insertRss(rss)
         // 3. 插入 rss item
-        rssItems?.forEach { rssItem ->
-            rssItem.rssId = rss.id
-            this.insertRssItem(rssItem)
+        rssItems.forEach { rssItem ->
+            this.insertRssItem(rssItem.copy(rssId = rss.id))
         }
         return rss
     }
 
     suspend fun saveRss(rss: Rss) {
-        rss.id?.let { this.updateRss(rss) }
+        this.updateRss(rss)
     }
 
     suspend fun fetchRssFromLink(link: String) = RssTool().use { it.fetchRss(link) }
@@ -56,13 +54,12 @@ class RssService {
         }
     }
 
-    suspend fun fetchRssByRss(rss: Rss) = this.fetchRssFromLink(rss.link).items?.forEach {
+    suspend fun fetchRssByRss(rss: Rss) = this.fetchRssFromLink(rss.link).items.forEach {
         // 先查询是否已存在，不存在则插入
-        selectRssItemByRssIdAndGuid(rss.id!!, it.guid) ?: this.insertRssItem(it)
+        selectRssItemByRssIdAndGuid(rss.id, it.guid) ?: this.insertRssItem(it)
     }.also {
         // 更新 rss 的 lastFetchAt
-        rss.lastFetchAt = Clock.System.now()
-        this.updateRss(rss)
+        this.updateRss(rss.copy(lastFetchAt = Clock.System.now()))
     }
 
     suspend fun removeRss(id: ULong) {
@@ -89,11 +86,11 @@ class RssService {
     }
 
     suspend fun updateRss(rss: Rss) = suspendTransaction {
-        RssDAO.findByIdAndUpdate(rss.id!!) {
-            it.title = rss.title ?: it.title
-            it.description = rss.description ?: it.description
-            it.ttl = rss.ttl ?: it.ttl
-            it.lastFetchAt = rss.lastFetchAt ?: it.lastFetchAt
+        RssDAO.findByIdAndUpdate(rss.id) {
+            it.title = rss.title
+            it.description = rss.description
+            it.ttl = rss.ttl
+            it.lastFetchAt = rss.lastFetchAt
         }?.toDTO() ?: throw NoSuchElementException()
     }
 
@@ -122,7 +119,7 @@ class RssService {
 
     suspend fun insertRssItem(rssItem: RssItem) = suspendTransaction {
         RssItemDAO.new {
-            this.rssId = rssItem.rssId!!
+            this.rssId = rssItem.rssId
             this.link = rssItem.link
             this.guid = rssItem.guid
             this.title = rssItem.title

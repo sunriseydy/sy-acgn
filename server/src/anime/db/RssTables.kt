@@ -19,10 +19,10 @@ import java.util.*
  */
 object RssTable : ULongIdTable("anime_rss") {
     val link = varchar("link", 1024).uniqueIndex()
-    val title = varchar("title", 255).nullable()
+    val title = varchar("title", 255)
     val description = text("description", eagerLoading = true).nullable()
-    val ttl = integer("ttl").nullable()
-    val lastFetchAt = timestamp("last_fetch_at").nullable()
+    val ttl = integer("ttl")
+    val lastFetchAt = timestamp("last_fetch_at").defaultExpression(CurrentTimestamp)
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
 }
@@ -59,7 +59,7 @@ object RssItemTable : UUIDTable("anime_rss_item") {
     val content = text("content", eagerLoading = true).nullable()
     val torrent = text("torrent", eagerLoading = true)
     val isRead = bool("is_read")
-    val publishedAt = timestamp("published_at").defaultExpression(CurrentTimestamp).index()
+    val publishedAt = timestamp("published_at").index()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
     val u1 = index(isUnique = true, rssId, guid)
