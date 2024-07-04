@@ -1,11 +1,7 @@
 package dev.sunriseydy.acgn.plugins
 
-import dev.sunriseydy.acgn.anime.db.AnimeAdditionTable
-import dev.sunriseydy.acgn.anime.db.AnimeEpisodeTable
-import dev.sunriseydy.acgn.anime.db.AnimeSeasonTable
-import dev.sunriseydy.acgn.anime.db.AnimeTable
-import dev.sunriseydy.acgn.anime.db.RssItemTable
-import dev.sunriseydy.acgn.anime.db.RssTable
+import dev.sunriseydy.acgn.anime.db.animeTables
+import dev.sunriseydy.acgn.anime.db.rssTables
 import dev.sunriseydy.acgn.config.DatabaseKey
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +17,7 @@ fun Application.configureDatabases() {
     TransactionManager.defaultDatabase = db
 }
 
-fun Application.connectToPostgres() : Database {
+fun Application.connectToPostgres(): Database {
     val user = environment.config.property(DatabaseKey.USER).getString()
     val password = environment.config.property(DatabaseKey.PASSWORD).getString()
     val host = environment.config.property(DatabaseKey.HOST).getString()
@@ -46,12 +42,10 @@ fun Application.initializeDatabase() {
             }
             // create tables
             SchemaUtils.createMissingTablesAndColumns(
-                RssTable,
-                RssItemTable,
-                AnimeTable,
-                AnimeSeasonTable,
-                AnimeEpisodeTable,
-                AnimeAdditionTable,
+                *(listOf(
+                    rssTables(),
+                    animeTables(),
+                ).flatMap { it }.toTypedArray())
             )
         }
     }

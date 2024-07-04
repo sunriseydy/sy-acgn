@@ -159,3 +159,10 @@ class AnimeAdditionDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         updatedAt = updatedAt,
     )
 }
+
+fun animeTables() = listOf(
+    AnimeTable,
+    AnimeSeasonTable,
+    AnimeEpisodeTable,
+    AnimeAdditionTable,
+)

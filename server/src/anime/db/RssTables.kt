@@ -95,3 +95,5 @@ class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         updatedAt = updatedAt,
     )
 }
+
+fun rssTables() = listOf(RssTable, RssItemTable)
