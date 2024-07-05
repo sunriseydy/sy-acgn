@@ -11,7 +11,7 @@ fun Route.rssRoutes() {
     val rssService = RssService()
     route("/rss") {
         get {
-            call.respond(rssService.selectAllRss())
+            call.respond(rssService.getAllRss())
         }
         put("/{id}") {
             call.respond(rssService.saveRss(call.receive<Rss>().copy(id = call.parameters["id"]!!.toULong())))
@@ -28,7 +28,7 @@ fun Route.rssRoutes() {
         route("/item") {
             get {
                 call.respond(
-                    rssService.selectRssItemByRssIdOrIsRead(
+                    rssService.getRssItemByRssIdOrIsRead(
                         rssId = call.parameters["rssId"]?.toULong(),
                         isRead = call.parameters["isRead"]?.toBoolean(),
                         page = call.parameters["page"]?.toLong() ?: 0,
@@ -38,7 +38,7 @@ fun Route.rssRoutes() {
             }
             put("/read") {
                 call.respond(
-                    rssService.updateRssItemReadByIdOrRssId(
+                    rssService.markRssItemReadByIdOrRssId(
                         id = call.parameters["id"]?.let { UUID.fromString(it) },
                         rssId = call.parameters["rssId"]?.toULong(),
                     )
