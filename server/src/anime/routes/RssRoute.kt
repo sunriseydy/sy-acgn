@@ -14,7 +14,7 @@ fun Route.rssRoutes() {
             call.respond(rssService.selectAllRss())
         }
         put("/{id}") {
-            call.respond(rssService.saveRss(call.receive<Rss>().apply { id = call.parameters["id"]!!.toULong() }))
+            call.respond(rssService.saveRss(call.receive<Rss>().copy(id = call.parameters["id"]!!.toULong())))
         }
         put("/fetch") {
             call.respond(rssService.fetchRss(call.parameters["rssId"]?.toULong()))
@@ -27,18 +27,22 @@ fun Route.rssRoutes() {
         }
         route("/item") {
             get {
-                call.respond(rssService.selectRssItemByRssIdOrIsRead(
-                    rssId = call.parameters["rssId"]?.toULong(),
-                    isRead = call.parameters["isRead"]?.toBoolean(),
-                    page = call.parameters["page"]?.toLong() ?: 0,
-                    size = call.parameters["size"]?.toInt() ?: 10,
-                ))
+                call.respond(
+                    rssService.selectRssItemByRssIdOrIsRead(
+                        rssId = call.parameters["rssId"]?.toULong(),
+                        isRead = call.parameters["isRead"]?.toBoolean(),
+                        page = call.parameters["page"]?.toLong() ?: 0,
+                        size = call.parameters["size"]?.toInt() ?: 10,
+                    )
+                )
             }
             put("/read") {
-                call.respond(rssService.updateRssItemReadByIdOrRssId(
-                    id = call.parameters["id"]?.let { UUID.fromString(it) },
-                    rssId = call.parameters["rssId"]?.toULong(),
-                ))
+                call.respond(
+                    rssService.updateRssItemReadByIdOrRssId(
+                        id = call.parameters["id"]?.let { UUID.fromString(it) },
+                        rssId = call.parameters["rssId"]?.toULong(),
+                    )
+                )
             }
         }
     }

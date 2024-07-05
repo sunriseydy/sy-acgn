@@ -18,7 +18,7 @@ import nl.adaptivity.xmlutil.serialization.XmlElement
  * @author SunriseYDY
  * @date 2024-07-01 14:17
  */
-class RssTool: Closeable {
+class RssTool : Closeable {
     private val httpClient: HttpClient = httpClient {
         Logging {
             level = LogLevel.INFO
