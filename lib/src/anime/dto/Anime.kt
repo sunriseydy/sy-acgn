@@ -1,10 +1,10 @@
 package dev.sunriseydy.acgn.anime.dto
 
+import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
+import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
 
 @Serializable
 data class Anime(
@@ -72,40 +72,22 @@ data class AnimeMovie(
 @Serializable
 data class AnimeAddition(
     val id: String,
+    /**
+     * 关联id
+     */
     val associatedId: ULong,
+    /**
+     * 关联类型
+     */
     val associatedType: AnimeAssociatedType,
+    /**
+     * 附加类型
+     */
     val additionalType: AnimeAdditionType,
+    /**
+     * 附加值
+     */
     val value: String,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
 )
-
-enum class AnimeAssociatedType() {
-    ANIME, ANIME_SEASON, ANIME_EPISODE, ANIME_MOVIE,
-}
-
-fun AnimeAssociatedType(obj: Any) = when (obj) {
-    is Anime -> AnimeAssociatedType.ANIME
-    is AnimeSeason -> AnimeAssociatedType.ANIME_SEASON
-    is AnimeEpisode -> AnimeAssociatedType.ANIME_EPISODE
-    is AnimeMovie -> AnimeAssociatedType.ANIME_MOVIE
-    else -> throw IllegalArgumentException("Invalid AnimeAssociatedType")
-}
-
-enum class AnimeAdditionType() {
-    TMDB_ID {
-        override fun getValue(animeAdditions: List<AnimeAddition>): ULong? = getStringValue(animeAdditions)?.toULong()
-    },
-    TMDB_JSON {
-        override fun getValue(animeAdditions: List<AnimeAddition>): JsonObject? = getStringValue(animeAdditions)?.let {
-            Json.parseToJsonElement(it).jsonObject
-        }
-    }
-    ;
-
-    fun getStringValue(animeAdditions: List<AnimeAddition>): String? {
-        return animeAdditions.find { it.additionalType == this }?.value
-    }
-
-    abstract fun getValue(animeAdditions: List<AnimeAddition>): Any?
-}

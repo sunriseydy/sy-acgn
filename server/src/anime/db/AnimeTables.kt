@@ -2,10 +2,10 @@ package dev.sunriseydy.acgn.anime.db
 
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeAddition
-import dev.sunriseydy.acgn.anime.dto.AnimeAdditionType
-import dev.sunriseydy.acgn.anime.dto.AnimeAssociatedType
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
+import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import org.jetbrains.exposed.dao.ULongEntity
 import org.jetbrains.exposed.dao.ULongEntityClass
 import org.jetbrains.exposed.dao.UUIDEntity

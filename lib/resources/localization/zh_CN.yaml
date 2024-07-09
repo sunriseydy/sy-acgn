@@ -1,0 +1,7 @@
+enum:
+  ANIME:
+    AnimeAssociatedType:
+      ANIME: "动画"
+      ANIME_SEASON: "动画季度"
+      ANIME_EPISODE: "动画集"
+      ANIME_MOVIE: "动画电影"

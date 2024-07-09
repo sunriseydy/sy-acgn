@@ -2,7 +2,7 @@ package dev.sunriseydy.acgn.anime.tools
 
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
-import dev.sunriseydy.acgn.client.httpClient
+import dev.sunriseydy.acgn.tools.httpClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.logging.LogLevel

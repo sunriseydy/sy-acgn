@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.client
+package dev.sunriseydy.acgn.tools
 
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
