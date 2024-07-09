@@ -11,7 +11,7 @@ import io.ktor.server.config.yaml.YamlConfig
  */
 
 object LocalizationTool {
-    internal val DEFAULT_LANGUAGE = Language.CHINESE
+    internal val DEFAULT_LANGUAGE = Language.SIMPLIFIED_CHINESE
 
     fun getLocalizationMessage(key: String): String {
         return this.getLocalizationMessage(DEFAULT_LANGUAGE, key)
@@ -26,7 +26,7 @@ object LocalizationTool {
 
     fun getKeyFromEnum(enum: Enum<*>): String {
         if (enum is Localizable) {
-            return "enum.${enum.moduleName.name}.${enum.enumName}.${enum.name}"
+            return "enum.${enum.moduleName.name}.${enum::class.simpleName}.${enum.name}"
         } else {
             throw IllegalArgumentException("$enum is not a Localizable enum")
         }

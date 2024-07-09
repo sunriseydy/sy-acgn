@@ -17,9 +17,7 @@ import kotlinx.serialization.json.jsonObject
 enum class AnimeAssociatedType : Localizable {
     ANIME, ANIME_SEASON, ANIME_EPISODE, ANIME_MOVIE,
     ;
-    override val moduleName: ModuleName = ModuleName.ANIME
-    override val enumName = "AnimeAssociatedType"
-    override var prefix: String? = null
+    override val moduleName = ModuleName.ANIME
 }
 
 fun AnimeAssociatedType(obj: Any) = when (obj) {

@@ -14,4 +14,4 @@ level:
 
 ### Enum Meanings
 
-`enum.[module_name].[enum_name].[enum_value]`
+`enum.[MODULE_NAME].[EnumName].[ENUM_VALUE]`
