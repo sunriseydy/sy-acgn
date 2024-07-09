@@ -1,8 +1,7 @@
 package dev.sunriseydy.acgn
 
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format.DateTimeComponents
-import kotlinx.datetime.toLocalDateTime
+import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
+import dev.sunriseydy.acgn.tools.LocalizationTool
 import kotlin.test.Test
 
 /**
@@ -12,10 +11,7 @@ import kotlin.test.Test
 class YdyTest {
     @Test
     fun test() {
-        val s = "Sat, 22 Jun 2024 22:27:36 -0700"
-        println(s)
-        val format = DateTimeComponents.Formats.RFC_1123
-        val d = format.parse(s)
-        println(d.toInstantUsingOffset().toLocalDateTime(TimeZone.currentSystemDefault()))
+        val s = LocalizationTool.getKeyFromEnum(AnimeAssociatedType.ANIME_SEASON)
+        println(LocalizationTool.getLocalizationMessage(s))
     }
 }

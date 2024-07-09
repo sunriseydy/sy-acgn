@@ -2,9 +2,7 @@ package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.enums.Localizable
-import net.mamoe.yamlkt.Yaml
-import net.mamoe.yamlkt.YamlMap
-import nl.adaptivity.xmlutil.core.impl.multiplatform.name
+import io.ktor.server.config.yaml.YamlConfig
 
 
 /**
@@ -20,22 +18,19 @@ object LocalizationTool {
     }
 
     fun getLocalizationMessage(language: Language, key: String): String {
-        return this.getLocalizationYaml(language).getStringOrNull(key) ?: key
+        return this.getLocalizationYaml(language)
+            ?.propertyOrNull(key)
+            ?.getString()
+            ?: key
     }
 
-    fun getKeyFromEnum(enum: Any): String {
-        if (enum is Enum && enum is Localizable) {
+    fun getKeyFromEnum(enum: Enum<*>): String {
+        if (enum is Localizable) {
             return "enum.${enum.moduleName.name}.${enum.enumName}.${enum.name}"
+        } else {
+            throw IllegalArgumentException("$enum is not a Localizable enum")
         }
     }
 
-    private fun getLocalizationYaml(language: Language): YamlMap {
-        val resource = Thread.currentThread().contextClassLoader.getResource("localization/${language.code}.yaml")
-        if (resource != null) {
-            return resource.openStream().use {
-                Yaml.decodeYamlMapFromString(String(it.readBytes()))
-            }
-        }
-        return YamlMap(emptyMap())
-    }
+    private fun getLocalizationYaml(language: Language) = YamlConfig("localization/${language.code}.yaml")
 }
