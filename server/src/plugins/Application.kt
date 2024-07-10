@@ -10,4 +10,5 @@ fun Application.module() {
     configureDatabases()
     initializeDatabase()
     configureRouting()
+    configureLocalization()
 }

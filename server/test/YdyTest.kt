@@ -1,6 +1,7 @@
 package dev.sunriseydy.acgn
 
-import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
+import dev.sunriseydy.acgn.enums.Language
+import dev.sunriseydy.acgn.plugins.loadLocalizations
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import kotlin.test.Test
 
@@ -11,7 +12,7 @@ import kotlin.test.Test
 class YdyTest {
     @Test
     fun test() {
-        val s = LocalizationTool.getKeyFromEnum(AnimeAssociatedType.ANIME_SEASON)
-        println(LocalizationTool.getLocalizationMessage(s))
+        LocalizationTool.loadLocalizations()
+        println(LocalizationTool.getLocalizationMessage(Language.SIMPLIFIED_CHINESE))
     }
 }

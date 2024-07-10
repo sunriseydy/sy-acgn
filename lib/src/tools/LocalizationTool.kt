@@ -2,26 +2,23 @@ package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.enums.Localizable
-import io.ktor.server.config.yaml.YamlConfig
 
 
 /**
  * @author SunriseYDY
  * @date 2024-07-09 14:56
  */
-
 object LocalizationTool {
-    internal val DEFAULT_LANGUAGE = Language.SIMPLIFIED_CHINESE
+    val DEFAULT_LANGUAGE = Language.SIMPLIFIED_CHINESE
 
-    fun getLocalizationMessage(key: String): String {
-        return this.getLocalizationMessage(DEFAULT_LANGUAGE, key)
+    private val localizations = mutableMapOf<String, String>()
+
+    fun getLocalizationMessage(key: String, defaultValue: String = key): String {
+        return localizations.getOrDefault(key, defaultValue)
     }
 
-    fun getLocalizationMessage(language: Language, key: String): String {
-        return this.getLocalizationYaml(language)
-            ?.propertyOrNull(key)
-            ?.getString()
-            ?: key
+    fun getLocalizationMessage(enum: Enum<*>, defaultValue: String = enum.name): String {
+        return getLocalizationMessage(getKeyFromEnum(enum), defaultValue)
     }
 
     fun getKeyFromEnum(enum: Enum<*>): String {
@@ -32,5 +29,11 @@ object LocalizationTool {
         }
     }
 
-    private fun getLocalizationYaml(language: Language) = YamlConfig("localization/${language.code}.yaml")
+    fun putLocalizationMessage(key: String, value: String) {
+        localizations[key] = value
+    }
+
+    fun putLocalizationMessages(map: Map<String, String>) {
+        localizations.putAll(map)
+    }
 }
