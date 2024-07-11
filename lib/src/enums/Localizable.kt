@@ -7,3 +7,11 @@ package dev.sunriseydy.acgn.enums
 interface Localizable {
     val moduleName: ModuleName
 }
+
+interface CommonLocalizable : Localizable {
+    override val moduleName get() = ModuleName.COMMON
+}
+
+interface AnimeLocalizable : Localizable {
+    override val moduleName get() = ModuleName.ANIME
+}

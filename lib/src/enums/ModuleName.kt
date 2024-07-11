@@ -8,11 +8,3 @@ enum class ModuleName {
     COMMON,
     ANIME,
 }
-
-interface CommonLocalizable : Localizable {
-    override val moduleName get() = ModuleName.COMMON
-}
-
-interface AnimeLocalizable : Localizable {
-    override val moduleName get() = ModuleName.ANIME
-}
