@@ -4,6 +4,11 @@
 GET http://localhost:9390/api
 Accept: application/json
 
+### error
+# @no-log
+GET http://localhost:9390/api/error
+Accept: application/json
+
 ### create rss
 # @no-log
 POST http://localhost:9390/api/anime/rss
