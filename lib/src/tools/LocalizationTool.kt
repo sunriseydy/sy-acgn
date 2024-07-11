@@ -11,7 +11,7 @@ import dev.sunriseydy.acgn.enums.Localizable
 object LocalizationTool {
     val DEFAULT_LANGUAGE = Language.SIMPLIFIED_CHINESE
 
-    private val localizations = mutableMapOf<String, String>()
+    val localizations = mutableMapOf<String, String>()
 
     fun getLocalizationMessage(key: String, defaultValue: String = key): String {
         return localizations.getOrDefault(key, defaultValue)
@@ -27,13 +27,5 @@ object LocalizationTool {
         } else {
             throw IllegalArgumentException("$enum is not a Localizable enum")
         }
-    }
-
-    fun putLocalizationMessage(key: String, value: String) {
-        localizations[key] = value
-    }
-
-    fun putLocalizationMessages(map: Map<String, String>) {
-        localizations.putAll(map)
     }
 }
