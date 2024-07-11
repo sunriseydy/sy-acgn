@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.enums.Localizable
+import dev.sunriseydy.acgn.exception.LocalizableException
 
 
 /**
@@ -17,8 +18,15 @@ object LocalizationTool {
         return localizations.getOrDefault(key, defaultValue)
     }
 
-    fun getLocalizationMessage(enum: Enum<*>, defaultValue: String = enum.name): String {
+    fun getLocalizationMessage(enum: Enum<*>, defaultValue: String = getKeyFromEnum(enum)): String {
         return getLocalizationMessage(getKeyFromEnum(enum), defaultValue)
+    }
+
+    fun getLocalizationMessage(
+        exception: LocalizableException,
+        defaultValue: String = getKeyFromException(exception)
+    ): String {
+        return getLocalizationMessage(getKeyFromException(exception), defaultValue)
     }
 
     fun getKeyFromEnum(enum: Enum<*>): String {
@@ -27,5 +35,9 @@ object LocalizationTool {
         } else {
             throw IllegalArgumentException("$enum is not a Localizable enum")
         }
+    }
+
+    fun getKeyFromException(exception: LocalizableException): String {
+        return "message.error.${exception.moduleName}.${exception.exceptionCode}"
     }
 }

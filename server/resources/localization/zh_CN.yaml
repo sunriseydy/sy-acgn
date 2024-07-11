@@ -8,3 +8,8 @@ enum:
       ANIME_SEASON: "动画季度"
       ANIME_EPISODE: "动画集"
       ANIME_MOVIE: "动画电影"
+
+message:
+  error:
+    COMMON:
+      test: "通用模块测试异常"

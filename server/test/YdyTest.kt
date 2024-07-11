@@ -1,6 +1,6 @@
 package dev.sunriseydy.acgn
 
-import dev.sunriseydy.acgn.enums.Language
+import dev.sunriseydy.acgn.exception.CommonModuleException
 import dev.sunriseydy.acgn.plugins.loadLocalizations
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import kotlin.test.Test
@@ -13,6 +13,6 @@ class YdyTest {
     @Test
     fun test() {
         LocalizationTool.loadLocalizations()
-        println(LocalizationTool.getLocalizationMessage(Language.SIMPLIFIED_CHINESE))
+        println(LocalizationTool.getLocalizationMessage(CommonModuleException("test")))
     }
 }
