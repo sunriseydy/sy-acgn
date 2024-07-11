@@ -4,13 +4,14 @@
 
 ### Server Messages
 
-`message.[level].[module_name].[error_code]`
+`message.[level].[MODULE_NAME].[error_code]`
 
-level: 
-  * error
-  * warning
-  * info
-  * debug
+level:
+
+* error
+* warning
+* info
+* debug
 
 ### Enum Meanings
 

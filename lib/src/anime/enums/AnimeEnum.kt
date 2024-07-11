@@ -5,8 +5,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeAddition
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
-import dev.sunriseydy.acgn.enums.Localizable
-import dev.sunriseydy.acgn.enums.ModuleName
+import dev.sunriseydy.acgn.enums.AnimeLocalizable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -14,10 +13,8 @@ import kotlinx.serialization.json.jsonObject
 /**
  * 关联类型
  */
-enum class AnimeAssociatedType : Localizable {
+enum class AnimeAssociatedType : AnimeLocalizable {
     ANIME, ANIME_SEASON, ANIME_EPISODE, ANIME_MOVIE,
-    ;
-    override val moduleName = ModuleName.ANIME
 }
 
 fun AnimeAssociatedType(obj: Any) = when (obj) {
