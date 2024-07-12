@@ -8,16 +8,14 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
  * @date 2024-07-12 15:07
  */
 interface AppConfigInterface<out T> : Localizable {
-    fun getConfigKey(): String = "config.${this.moduleName}.${this::class.simpleName}"
+    val configKey get() = "config.${this.moduleName}.${this::class.simpleName}"
+    override val localizationKey get() = "${this.configKey}.meaning"
+    val descriptionKey get() = "${this.configKey}.description"
+    val description get() = LocalizationTool.getLocalization(this.descriptionKey)
 
-    fun getConfigMeaningKey(): String = LocalizationTool.getLocalizationMessage(this.getConfigKey() + ".meaning")
+    val stringValue: String? get() = AppConfigTool.appConfig[this.configKey]
 
-    fun getConfigDescriptionKey(): String =
-        LocalizationTool.getLocalizationMessage(this.getConfigKey() + ".description")
-
-    fun getConfigStringValue(): String? = AppConfigTool.appConfig[this.getConfigKey()]
-
-    fun getConfigValue(): T?
+    val configValue: Any?
 }
 
 interface CommonModuleAppConfigInterface<T> : AppConfigInterface<T>, CommonModuleLocalizable

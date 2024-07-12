@@ -11,8 +11,8 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
  */
 abstract class LocalizableException(val exceptionCode: String, cause: Throwable? = null) :
     RuntimeException(exceptionCode, cause), Localizable {
-    override val message: String
-        get() = LocalizationTool.getLocalizationMessage(this)
+    override val message get() = this.localization
+    override val localizationKey get() = LocalizationTool.getLocalizationKeyFromException(this)
 }
 
 class CommonModuleException(

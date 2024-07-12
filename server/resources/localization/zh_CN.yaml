@@ -16,6 +16,6 @@ message:
 
 config:
   COMMON:
-    APP_NAME:
+    AppName:
       meaning: "应用名称"
       description: "应用的名称"

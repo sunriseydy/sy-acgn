@@ -2,7 +2,7 @@ package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.exception.LocalizableException
-import dev.sunriseydy.acgn.interfaces.Localizable
+import dev.sunriseydy.acgn.interfaces.EnumLocalizable
 
 
 /**
@@ -14,30 +14,19 @@ object LocalizationTool {
 
     val localizations = mutableMapOf<String, String>()
 
-    fun getLocalizationMessage(key: String, defaultValue: String = key): String {
+    fun getLocalization(key: String, defaultValue: String = key): String {
         return localizations.getOrDefault(key, defaultValue)
     }
 
-    fun getLocalizationMessage(enum: Enum<*>, defaultValue: String = getKeyFromEnum(enum)): String {
-        return getLocalizationMessage(getKeyFromEnum(enum), defaultValue)
-    }
-
-    fun getLocalizationMessage(
-        exception: LocalizableException,
-        defaultValue: String = getKeyFromException(exception)
-    ): String {
-        return getLocalizationMessage(getKeyFromException(exception), defaultValue)
-    }
-
-    fun getKeyFromEnum(enum: Enum<*>): String {
-        if (enum is Localizable) {
+    fun getLocalizationKeyFromEnum(enum: EnumLocalizable): String {
+        if (enum is Enum<*>) {
             return "enum.${enum.moduleName.name}.${enum::class.simpleName}.${enum.name}"
         } else {
             throw IllegalArgumentException("$enum is not a Localizable enum")
         }
     }
 
-    fun getKeyFromException(exception: LocalizableException): String {
+    fun getLocalizationKeyFromException(exception: LocalizableException): String {
         return "message.error.${exception.moduleName}.${exception.exceptionCode}"
     }
 }

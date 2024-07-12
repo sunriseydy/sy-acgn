@@ -6,6 +6,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.interfaces.AnimeModuleLocalizable
+import dev.sunriseydy.acgn.interfaces.EnumLocalizable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -13,7 +14,7 @@ import kotlinx.serialization.json.jsonObject
 /**
  * 关联类型
  */
-enum class AnimeAssociatedType : AnimeModuleLocalizable {
+enum class AnimeAssociatedType : AnimeModuleLocalizable, EnumLocalizable {
     ANIME, ANIME_SEASON, ANIME_EPISODE, ANIME_MOVIE,
 }
 
@@ -28,7 +29,7 @@ fun AnimeAssociatedType(obj: Any) = when (obj) {
 /**
  * 附加类型
  */
-enum class AnimeAdditionType() {
+enum class AnimeAdditionType() : AnimeModuleLocalizable, EnumLocalizable {
     TMDB_ID {
         override fun getValue(animeAdditions: List<AnimeAddition>): ULong? = getStringValue(animeAdditions)?.toULong()
     },

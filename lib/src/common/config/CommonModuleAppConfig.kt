@@ -8,6 +8,6 @@ import dev.sunriseydy.acgn.interfaces.CommonModuleAppConfigInterface
  */
 object CommonModuleAppConfig {
     object AppName : CommonModuleAppConfigInterface<String> {
-        override fun getConfigValue(): String = super.getConfigStringValue() ?: "SY ACGN"
+        override val configValue: String get() = this.stringValue ?: "SY ACGN"
     }
 }
