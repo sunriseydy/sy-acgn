@@ -5,6 +5,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeAddition
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.interfaces.AdditionTypeInterface
 import dev.sunriseydy.acgn.interfaces.AnimeModuleLocalizable
 import dev.sunriseydy.acgn.interfaces.EnumLocalizable
 import kotlinx.serialization.json.Json
@@ -29,20 +30,17 @@ fun AnimeAssociatedType(obj: Any) = when (obj) {
 /**
  * 附加类型
  */
-enum class AnimeAdditionType() : AnimeModuleLocalizable, EnumLocalizable {
+enum class AnimeAdditionType : AnimeModuleLocalizable, AdditionTypeInterface<AnimeAddition> {
     TMDB_ID {
-        override fun getValue(animeAdditions: List<AnimeAddition>): ULong? = getStringValue(animeAdditions)?.toULong()
+        override val valueOf: (List<AnimeAddition>) -> ULong? = { this.stringValueOf(it)?.toULong() }
     },
     TMDB_JSON {
-        override fun getValue(animeAdditions: List<AnimeAddition>): JsonObject? = getStringValue(animeAdditions)?.let {
-            Json.parseToJsonElement(it).jsonObject
-        }
+        override val valueOf: (List<AnimeAddition>) -> JsonObject? =
+            { this.stringValueOf(it)?.let { Json.parseToJsonElement(it).jsonObject } }
     }
     ;
 
-    fun getStringValue(animeAdditions: List<AnimeAddition>): String? {
-        return animeAdditions.find { it.additionalType == this }?.value
+    override val stringValueOf: (List<AnimeAddition>) -> String? = {
+        it.find { addition -> addition.additionalType == this }?.value
     }
-
-    abstract fun getValue(animeAdditions: List<AnimeAddition>): Any?
 }

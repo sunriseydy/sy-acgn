@@ -34,6 +34,6 @@ class YdyTest {
             value = "1",
             id = "1"
         )
-        println(AnimeAdditionType.TMDB_ID.getValue(listOf(addition)))
+        println(AnimeAdditionType.TMDB_ID.valueOf(listOf(addition)))
     }
 }
