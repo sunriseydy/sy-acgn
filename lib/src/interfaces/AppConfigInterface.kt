@@ -7,8 +7,8 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
  * @author SunriseYDY
  * @date 2024-07-12 15:07
  */
-interface AppConfigInterface : Localizable {
-    fun getConfigKey(): String = "config.${this.moduleName}.${if (this is Enum<*>) this.name else null}"
+interface AppConfigInterface<out T> : Localizable {
+    fun getConfigKey(): String = "config.${this.moduleName}.${this::class.simpleName}"
 
     fun getConfigMeaningKey(): String = LocalizationTool.getLocalizationMessage(this.getConfigKey() + ".meaning")
 
@@ -17,8 +17,8 @@ interface AppConfigInterface : Localizable {
 
     fun getConfigStringValue(): String? = AppConfigTool.appConfig[this.getConfigKey()]
 
-    fun getConfigValue(): Any?
+    fun getConfigValue(): T?
 }
 
-interface CommonModuleAppConfigInterface : AppConfigInterface, CommonModuleLocalizable
-interface AnimeModuleAppConfigInterface : AppConfigInterface, AnimeModuleLocalizable
+interface CommonModuleAppConfigInterface<T> : AppConfigInterface<T>, CommonModuleLocalizable
+interface AnimeModuleAppConfigInterface<T> : AppConfigInterface<T>, AnimeModuleLocalizable

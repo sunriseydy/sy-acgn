@@ -1,6 +1,6 @@
 package dev.sunriseydy.acgn
 
-import dev.sunriseydy.acgn.common.enums.CommonModuleAppConfigEnum
+import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 import dev.sunriseydy.acgn.plugins.loadLocalizations
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import kotlin.test.Test
@@ -13,6 +13,6 @@ class YdyTest {
     @Test
     fun test() {
         LocalizationTool.loadLocalizations()
-        println(LocalizationTool.getLocalizationMessage(CommonModuleAppConfigEnum.APP_NAME.getConfigDescriptionKey()))
+        println(CommonModuleAppConfig.AppName.getConfigValue())
     }
 }
