@@ -7,7 +7,7 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
  * @author SunriseYDY
  * @date 2024-07-12 15:07
  */
-interface AppConfigInterface<out T> : Localizable {
+interface AppConfigInterface : Localizable {
     val configKey get() = "config.${this.moduleName}.${this::class.simpleName}"
     override val localizationKey get() = "${this.configKey}.meaning"
     val descriptionKey get() = "${this.configKey}.description"
@@ -18,5 +18,5 @@ interface AppConfigInterface<out T> : Localizable {
     val configValue: Any?
 }
 
-interface CommonModuleAppConfigInterface<T> : AppConfigInterface<T>, CommonModuleLocalizable
-interface AnimeModuleAppConfigInterface<T> : AppConfigInterface<T>, AnimeModuleLocalizable
+interface CommonModuleAppConfigInterface : AppConfigInterface, CommonModuleLocalizable
+interface AnimeModuleAppConfigInterface : AppConfigInterface, AnimeModuleLocalizable
