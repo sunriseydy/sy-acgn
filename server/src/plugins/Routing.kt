@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.plugins
 
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.routes.configureAnimeModuleRoutes
+import dev.sunriseydy.acgn.common.routes.configureCommonModuleRoutes
 import dev.sunriseydy.acgn.exception.CommonModuleException
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
@@ -23,6 +24,7 @@ fun Application.configureRouting() {
             get("/error") {
                 throw CommonModuleException("test")
             }
+            configureCommonModuleRoutes()
             configureAnimeModuleRoutes()
         }
     }

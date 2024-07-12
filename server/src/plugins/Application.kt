@@ -9,6 +9,6 @@ fun Application.module() {
     configureHTTP()
     configureDatabases()
     initializeDatabase()
-    configureRouting()
     configureLocalization()
+    configureRouting()
 }

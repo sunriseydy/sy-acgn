@@ -11,6 +11,4 @@ data class Result<T>(
     val failed: Boolean = false,
     val message: String = "success",
     val data: T? = null
-) {
-    constructor(data: T) : this()
-}
+)
