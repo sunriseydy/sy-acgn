@@ -1,4 +1,6 @@
-package dev.sunriseydy.acgn.enums
+package dev.sunriseydy.acgn.interfaces
+
+import dev.sunriseydy.acgn.enums.ModuleName
 
 /**
  * @author SunriseYDY
@@ -8,10 +10,10 @@ interface Localizable {
     val moduleName: ModuleName
 }
 
-interface CommonLocalizable : Localizable {
+interface CommonModuleLocalizable : Localizable {
     override val moduleName get() = ModuleName.COMMON
 }
 
-interface AnimeLocalizable : Localizable {
+interface AnimeModuleLocalizable : Localizable {
     override val moduleName get() = ModuleName.ANIME
 }

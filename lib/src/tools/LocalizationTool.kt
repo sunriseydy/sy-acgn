@@ -1,8 +1,8 @@
 package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.enums.Language
-import dev.sunriseydy.acgn.enums.Localizable
 import dev.sunriseydy.acgn.exception.LocalizableException
+import dev.sunriseydy.acgn.interfaces.Localizable
 
 
 /**

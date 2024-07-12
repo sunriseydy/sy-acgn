@@ -1,8 +1,8 @@
 package dev.sunriseydy.acgn.exception
 
-import dev.sunriseydy.acgn.enums.AnimeLocalizable
-import dev.sunriseydy.acgn.enums.CommonLocalizable
-import dev.sunriseydy.acgn.enums.Localizable
+import dev.sunriseydy.acgn.interfaces.AnimeModuleLocalizable
+import dev.sunriseydy.acgn.interfaces.CommonModuleLocalizable
+import dev.sunriseydy.acgn.interfaces.Localizable
 import dev.sunriseydy.acgn.tools.LocalizationTool
 
 /**
@@ -18,9 +18,9 @@ abstract class LocalizableException(val exceptionCode: String, cause: Throwable?
 class CommonModuleException(
     exceptionCode: String,
     cause: Throwable? = null
-) : LocalizableException(exceptionCode, cause), CommonLocalizable
+) : LocalizableException(exceptionCode, cause), CommonModuleLocalizable
 
 class AnimeModuleException(
     exceptionCode: String,
     cause: Throwable? = null
-) : LocalizableException(exceptionCode, cause), AnimeLocalizable
+) : LocalizableException(exceptionCode, cause), AnimeModuleLocalizable
