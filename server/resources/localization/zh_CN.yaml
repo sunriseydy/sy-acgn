@@ -13,3 +13,9 @@ message:
   error:
     COMMON:
       test: "通用模块测试异常"
+
+config:
+  COMMON:
+    APP_NAME:
+      meaning: "应用名称"
+      description: "应用的名称"
