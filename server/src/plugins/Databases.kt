@@ -16,6 +16,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 fun Application.configureDatabases() {
     val db = connectToPostgres()
     TransactionManager.defaultDatabase = db
+    initializeDatabase()
 }
 
 fun Application.connectToPostgres(): Database {
