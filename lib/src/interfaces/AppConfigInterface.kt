@@ -17,6 +17,3 @@ interface AppConfigInterface : Localizable {
 
     val configValue: Any?
 }
-
-interface CommonModuleAppConfigInterface : AppConfigInterface, CommonModuleLocalizable
-interface AnimeModuleAppConfigInterface : AppConfigInterface, AnimeModuleLocalizable

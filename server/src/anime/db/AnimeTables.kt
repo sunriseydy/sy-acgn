@@ -1,21 +1,14 @@
 package dev.sunriseydy.acgn.anime.db
 
 import dev.sunriseydy.acgn.anime.dto.Anime
-import dev.sunriseydy.acgn.anime.dto.AnimeAddition
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
-import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
-import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import org.jetbrains.exposed.dao.ULongEntity
 import org.jetbrains.exposed.dao.ULongEntityClass
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.ULongIdTable
-import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
-import java.util.UUID
 
 object AnimeTable : ULongIdTable("anime") {
     val name = varchar("name", 1024)
@@ -130,39 +123,8 @@ class AnimeEpisodeDAO(id: EntityID<ULong>) : ULongEntity(id) {
     )
 }
 
-object AnimeAdditionTable : UUIDTable("anime_addition") {
-    val associatedId = ulong("associated_id")
-    val associatedType = varchar("associated_type", 256)
-    val additionalType = varchar("additional_type", 256)
-    val value = text("value", eagerLoading = true)
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
-    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
-}
-
-class AnimeAdditionDAO(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<AnimeAdditionDAO>(AnimeAdditionTable)
-
-    var associatedId by AnimeAdditionTable.associatedId
-    var associatedType by AnimeAdditionTable.associatedType
-    var additionalType by AnimeAdditionTable.additionalType
-    var value by AnimeAdditionTable.value
-    var createdAt by AnimeAdditionTable.createdAt
-    var updatedAt by AnimeAdditionTable.updatedAt
-
-    fun toDTO() = AnimeAddition(
-        id = id.toString(),
-        associatedId = associatedId,
-        associatedType = AnimeAssociatedType.valueOf(associatedType),
-        additionalType = AnimeAdditionType.valueOf(additionalType),
-        value = value,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-    )
-}
-
 fun animeTables() = listOf(
     AnimeTable,
     AnimeSeasonTable,
     AnimeEpisodeTable,
-    AnimeAdditionTable,
 )

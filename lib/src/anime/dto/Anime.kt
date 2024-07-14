@@ -1,7 +1,6 @@
 package dev.sunriseydy.acgn.anime.dto
 
-import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
-import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
+import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -16,7 +15,7 @@ data class Anime(
     val updatedAt: Instant? = null,
 ) {
     var animeSeasons: List<AnimeSeason> = emptyList()
-    var additions: List<AnimeAddition> = emptyList()
+    var additions: List<AdditionalInfo> = emptyList()
     var tmdbId: ULong? = null
     var tmdbJson: JsonObject? = null
 }
@@ -37,7 +36,7 @@ data class AnimeSeason(
     val updatedAt: Instant? = null,
 ) {
     var animeEpisodes: List<AnimeEpisode> = emptyList()
-    var additions: List<AnimeAddition> = emptyList()
+    var additions: List<AdditionalInfo> = emptyList()
 }
 
 @Serializable
@@ -53,7 +52,7 @@ data class AnimeEpisode(
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
 ) {
-    var additions: List<AnimeAddition> = emptyList()
+    var additions: List<AdditionalInfo> = emptyList()
 }
 
 @Serializable
@@ -66,28 +65,5 @@ data class AnimeMovie(
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
 ) {
-    var additions: List<AnimeAddition> = emptyList()
+    var additions: List<AdditionalInfo> = emptyList()
 }
-
-@Serializable
-data class AnimeAddition(
-    val id: String,
-    /**
-     * 关联id
-     */
-    val associatedId: ULong,
-    /**
-     * 关联类型
-     */
-    val associatedType: AnimeAssociatedType,
-    /**
-     * 附加类型
-     */
-    val additionalType: AnimeAdditionType,
-    /**
-     * 附加值
-     */
-    val value: String,
-    val createdAt: Instant? = null,
-    val updatedAt: Instant? = null,
-)

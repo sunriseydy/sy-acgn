@@ -1,9 +1,9 @@
 package dev.sunriseydy.acgn
 
-import dev.sunriseydy.acgn.anime.dto.AnimeAddition
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
+import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.exception.CommonModuleException
 import dev.sunriseydy.acgn.plugins.loadLocalizations
@@ -27,13 +27,13 @@ class YdyTest {
 
     @Test
     fun testAddition() {
-        val addition = AnimeAddition(
+        val addition = AdditionalInfo(
             associatedId = 1u,
-            associatedType = AnimeAssociatedType.ANIME,
-            additionalType = AnimeAdditionType.TMDB_ID,
-            value = "1",
+            associatedType = AnimeAssociatedType.ANIME.name,
+            additionalType = AnimeAdditionType.tmdbId.key,
+            additionalValue = "1",
             id = "1"
         )
-        println(AnimeAdditionType.TMDB_ID.valueOf(listOf(addition)))
+        println(AnimeAdditionType.tmdbId.valueOf(listOf(addition)))
     }
 }
