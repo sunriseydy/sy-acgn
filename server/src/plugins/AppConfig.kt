@@ -1,6 +1,6 @@
 package dev.sunriseydy.acgn.plugins
 
-import dev.sunriseydy.acgn.common.repository.AppConfigRepository
+import dev.sunriseydy.acgn.common.service.AppConfigService
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import io.ktor.server.application.Application
 
@@ -12,8 +12,4 @@ suspend fun Application.loadAppConfig() {
     AppConfigTool.loadAppConfig()
 }
 
-suspend fun AppConfigTool.loadAppConfig() {
-    AppConfigRepository().selectAllAppConfig().also {
-        fromAppConfigList(it)
-    }
-}
+suspend fun AppConfigTool.loadAppConfig() = AppConfigService().loadAppConfig()
