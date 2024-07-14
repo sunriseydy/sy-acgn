@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.anime.dto
 
+import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -16,8 +17,8 @@ data class Anime(
 ) {
     var animeSeasons: List<AnimeSeason> = emptyList()
     var additions: List<AdditionalInfo> = emptyList()
-    var tmdbId: ULong? = null
-    var tmdbJson: JsonObject? = null
+    var tmdbId: ULong? = AnimeAdditionType.tmdbId.valueOf(additions)
+    var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
 }
 
 @Serializable
