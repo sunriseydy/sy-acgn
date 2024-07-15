@@ -38,7 +38,7 @@ class RssTool : Closeable {
         val channel = rssXml.channel
 
         return Rss(
-            id = 0u,
+            id = ULong.MIN_VALUE,
             link = url,
             title = channel.title,
             description = channel.description,
@@ -47,7 +47,7 @@ class RssTool : Closeable {
             items = channel.item.map {
                 RssItem(
                     id = "",
-                    rssId = 0u,
+                    rssId = ULong.MIN_VALUE,
                     link = it.link,
                     guid = it.guid,
                     title = it.title,
