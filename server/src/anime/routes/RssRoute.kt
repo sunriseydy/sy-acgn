@@ -7,8 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.UUID
 
-fun Route.rssRoutes() {
-    val rssService = RssService()
+fun Route.rssRoutes(rssService: RssService = RssService()) {
     route("/rss") {
         get {
             call.respond(rssService.getAllRss())
