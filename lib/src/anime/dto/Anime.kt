@@ -36,6 +36,7 @@ data class AnimeSeason(
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
 ) {
+    var anime: Anime? = null
     var animeEpisodes: List<AnimeEpisode> = emptyList()
     var additions: List<AdditionalInfo> = emptyList()
 }
