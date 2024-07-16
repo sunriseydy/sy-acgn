@@ -1,2 +1,4 @@
 dependencies:
   - ./lib
+test-dependencies:
+  - ./lib
