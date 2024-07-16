@@ -1,6 +1,9 @@
+### rss xml
 # @no-log
-# @no-cookie-jar
+GET http://localhost:9390/resources/rss/rss.xml
+
 ### home
+# @no-log
 GET http://localhost:9390/api
 Accept: application/json
 
@@ -21,7 +24,9 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "link": "http://localhost:3000/rss.xml"
+  "link": "http://localhost:9390/resources/rss/rss.xml",
+  "id": 0,
+  "title": ""
 }
 
 ### get rss list
@@ -41,10 +46,10 @@ Accept: application/json
 
 ### get rss items
 # @no-log
-GET http://localhost:9390/api/anime/rss/item?rssId=7&isRead=true
+GET http://localhost:9390/api/anime/rss/item?rssId=1&isRead=true
 Accept: application/json
 
 ### mark rss item as read
 # @no-log
-PUT http://localhost:9390/api/anime/rss/item/read?id=b34916b7-c3d4-46e9-941e-a081486eb0f1
+PUT http://localhost:9390/api/anime/rss/item/read?rssId=1
 Accept: application/json

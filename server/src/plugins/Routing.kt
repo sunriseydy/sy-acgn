@@ -6,6 +6,7 @@ import dev.sunriseydy.acgn.common.routes.configureCommonModuleRoutes
 import dev.sunriseydy.acgn.exception.CommonModuleException
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
@@ -17,6 +18,7 @@ fun Application.configureRouting() {
     }
     install(Resources)
     routing {
+        staticResources("/resources", "static")
         route("/api") {
             get {
                 call.respond(Pair("SY ACGN", "Hello, World!"))
