@@ -2,4 +2,4 @@ settings:
   kotlin:
     serialization: json
   jvm:
-    release: 17
+    release: 21
