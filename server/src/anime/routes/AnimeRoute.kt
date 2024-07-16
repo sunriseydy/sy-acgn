@@ -30,7 +30,7 @@ fun Route.animeRoutes(animeService: AnimeService = AnimeService()) {
                     call.parameters["animeId"]!!.toULong()
                 call.respond(Result(data = animeService.getAnimeSeasonByAnimeId(animeId)))
             }
-            post("/") {
+            post {
                 call.respond(Result(data = animeService.saveAnimeSeason(call.receive())))
             }
             delete("/{seasonId}") {

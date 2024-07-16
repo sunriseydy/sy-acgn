@@ -51,3 +51,45 @@ Accept: application/json
 # @no-log
 PUT http://localhost:9390/api/anime/rss/item/read?rssId=1
 Accept: application/json
+
+# Anime
+### create anime
+# @no-log
+POST http://localhost:9390/api/anime/anime/season
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 0,
+  "animeId": 0,
+  "name": "test",
+  "originalName": "test",
+  "description": "test",
+  "season": 1,
+  "year": 2024,
+  "month": 4,
+  "startedAt": "2024-04-01T00:00:00.000Z",
+  "endedAt": "2024-04-01T00:00:00.000Z",
+  "tmdbId": 1,
+  "bgmId": 1,
+  "anime": {
+    "id": 0,
+    "name": "test",
+    "originalName": "test",
+    "description": "test",
+    "tmdbId": 1,
+    "bgmId": 1
+  }
+}
+
+### get anime name-id map
+# @no-log
+GET http://localhost:9390/api/anime/anime/name-id-map
+
+### get anime season by anime id
+# @no-log
+GET http://localhost:9390/api/anime/anime/season/by-anime-id/2
+
+### delete anime
+# @no-log
+DELETE http://localhost:9390/api/anime/anime/2

@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.anime.service
 
+import dev.sunriseydy.acgn.anime.db.AnimeSeasonTable.season
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.repository.AnimeRepository
 
@@ -12,15 +13,18 @@ class AnimeService(val animeRepository: AnimeRepository = AnimeRepository()) {
     suspend fun getAnimeSeasonByAnimeId(animeId: ULong) = animeRepository.selectAnimeSeasonByAnimeId(animeId)
 
     suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason {
-        if (season.id == ULong.MIN_VALUE) {
-            val new = animeRepository.insertAnimeSeason(season)
-            val anime = season.anime
-            if (anime != null && anime.id == ULong.MIN_VALUE) {
-                new.anime = animeRepository.insertAnime(anime)
-            }
-            return new
+        // 只能新增数据
+        check(season.id == ULong.MIN_VALUE) { "只能新增数据" }
+        var anime = season.anime
+        var newSeason = season
+        if (newSeason.animeId == ULong.MIN_VALUE) {
+            // 动画系列也要新增
+            checkNotNull(anime) { "新增动画时的动画数据为空" }
+            anime = animeRepository.insertAnime(anime)
+            newSeason = newSeason.copy(animeId = anime.id)
         }
-        return season
+        check(newSeason.animeId != ULong.MIN_VALUE) { "必须关联动画" }
+        return animeRepository.insertAnimeSeason(newSeason)
     }
 
     suspend fun removeAnimeById(id: ULong) {
