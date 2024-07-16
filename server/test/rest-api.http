@@ -62,7 +62,7 @@ Accept: application/json
 {
   "id": 0,
   "animeId": 0,
-  "name": "test",
+  "name": {{$random.alphabetic(10)}},
   "originalName": "test",
   "description": "test",
   "season": 1,
@@ -74,7 +74,7 @@ Accept: application/json
   "bgmId": 1,
   "anime": {
     "id": 0,
-    "name": "test",
+    "name": {{$random.alphabetic(10)}},
     "originalName": "test",
     "description": "test",
     "tmdbId": 1,
@@ -84,7 +84,7 @@ Accept: application/json
 
 ### get anime name-id map
 # @no-log
-GET http://localhost:9390/api/anime/anime/name-id-map
+GET http://localhost:9390/api/anime/anime/name-id-map?name=e
 
 ### get anime season by anime id
 # @no-log

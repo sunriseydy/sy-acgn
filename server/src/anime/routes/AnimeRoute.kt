@@ -17,7 +17,7 @@ import io.ktor.server.routing.route
 fun Route.animeRoutes(animeService: AnimeService = AnimeService()) {
     route("/anime") {
         get("/name-id-map") {
-            call.respond(Result(data = animeService.getAnimeNameAndId()))
+            call.respond(Result(data = animeService.getAnimeNameAndId(call.parameters["name"])))
         }
         delete("/{animeId}") {
             val animeId =
