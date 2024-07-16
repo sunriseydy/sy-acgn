@@ -19,7 +19,7 @@ import io.ktor.server.routing.route
 fun Route.configureCommonModuleRoutes() {
     route("/common") {
         get("/localizations") {
-            call.respond(Result(data = LocalizationTool.localizations))
+            call.respond(Result(data = LocalizationTool.getLocalizations()))
         }
         route("/config") {
             val appConfigService = AppConfigService()
@@ -27,7 +27,7 @@ fun Route.configureCommonModuleRoutes() {
                 call.respond(Result(data = appConfigService.getAllAppConfigFromDB()))
             }
             get("/map") {
-                call.respond(Result(data = AppConfigTool.appConfig))
+                call.respond(Result(data = AppConfigTool.getAppConfigs()))
             }
             post {
                 val appConfigs = call.receive<List<AppConfig>>()

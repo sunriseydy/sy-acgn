@@ -13,7 +13,7 @@ import nl.adaptivity.xmlutil.serialization.XML
 import nl.adaptivity.xmlutil.serialization.XmlConfig
 
 @OptIn(ExperimentalXmlUtilApi::class, ExperimentalSerializationApi::class)
-fun httpClient(config: HttpClientConfig<*>.() -> Unit = {}): HttpClient = HttpClient {
+val httpClientConfig: HttpClientConfig<*>.() -> Unit = {
     expectSuccess = true
     install(ContentNegotiation) {
         json(Json {
@@ -32,5 +32,9 @@ fun httpClient(config: HttpClientConfig<*>.() -> Unit = {}): HttpClient = HttpCl
         level = LogLevel.ALL
         sanitizeHeader { header -> header == HttpHeaders.Authorization }
     }
+}
+
+fun httpClient(config: HttpClientConfig<*>.() -> Unit = {}): HttpClient = HttpClient {
+    httpClientConfig(this)
     config(this)
 }

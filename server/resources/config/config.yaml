@@ -1,0 +1,3 @@
+config:
+  ANIME:
+    TmdbApiKey: "$?SY_TMDB_API_KEY"

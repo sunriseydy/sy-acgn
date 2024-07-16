@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.anime.routes
 
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.service.AnimeService
+import dev.sunriseydy.acgn.anime.tools.TmdbTool
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -45,6 +46,25 @@ fun Route.animeRoutes(animeService: AnimeService = AnimeService()) {
                         call.parameters["episodeId"]!!.toULong()
                     call.respond(Result(data = animeService.removeAnimeEpisodeById(episodeId)))
                 }
+            }
+        }
+        route("/tmdb") {
+            val tmdbTool = TmdbTool()
+            get("/search-anime-tv") {
+                val query = call.parameters["query"]!!
+                call.respond(Result(data = tmdbTool.searchAnimeTV(query)))
+            }
+            get("/search-anime-movie") {
+                val query = call.parameters["query"]!!
+                call.respond(Result(data = tmdbTool.searchAnimeMovie(query)))
+            }
+            get("/tv-detail") {
+                val id = call.parameters["id"]!!.toInt()
+                call.respond(Result(data = tmdbTool.getTvDetails(id)))
+            }
+            get("/movie-detail") {
+                val id = call.parameters["id"]!!.toInt()
+                call.respond(Result(data = tmdbTool.getMovieDetails(id)))
             }
         }
     }

@@ -13,7 +13,7 @@ interface AppConfigInterface : Localizable {
     val descriptionKey get() = "${this.configKey}.description"
     val description get() = LocalizationTool.getLocalization(this.descriptionKey)
 
-    val stringValue: String? get() = AppConfigTool.appConfig[this.configKey]
+    val stringValue: String? get() = AppConfigTool.getAppConfig(this.configKey)
 
     val configValue: Any?
 }

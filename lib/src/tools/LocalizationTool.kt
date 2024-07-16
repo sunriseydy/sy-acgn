@@ -11,8 +11,15 @@ import dev.sunriseydy.acgn.interfaces.EnumLocalizable
  */
 object LocalizationTool {
     val DEFAULT_LANGUAGE = Language.SIMPLIFIED_CHINESE
+    var currentLanguage = DEFAULT_LANGUAGE
 
-    val localizations = mutableMapOf<String, String>()
+    private val localizations = mutableMapOf<String, String>()
+
+    fun putLocalization(key: String, value: String) {
+        localizations[key] = value
+    }
+
+    fun getLocalizations() = localizations
 
     fun getLocalization(key: String, defaultValue: String = key): String {
         return localizations.getOrDefault(key, defaultValue)

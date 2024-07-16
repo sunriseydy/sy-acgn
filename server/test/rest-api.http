@@ -93,3 +93,7 @@ GET http://localhost:9390/api/anime/anime/season/by-anime-id/2
 ### delete anime
 # @no-log
 DELETE http://localhost:9390/api/anime/anime/2
+
+### tmdb search anime tv
+# @no-log
+GET http://localhost:9390/api/anime/anime/tmdb/search-anime-tv?query=久保同学不放过我
