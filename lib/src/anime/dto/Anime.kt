@@ -12,12 +12,13 @@ data class Anime(
     val name: String,
     val originalName: String? = null,
     val description: String? = null,
+    val tmdbId: ULong? = null,
+    val bgmId: ULong? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
 ) {
     var animeSeasons: List<AnimeSeason> = emptyList()
     var additions: List<AdditionalInfo> = emptyList()
-    var tmdbId: ULong? = AnimeAdditionType.tmdbId.valueOf(additions)
     var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
 }
 
@@ -33,12 +34,15 @@ data class AnimeSeason(
     val month: Int,
     val startedAt: Instant? = null,
     val endedAt: Instant? = null,
+    val tmdbId: ULong? = null,
+    val bgmId: ULong? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
 ) {
     var anime: Anime? = null
     var animeEpisodes: List<AnimeEpisode> = emptyList()
     var additions: List<AdditionalInfo> = emptyList()
+    var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
 }
 
 @Serializable
@@ -51,10 +55,13 @@ data class AnimeEpisode(
     val description: String? = null,
     val episode: Int,
     val publishedAt: Instant? = null,
+    val tmdbId: ULong? = null,
+    val bgmId: ULong? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
 ) {
     var additions: List<AdditionalInfo> = emptyList()
+    var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
 }
 
 @Serializable
@@ -64,8 +71,11 @@ data class AnimeMovie(
     val originalName: String? = null,
     val description: String? = null,
     val publishedAt: Instant? = null,
+    val tmdbId: ULong? = null,
+    val bgmId: ULong? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
 ) {
     var additions: List<AdditionalInfo> = emptyList()
+    var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
 }

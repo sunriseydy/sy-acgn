@@ -52,6 +52,8 @@ class AnimeRepository {
             this.name = anime.name
             this.originalName = anime.originalName
             this.description = anime.description
+            this.tmdbId = anime.tmdbId
+            this.bgmId = anime.bgmId
         }.toDTO()
     }
 
@@ -66,6 +68,8 @@ class AnimeRepository {
             this.month = animeSeason.month
             this.startedAt = animeSeason.startedAt
             this.endedAt = animeSeason.endedAt
+            this.tmdbId = animeSeason.tmdbId
+            this.bgmId = animeSeason.bgmId
         }.toDTO()
     }
 
@@ -78,6 +82,8 @@ class AnimeRepository {
             this.description = animeEpisode.description
             this.episode = animeEpisode.episode
             this.publishedAt = animeEpisode.publishedAt
+            this.tmdbId = animeEpisode.tmdbId
+            this.bgmId = animeEpisode.bgmId
         }.toDTO()
     }
 
