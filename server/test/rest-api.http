@@ -24,9 +24,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "link": "http://localhost:9390/resources/rss/rss.xml",
-  "id": 0,
-  "title": ""
+  "link": "http://localhost:9390/resources/rss/rss.xml"
 }
 
 ### get rss list

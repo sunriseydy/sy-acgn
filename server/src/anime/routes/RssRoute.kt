@@ -6,6 +6,8 @@ import dev.sunriseydy.acgn.anime.service.RssService
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.util.UUID
 
 fun Route.rssRoutes(rssService: RssService = RssService()) {
@@ -20,7 +22,9 @@ fun Route.rssRoutes(rssService: RssService = RssService()) {
             call.respond(Result(data = rssService.fetchRss(call.parameters["rssId"]?.toULong())))
         }
         post {
-            call.respond(Result(data = rssService.createRss(call.receive<Rss>().link)))
+            call.receive(JsonObject::class).getValue("link").also {
+                call.respond(Result(data = rssService.createRss(it.jsonPrimitive.content)))
+            }
         }
         delete("/{id}") {
             call.respond(Result(data = rssService.removeRss(call.parameters["id"]!!.toULong())))
