@@ -5,7 +5,7 @@ import dev.sunriseydy.acgn.anime.service.AnimeService
 import dev.sunriseydy.acgn.anime.tools.TmdbTool
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
-import io.ktor.server.routing.Route
+import io.ktor.server.routing.Routing
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
@@ -15,7 +15,7 @@ import io.ktor.server.routing.route
  * @author SunriseYDY
  * @date 2024-07-15 14:45
  */
-fun Route.animeRoutes(animeService: AnimeService = AnimeService()) {
+fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
     route("/anime") {
         get("/name-id-map") {
             call.respond(Result(data = animeService.getAnimeNameAndId(call.parameters["name"])))

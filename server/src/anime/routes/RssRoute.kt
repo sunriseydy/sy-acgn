@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.util.UUID
 
-fun Route.rssRoutes(rssService: RssService = RssService()) {
+fun Routing.rssRoutes(rssService: RssService = RssService()) {
     route("/rss") {
         get {
             call.respond(Result(data = rssService.getAllRss()))
