@@ -19,7 +19,7 @@ enum class AnimeAssociatedType : AnimeModuleLocalizable, EnumLocalizable {
  * 附加类型
  */
 object AnimeAdditionType {
-    object tmdbJson : AnimeModuleLocalizable, AdditionTypeInterface {
+    object TmdbJson : AnimeModuleLocalizable, AdditionTypeInterface {
         override val valueOf: (List<AdditionalInfo>) -> JsonObject? =
             { this.stringValueOf(it)?.let { Json.parseToJsonElement(it).jsonObject } }
     }

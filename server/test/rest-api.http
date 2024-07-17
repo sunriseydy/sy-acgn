@@ -79,12 +79,19 @@ Accept: application/json
     "description": "test",
     "tmdbId": 1,
     "bgmId": 1
-  }
+  },
+  "additions": [{
+    "id": "",
+    "associatedId": 0,
+    "associatedType": "enum.ANIME.AnimeAssociatedType.ANIME",
+    "additionalType": "addition.ANIME.TmdbJson",
+    "additionalValue": "{\"id\": 1}"
+  }]
 }
 
 ### get anime name-id map
 # @no-log
-GET http://localhost:9390/api/anime/anime/name-id-map?name=e
+GET http://localhost:9390/api/anime/anime/name-id-map
 
 ### get anime season by anime id
 # @no-log

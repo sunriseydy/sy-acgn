@@ -16,10 +16,10 @@ data class Anime(
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
+    val animeSeasons: List<AnimeSeason> = emptyList(),
+    val additions: List<AdditionalInfo> = emptyList(),
 ) {
-    var animeSeasons: List<AnimeSeason> = emptyList()
-    var additions: List<AdditionalInfo> = emptyList()
-    var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
+    var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
 }
 
 @Serializable
@@ -38,11 +38,11 @@ data class AnimeSeason(
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
+    val anime: Anime? = null,
+    val animeEpisodes: List<AnimeEpisode> = emptyList(),
+    val additions: List<AdditionalInfo> = emptyList(),
 ) {
-    var anime: Anime? = null
-    var animeEpisodes: List<AnimeEpisode> = emptyList()
-    var additions: List<AdditionalInfo> = emptyList()
-    var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
+    var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
 }
 
 @Serializable
@@ -59,9 +59,9 @@ data class AnimeEpisode(
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
+    val additions: List<AdditionalInfo> = emptyList(),
 ) {
-    var additions: List<AdditionalInfo> = emptyList()
-    var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
+    var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
 }
 
 @Serializable
@@ -75,7 +75,7 @@ data class AnimeMovie(
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
+    val additions: List<AdditionalInfo> = emptyList(),
 ) {
-    var additions: List<AdditionalInfo> = emptyList()
-    var tmdbJson: JsonObject? = AnimeAdditionType.tmdbJson.valueOf(additions)
+    var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
 }

@@ -1,33 +1,62 @@
 package dev.sunriseydy.acgn.anime.service
 
-import dev.sunriseydy.acgn.anime.db.AnimeSeasonTable.season
+import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.repository.AnimeRepository
 import dev.sunriseydy.acgn.anime.tools.AnimeCacheTool
+import dev.sunriseydy.acgn.common.repository.AdditionalInfoRepository
 
 /**
  * @author SunriseYDY
  * @date 2024-07-04 18:41
  */
-class AnimeService(val animeRepository: AnimeRepository = AnimeRepository()) {
-    suspend fun getAnimeNameAndId(name: String? = null) = AnimeCacheTool.getAnimeIdAndNameMap(name)
+class AnimeService(
+    val animeRepository: AnimeRepository = AnimeRepository(),
+    val additionalInfoRepository: AdditionalInfoRepository = AdditionalInfoRepository()
+) {
+    fun getAnimeNameAndId(name: String? = null) = AnimeCacheTool.getAnimeIdAndNameMap(name)
     suspend fun getAnimeSeasonByAnimeId(animeId: ULong) = animeRepository.selectAnimeSeasonByAnimeId(animeId)
 
-    suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason {
+    suspend fun createAnime(anime: Anime): Anime =
+        check(anime.id == ULong.MIN_VALUE) { "只能新增数据" }
+            .let {
+                animeRepository.insertAnime(anime)
+                    .also {
+                        additionalInfoRepository.saveAdditionalInfos(anime.additions, it.id)
+                    }
+            }
+
+    suspend fun createAnimeSeason(season: AnimeSeason): AnimeSeason =
         // 只能新增数据
         check(season.id == ULong.MIN_VALUE) { "只能新增数据" }
-        var anime = season.anime
-        var newSeason = season
-        if (newSeason.animeId == ULong.MIN_VALUE) {
-            // 动画系列也要新增
-            checkNotNull(anime) { "新增动画时的动画数据为空" }
-            anime = animeRepository.insertAnime(anime)
-            this.refreshAnimeCache()
-            newSeason = newSeason.copy(animeId = anime.id)
-        }
-        check(newSeason.animeId != ULong.MIN_VALUE) { "必须关联动画" }
-        return animeRepository.insertAnimeSeason(newSeason)
-    }
+            .let {
+                animeRepository.insertAnimeSeason(season)
+                    .also {
+                        additionalInfoRepository.saveAdditionalInfos(season.additions, it.id)
+                    }
+            }
+
+    suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason =
+        // 只能新增数据
+        check(season.id == ULong.MIN_VALUE) { "只能新增数据" }
+            .let {
+                season.copy(animeId =
+                if (season.animeId == ULong.MIN_VALUE) {
+                    // 动画系列也要新增
+                    var anime = season.anime
+                    checkNotNull(anime) { "新增动画时的动画数据为空" }
+                    this.createAnime(anime).also {
+                        this.refreshAnimeCache()
+                    }.id
+                } else {
+                    // 动画系列已存在
+                    season.animeId
+                }
+                ).let {
+                    check(it.animeId != ULong.MIN_VALUE) { "必须关联动画" }
+                    this.createAnimeSeason(it)
+                }
+            }
 
     suspend fun refreshAnimeCache() = AnimeCacheTool.refreshAnimeMap(animeRepository.selectAllAnime())
 

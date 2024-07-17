@@ -1,0 +1,92 @@
+{
+  "data": {
+    "id": 201889,
+    "name": "久保同学不放过我",
+    "poster_path": "/wX0QTHGFniii57QU2uT1wrR4pJ6.jpg",
+    "backdrop_path": "/78Q6wh406ISbS613KBlPb2Umgld.jpg",
+    "popularity": 38.293,
+    "first_air_date": "2023-01-10",
+    "last_air_date": "2023-06-20",
+    "genres": [
+      {
+        "id": 16,
+        "name": "动画"
+      },
+      {
+        "id": 35,
+        "name": "喜剧"
+      }
+    ],
+    "last_episode_to_air": {
+      "id": 4141016,
+      "overview": "4月25日。今天是白石的生日，然而像往常一样，没有任何人来祝贺他，他依旧感觉没有被重视。但在安静的教室里他的肚子却突然咕咕作响，这时候同班同学们开始注意到了他。久保同学看到白石难堪的表情，于是递给他巧克力，并在包装纸上写下“生日快乐”。那么，为什么久保同学会如此关心白石呢？",
+      "episode_number": 12,
+      "season_number": 1,
+      "air_date": "2023-06-20",
+      "name": "「主人公与祝福」",
+      "vote_average": 7.5,
+      "vote_count": 2,
+      "still_path": "/3F0UIO1IAUvGFnXYSkhGnPEEaEh.jpg"
+    },
+    "number_of_episodes": 12,
+    "number_of_seasons": 1,
+    "episode_run_time": [
+      24
+    ],
+    "production_companies": [
+      {
+        "id": 91510,
+        "logo_path": "/1eYmEppUaIhXUhejVYPJQhwx4JP.png",
+        "name": "PINE JAM",
+        "origin_country": "JP"
+      },
+      {
+        "id": 9148,
+        "logo_path": "/rtW3NadfF4kR5mTW00ahiFxw6k7.png",
+        "name": "Pony Canyon",
+        "origin_country": "JP"
+      },
+      {
+        "id": 9067,
+        "name": "Glovision",
+        "origin_country": "JP"
+      }
+    ],
+    "homepage": "https://kubosan-anime.jp",
+    "in_production": false,
+    "seasons": [
+      {
+        "id": 293567,
+        "air_date": "2023-01-10",
+        "episode_count": 12,
+        "name": "久保同学不放过我",
+        "poster_path": "/wX0QTHGFniii57QU2uT1wrR4pJ6.jpg",
+        "season_number": 1,
+        "overview": "白石纯太是个存在感极低，就算站在班上同学或老师旁边，也不会被察觉到的“路人”男，然而却有一位同学总是会发现他的存在，并一再捉弄他。这位同学名叫久保渚笑，是位眉清目秀，头脑聪明的“女主角级”美少女。每次久保同学找上白石同学，都让白石同学原本平凡的生活有全新的感受，也让两人对彼此有着距离“恋爱”还差那么一点点的感情……"
+      }
+    ],
+    "networks": [
+      {
+        "id": 173,
+        "name": "AT-X",
+        "origin_country": "JP",
+        "logo_path": "/fERjndErEpveJmQZccJbJDi93rj.png"
+      }
+    ],
+    "status": "Ended",
+    "type": "Scripted",
+    "languages": [
+      "ja"
+    ],
+    "origin_country": [
+      "JP"
+    ],
+    "original_language": "ja",
+    "original_name": "久保さんは僕を許さない",
+    "overview": "高中一年级学生白石纯太，是个身边的人都注意不到的角色。是个即使去拍了集体照也不会被发现最后还得被P上去的毫无存在感的“路人”男孩。\n\n但是偏偏只躲不过同班同学、“女主角级”的美少女久保的目光，今天也要一点点向你靠近！\n\n是谁成为了谁的特别的存在，但这份感情距离可以被称作“恋爱”，却又对二人来说尚在萌芽之时。\n\n“恋爱喜剧”前的两步之遥，是女主角×平凡男孩的青春期甜蜜喜剧。",
+    "tagline": "",
+    "vote_average": 6.7,
+    "vote_count": 20,
+    "created_by": []
+  }
+}
