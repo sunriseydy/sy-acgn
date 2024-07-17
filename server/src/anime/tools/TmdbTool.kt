@@ -51,5 +51,15 @@ class TmdbTool {
 
     suspend fun getTvSeasonDetails(showId: Int, seasonNumber: Int): TmdbSeasonDetail {
         return tmdbClient.showSeasons.getDetails(showId, seasonNumber, language)
+            .let {
+                var episodes = it.episodes
+                episodes = episodes?.map {
+                    it.copy(
+                        crew = null,
+                        guestStars = null
+                    )
+                }
+                it.copy(episodes = episodes)
+            }
     }
 }
