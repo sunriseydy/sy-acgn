@@ -2,7 +2,7 @@ package dev.sunriseydy.acgn.anime.tools
 
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
-import dev.sunriseydy.acgn.tools.httpClient
+import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.logging.LogLevel
@@ -19,7 +19,7 @@ import nl.adaptivity.xmlutil.serialization.XmlElement
  * @date 2024-07-01 14:17
  */
 class RssTool : Closeable {
-    private val httpClient: HttpClient = httpClient {
+    private val httpClient: HttpClient = HttpClientFactory.buildHttpClient {
         Logging {
             level = LogLevel.INFO
         }
