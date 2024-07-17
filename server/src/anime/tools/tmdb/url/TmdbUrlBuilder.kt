@@ -1,0 +1,38 @@
+package dev.sunriseydy.acgn.anime.tools.tmdb.url
+
+import dev.sunriseydy.acgn.anime.tools.tmdb.TmdbWebConfig
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMediaType
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbVideo
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbVideoSite
+
+object TmdbUrlBuilder {
+
+    /**
+     * Example: https://www.themoviedb.org/u/msbreviews
+     */
+    fun buildUserPage(userId: String) = "${TmdbWebConfig.BASE_WEBSITE_URL}/u/$userId"
+
+    /**
+     * Example: https://www.themoviedb.org/review/63501e9ed363e5007a664110
+     */
+    fun buildReviewPage(reviewId: Int) = "${TmdbWebConfig.BASE_WEBSITE_URL}/review/$reviewId"
+
+    /**
+     * Example: https://www.themoviedb.org/tv/96677-lupin/watch?locale=AU
+     */
+    fun buildWatch(mediaType: TmdbMediaType, mediaId: Int, region: String): String {
+        require(mediaType == TmdbMediaType.MOVIE || mediaType == TmdbMediaType.SHOW) { "Only movie and tv are supported" }
+
+        val tmdbMediaType = if (mediaType == TmdbMediaType.MOVIE) "movie" else "tv"
+        return "${TmdbWebConfig.BASE_WEBSITE_URL}/$tmdbMediaType/$mediaId/watch?locale=$region"
+    }
+
+    /**
+     * Build the video URL depending on the site the video is from
+     */
+    fun buildVideo(tmdbVideo: TmdbVideo): String? = when (tmdbVideo.site) {
+        TmdbVideoSite.YOUTUBE -> "https://www.youtube.com/watch?v=${tmdbVideo.key}"
+        TmdbVideoSite.VIMEO -> "https://vimeo.com/${tmdbVideo.key}"
+        else -> null
+    }
+}

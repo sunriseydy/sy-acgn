@@ -1,0 +1,63 @@
+package dev.sunriseydy.acgn.anime.tools.tmdb.discover
+
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbDiscoverFilter
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMediaType
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbNetworkId
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbWatchProviderId
+
+sealed interface DiscoverCategory {
+
+    data object NowPlaying : DiscoverCategory
+    data object Upcoming : DiscoverCategory
+    data class Popular(val mediaType: TmdbMediaType) : DiscoverCategory
+    data class TopRated(val mediaType: TmdbMediaType) : DiscoverCategory
+    data object AiringToday : DiscoverCategory
+    data object OnTv : DiscoverCategory
+    data class OnDvd(val mediaType: TmdbMediaType) : DiscoverCategory
+
+    data class Network(val network: Int) : DiscoverCategory {
+        companion object {
+            val NETFLIX = Network(TmdbNetworkId.NETFLIX)
+            val AMAZON = Network(TmdbNetworkId.AMAZON)
+            val DISNEY_PLUS = Network(TmdbNetworkId.DISNEY_PLUS)
+            val APPLE_TV = Network(TmdbNetworkId.APPLE_TV)
+        }
+    }
+
+    data class OnStreaming(
+        val mediaType: TmdbMediaType,
+        val watchRegion: String,
+        val watchProviders: TmdbDiscoverFilter<Int>
+    ) : DiscoverCategory {
+        companion object {
+            fun Netflix(mediaType: TmdbMediaType, watchRegion: String) = OnStreaming(
+                mediaType,
+                watchRegion,
+                TmdbDiscoverFilter(items = listOf(TmdbWatchProviderId.Flatrate.NETFLIX)),
+            )
+
+            fun AmazonPrimeVideo(mediaType: TmdbMediaType, watchRegion: String) = OnStreaming(
+                mediaType,
+                watchRegion,
+                TmdbDiscoverFilter(
+                    items = listOf(
+                        TmdbWatchProviderId.Flatrate.AMAZON_PRIME_VIDEO_TIER_A,
+                        TmdbWatchProviderId.Flatrate.AMAZON_PRIME_VIDEO_TIER_B,
+                    ),
+                ),
+            )
+
+            fun AppleTv(mediaType: TmdbMediaType, watchRegion: String) = OnStreaming(
+                mediaType,
+                watchRegion,
+                TmdbDiscoverFilter(items = listOf(TmdbWatchProviderId.Flatrate.APPLE_TV_PLUS)),
+            )
+
+            fun DisneyPlus(mediaType: TmdbMediaType, watchRegion: String) = OnStreaming(
+                mediaType,
+                watchRegion,
+                TmdbDiscoverFilter(items = listOf(TmdbWatchProviderId.Flatrate.DISNEY_PLUS)),
+            )
+        }
+    }
+}

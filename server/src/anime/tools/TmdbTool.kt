@@ -1,10 +1,10 @@
 package dev.sunriseydy.acgn.anime.tools
 
-import app.moviebase.tmdb.Tmdb3
-import app.moviebase.tmdb.model.TmdbMovie
-import app.moviebase.tmdb.model.TmdbMovieDetail
-import app.moviebase.tmdb.model.TmdbShow
-import app.moviebase.tmdb.model.TmdbShowDetail
+import dev.sunriseydy.acgn.anime.tools.tmdb.Tmdb3
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovie
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovieDetail
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShow
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShowDetail
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.tools.LocalizationTool
 
