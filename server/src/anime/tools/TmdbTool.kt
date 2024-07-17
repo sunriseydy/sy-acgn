@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.anime.tools
 import dev.sunriseydy.acgn.anime.tools.tmdb.Tmdb3
 import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovie
 import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovieDetail
+import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbSeasonDetail
 import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShow
 import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShowDetail
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
@@ -46,5 +47,9 @@ class TmdbTool {
 
     suspend fun getMovieDetails(id: Int): TmdbMovieDetail {
         return tmdbClient.movies.getDetails(id, language)
+    }
+
+    suspend fun getTvSeasonDetails(showId: Int, seasonNumber: Int): TmdbSeasonDetail {
+        return tmdbClient.showSeasons.getDetails(showId, seasonNumber, language)
     }
 }

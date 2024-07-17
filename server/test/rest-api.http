@@ -101,3 +101,7 @@ GET http://localhost:9390/api/anime/anime/tmdb/search-anime-tv?query=久保同�
 ### tmdb get tv detail
 # @no-log
 GET http://localhost:9390/api/anime/anime/tmdb/tv-detail?id=201889
+
+### tmdb get tv season detail
+# @no-log
+GET http://localhost:9390/api/anime/anime/tmdb/season-detail?id=201889&season=1

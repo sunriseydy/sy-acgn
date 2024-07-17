@@ -62,6 +62,11 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
                 val id = call.parameters["id"]!!.toInt()
                 call.respond(Result(data = tmdbTool.getTvDetails(id)))
             }
+            get("/season-detail") {
+                val id = call.parameters["id"]!!.toInt()
+                val season = call.parameters["season"]!!.toInt()
+                call.respond(Result(data = tmdbTool.getTvSeasonDetails(id, season)))
+            }
             get("/movie-detail") {
                 val id = call.parameters["id"]!!.toInt()
                 call.respond(Result(data = tmdbTool.getMovieDetails(id)))
