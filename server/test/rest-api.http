@@ -44,7 +44,7 @@ Accept: application/json
 
 ### get rss items
 # @no-log
-GET http://localhost:9390/api/anime/rss/item?rssId=1&isRead=true
+GET http://localhost:9390/api/anime/rss/item?rssId=5&page=2&size=2
 Accept: application/json
 
 ### mark rss item as read
@@ -78,12 +78,19 @@ Accept: application/json
     "originalName": "test",
     "description": "test",
     "tmdbId": 1,
-    "bgmId": 1
+    "bgmId": 1,
+    "additions": [{
+      "id": "",
+      "associatedId": 0,
+      "associatedType": "enum.ANIME.AnimeAssociatedType.ANIME",
+      "additionalType": "addition.ANIME.TmdbJson",
+      "additionalValue": "{\"id\": 1}"
+    }]
   },
   "additions": [{
     "id": "",
     "associatedId": 0,
-    "associatedType": "enum.ANIME.AnimeAssociatedType.ANIME",
+    "associatedType": "enum.ANIME.AnimeAssociatedType.ANIME_SEASON",
     "additionalType": "addition.ANIME.TmdbJson",
     "additionalValue": "{\"id\": 1}"
   }]
@@ -96,6 +103,10 @@ GET http://localhost:9390/api/anime/anime/name-id-map
 ### get anime season by anime id
 # @no-log
 GET http://localhost:9390/api/anime/anime/season/by-anime-id/2
+
+### get anime season by year and month type
+# @no-log
+GET http://localhost:9390/api/anime/anime/season/by-year-and-month-type?year=2024&monthType=SPRING
 
 ### delete anime
 # @no-log

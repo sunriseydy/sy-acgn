@@ -15,7 +15,7 @@ import java.util.UUID
  * @date 2024-07-17 20:40
  */
 class AdditionalInfoRepository {
-    suspend fun selectAdditionalInfos(associatedType: String, associatedId: ULong, additionalType: String?) =
+    suspend fun selectAdditionalInfos(associatedType: String, associatedId: ULong, additionalType: String? = null) =
         suspendTransaction {
             AdditionalInfoDAO.find {
                 (AdditionalInfoTable.associatedType eq associatedType) and
@@ -55,7 +55,7 @@ class AdditionalInfoRepository {
         AdditionalInfoDAO.findById(UUID.fromString(id))?.delete() ?: throw NoSuchElementException()
     }
 
-    suspend fun deleteAdditionalInfos(associatedType: String, associatedId: ULong, additionalType: String?) =
+    suspend fun deleteAdditionalInfos(associatedType: String, associatedId: ULong, additionalType: String? = null) =
         suspendTransaction {
             AdditionalInfoTable.deleteWhere {
                 (AdditionalInfoTable.associatedType eq associatedType) and

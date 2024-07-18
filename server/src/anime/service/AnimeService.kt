@@ -2,6 +2,8 @@ package dev.sunriseydy.acgn.anime.service
 
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
+import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.anime.repository.AnimeRepository
 import dev.sunriseydy.acgn.anime.tools.AnimeCacheTool
 import dev.sunriseydy.acgn.common.repository.AdditionalInfoRepository
@@ -14,8 +16,44 @@ class AnimeService(
     val animeRepository: AnimeRepository = AnimeRepository(),
     val additionalInfoRepository: AdditionalInfoRepository = AdditionalInfoRepository()
 ) {
-    fun getAnimeNameAndId(name: String? = null) = AnimeCacheTool.getAnimeIdAndNameMap(name)
+    suspend fun getAllAnimeWithAdditionFromDB(): List<Anime> {
+        return animeRepository.selectAllAnime().map {
+            it.copy(additions = additionalInfoRepository.selectAdditionalInfos(AnimeAssociatedType.ANIME.localizationKey, it.id))
+        }
+    }
+
+    suspend fun getAllAnimeWithAdditionFromCache(): List<Anime> {
+        if (AnimeCacheTool.getAnimeIdAndNameMap().isEmpty()) {
+            this.refreshAnimeCache()
+        }
+        return AnimeCacheTool.getAnimeList()
+    }
+
+    suspend fun getAnimeNameAndId(name: String? = null): Map<ULong, String> {
+        if (AnimeCacheTool.getAnimeIdAndNameMap().isEmpty()) {
+            this.refreshAnimeCache()
+        }
+        return AnimeCacheTool.getAnimeIdAndNameMap(name)
+    }
+
+    suspend fun getAnimeById(id: ULong): Anime? {
+        if (AnimeCacheTool.getAnimeIdAndNameMap().isEmpty()) {
+            this.refreshAnimeCache()
+        }
+        return AnimeCacheTool.getAnimeById(id)
+    }
+
     suspend fun getAnimeSeasonByAnimeId(animeId: ULong) = animeRepository.selectAnimeSeasonByAnimeId(animeId)
+
+    suspend fun getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year: Int, monthType: AnimeMonthType): List<AnimeSeason> {
+        return animeRepository.selectAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, monthType.months)
+            .map {
+                it.copy(
+                    additions = additionalInfoRepository.selectAdditionalInfos(AnimeAssociatedType.ANIME_SEASON.localizationKey, it.id),
+                    anime = this.getAnimeById(it.animeId)
+                )
+            }
+    }
 
     suspend fun createAnime(anime: Anime): Anime =
         check(anime.id == ULong.MIN_VALUE) { "只能新增数据" }
@@ -58,7 +96,7 @@ class AnimeService(
                 }
             }
 
-    suspend fun refreshAnimeCache() = AnimeCacheTool.refreshAnimeMap(animeRepository.selectAllAnime())
+    suspend fun refreshAnimeCache() = AnimeCacheTool.refreshAnimeMap(this.getAllAnimeWithAdditionFromDB())
 
     suspend fun removeAnimeById(id: ULong) {
         animeRepository.deleteAnimeById(id)

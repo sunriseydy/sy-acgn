@@ -14,6 +14,9 @@ object AnimeCacheTool {
             animeMap[it.id] = it
         }
     }
+
+    fun getAnimeList() = animeMap.values.toList()
+
     fun getAnimeById(id: ULong): Anime? = animeMap[id]
 
     fun getAnimeIdAndNameMap(name: String? = null): Map<ULong, String> =

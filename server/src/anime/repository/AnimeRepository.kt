@@ -11,6 +11,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.plugins.suspendTransaction
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.and
 
 /**
  * @author SunriseYDY
@@ -33,6 +34,12 @@ class AnimeRepository {
         AnimeSeasonDAO.find {
             AnimeSeasonTable.animeId eq animeId
         }.orderBy(AnimeSeasonTable.season to SortOrder.ASC).map(AnimeSeasonDAO::toDTO)
+    }
+
+    suspend fun selectAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year: Int, month: List<Int>) = suspendTransaction {
+        AnimeSeasonDAO.find {
+            (AnimeSeasonTable.year eq year) and (AnimeSeasonTable.month inList month)
+        }.orderBy(AnimeSeasonTable.startedAt to SortOrder.ASC).map(AnimeSeasonDAO::toDTO)
     }
 
     suspend fun selectAnimeEpisodeById(id: ULong): AnimeEpisode = suspendTransaction {

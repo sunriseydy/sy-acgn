@@ -5,6 +5,7 @@ import dev.sunriseydy.acgn.anime.db.RssItemDAO
 import dev.sunriseydy.acgn.anime.db.RssItemTable
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
+import dev.sunriseydy.acgn.plugins.paging
 import dev.sunriseydy.acgn.plugins.suspendTransaction
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -54,11 +55,7 @@ class RssRepository {
             RssItemDAO.find {
                 (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and
                         (isRead?.let { RssItemTable.isRead eq it } ?: Op.TRUE)
-            }.also {
-                if (page > 0) {
-                    it.limit(size, (page - 1) * size)
-                }
-            }.sortedByDescending { it.publishedAt }.map(RssItemDAO::toDTO)
+            }.paging(page, size).sortedByDescending { it.publishedAt }.map(RssItemDAO::toDTO)
         }
 
     suspend fun selectRssItemByRssIdAndGuid(rssId: ULong, guid: String) = suspendTransaction {
