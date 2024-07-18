@@ -43,7 +43,12 @@ class AnimeService(
         return AnimeCacheTool.getAnimeById(id)
     }
 
-    suspend fun getAnimeSeasonByAnimeId(animeId: ULong) = animeRepository.selectAnimeSeasonByAnimeId(animeId)
+    suspend fun getAnimeSeasonWithAdditionByAnimeId(animeId: ULong) = animeRepository.selectAnimeSeasonByAnimeId(animeId)
+        .map {
+            it.copy(
+                additions = additionalInfoRepository.selectAdditionalInfos(AnimeAssociatedType.ANIME_SEASON.localizationKey, it.id),
+            )
+        }
 
     suspend fun getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year: Int, monthType: AnimeMonthType): List<AnimeSeason> {
         return animeRepository.selectAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, monthType.months)

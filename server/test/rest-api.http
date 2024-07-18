@@ -70,15 +70,15 @@ Accept: application/json
   "month": 4,
   "startedAt": "2024-04-01T00:00:00.000Z",
   "endedAt": "2024-04-01T00:00:00.000Z",
-  "tmdbId": 1,
-  "bgmId": 1,
+  "tmdbId": {{$randomInt}},
+  "bgmId": {{$randomInt}},
   "anime": {
     "id": 0,
     "name": {{$random.alphabetic(10)}},
     "originalName": "test",
     "description": "test",
-    "tmdbId": 1,
-    "bgmId": 1,
+    "tmdbId": {{$randomInt}},
+    "bgmId": {{$randomInt}},
     "additions": [{
       "id": "",
       "associatedId": 0,
@@ -102,7 +102,7 @@ GET http://localhost:9390/api/anime/anime/name-id-map
 
 ### get anime season by anime id
 # @no-log
-GET http://localhost:9390/api/anime/anime/season/by-anime-id/2
+GET http://localhost:9390/api/anime/anime/season/by-anime-id/5
 
 ### get anime season by year and month type
 # @no-log

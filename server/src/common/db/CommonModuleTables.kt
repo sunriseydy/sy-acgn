@@ -24,6 +24,7 @@ object AdditionalInfoTable : UUIDTable("common_addition") {
     val additionalValue = text("additional_value", eagerLoading = true)
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
+    val unique = uniqueIndex(associatedType, associatedId, additionalType)
 }
 
 class AdditionalInfoDAO(id: EntityID<UUID>) : UUIDEntity(id) {
