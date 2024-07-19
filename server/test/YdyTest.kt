@@ -30,10 +30,10 @@ class YdyTest {
         val addition = AdditionalInfo(
             associatedId = 1u,
             associatedType = AnimeAssociatedType.ANIME.name,
-            additionalType = AnimeAdditionType.tmdbId.key,
+            additionalType = AnimeAdditionType.TmdbJson.key,
             additionalValue = "1",
             id = "1"
         )
-        println(AnimeAdditionType.tmdbId.valueOf(listOf(addition)))
+        println(AnimeAdditionType.TmdbJson.valueOf(listOf(addition)))
     }
 }
