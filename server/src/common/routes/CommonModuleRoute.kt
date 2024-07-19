@@ -2,12 +2,14 @@ package dev.sunriseydy.acgn.common.routes
 
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.common.dto.AppConfig
+import dev.sunriseydy.acgn.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.common.service.AppConfigService
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Routing
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
@@ -32,6 +34,21 @@ fun Routing.configureCommonModuleRoutes() {
             post {
                 val appConfigs = call.receive<List<AppConfig>>()
                 call.respond(Result(data = appConfigService.saveAppConfigs(appConfigs)))
+            }
+        }
+        route("/addition") {
+            val additionalInfoRepository = AdditionalInfoRepository()
+            get("/") {
+                val associatedType = call.parameters["associatedType"]!!
+                val associatedId = call.parameters["associatedId"]!!.toULong()
+                val additionalType = call.parameters["additionalType"]
+                call.respond(Result(data = additionalInfoRepository.selectAdditionalInfos(associatedType, associatedId, additionalType)))
+            }
+            post {
+                call.respond(Result(data = additionalInfoRepository.saveAdditionalInfo(call.receive())))
+            }
+            delete {
+                call.respond(Result(data = additionalInfoRepository.deleteAdditionalInfo(call.parameters["id"]!!)))
             }
         }
     }
