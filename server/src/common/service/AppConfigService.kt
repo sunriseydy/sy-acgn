@@ -9,8 +9,6 @@ import dev.sunriseydy.acgn.tools.AppConfigTool
  * @date 2024-07-14 20:54
  */
 class AppConfigService(val appConfigRepository: AppConfigRepository = AppConfigRepository()) {
-    suspend fun loadAppConfig() = AppConfigTool.fromAppConfigList(this.getAllAppConfigFromDB())
-
     suspend fun getAllAppConfigFromDB(): List<AppConfig> =
         appConfigRepository.selectAllAppConfig()
 

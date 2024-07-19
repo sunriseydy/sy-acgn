@@ -7,23 +7,25 @@ import dev.sunriseydy.acgn.common.dto.AppConfig
  * @date 2024-07-12 16:47
  */
 object AppConfigTool {
-    private val appConfig = mutableMapOf<String, String>()
+    private val appConfigs = mutableMapOf<String/* config key */, Pair<AppConfig?/* db value */, String?/* file value */>>()
 
-    fun getAppConfig(key: String): String? {
-        return appConfig[key]
+    fun getAppConfigStringValue(key: String): String? {
+        return appConfigs[key]?.first?.configValue ?: appConfigs[key]?.second
     }
 
-    fun getAppConfigs(): Map<String, String> {
-        return appConfig
+    fun getAppConfigs() = appConfigs
+
+    fun putAppConfigFromFile(key: String, value: String) {
+        appConfigs[key] = Pair(appConfigs[key]?.first, value)
     }
 
-    fun putAppConfig(key: String, value: String) {
-        appConfig[key] = value
+    fun putAppConfigFromDB(key: String, value: AppConfig) {
+        appConfigs[key] = Pair(value, appConfigs[key]?.second)
     }
 
     fun fromAppConfigList(appConfigList: List<AppConfig>) {
         appConfigList.forEach {
-            appConfig[it.configKey] = it.configValue
+            this.putAppConfigFromDB(it.configKey, it)
         }
     }
 }

@@ -9,9 +9,7 @@ fun Application.module() {
     configureMonitoring()
     configureHTTP()
     configureDatabases()
-    runBlocking {
-        loadAppConfig()
-    }
+    loadAppConfig()
     configureLocalization()
     configureRouting()
 }
