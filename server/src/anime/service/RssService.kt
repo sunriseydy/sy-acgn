@@ -31,7 +31,7 @@ class RssService(val rssRepository: RssRepository = RssRepository()) {
         rssRepository.updateRss(rss)
     }
 
-    suspend fun fetchRssFromLink(link: String) = RssTool().use { it.fetchRss(link) }
+    suspend fun fetchRssFromLink(link: String) = RssTool().fetchRss(link)
 
     suspend fun fetchRss(rssId: ULong?) = rssId?.let { this.fetchRssByRssId(rssId) } ?: this.fetchAllRss()
 

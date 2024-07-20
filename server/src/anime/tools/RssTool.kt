@@ -18,19 +18,15 @@ import nl.adaptivity.xmlutil.serialization.XmlElement
  * @author SunriseYDY
  * @date 2024-07-01 14:17
  */
-class RssTool : Closeable {
+class RssTool {
     private val httpClient: HttpClient = HttpClientFactory.buildHttpClient {
         Logging {
             level = LogLevel.INFO
         }
     }
 
-    override fun close() {
-        httpClient.close()
-    }
-
     suspend fun fetchRss(url: String): Rss {
-        val rss: RssXml = httpClient.get(url).body()
+        val rss: RssXml = httpClient.use { it.get(url).body() }
         return convertRss(rss, url)
     }
 
