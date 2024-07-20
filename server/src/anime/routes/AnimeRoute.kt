@@ -69,27 +69,26 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
         }
 
         route("/tmdb") {
-            val tmdbTool = TmdbTool()
             get("/search-anime-tv") {
                 val query = call.parameters["query"]!!
-                call.respond(Result(data = tmdbTool.searchAnimeTV(query)))
+                call.respond(Result(data = TmdbTool().searchAnimeTV(query)))
             }
             get("/search-anime-movie") {
                 val query = call.parameters["query"]!!
-                call.respond(Result(data = tmdbTool.searchAnimeMovie(query)))
+                call.respond(Result(data = TmdbTool().searchAnimeMovie(query)))
             }
             get("/tv-detail") {
                 val id = call.parameters["id"]!!.toInt()
-                call.respond(Result(data = tmdbTool.getTvDetails(id)))
+                call.respond(Result(data = TmdbTool().getTvDetails(id)))
             }
             get("/season-detail") {
                 val id = call.parameters["id"]!!.toInt()
                 val season = call.parameters["season"]!!.toInt()
-                call.respond(Result(data = tmdbTool.getTvSeasonDetails(id, season)))
+                call.respond(Result(data = TmdbTool().getTvSeasonDetails(id, season)))
             }
             get("/movie-detail") {
                 val id = call.parameters["id"]!!.toInt()
-                call.respond(Result(data = tmdbTool.getMovieDetails(id)))
+                call.respond(Result(data = TmdbTool().getMovieDetails(id)))
             }
         }
     }
