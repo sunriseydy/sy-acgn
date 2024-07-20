@@ -18,7 +18,7 @@ object HttpClientFactory {
         expectSuccess = true
         install(ContentNegotiation) {
             json(Json {
-                ignoreUnknownKeys = false
+                ignoreUnknownKeys = true
                 isLenient = true
                 explicitNulls = false
             })

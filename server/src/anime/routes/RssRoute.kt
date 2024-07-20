@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.anime.routes
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.service.RssService
+import dev.sunriseydy.acgn.anime.tools.QbTool
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -16,7 +17,13 @@ fun Routing.rssRoutes(rssService: RssService = RssService()) {
             call.respond(Result(data = rssService.getAllRss()))
         }
         put("/{id}") {
-            call.respond(Result(data = rssService.saveRss(call.receive<Rss>().copy(id = call.parameters["id"]!!.toULong()))))
+            call.respond(
+                Result(
+                    data = rssService.saveRss(
+                        call.receive<Rss>().copy(id = call.parameters["id"]!!.toULong())
+                    )
+                )
+            )
         }
         put("/fetch") {
             call.respond(Result(data = rssService.fetchRss(call.parameters["rssId"]?.toULong())))
@@ -29,27 +36,41 @@ fun Routing.rssRoutes(rssService: RssService = RssService()) {
         delete("/{id}") {
             call.respond(Result(data = rssService.removeRss(call.parameters["id"]!!.toULong())))
         }
+
         route("/item") {
             get {
                 val page = call.parameters["page"]?.toLong() ?: 0
                 val size = call.parameters["size"]?.toInt() ?: 10
                 call.respond(
-                    Result(data = rssService.getRssItemByRssIdOrIsRead(
-                        rssId = call.parameters["rssId"]?.toULong(),
-                        isRead = call.parameters["isRead"]?.toBoolean(),
-                        page = page,
-                        size = size,
-                    ))
+                    Result(
+                        data = rssService.getRssItemByRssIdOrIsRead(
+                            rssId = call.parameters["rssId"]?.toULong(),
+                            isRead = call.parameters["isRead"]?.toBoolean(),
+                            page = page,
+                            size = size,
+                        )
+                    )
                 )
             }
             put("/read") {
                 call.respond(
-                    Result(data = rssService.markRssItemReadByIdOrRssId(
-                        id = call.parameters["id"]?.let { UUID.fromString(it) },
-                        rssId = call.parameters["rssId"]?.toULong(),
-                    ))
+                    Result(
+                        data = rssService.markRssItemReadByIdOrRssId(
+                            id = call.parameters["id"]?.let { UUID.fromString(it) },
+                            rssId = call.parameters["rssId"]?.toULong(),
+                        )
+                    )
                 )
             }
+        }
+    }
+
+    route("/qb/torrent") {
+        get("/{hash}") {
+            call.respond(Result(data = QbTool().getTorrentInfo(call.parameters["hash"]!!)))
+        }
+        post {
+            call.respond(Result(data = QbTool().addTorrent(call.receive())))
         }
     }
 }
