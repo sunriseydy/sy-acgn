@@ -19,7 +19,7 @@ fun Application.loadAppConfig() {
 suspend fun AppConfigTool.loadAppConfigFromDB() = fromAppConfigList(AppConfigService().getAllAppConfigFromDB())
 
 fun AppConfigTool.loadAppConfigFromFile() {
-    val yamlConfig = YamlConfig("config/config.yaml") ?: return
+    val yamlConfig = YamlConfig("data/config/config.local.yaml") ?: YamlConfig("data/config/config.yaml") ?: return
     yamlConfig.keys().forEach {
         val key = it
         yamlConfig.propertyOrNull(it)?.let { putAppConfigFromFile(key, it.getString()) }
