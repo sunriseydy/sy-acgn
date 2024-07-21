@@ -131,7 +131,7 @@ GET http://localhost:9390/api/anime/anime/tmdb/season-detail?id=201889&season=1
 
 ### qb torrent properties
 # @no-log
-GET http://localhost:9390/api/anime/qb/torrent/0155ccf18caa216fe8050427b1bda5815a7c0eb3
+GET http://localhost:9390/api/anime/qb/torrent/e7b7655298462d527ac15b475c0e933b23654ed7
 
 ### qb torrent add
 # @no-log
@@ -139,6 +139,5 @@ POST http://localhost:9390/api/anime/qb/torrent
 Content-Type: application/json
 
 {
-  "url": "https://acg.rip/t/308713.torrent",
-  "category": "Anime"
+  "url": "magnet:?xt=urn:btih:5EHUHOELUFTETIQLKVPLPX64PRMDMU3J"
 }

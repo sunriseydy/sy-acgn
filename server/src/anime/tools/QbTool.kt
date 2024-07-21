@@ -1,20 +1,28 @@
 package dev.sunriseydy.acgn.anime.tools
 
+import anime.tools.torrent.TorrentParser
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.exception.AnimeModuleException
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.call.body
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.cookies.cookies
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.appendPathSegments
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.io.ByteArrayInputStream
+import java.net.URLDecoder
 
 /**
  * @author SunriseYDY
@@ -35,6 +43,9 @@ class QbTool {
     private val httpClient = HttpClientFactory.buildHttpClient {
         install(HttpCookies)
         expectSuccess = false
+        Logging {
+            level = LogLevel.INFO
+        }
     }
 
     suspend fun checkCookie() =
@@ -60,6 +71,7 @@ class QbTool {
         }
         val response = block()
         if (response.status.isSuccess()) {
+            println(response.bodyAsText())
             return response
         } else {
             if (response.status == HttpStatusCode.Forbidden) {
@@ -72,19 +84,36 @@ class QbTool {
     }
 
     suspend fun addTorrent(torrentAdd: TorrentAdd): String {
+        val hash: String
+        var bytes: ByteArray? = null
         if (torrentAdd.url.startsWith("http")) {
-            TODO()
+            val response = httpClient.get(torrentAdd.url)
+            if (!response.status.isSuccess()) {
+                throw AnimeModuleException("qb_download_torrent_failed")
+            }
+            bytes = response.body()
+            val torrent = TorrentParser.parseTorrent(ByteArrayInputStream(bytes))
+            if (torrent == null) {
+                throw AnimeModuleException("qb_parse_torrent_failed")
+            } else {
+                hash = torrent.info_hash
+            }
+        } else if (torrentAdd.url.startsWith("magnet:")) {
+            hash = this.extractInfoHash(torrentAdd.url) ?: throw AnimeModuleException("qb_parse_magnet_failed")
+        } else {
+            throw AnimeModuleException("qb_parse_hash_failed")
         }
-        return invoke {
-            httpClient.submitForm(
+        invoke {
+            httpClient.submitFormWithBinaryData(
                 url = apiBaseUrl + QbUrl.QB_TORRENT_ADD,
-                formParameters = parameters {
-                    append("urls", torrentAdd.url)
+                formData = formData {
+                    bytes?.let { append("torrents", it) } ?: append("urls", torrentAdd.url)
                     torrentAdd.category?.let { append("category", it) }
                     append("autoTMM", torrentAdd.autoTMM.toString())
                 }
             )
-        }.body()
+        }
+        return hash.lowercase()
     }
 
     suspend fun getTorrentInfo(hash: String): TorrentInfo =
@@ -96,6 +125,17 @@ class QbTool {
                 }
             }
         }.body()
+
+    fun extractInfoHash(magnetLink: String): String? {
+        val params = magnetLink.substringAfter("magnet:?").split("&")
+        for (param in params) {
+            val keyValue = param.split("=")
+            if (keyValue.size == 2 && keyValue[0] == "xt" && keyValue[1].startsWith("urn:btih:")) {
+                return URLDecoder.decode(keyValue[1].substringAfter("urn:btih:"), "UTF-8")
+            }
+        }
+        return null
+    }
 }
 
 object QbUrl {

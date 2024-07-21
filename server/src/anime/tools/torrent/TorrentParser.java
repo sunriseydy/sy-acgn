@@ -1,7 +1,5 @@
 package anime.tools.torrent;
 
-import anime.tools.torrent.Torrent;
-import anime.tools.torrent.TorrentFile;
 import anime.tools.torrent.bencoding.Reader;
 import anime.tools.torrent.bencoding.Utils;
 import anime.tools.torrent.bencoding.types.BByteString;
