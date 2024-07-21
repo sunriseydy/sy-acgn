@@ -72,17 +72,19 @@ class QbTool {
     }
 
     suspend fun addTorrent(torrentAdd: TorrentAdd): String {
-        if (torrentAdd.url)
-            return invoke {
-                httpClient.submitForm(
-                    url = apiBaseUrl + QbUrl.QB_TORRENT_ADD,
-                    formParameters = parameters {
-                        append("urls", torrentAdd.url)
-                        torrentAdd.category?.let { append("category", it) }
-                        append("autoTMM", torrentAdd.autoTMM.toString())
-                    }
-                )
-            }.body()
+        if (torrentAdd.url.startsWith("http")) {
+            TODO()
+        }
+        return invoke {
+            httpClient.submitForm(
+                url = apiBaseUrl + QbUrl.QB_TORRENT_ADD,
+                formParameters = parameters {
+                    append("urls", torrentAdd.url)
+                    torrentAdd.category?.let { append("category", it) }
+                    append("autoTMM", torrentAdd.autoTMM.toString())
+                }
+            )
+        }.body()
     }
 
     suspend fun getTorrentInfo(hash: String): TorrentInfo =

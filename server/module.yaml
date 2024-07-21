@@ -23,7 +23,6 @@ dependencies:
   - org.jetbrains.exposed:exposed-kotlin-datetime:0.52.0
   - org.jetbrains.exposed:exposed-json:0.52.0
   - org.postgresql:postgresql:42.7.3
-  - torrentparser.plugin:torrentparser-maven-plugin:1.0-SNAPSHOT
 test-dependencies:
   - io.ktor:ktor-server-tests-jvm:3.0.0-beta-2
   - $kotlin-test-junit
