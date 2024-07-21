@@ -1,13 +1,6 @@
 package dev.sunriseydy.acgn
 
-import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
-import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
-import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
-import dev.sunriseydy.acgn.common.dto.AdditionalInfo
-import dev.sunriseydy.acgn.enums.Language
-import dev.sunriseydy.acgn.exception.CommonModuleException
-import dev.sunriseydy.acgn.plugins.loadLocalizations
-import dev.sunriseydy.acgn.tools.LocalizationTool
+import dev.sunriseydy.acgn.anime.tools.FileTool
 import kotlin.test.Test
 
 /**
@@ -17,23 +10,7 @@ import kotlin.test.Test
 class YdyTest {
     @Test
     fun test() {
-        LocalizationTool.loadLocalizations()
-        println(CommonModuleAppConfig.AppName.configValue)
-        println(CommonModuleAppConfig.AppName.localization)
-        println(CommonModuleAppConfig.AppName.description)
-        println(Language.SIMPLIFIED_CHINESE.localization)
-        println(CommonModuleException("test").message)
-    }
-
-    @Test
-    fun testAddition() {
-        val addition = AdditionalInfo(
-            associatedId = 1u,
-            associatedType = AnimeAssociatedType.ANIME.name,
-            additionalType = AnimeAdditionType.TmdbJson.key,
-            additionalValue = "1",
-            id = "1"
-        )
-        println(AnimeAdditionType.TmdbJson.valueOf(listOf(addition)))
+        FileTool().listVideos("/media/sunriseydy/DATA/下载/Anime/[VCB-Studio] NieR Automata Ver1.1a [Ma10p_1080p]")
+            .forEach(::println)
     }
 }

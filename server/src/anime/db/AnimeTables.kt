@@ -14,6 +14,8 @@ object AnimeTable : ULongIdTable("anime") {
     val name = varchar("name", 1024).uniqueIndex()
     val originalName = varchar("original_name", 1024).nullable()
     val description = text("description", eagerLoading = true).nullable()
+    val startedAt = timestamp("start_at").nullable()
+    val endedAt = timestamp("ended_at").nullable()
     val tmdbId = ulong("tmdb_id").nullable().uniqueIndex()
     val bgmId = ulong("bmg_id").nullable().uniqueIndex()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
@@ -26,6 +28,8 @@ class AnimeDAO(id: EntityID<ULong>) : ULongEntity(id) {
     var name by AnimeTable.name
     var originalName by AnimeTable.originalName
     var description by AnimeTable.description
+    var startedAt by AnimeTable.startedAt
+    var endedAt by AnimeTable.endedAt
     var tmdbId by AnimeTable.tmdbId
     var bgmId by AnimeTable.bgmId
     var createdAt by AnimeTable.createdAt
@@ -36,6 +40,8 @@ class AnimeDAO(id: EntityID<ULong>) : ULongEntity(id) {
         name = name,
         originalName = originalName,
         description = description,
+        startedAt = startedAt,
+        endedAt = endedAt,
         tmdbId = tmdbId,
         bgmId = bgmId,
         createdAt = createdAt,

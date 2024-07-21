@@ -12,6 +12,8 @@ data class Anime(
     val name: String,
     val originalName: String? = null,
     val description: String? = null,
+    val startedAt: Instant? = null,
+    val endedAt: Instant? = null,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,

@@ -5,7 +5,6 @@ import dev.sunriseydy.acgn.anime.db.AnimeEpisodeDAO
 import dev.sunriseydy.acgn.anime.db.AnimeEpisodeTable
 import dev.sunriseydy.acgn.anime.db.AnimeSeasonDAO
 import dev.sunriseydy.acgn.anime.db.AnimeSeasonTable
-import dev.sunriseydy.acgn.anime.db.AnimeTable
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
@@ -57,6 +56,8 @@ class AnimeRepository {
             this.name = anime.name
             this.originalName = anime.originalName
             this.description = anime.description
+            this.startedAt = anime.startedAt
+            this.endedAt = anime.endedAt
             this.tmdbId = anime.tmdbId
             this.bgmId = anime.bgmId
         }.toDTO()
