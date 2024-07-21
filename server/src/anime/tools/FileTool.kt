@@ -28,8 +28,13 @@ class FileTool {
             anime.tmdbId?.let { append("[tmdbid-${anime.tmdbId}]") }
         }
 
-    fun generateAnimeSeasonDirectoryName(animeSeason: AnimeSeason) =
+    fun generateSeasonDirectoryName(animeSeason: AnimeSeason) =
         "Season ${animeSeason.season.toString().padStart(2, '0')}"
+
+    fun generateEpisodeFileNameListByNameSort(videos: List<Path>, season: Int) =
+        videos.mapIndexed { index, videoFilePath ->
+            "S${season.toString().padStart(2, '0')}E${(index + 1).toString().padStart(2, '0')} ${videoFilePath.name}"
+        }
 }
 
 enum class Extension(val exts: Set<String>) {
