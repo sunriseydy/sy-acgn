@@ -126,6 +126,9 @@ class AnimeService(
                 ).let {
                     check(it.animeId != ULong.MIN_VALUE) { "必须关联动画" }
                     this.createAnimeSeason(it)
+                        .let {
+                            this.getAnimeSeasonsWithAdditionAndAnimeById(it.id)
+                        }
                 }
             }
 
