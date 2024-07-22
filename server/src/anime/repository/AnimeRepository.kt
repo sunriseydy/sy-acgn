@@ -54,9 +54,11 @@ class AnimeRepository {
     suspend fun insertAnime(anime: Anime): Anime = suspendTransaction {
         AnimeDAO.new {
             this.name = anime.name
-            this.originalName = anime.originalName
             this.description = anime.description
-            this.airDate = anime.airDate
+            this.firstAirDate = anime.firstAirDate
+            this.lastAirDate = anime.lastAirDate
+            this.numberOfSeasons = anime.numberOfSeasons
+            this.numberOfEpisodes = anime.numberOfEpisodes
             this.tmdbId = anime.tmdbId
             this.bgmId = anime.bgmId
         }.toDTO()
@@ -66,9 +68,9 @@ class AnimeRepository {
         AnimeSeasonDAO.new {
             this.animeId = animeSeason.animeId
             this.name = animeSeason.name
-            this.originalName = animeSeason.originalName
             this.description = animeSeason.description
             this.season = animeSeason.season
+            this.numberOfEpisodes = animeSeason.numberOfEpisodes
             this.year = animeSeason.year
             this.month = animeSeason.month
             this.airDate = animeSeason.airDate
@@ -82,7 +84,6 @@ class AnimeRepository {
             this.animeId = animeEpisode.animeId
             this.animeSeasonId = animeEpisode.animeSeasonId
             this.name = animeEpisode.name
-            this.originalName = animeEpisode.originalName
             this.description = animeEpisode.description
             this.episode = animeEpisode.episode
             this.airDate = animeEpisode.airDate

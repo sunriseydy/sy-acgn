@@ -66,7 +66,7 @@ class FileTool {
     fun generateAnimeDirectoryName(anime: Anime) =
         buildString {
             append(anime.name)
-            anime.airDate?.let { append(" (${anime.airDate!!.year})") }
+            anime.firstAirDate?.let { append(" (${anime.firstAirDate!!.year})") }
             anime.tmdbId?.let { append(" [tmdbid-${anime.tmdbId}]") }
         }
 

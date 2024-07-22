@@ -13,9 +13,11 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object AnimeTable : ULongIdTable("anime") {
     val name = varchar("name", 1024).uniqueIndex()
-    val originalName = varchar("original_name", 1024).nullable()
     val description = text("description", eagerLoading = true).nullable()
-    val airDate = date("air_date").nullable()
+    val firstAirDate = date("first_air_date").nullable()
+    val lastAirDate = date("last_air_date").nullable()
+    val numberOfSeasons = integer("number_of_seasons").default(0)
+    val numberOfEpisodes = integer("number_of_episodes").default(0)
     val tmdbId = ulong("tmdb_id").nullable().uniqueIndex()
     val bgmId = ulong("bmg_id").nullable().uniqueIndex()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
@@ -26,9 +28,11 @@ class AnimeDAO(id: EntityID<ULong>) : ULongEntity(id) {
     companion object : ULongEntityClass<AnimeDAO>(AnimeTable)
 
     var name by AnimeTable.name
-    var originalName by AnimeTable.originalName
     var description by AnimeTable.description
-    var airDate by AnimeTable.airDate
+    var firstAirDate by AnimeTable.firstAirDate
+    var lastAirDate by AnimeTable.lastAirDate
+    var numberOfSeasons by AnimeTable.numberOfSeasons
+    var numberOfEpisodes by AnimeTable.numberOfEpisodes
     var tmdbId by AnimeTable.tmdbId
     var bgmId by AnimeTable.bgmId
     var createdAt by AnimeTable.createdAt
@@ -37,9 +41,11 @@ class AnimeDAO(id: EntityID<ULong>) : ULongEntity(id) {
     fun toDTO() = Anime(
         id = id.value,
         name = name,
-        originalName = originalName,
         description = description,
-        airDate = airDate,
+        firstAirDate = firstAirDate,
+        lastAirDate = lastAirDate,
+        numberOfSeasons = numberOfSeasons,
+        numberOfEpisodes = numberOfEpisodes,
         tmdbId = tmdbId,
         bgmId = bgmId,
         createdAt = createdAt,
@@ -50,9 +56,9 @@ class AnimeDAO(id: EntityID<ULong>) : ULongEntity(id) {
 object AnimeSeasonTable : ULongIdTable("anime_season") {
     val animeId = ulong("anime_id")
     val name = varchar("name", 1024).uniqueIndex()
-    val originalName = varchar("original_name", 1024).nullable()
     val description = text("description", eagerLoading = true).nullable()
     val season = integer("season")
+    val numberOfEpisodes = integer("number_of_episodes").default(0)
     val year = integer("year")
     val month = integer("month")
     val airDate = date("air_date").nullable()
@@ -68,9 +74,9 @@ class AnimeSeasonDAO(id: EntityID<ULong>) : ULongEntity(id) {
 
     var animeId by AnimeSeasonTable.animeId
     var name by AnimeSeasonTable.name
-    var originalName by AnimeSeasonTable.originalName
     var description by AnimeSeasonTable.description
     var season by AnimeSeasonTable.season
+    var numberOfEpisodes by AnimeSeasonTable.numberOfEpisodes
     var year by AnimeSeasonTable.year
     var month by AnimeSeasonTable.month
     var airDate by AnimeSeasonTable.airDate
@@ -83,9 +89,9 @@ class AnimeSeasonDAO(id: EntityID<ULong>) : ULongEntity(id) {
         id = id.value,
         animeId = animeId,
         name = name,
-        originalName = originalName,
         description = description,
         season = season,
+        numberOfEpisodes = numberOfEpisodes,
         year = year,
         month = month,
         airDate = airDate,
@@ -100,7 +106,6 @@ object AnimeEpisodeTable : ULongIdTable("anime_episode") {
     val animeId = ulong("anime_id")
     val animeSeasonId = ulong("anime_season_id")
     val name = varchar("name", 1024).uniqueIndex()
-    val originalName = varchar("original_name", 1024).nullable()
     val description = text("description", eagerLoading = true).nullable()
     val episode = integer("episode")
     val airDate = date("air_date").nullable()
@@ -117,7 +122,6 @@ class AnimeEpisodeDAO(id: EntityID<ULong>) : ULongEntity(id) {
     var animeId by AnimeEpisodeTable.animeId
     var animeSeasonId by AnimeEpisodeTable.animeSeasonId
     var name by AnimeEpisodeTable.name
-    var originalName by AnimeEpisodeTable.originalName
     var description by AnimeEpisodeTable.description
     var episode by AnimeEpisodeTable.episode
     var airDate by AnimeEpisodeTable.airDate
@@ -131,7 +135,6 @@ class AnimeEpisodeDAO(id: EntityID<ULong>) : ULongEntity(id) {
         animeId = animeId,
         animeSeasonId = animeSeasonId,
         name = name,
-        originalName = originalName,
         description = description,
         episode = episode,
         airDate = airDate,
