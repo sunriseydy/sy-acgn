@@ -1,0 +1,4 @@
+dependencies:
+  - ./ui
+test-dependencies:
+  - ./ui

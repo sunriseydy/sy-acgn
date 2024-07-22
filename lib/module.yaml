@@ -1,16 +1,12 @@
 product:
   type: lib
-  platforms: [jvm]
+  platforms: [ jvm ]
 
 apply:
-  - ../compose.module-template.yaml
   - ../jvm.module-template.yaml
   - ../maven.module-template.yaml
 
 dependencies:
-  - $compose.foundation: exported
-  - $compose.material3: exported
-  - $compose.desktop.currentOs: exported
   - org.jetbrains.kotlinx:kotlinx-datetime:0.6.0
   - io.ktor:ktor-client-core:3.0.0-beta-2: exported
   - io.ktor:ktor-client-cio:3.0.0-beta-2: exported

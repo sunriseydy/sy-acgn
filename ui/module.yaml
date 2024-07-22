@@ -1,0 +1,14 @@
+product:
+  type: lib
+  platforms: [ jvm ]
+
+apply:
+  - ../lib.module-template.yaml
+  - ../compose.module-template.yaml
+  - ../jvm.module-template.yaml
+  - ../maven.module-template.yaml
+
+dependencies:
+  - $compose.foundation: exported
+  - $compose.material3: exported
+  - $compose.desktop.currentOs: exported

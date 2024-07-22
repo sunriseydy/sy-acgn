@@ -1,7 +1,7 @@
 product: jvm/app
 
 apply:
-  - ../app.module-template.yaml
+  - ../ui.module-template.yaml
   - ../compose.module-template.yaml
   - ../jvm.module-template.yaml
   - ../maven.module-template.yaml
