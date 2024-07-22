@@ -25,7 +25,7 @@ class AnimeRepository {
         AnimeDAO.findById(id)?.toDTO() ?: throw NoSuchElementException()
     }
 
-    suspend fun selectAnimeSeasonById(id: ULong): AnimeSeason? = suspendTransaction {
+    suspend fun selectAnimeSeasonById(id: ULong): AnimeSeason = suspendTransaction {
         AnimeSeasonDAO.findById(id)?.toDTO() ?: throw NoSuchElementException()
     }
 
@@ -35,10 +35,10 @@ class AnimeRepository {
         }.orderBy(AnimeSeasonTable.season to SortOrder.ASC).map(AnimeSeasonDAO::toDTO)
     }
 
-    suspend fun selectAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year: Int, month: List<Int>) = suspendTransaction {
+    suspend fun selectAnimeSeasonsByYearAndMonth(year: Int, month: List<Int>) = suspendTransaction {
         AnimeSeasonDAO.find {
             (AnimeSeasonTable.year eq year) and (AnimeSeasonTable.month inList month)
-        }.orderBy(AnimeSeasonTable.startedAt to SortOrder.ASC).map(AnimeSeasonDAO::toDTO)
+        }.orderBy(AnimeSeasonTable.airDate to SortOrder.ASC).map(AnimeSeasonDAO::toDTO)
     }
 
     suspend fun selectAnimeEpisodeById(id: ULong): AnimeEpisode = suspendTransaction {
@@ -56,8 +56,7 @@ class AnimeRepository {
             this.name = anime.name
             this.originalName = anime.originalName
             this.description = anime.description
-            this.startedAt = anime.startedAt
-            this.endedAt = anime.endedAt
+            this.airDate = anime.airDate
             this.tmdbId = anime.tmdbId
             this.bgmId = anime.bgmId
         }.toDTO()
@@ -72,8 +71,7 @@ class AnimeRepository {
             this.season = animeSeason.season
             this.year = animeSeason.year
             this.month = animeSeason.month
-            this.startedAt = animeSeason.startedAt
-            this.endedAt = animeSeason.endedAt
+            this.airDate = animeSeason.airDate
             this.tmdbId = animeSeason.tmdbId
             this.bgmId = animeSeason.bgmId
         }.toDTO()
@@ -87,7 +85,7 @@ class AnimeRepository {
             this.originalName = animeEpisode.originalName
             this.description = animeEpisode.description
             this.episode = animeEpisode.episode
-            this.publishedAt = animeEpisode.publishedAt
+            this.airDate = animeEpisode.airDate
             this.tmdbId = animeEpisode.tmdbId
             this.bgmId = animeEpisode.bgmId
         }.toDTO()

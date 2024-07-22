@@ -12,6 +12,8 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * @author SunriseYDY
@@ -38,17 +40,29 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
         }
 
         route("/season") {
+            get("{id}") {
+                val animeSeasonId =
+                    call.parameters["id"]!!.toULong()
+                call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonId)))
+            }
             get("/by-anime-id/{animeId}") {
                 val animeId =
                     call.parameters["animeId"]!!.toULong()
-                call.respond(Result(data = animeService.getAnimeSeasonWithAdditionByAnimeId(animeId)))
+                call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionByAnimeId(animeId)))
             }
             get("/by-year-and-month-type") {
                 val year = call.parameters["year"]!!.toInt()
                 val monthType = call.parameters["monthType"]!!.let {
                     AnimeMonthType.valueOf(it)
                 }
-                call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, monthType)))
+                call.respond(
+                    Result(
+                        data = animeService.getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(
+                            year,
+                            monthType
+                        )
+                    )
+                )
             }
             post {
                 call.respond(Result(data = animeService.saveAnimeSeason(call.receive())))
@@ -89,6 +103,15 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
             get("/movie-detail") {
                 val id = call.parameters["id"]!!.toInt()
                 call.respond(Result(data = TmdbTool().getMovieDetails(id)))
+            }
+        }
+
+        route("/file") {
+            post("/season-file") {
+                val map = call.receive<JsonObject>()
+                val animeSeasonId = map["id"]!!.jsonPrimitive.content.toULong()
+                val path = map["path"]!!.jsonPrimitive.content
+                call.respond(Result(data = animeService.handleAnimeSeasonFile(animeSeasonId, path)))
             }
         }
     }

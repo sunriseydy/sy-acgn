@@ -6,6 +6,7 @@ import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.anime.repository.AnimeRepository
 import dev.sunriseydy.acgn.anime.tools.AnimeCacheTool
+import dev.sunriseydy.acgn.anime.tools.FileTool
 import dev.sunriseydy.acgn.common.repository.AdditionalInfoRepository
 
 /**
@@ -18,7 +19,12 @@ class AnimeService(
 ) {
     suspend fun getAllAnimeWithAdditionFromDB(): List<Anime> {
         return animeRepository.selectAllAnime().map {
-            it.copy(additions = additionalInfoRepository.selectAdditionalInfos(AnimeAssociatedType.ANIME.localizationKey, it.id))
+            it.copy(
+                additions = additionalInfoRepository.selectAdditionalInfos(
+                    AnimeAssociatedType.ANIME.localizationKey,
+                    it.id
+                )
+            )
         }
     }
 
@@ -43,18 +49,40 @@ class AnimeService(
         return AnimeCacheTool.getAnimeById(id)
     }
 
-    suspend fun getAnimeSeasonWithAdditionByAnimeId(animeId: ULong) = animeRepository.selectAnimeSeasonByAnimeId(animeId)
-        .map {
+    suspend fun getAnimeSeasonsWithAdditionAndAnimeById(id: ULong): AnimeSeason {
+        return animeRepository.selectAnimeSeasonById(id).let {
             it.copy(
-                additions = additionalInfoRepository.selectAdditionalInfos(AnimeAssociatedType.ANIME_SEASON.localizationKey, it.id),
+                additions = additionalInfoRepository.selectAdditionalInfos(
+                    AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                    it.id
+                ),
+                anime = this.getAnimeById(it.animeId)
             )
         }
+    }
 
-    suspend fun getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year: Int, monthType: AnimeMonthType): List<AnimeSeason> {
-        return animeRepository.selectAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, monthType.months)
+    suspend fun getAnimeSeasonsWithAdditionByAnimeId(animeId: ULong) =
+        animeRepository.selectAnimeSeasonByAnimeId(animeId)
             .map {
                 it.copy(
-                    additions = additionalInfoRepository.selectAdditionalInfos(AnimeAssociatedType.ANIME_SEASON.localizationKey, it.id),
+                    additions = additionalInfoRepository.selectAdditionalInfos(
+                        AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                        it.id
+                    ),
+                )
+            }
+
+    suspend fun getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(
+        year: Int,
+        monthType: AnimeMonthType
+    ): List<AnimeSeason> {
+        return animeRepository.selectAnimeSeasonsByYearAndMonth(year, monthType.months)
+            .map {
+                it.copy(
+                    additions = additionalInfoRepository.selectAdditionalInfos(
+                        AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                        it.id
+                    ),
                     anime = this.getAnimeById(it.animeId)
                 )
             }
@@ -99,6 +127,12 @@ class AnimeService(
                     check(it.animeId != ULong.MIN_VALUE) { "必须关联动画" }
                     this.createAnimeSeason(it)
                 }
+            }
+
+    suspend fun handleAnimeSeasonFile(animeSeasonId: ULong, path: String) =
+        this.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonId)
+            .let {
+                FileTool().handleAnimeSeasonFile(it, path)
             }
 
     suspend fun refreshAnimeCache() = AnimeCacheTool.refreshAnimeMap(this.getAllAnimeWithAdditionFromDB())

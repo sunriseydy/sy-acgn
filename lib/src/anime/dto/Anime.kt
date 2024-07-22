@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.anime.dto
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 
@@ -12,8 +13,7 @@ data class Anime(
     val name: String,
     val originalName: String? = null,
     val description: String? = null,
-    val startedAt: Instant? = null,
-    val endedAt: Instant? = null,
+    val airDate: LocalDate? = null,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,
@@ -34,8 +34,7 @@ data class AnimeSeason(
     val season: Int,
     val year: Int,
     val month: Int,
-    val startedAt: Instant? = null,
-    val endedAt: Instant? = null,
+    val airDate: LocalDate? = null,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,
@@ -56,7 +55,7 @@ data class AnimeEpisode(
     val originalName: String? = null,
     val description: String? = null,
     val episode: Int,
-    val publishedAt: Instant? = null,
+    val airDate: LocalDate? = null,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,
@@ -72,7 +71,7 @@ data class AnimeMovie(
     val name: String,
     val originalName: String? = null,
     val description: String? = null,
-    val publishedAt: Instant? = null,
+    val airDate: LocalDate? = null,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
     val createdAt: Instant? = null,

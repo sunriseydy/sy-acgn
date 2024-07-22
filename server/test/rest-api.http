@@ -58,7 +58,7 @@ PUT http://localhost:9390/api/anime/rss/item/read?rssId=1
 Accept: application/json
 
 # Anime
-### create anime
+### create anime season
 # @no-log
 POST http://localhost:9390/api/anime/anime/season
 Content-Type: application/json
@@ -67,39 +67,26 @@ Accept: application/json
 {
   "id": 0,
   "animeId": 0,
-  "name": {{$random.alphabetic(10)}},
-  "originalName": "test",
-  "description": "test",
+  "name": "Comic Girls",
+  "description": "萌田薰子（笔名：混沌）15岁。女子高中生、四格漫画家！搬进漫画家专用的女子宿舍的她，被同室的少女漫画家小梦和TL漫画家琉姬、少年漫画家翼等同伴们所围绕，今天也愉快地绘制原稿，彻夜工作！可爱又有趣的漫画家生活就此开幕！",
   "season": 1,
-  "year": 2024,
+  "year": 2018,
   "month": 4,
-  "startedAt": "2024-04-01T00:00:00.000Z",
-  "endedAt": "2024-04-01T00:00:00.000Z",
-  "tmdbId": {{$randomInt}},
-  "bgmId": {{$randomInt}},
+  "airDate": "2018-04-05",
+  "tmdbId": 100349,
   "anime": {
     "id": 0,
-    "name": {{$random.alphabetic(10)}},
-    "originalName": "test",
-    "description": "test",
-    "tmdbId": {{$randomInt}},
-    "bgmId": {{$randomInt}},
-    "additions": [{
-      "id": "",
-      "associatedId": 0,
-      "associatedType": "enum.ANIME.AnimeAssociatedType.ANIME",
-      "additionalType": "addition.ANIME.TmdbJson",
-      "additionalValue": "{\"id\": 1}"
-    }]
-  },
-  "additions": [{
-    "id": "",
-    "associatedId": 0,
-    "associatedType": "enum.ANIME.AnimeAssociatedType.ANIME_SEASON",
-    "additionalType": "addition.ANIME.TmdbJson",
-    "additionalValue": "{\"id\": 1}"
-  }]
+    "name": "漫画女孩",
+    "airDate": "2018-04-05",
+    "originalName": "こみっくがーるず",
+    "description": "四格漫画家萌田薰子凭借对漫画独特的感觉和发展前途被选中，还是女高中生便在出版社“文芳社”的漫画杂志上发表出道作。然而，因为画技稚拙，故事枯燥，角色欠缺魅力与真实感，她的作品最终没能博得好评，在读者调查中不幸处于末位。考虑到自虐性格、抗压能力差的薰子难以独自施展自己的才能，责任编辑编泽麻友劝导她住进了女子漫画家宿舍。\n\n在宿舍，薰子结识了室友恋冢小梦和前辈漫画家（同年龄）色川琉姬、胜木翼，并和她们成为一个高中的同学，积累专业漫画家经验。在编泽的酒友兼学生时代御宅同好——宿舍管理员花园莉莉香和学校教师虹野美晴守护下，四人在校内隐藏漫画家的身份，在校外互相充当漫画助手、思考漫画桥段、陪同漫画取材，度过属于自己的漫画家生活日常。",
+    "tmdbId": 77698
+  }
 }
+
+### refresh anime cache
+# @no-log
+PUT http://localhost:9390/api/anime/anime/refresh
 
 ### get anime name-id map
 # @no-log
@@ -107,7 +94,11 @@ GET http://localhost:9390/api/anime/anime/name-id-map
 
 ### get anime season by anime id
 # @no-log
-GET http://localhost:9390/api/anime/anime/season/by-anime-id/5
+GET http://localhost:9390/api/anime/anime/season/by-anime-id/1
+
+### get anime season by id
+# @no-log
+GET http://localhost:9390/api/anime/anime/season/1
 
 ### get anime season by year and month type
 # @no-log
@@ -117,17 +108,27 @@ GET http://localhost:9390/api/anime/anime/season/by-year-and-month-type?year=202
 # @no-log
 DELETE http://localhost:9390/api/anime/anime/2
 
+### handle anime season file
+# @no-log
+POST http://localhost:9390/api/anime/anime/file/season-file
+Content-Type: application/json
+
+{
+  "id": 1,
+  "path": "/media/sunriseydy/DATA/下载/Anime/[Nekomoe kissaten&YUI-7&VCB-Studio] Comic Girls [Ma10p_1080p]"
+}
+
 ### tmdb search anime tv
 # @no-log
 GET http://localhost:9390/api/anime/anime/tmdb/search-anime-tv?query=久保同学不放过我
 
 ### tmdb get tv detail
 # @no-log
-GET http://localhost:9390/api/anime/anime/tmdb/tv-detail?id=201889
+GET http://localhost:9390/api/anime/anime/tmdb/tv-detail?id=77698
 
 ### tmdb get tv season detail
 # @no-log
-GET http://localhost:9390/api/anime/anime/tmdb/season-detail?id=201889&season=1
+GET http://localhost:9390/api/anime/anime/tmdb/season-detail?id=77698&season=1
 
 ### qb torrent properties
 # @no-log
