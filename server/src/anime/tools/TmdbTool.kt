@@ -1,11 +1,7 @@
 package dev.sunriseydy.acgn.anime.tools
 
 import dev.sunriseydy.acgn.anime.tools.tmdb.Tmdb3
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovie
 import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovieDetail
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbSeasonDetail
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShow
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShowDetail
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.tools.LocalizationTool
 
@@ -21,36 +17,41 @@ class TmdbTool {
         tmdbApiKey = AnimeModuleAppConfig.TmdbApiKey.configValue
     }
 
-    suspend fun searchTV(query: String): List<TmdbShow> =
+    suspend fun searchTV(query: String) =
         tmdbClient.search.findShows(
             query = query,
             language = language,
             page = 1
         ).results
 
-    suspend fun searchMovie(query: String): List<TmdbMovie> =
+    suspend fun searchMovie(query: String) =
         tmdbClient.search.findMovies(
             query = query,
             page = 1,
             language = language
         ).results
 
-    suspend fun searchAnimeTV(query: String): List<TmdbShow> =
+    suspend fun searchAnimeTV(query: String) =
         searchTV(query).filter { it.genresIds.contains(ANIME_GENRE_ID) }
 
-    suspend fun searchAnimeMovie(query: String): List<TmdbMovie> =
+    suspend fun searchAnimeMovie(query: String) =
         searchMovie(query).filter { it.genresIds.contains(ANIME_GENRE_ID) }
 
-    suspend fun getTvDetails(id: Int): TmdbShowDetail {
-        return tmdbClient.show.getDetails(id, language)
-    }
+    suspend fun getTvDetails(id: Int) =
+        tmdbClient.show.getDetails(id, language).copy(
+            genres = emptyList(),
+            lastEpisodeToAir = null,
+            episodeRuntime = emptyList(),
+            productionCompanies = null,
+            networks = emptyList(),
+            createdBy = null
+        )
 
-    suspend fun getMovieDetails(id: Int): TmdbMovieDetail {
-        return tmdbClient.movies.getDetails(id, language)
-    }
+    suspend fun getMovieDetails(id: Int): TmdbMovieDetail =
+        tmdbClient.movies.getDetails(id, language)
 
-    suspend fun getTvSeasonDetails(showId: Int, seasonNumber: Int): TmdbSeasonDetail {
-        return tmdbClient.showSeasons.getDetails(showId, seasonNumber, language)
+    suspend fun getTvSeasonDetails(showId: Int, seasonNumber: Int) =
+        tmdbClient.showSeasons.getDetails(showId, seasonNumber, language)
             .let {
                 var episodes = it.episodes
                 episodes = episodes?.map {
@@ -61,5 +62,4 @@ class TmdbTool {
                 }
                 it.copy(episodes = episodes)
             }
-    }
 }
