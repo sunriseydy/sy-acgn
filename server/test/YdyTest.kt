@@ -10,7 +10,7 @@ import kotlin.test.Test
 class YdyTest {
     @Test
     fun test() {
-        FileTool().listVideos("/media/sunriseydy/DATA/下载/Anime/[VCB-Studio] NieR Automata Ver1.1a [Ma10p_1080p]")
+        FileTool().listVideoNames("/media/sunriseydy/DATA/下载/Anime/[VCB-Studio] NieR Automata Ver1.1a [Ma10p_1080p]")
             .forEach(::println)
     }
 }

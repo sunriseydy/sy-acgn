@@ -11,13 +11,20 @@ object AnimeModuleAppConfig {
     object TmdbApiKey : AppConfigInterface, AnimeModuleLocalizable {
         override val configValue: String? get() = this.stringValue
     }
+
     object QbApiBaseUrl : AppConfigInterface, AnimeModuleLocalizable {
         override val configValue: String? get() = this.stringValue
     }
+
     object QbUserName : AppConfigInterface, AnimeModuleLocalizable {
         override val configValue: String? get() = this.stringValue
     }
+
     object QbPassword : AppConfigInterface, AnimeModuleLocalizable {
+        override val configValue: String? get() = this.stringValue
+    }
+
+    object MediaTargetDirectory : AppConfigInterface, AnimeModuleLocalizable {
         override val configValue: String? get() = this.stringValue
     }
 }
