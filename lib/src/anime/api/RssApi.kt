@@ -4,7 +4,7 @@ import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.anime.dto.TorrentAdd
-import dev.sunriseydy.acgn.animeApiEndPoint
+import dev.sunriseydy.acgn.animeModuleApiEndPoint
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -22,7 +22,7 @@ import java.util.UUID
  * @author SunriseYDY
  * @date 2024-07-23 11:33
  */
-class AnimeRssApi internal constructor(private val httpClient: HttpClient) {
+class RssApi internal constructor(private val httpClient: HttpClient) {
     suspend fun getAllRss(): Result<List<Rss>> = httpClient.get {
         animeRssApiEndPoint()
     }.body()
@@ -76,10 +76,10 @@ class AnimeRssApi internal constructor(private val httpClient: HttpClient) {
     }.body()
 
     private fun HttpRequestBuilder.animeRssApiEndPoint(vararg paths: String) {
-        animeApiEndPoint("rss", *paths)
+        animeModuleApiEndPoint("rss", *paths)
     }
 
     private fun HttpRequestBuilder.animeQbApiEndPoint(vararg paths: String) {
-        animeApiEndPoint("qb", "torrent", *paths)
+        animeModuleApiEndPoint("qb", "torrent", *paths)
     }
 }
