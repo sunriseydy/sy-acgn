@@ -1,6 +1,7 @@
 package dev.sunriseydy.acgn.anime.tools
 
 import anime.tools.torrent.TorrentParser
+import dev.sunriseydy.acgn.anime.dto.TorrentAdd
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.exception.AnimeModuleException
 import dev.sunriseydy.acgn.tools.HttpClientFactory
@@ -152,11 +153,4 @@ data class TorrentInfo(
     @SerialName("hash") val hash: String,
     @SerialName("name") val name: String,
     @SerialName("save_path") val savePath: String,
-)
-
-@Serializable
-data class TorrentAdd(
-    val url: String,
-    val category: String?,
-    val autoTMM: Boolean = true,
 )

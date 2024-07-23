@@ -39,3 +39,10 @@ data class RssItem(
     val createdAt: Instant = Clock.System.now(),
     val updatedAt: Instant = Clock.System.now(),
 )
+
+@Serializable
+data class TorrentAdd(
+    val url: String,
+    val category: String?,
+    val autoTMM: Boolean = true,
+)
