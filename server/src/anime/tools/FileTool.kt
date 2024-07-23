@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.anime.tools
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
+import dev.sunriseydy.acgn.exception.AnimeModuleException
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 
@@ -14,7 +15,12 @@ class FileTool {
 
     val SP_DIR_NAME = ".SPs"
 
-    fun handleAnimeSeasonFile(animeSeason: AnimeSeason, pathString: String, isDelete: Boolean = false) {
+    fun handleAnimeSeasonFile(
+        animeSeason: AnimeSeason,
+        pathString: String,
+        isDeleteSource: Boolean = false,
+        isDeleteTarget: Boolean = false,
+    ) {
         requireNotNull(animeSeason.anime) { "动画数据不能为空" }
         val path = Path(pathString)
         require(exists(path) && isDirectory(path)) { "路径 $path 不存在或不是文件夹" }
@@ -35,6 +41,13 @@ class FileTool {
         val newSubtitlePairs =
             generateEpisodeSubtitlesByVideos(newVideoPairs, subtitles, animeSeasonDirectory)
         val newOtherPairs = generateOthers(others, animeSeasonDirectory)
+        if (exists(animeSeasonDirectory) && isDirectory(animeSeasonDirectory)) {
+            if (isDeleteTarget) {
+                deleteFile(animeSeasonDirectory)
+            } else {
+                throw AnimeModuleException("target_dir_exists")
+            }
+        }
         // 创建目录
         if (others.any { !isDirectory(it) }) {
             createDirectories(Path(animeSeasonDirectory, SP_DIR_NAME))
@@ -50,7 +63,7 @@ class FileTool {
             moveFile(it.first, it.second)
         }
         // 删除文件
-        if (isDelete) deleteFile(path)
+        if (isDeleteSource) deleteFile(path)
     }
 
     fun isVideo(path: Path) = Extension.VIDEO.isPathMatch(path.name)

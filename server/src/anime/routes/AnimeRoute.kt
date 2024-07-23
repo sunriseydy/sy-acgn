@@ -13,6 +13,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
@@ -111,7 +112,18 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
                 val map = call.receive<JsonObject>()
                 val animeSeasonId = map["id"]!!.jsonPrimitive.content.toULong()
                 val path = map["path"]!!.jsonPrimitive.content
-                call.respond(Result(data = animeService.handleAnimeSeasonFile(animeSeasonId, path)))
+                val isDeleteSource = map["isDeleteSource"]?.jsonPrimitive?.boolean == true
+                val isDeleteTarget = map["isDeleteTarget"]?.jsonPrimitive?.boolean == true
+                call.respond(
+                    Result(
+                        data = animeService.handleAnimeSeasonFile(
+                            animeSeasonId,
+                            path,
+                            isDeleteSource,
+                            isDeleteTarget
+                        )
+                    )
+                )
             }
         }
     }

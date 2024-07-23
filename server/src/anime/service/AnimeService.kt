@@ -132,10 +132,14 @@ class AnimeService(
                 }
             }
 
-    suspend fun handleAnimeSeasonFile(animeSeasonId: ULong, path: String) =
+    suspend fun handleAnimeSeasonFile(
+        animeSeasonId: ULong, path: String,
+        isDeleteSource: Boolean = false,
+        isDeleteTarget: Boolean = false,
+    ) =
         this.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonId)
             .let {
-                FileTool().handleAnimeSeasonFile(it, path)
+                FileTool().handleAnimeSeasonFile(it, path, isDeleteSource, isDeleteTarget)
             }
 
     suspend fun refreshAnimeCache() = AnimeCacheTool.refreshAnimeMap(this.getAllAnimeWithAdditionFromDB())
