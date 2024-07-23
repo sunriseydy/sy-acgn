@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.anime.service
 
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.anime.repository.AnimeRepository
@@ -132,14 +133,10 @@ class AnimeService(
                 }
             }
 
-    suspend fun handleAnimeSeasonFile(
-        animeSeasonId: ULong, path: String,
-        isDeleteSource: Boolean = false,
-        isDeleteTarget: Boolean = false,
-    ) =
-        this.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonId)
+    suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile) =
+        this.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonFile.id)
             .let {
-                FileTool().handleAnimeSeasonFile(it, path, isDeleteSource, isDeleteTarget)
+                FileTool().handleAnimeSeasonFile(it, animeSeasonFile)
             }
 
     suspend fun refreshAnimeCache() = AnimeCacheTool.refreshAnimeMap(this.getAllAnimeWithAdditionFromDB())

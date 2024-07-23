@@ -96,7 +96,7 @@ GET http://localhost:9390/api/anime/anime/name-id-map
 
 ### get anime season by anime id
 # @no-log
-GET http://localhost:9390/api/anime/anime/season/by-anime-id/1
+GET http://localhost:9390/api/anime/anime/season/by-anime-id?animeId=1
 
 ### get anime season by id
 # @no-log
@@ -130,7 +130,7 @@ GET http://localhost:9390/api/anime/anime/tmdb/tv-detail?id=77698
 
 ### tmdb get tv season detail
 # @no-log
-GET http://localhost:9390/api/anime/anime/tmdb/season-detail?id=77698&season=1
+GET http://localhost:9390/api/anime/anime/tmdb/season-detail?showId=77698&season=1
 
 ### qb torrent properties
 # @no-log

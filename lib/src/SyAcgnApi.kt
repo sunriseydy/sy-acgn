@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn
 
+import dev.sunriseydy.acgn.anime.api.AnimeApi
 import dev.sunriseydy.acgn.anime.api.RssApi
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 import dev.sunriseydy.acgn.tools.HttpClientFactory
@@ -22,6 +23,7 @@ class SyAcgnApi {
     }
 
     val rss by buildApi(::RssApi)
+    val anime by buildApi(::AnimeApi)
 
     private inline fun <T> buildApi(crossinline builder: (HttpClient) -> T) = lazy {
         builder(httpClient)

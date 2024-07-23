@@ -12,9 +12,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.boolean
-import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * @author SunriseYDY
@@ -46,7 +43,7 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
                     call.parameters["id"]!!.toULong()
                 call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonId)))
             }
-            get("/by-anime-id/{animeId}") {
+            get("/by-anime-id") {
                 val animeId =
                     call.parameters["animeId"]!!.toULong()
                 call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionByAnimeId(animeId)))
@@ -86,42 +83,32 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
         route("/tmdb") {
             get("/search-anime-tv") {
                 val query = call.parameters["query"]!!
-                call.respond(Result(data = TmdbTool().searchAnimeTV(query)))
+                call.respond(Result(data = TmdbTool().searchAnimeTVForAnime(query)))
             }
             get("/search-anime-movie") {
                 val query = call.parameters["query"]!!
-                call.respond(Result(data = TmdbTool().searchAnimeMovie(query)))
+                call.respond(Result(data = TmdbTool().searchAnimeMovieForAnimeMovie(query)))
             }
             get("/tv-detail") {
                 val id = call.parameters["id"]!!.toInt()
-                call.respond(Result(data = TmdbTool().getTvDetails(id)))
+                call.respond(Result(data = TmdbTool().getTvDetailsForAnime(id)))
             }
             get("/season-detail") {
-                val id = call.parameters["id"]!!.toInt()
+                val showId = call.parameters["showId"]!!.toInt()
                 val season = call.parameters["season"]!!.toInt()
-                call.respond(Result(data = TmdbTool().getTvSeasonDetails(id, season)))
+                call.respond(Result(data = TmdbTool().getTvSeasonDetailsForAnimeSeason(showId, season)))
             }
             get("/movie-detail") {
                 val id = call.parameters["id"]!!.toInt()
-                call.respond(Result(data = TmdbTool().getMovieDetails(id)))
+                call.respond(Result(data = TmdbTool().getMovieDetailsForAnimeMovie(id)))
             }
         }
 
         route("/file") {
             post("/season-file") {
-                val map = call.receive<JsonObject>()
-                val animeSeasonId = map["id"]!!.jsonPrimitive.content.toULong()
-                val path = map["path"]!!.jsonPrimitive.content
-                val isDeleteSource = map["isDeleteSource"]?.jsonPrimitive?.boolean == true
-                val isDeleteTarget = map["isDeleteTarget"]?.jsonPrimitive?.boolean == true
                 call.respond(
                     Result(
-                        data = animeService.handleAnimeSeasonFile(
-                            animeSeasonId,
-                            path,
-                            isDeleteSource,
-                            isDeleteTarget
-                        )
+                        data = animeService.handleAnimeSeasonFile(call.receive())
                     )
                 )
             }

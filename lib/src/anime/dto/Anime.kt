@@ -80,3 +80,11 @@ data class AnimeMovie(
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
 }
+
+@Serializable
+data class AnimeSeasonFile(
+    val id: ULong,
+    val path: String,
+    val isDeleteSource: Boolean = false,
+    val isDeleteTarget: Boolean = false,
+)
