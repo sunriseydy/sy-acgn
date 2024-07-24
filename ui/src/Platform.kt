@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn
+package dev.sunriseydy.acgn.ui
 
 interface Platform {
     val name: String
@@ -6,6 +6,6 @@ interface Platform {
 
 class JVMPlatform(
     override val name: String = "Java ${System.getProperty("java.version")}"
-): Platform
+) : Platform
 
 fun getPlatform(): Platform = JVMPlatform()
