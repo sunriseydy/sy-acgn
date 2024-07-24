@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn
 
 import dev.sunriseydy.acgn.anime.api.AnimeApi
 import dev.sunriseydy.acgn.anime.api.RssApi
+import dev.sunriseydy.acgn.common.api.CommonApi
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.HttpClient
@@ -24,6 +25,7 @@ class SyAcgnApi {
 
     val rss by buildApi(::RssApi)
     val anime by buildApi(::AnimeApi)
+    val common by buildApi(::CommonApi)
 
     private inline fun <T> buildApi(crossinline builder: (HttpClient) -> T) = lazy {
         builder(httpClient)
@@ -38,4 +40,8 @@ internal fun HttpRequestBuilder.apiEndPoint(vararg paths: String) {
 
 internal fun HttpRequestBuilder.animeModuleApiEndPoint(vararg paths: String) {
     apiEndPoint("anime", *paths)
+}
+
+internal fun HttpRequestBuilder.commonModuleApiEndPoint(vararg paths: String) {
+    apiEndPoint("common", *paths)
 }

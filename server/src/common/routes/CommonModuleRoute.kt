@@ -25,7 +25,7 @@ fun Routing.configureCommonModuleRoutes() {
         }
         route("/config") {
             val appConfigService = AppConfigService()
-            get("/") {
+            get {
                 call.respond(Result(data = appConfigService.getAllAppConfigFromDB()))
             }
             get("/map") {
@@ -38,11 +38,19 @@ fun Routing.configureCommonModuleRoutes() {
         }
         route("/addition") {
             val additionalInfoRepository = AdditionalInfoRepository()
-            get("/") {
+            get {
                 val associatedType = call.parameters["associatedType"]!!
                 val associatedId = call.parameters["associatedId"]!!.toULong()
                 val additionalType = call.parameters["additionalType"]
-                call.respond(Result(data = additionalInfoRepository.selectAdditionalInfos(associatedType, associatedId, additionalType)))
+                call.respond(
+                    Result(
+                        data = additionalInfoRepository.selectAdditionalInfos(
+                            associatedType,
+                            associatedId,
+                            additionalType
+                        )
+                    )
+                )
             }
             post {
                 call.respond(Result(data = additionalInfoRepository.saveAdditionalInfo(call.receive())))
