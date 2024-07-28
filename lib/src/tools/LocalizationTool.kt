@@ -37,3 +37,5 @@ object LocalizationTool {
         return "message.error.${exception.moduleName}.${exception.exceptionCode}"
     }
 }
+
+fun i(key: String, defaultValue: String = key) = LocalizationTool.getLocalization(key, defaultValue)
