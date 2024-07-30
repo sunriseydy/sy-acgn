@@ -15,7 +15,11 @@ object AppConfigTool {
     private val serverSettings: Settings = Settings()
 
     fun getLocalServerConfig(): String? = serverSettings.getStringOrNull(CommonModuleAppConfig.AppServer.configKey)
-    fun setLocalServerConfig(value: String) = serverSettings.putString(CommonModuleAppConfig.AppServer.configKey, value)
+    fun setLocalServerConfig(value: String): String =
+        serverSettings.putString(CommonModuleAppConfig.AppServer.configKey, value)
+            .run { getLocalServerConfig() ?: throw Error("设置 server 失败") }
+
+    fun clearLocalServerConfig() = serverSettings.clear()
 
     private val appConfigs =
         mutableMapOf<String/* config key */, Pair<AppConfig?/* db value */, String?/* file value */>>()
