@@ -5,13 +5,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.ui.navigation.AcgnNavigationWrapper
+import io.github.oshai.kotlinlogging.KotlinLogging
+
+private val logger = KotlinLogging.logger { }
 
 @Composable
 fun App() {
     MaterialTheme {
         Surface {
             val server = AppConfigTool.getLocalServerConfig()
-            println("server: $server")
+            logger.info { "server: $server" }
             if (server == null) {
                 AppConfigTool.setLocalServerConfig("test")
             }

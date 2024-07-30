@@ -20,3 +20,5 @@ dependencies:
   - $compose.preview: exported
   - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0: exported
   - org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07: exported
+  - org.slf4j:slf4j-simple:2.0.13: exported
+  - io.github.oshai:kotlin-logging:7.0.0: exported
