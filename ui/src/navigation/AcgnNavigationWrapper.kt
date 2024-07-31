@@ -96,6 +96,7 @@ fun AcgnNavigationWrapper() {
             )
         },
     ) {
+        // todo 等待 kmp compose 适配自适应导航
         when (navigationType) {
             AcgnNavigationType.BOTTOM_NAVIGATION -> AcgnBottomNavigationBar(
                 selectedDestination = selectedDestination,
