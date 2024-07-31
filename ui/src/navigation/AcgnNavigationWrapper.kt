@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -165,10 +165,20 @@ fun ReplyNavigationRail(
                     selected = selectedDestination == destination.name,
                     onClick = { navigateToTopLevelDestination(destination) },
                     icon = {
-                        Icon(
-                            imageVector = destination.icon,
-                            contentDescription = destination.localization
-                        )
+                        destination.icon?.apply {
+                            Icon(
+                                imageVector = destination.icon,
+                                contentDescription = destination.localization
+                            )
+                        }
+                    },
+                    label = {
+                        if (destination.icon == null) {
+                            Text(
+                                text = destination.localization,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
                     }
                 )
             }
@@ -187,10 +197,20 @@ fun AcgnBottomNavigationBar(
                 selected = selectedDestination == destination.name,
                 onClick = { navigateToTopLevelDestination(destination) },
                 icon = {
-                    Icon(
-                        imageVector = destination.icon,
-                        contentDescription = destination.localization
-                    )
+                    destination.icon?.apply {
+                        Icon(
+                            imageVector = destination.icon,
+                            contentDescription = destination.localization
+                        )
+                    }
+                },
+                label = {
+                    if (destination.icon == null) {
+                        Text(
+                            text = destination.localization,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
                 }
             )
         }
@@ -203,14 +223,12 @@ fun PermanentNavigationDrawerContent(
     navigationContentPosition: AcgnNavigationContentPosition,
     navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit,
 ) {
-    PermanentDrawerSheet(
-        modifier = Modifier.sizeIn(minWidth = 200.dp, maxWidth = 300.dp),
-        drawerContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-    ) {
+    PermanentDrawerSheet {
         Layout(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(16.dp),
+                .padding(16.dp)
+                .width(150.dp),
             content = {
                 Column(
                     modifier = Modifier.layoutId(LayoutType.HEADER),
@@ -289,6 +307,7 @@ fun NavigationDrawerItems(
 ) {
     AcgnNavigationRoute.entries.forEach { destination ->
         NavigationDrawerItem(
+            modifier = Modifier.padding(bottom = 8.dp),
             selected = selectedDestination == destination.name,
             label = {
                 Text(
@@ -297,10 +316,12 @@ fun NavigationDrawerItems(
                 )
             },
             icon = {
-                Icon(
-                    imageVector = destination.icon,
-                    contentDescription = destination.localization
-                )
+                destination.icon?.apply {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = destination.localization
+                    )
+                }
             },
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedContainerColor = Color.Transparent

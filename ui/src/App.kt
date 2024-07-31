@@ -22,9 +22,7 @@ fun App() {
             if (server != null) {
                 AcgnNavigationWrapper()
             } else {
-                ServerConfig {
-                    server = AppConfigTool.setLocalServerConfig(it)
-                }
+                ServerConfig { server = it }
             }
         }
     }
