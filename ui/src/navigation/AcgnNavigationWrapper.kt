@@ -4,10 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -20,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
@@ -28,6 +26,8 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.PermanentDrawerSheet
+import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -51,7 +51,6 @@ import dev.sunriseydy.acgn.ui.utils.AcgnNavigationType
 import dev.sunriseydy.acgn.ui.utils.getContentType
 import dev.sunriseydy.acgn.ui.utils.getNavigationContentPosition
 import dev.sunriseydy.acgn.ui.utils.getNavigationType
-import kotlinx.coroutines.launch
 
 /**
  * @author SunriseYDY
@@ -80,54 +79,52 @@ fun AcgnNavigationWrapper() {
     val selectedDestination =
         navBackStackEntry?.destination?.route ?: AcgnNavigationRoute.RSS.name
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = gesturesEnabled,
-        drawerContent = {
-            ModalNavigationDrawerContent(
-                selectedDestination = selectedDestination,
-                navigationContentPosition = navContentPosition,
-                navigateToTopLevelDestination = navigationAction::navigateTo,
-                onDrawerClicked = {
-                    coroutineScope.launch {
-                        drawerState.close()
-                    }
-                }
-            )
-        },
-    ) {
-        // todo 等待 kmp compose 适配自适应导航
-        when (navigationType) {
-            AcgnNavigationType.BOTTOM_NAVIGATION -> AcgnBottomNavigationBar(
-                selectedDestination = selectedDestination,
-                navigateToTopLevelDestination = navigationAction::navigateTo
-            )
+    when (navigationType) {
+        AcgnNavigationType.BOTTOM_NAVIGATION -> Scaffold(
+            bottomBar = {
+                AcgnBottomNavigationBar(
+                    selectedDestination = selectedDestination,
+                    navigateToTopLevelDestination = navigationAction::navigateTo
+                )
+            },
+            content = { contentPadding ->
+                AcgnNavHost(
+                    navController = navController,
+                    contentType = contentType,
+                    navigationType = navigationType,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(contentPadding)
+                )
+            }
+        )
 
-            AcgnNavigationType.NAVIGATION_RAIL -> ReplyNavigationRail(
-                selectedDestination = selectedDestination,
-                navigationContentPosition = navContentPosition,
-                navigateToTopLevelDestination = navigationAction::navigateTo,
-                onDrawerClicked = {
-                    coroutineScope.launch {
-                        drawerState.open()
-                    }
-                }
-            )
+        AcgnNavigationType.PERMANENT_NAVIGATION_DRAWER -> PermanentNavigationDrawer(
+            drawerContent = {
+                PermanentNavigationDrawerContent(
+                    selectedDestination = selectedDestination,
+                    navigationContentPosition = navContentPosition,
+                    navigateToTopLevelDestination = navigationAction::navigateTo,
+                    modifier = Modifier.width(150.dp)
+                )
+            },
+            content = {
+                AcgnNavHost(
+                    navController = navController,
+                    contentType = contentType,
+                    navigationType = navigationType,
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+        )
 
-            AcgnNavigationType.PERMANENT_NAVIGATION_DRAWER -> PermanentNavigationDrawerContent(
-                selectedDestination = selectedDestination,
-                navigationContentPosition = navContentPosition,
-                navigateToTopLevelDestination = navigationAction::navigateTo
-            )
-
-            else -> throw IllegalArgumentException("Invalid navigation type")
-        }
-        AcgnNavHost(navController = navController, contentType = contentType, navigationType = navigationType)
+        else -> throw IllegalArgumentException("Invalid navigation type")
     }
 }
 
 @Composable
-fun ReplyNavigationRail(
+fun AcgnNavigationRail(
     selectedDestination: String,
     navigationContentPosition: AcgnNavigationContentPosition,
     navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit,
@@ -135,27 +132,26 @@ fun ReplyNavigationRail(
 ) {
     NavigationRail(
         modifier = Modifier.fillMaxHeight(),
-        containerColor = MaterialTheme.colorScheme.inverseOnSurface
-    ) {
-        Column(
-            modifier = Modifier.layoutId(LayoutType.HEADER),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            NavigationRailItem(
-                selected = false,
-                onClick = onDrawerClicked,
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = null
-                    )
-                }
-            )
-            Spacer(Modifier.height(8.dp)) // NavigationRailHeaderPadding
-            Spacer(Modifier.height(4.dp)) // NavigationRailVerticalPadding
+        containerColor = MaterialTheme.colorScheme.inverseOnSurface,
+        header = {
+            Column(
+                modifier = Modifier.layoutId(LayoutType.HEADER),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                NavigationRailItem(
+                    selected = false,
+                    onClick = onDrawerClicked,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = null
+                        )
+                    }
+                )
+            }
         }
-
+    ) {
         Column(
             modifier = Modifier.layoutId(LayoutType.CONTENT),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -223,13 +219,12 @@ fun PermanentNavigationDrawerContent(
     selectedDestination: String,
     navigationContentPosition: AcgnNavigationContentPosition,
     navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit,
+    modifier: Modifier
 ) {
-    PermanentDrawerSheet {
+    PermanentDrawerSheet(
+        modifier = modifier,
+    ) {
         Layout(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                .padding(16.dp)
-                .width(150.dp),
             content = {
                 Column(
                     modifier = Modifier.layoutId(LayoutType.HEADER),

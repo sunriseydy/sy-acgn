@@ -19,9 +19,7 @@ fun getContentType() = if (isCompact() || isMedium()) {
 
 fun getNavigationType() = if (isCompact()) {
     AcgnNavigationType.BOTTOM_NAVIGATION
-} else if (isMedium()) {
-    AcgnNavigationType.NAVIGATION_RAIL
-} else if (isLarge()) {
+} else if (isMedium() || isLarge()) {
     AcgnNavigationType.PERMANENT_NAVIGATION_DRAWER
 } else {
     AcgnNavigationType.BOTTOM_NAVIGATION
