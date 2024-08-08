@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.common.service
 
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.common.repository.AppConfigRepository
+import dev.sunriseydy.acgn.plugins.loadAppConfigFromDB
 import dev.sunriseydy.acgn.tools.AppConfigTool
 
 /**
@@ -22,6 +23,8 @@ class AppConfigService(val appConfigRepository: AppConfigRepository = AppConfigR
     suspend fun saveAppConfigs(appConfigs: List<AppConfig>): List<AppConfig> =
         appConfigs.map {
             saveAppConfig(it)
+        }.also {
+            AppConfigTool.loadAppConfigFromDB()
         }
 
     suspend fun deleteAppConfig(appConfig: AppConfig) =

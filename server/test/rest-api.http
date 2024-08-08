@@ -12,6 +12,11 @@ Accept: application/json
 GET http://localhost:9390/api/error
 Accept: application/json
 
+### app info
+# @no-log
+GET localhost:9390/api/common/info
+Accept: application/json
+
 ### get localizations
 # @no-log
 GET http://localhost:9390/api/common/localizations

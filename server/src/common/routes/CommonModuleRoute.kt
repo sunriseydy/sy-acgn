@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.common.routes
 
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.common.dto.AppConfig
+import dev.sunriseydy.acgn.common.dto.AppInfo
 import dev.sunriseydy.acgn.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.common.service.AppConfigService
 import dev.sunriseydy.acgn.tools.AppConfigTool
@@ -20,7 +21,17 @@ import io.ktor.server.routing.route
  */
 fun Routing.configureCommonModuleRoutes() {
     route("/common") {
-        get("/localizations") {
+        get("/info") {
+            call.respond(
+                Result(
+                    data = AppInfo(
+                        configs = AppConfigTool.getAppConfigs(),
+                        localizations = LocalizationTool.getLocalizations()
+                    )
+                )
+            )
+        }
+        get("/localization") {
             call.respond(Result(data = LocalizationTool.getLocalizations()))
         }
         route("/config") {

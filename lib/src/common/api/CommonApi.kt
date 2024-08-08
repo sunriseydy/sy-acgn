@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.common.api
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig
+import dev.sunriseydy.acgn.common.dto.AppInfo
 import dev.sunriseydy.acgn.commonModuleApiEndPoint
 import dev.sunriseydy.acgn.interfaces.AdditionTypeInterface
 import dev.sunriseydy.acgn.interfaces.AssociatedTypeInterface
@@ -21,8 +22,12 @@ import io.ktor.client.request.setBody
  */
 class CommonApi internal constructor(private val httpClient: HttpClient) {
 
+    suspend fun getAppInfo(): Result<AppInfo> = httpClient.get {
+        commonModuleApiEndPoint("info")
+    }.body()
+
     suspend fun getLocalizations(): Result<MutableMap<String, String>> = httpClient.get {
-        commonModuleApiEndPoint("localizations")
+        commonModuleApiEndPoint("localization")
     }.body()
 
     suspend fun getAllAppConfigFromDB(): Result<List<AppConfig>> = httpClient.get {
