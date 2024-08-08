@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.ui.components.ServerConfig
 import dev.sunriseydy.acgn.ui.navigation.AcgnNavigationWrapper
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -18,7 +17,7 @@ private val logger = KotlinLogging.logger { }
 fun App() {
     MaterialTheme {
         Surface {
-            var server by remember { mutableStateOf(AppConfigTool.getLocalServerConfig()) }
+            var server by remember { mutableStateOf(getLocalServerConfig()) }
             if (server != null) {
                 AcgnNavigationWrapper()
             } else {

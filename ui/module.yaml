@@ -22,3 +22,5 @@ dependencies:
   - org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07: exported
   - org.slf4j:slf4j-simple:2.0.13: exported
   - io.github.oshai:kotlin-logging:7.0.0: exported
+  - com.russhwolf:multiplatform-settings:1.1.1: exported
+  - com.russhwolf:multiplatform-settings-no-arg:1.1.1: exported

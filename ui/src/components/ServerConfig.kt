@@ -3,8 +3,8 @@ package dev.sunriseydy.acgn.ui.components
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
+import dev.sunriseydy.acgn.ui.setLocalServerConfig
 
 /**
  * @author SunriseYDY
@@ -14,7 +14,7 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
 fun ServerConfig(setServer: (String) -> Unit) {
     Button(
         onClick = {
-            setServer(AppConfigTool.setLocalServerConfig("test"))
+            setServer(setLocalServerConfig("test"))
             LocalizationTool.putLocalization("enum.COMMON.AcgnNavigationRoute.RSS", "订阅")
         }
     ) {
