@@ -36,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
@@ -115,6 +114,7 @@ fun AcgnNavigationWrapper() {
                     navigationType = navigationType,
                     modifier = Modifier
                         .fillMaxSize()
+                        .background(color = MaterialTheme.colorScheme.surface)
                 )
             }
         )
@@ -223,6 +223,7 @@ fun PermanentNavigationDrawerContent(
 ) {
     PermanentDrawerSheet(
         modifier = modifier,
+        drawerContainerColor = MaterialTheme.colorScheme.surfaceContainer
     ) {
         Layout(
             content = {
@@ -320,7 +321,7 @@ fun NavigationDrawerItems(
                 }
             },
             colors = NavigationDrawerItemDefaults.colors(
-                unselectedContainerColor = Color.Transparent
+                unselectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             ),
             onClick = { navigateToTopLevelDestination(destination) }
         )
