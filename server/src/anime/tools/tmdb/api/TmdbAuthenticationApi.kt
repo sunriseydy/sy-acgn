@@ -1,10 +1,10 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.api
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.api
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbGuestSession
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbRequestToken
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbSession
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.endPointV3
-import dev.sunriseydy.acgn.anime.tools.tmdb.url.TmdbAuthenticationUrlBuilder
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbGuestSession
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbRequestToken
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbSession
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.endPointV3
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.url.TmdbAuthenticationUrlBuilder
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

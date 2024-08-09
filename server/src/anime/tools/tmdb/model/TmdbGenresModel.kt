@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.model
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.model
 
 object TmdbGenreId {
 

@@ -1,11 +1,11 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.core
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.core
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMediaListItem
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovie
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbPerson
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbPersonCredit
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbSearchableListItem
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShow
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMediaListItem
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMovie
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbPerson
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbPersonCredit
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbSearchableListItem
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbShow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 

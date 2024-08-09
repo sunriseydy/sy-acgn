@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools
+package dev.sunriseydy.acgn.server.anime.tools
 
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
@@ -8,7 +8,6 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
-import io.ktor.utils.io.core.Closeable
 import kotlinx.datetime.format.DateTimeComponents.Formats.RFC_1123
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

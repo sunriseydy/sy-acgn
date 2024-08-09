@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.ui
+package dev.sunriseydy.acgn.client
 
 interface Platform {
     val name: String

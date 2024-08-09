@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.ui.navigation
+package dev.sunriseydy.acgn.client.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,12 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.sunriseydy.acgn.client.utils.AcgnNavigationContentPosition
+import dev.sunriseydy.acgn.client.utils.AcgnNavigationType
+import dev.sunriseydy.acgn.client.utils.getContentType
+import dev.sunriseydy.acgn.client.utils.getNavigationContentPosition
+import dev.sunriseydy.acgn.client.utils.getNavigationType
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
-import dev.sunriseydy.acgn.ui.utils.AcgnNavigationContentPosition
-import dev.sunriseydy.acgn.ui.utils.AcgnNavigationType
-import dev.sunriseydy.acgn.ui.utils.getContentType
-import dev.sunriseydy.acgn.ui.utils.getNavigationContentPosition
-import dev.sunriseydy.acgn.ui.utils.getNavigationType
 
 /**
  * @author SunriseYDY

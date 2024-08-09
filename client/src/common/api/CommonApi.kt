@@ -1,10 +1,10 @@
-package dev.sunriseydy.acgn.common.api
+package dev.sunriseydy.acgn.client.common.api
 
 import dev.sunriseydy.acgn.Result
+import dev.sunriseydy.acgn.client.commonModuleApiEndPoint
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.common.dto.AppInfo
-import dev.sunriseydy.acgn.commonModuleApiEndPoint
 import dev.sunriseydy.acgn.interfaces.AdditionTypeInterface
 import dev.sunriseydy.acgn.interfaces.AssociatedTypeInterface
 import io.ktor.client.HttpClient

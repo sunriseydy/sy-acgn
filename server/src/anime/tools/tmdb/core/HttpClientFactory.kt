@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.core
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.core
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.TmdbClientConfig
-import dev.sunriseydy.acgn.anime.tools.tmdb.TmdbVersion
-import dev.sunriseydy.acgn.anime.tools.tmdb.TmdbWebConfig
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbErrorResponse
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.TmdbClientConfig
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.TmdbVersion
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.TmdbWebConfig
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbErrorResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.network.sockets.ConnectTimeoutException
@@ -74,9 +74,11 @@ internal object HttpClientFactory {
             expectSuccess = config.expectSuccess
             HttpResponseValidator {
                 handleResponseExceptionWithRequest { exception, _ ->
-                    val clientException = exception as? ClientRequestException ?: return@handleResponseExceptionWithRequest
+                    val clientException =
+                        exception as? ClientRequestException ?: return@handleResponseExceptionWithRequest
                     val exceptionResponse = clientException.response
-                    val tmdbErrorResponse = json.decodeTmdbErrorResponse(exceptionResponse) ?: return@handleResponseExceptionWithRequest
+                    val tmdbErrorResponse =
+                        json.decodeTmdbErrorResponse(exceptionResponse) ?: return@handleResponseExceptionWithRequest
                     throw TmdbException(tmdbErrorResponse, exception)
                 }
             }
@@ -135,13 +137,13 @@ internal object HttpClientFactory {
 
     private val HttpResponse.isTmdbStatusHandled: Boolean
         get() = status == HttpStatusCode.NotFound ||
-            status == HttpStatusCode.Unauthorized ||
-            status == HttpStatusCode.InternalServerError
+                status == HttpStatusCode.Unauthorized ||
+                status == HttpStatusCode.InternalServerError
 
     private fun Throwable.isTimeoutException(): Boolean {
         val exception = unwrapCancellationException()
         return exception is HttpRequestTimeoutException ||
-            exception is ConnectTimeoutException ||
-            exception is SocketTimeoutException
+                exception is ConnectTimeoutException ||
+                exception is SocketTimeoutException
     }
 }

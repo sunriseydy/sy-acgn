@@ -1,16 +1,16 @@
 ktor:
-    application:
-        modules:
-            - dev.sunriseydy.acgn.plugins.ApplicationKt.module
-    deployment:
-        port: 9390
-        host: 127.0.0.1
-    development: true
+  application:
+    modules:
+      - dev.sunriseydy.acgn.server.plugins.ApplicationKt.module
+  deployment:
+    port: 9390
+    host: 127.0.0.1
+  development: true
 
 acgn:
-    postgres:
-        host: localhost
-        port: 5432
-        database: sy_acgn
-        user: sy_acgn
-        password: sy_acgn
+  postgres:
+    host: localhost
+    port: 5432
+    database: sy_acgn
+    user: sy_acgn
+    password: sy_acgn

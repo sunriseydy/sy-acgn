@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.config
+package dev.sunriseydy.acgn.server.constants
 
 /**
  * @author SunriseYDY

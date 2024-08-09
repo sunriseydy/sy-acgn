@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.ui.navigation
+package dev.sunriseydy.acgn.client.navigation
 
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController

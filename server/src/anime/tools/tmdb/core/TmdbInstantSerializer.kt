@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.core
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.core
 
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toInstant

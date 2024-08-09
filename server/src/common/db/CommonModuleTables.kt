@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.common.db
+package dev.sunriseydy.acgn.server.common.db
 
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig

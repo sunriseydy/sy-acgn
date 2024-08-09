@@ -1,6 +1,6 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.url
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.url
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.TmdbWebConfig
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.TmdbWebConfig
 
 object TmdbAuthenticationUrlBuilder {
 

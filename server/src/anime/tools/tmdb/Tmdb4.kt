@@ -1,11 +1,11 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb
+package dev.sunriseydy.acgn.server.anime.tools.tmdb
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.api.Tmdb4AccountApi
-import dev.sunriseydy.acgn.anime.tools.tmdb.api.Tmdb4AuthenticationApi
-import dev.sunriseydy.acgn.anime.tools.tmdb.api.Tmdb4ListApi
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.HttpClientFactory
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.TmdbDsl
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.interceptRequest
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.Tmdb4AccountApi
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.Tmdb4AuthenticationApi
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.Tmdb4ListApi
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.HttpClientFactory
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.TmdbDsl
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.interceptRequest
 import io.ktor.client.*
 import io.ktor.client.request.*
 

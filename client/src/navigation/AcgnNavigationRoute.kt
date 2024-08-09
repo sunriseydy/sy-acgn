@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.ui.navigation
+package dev.sunriseydy.acgn.client.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import dev.sunriseydy.acgn.interfaces.CommonModuleLocalizable

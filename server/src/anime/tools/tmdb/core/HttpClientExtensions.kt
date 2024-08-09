@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.core
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.core
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.HttpClientCall
@@ -31,5 +31,8 @@ private fun buildPaths(vararg paths: String): String = paths.joinToString(separa
 typealias RequestInterceptor = suspend (HttpRequestBuilder) -> Unit
 typealias ResponseInterceptor = suspend (HttpClientCall) -> Unit
 
-internal fun HttpClient.interceptRequest(phase: PipelinePhase = HttpRequestPipeline.Render, interceptor: RequestInterceptor) =
+internal fun HttpClient.interceptRequest(
+    phase: PipelinePhase = HttpRequestPipeline.Render,
+    interceptor: RequestInterceptor
+) =
     requestPipeline.intercept(phase) { interceptor(context) }

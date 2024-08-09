@@ -1,5 +1,5 @@
 modules:
-  - ./jvm-app
+  - ./jvm-client
   - ./server
   - ./lib
-  - ./ui
+  - ./client

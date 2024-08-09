@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.anime.routes
+package dev.sunriseydy.acgn.server.anime.routes
 
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.dto.Rss
-import dev.sunriseydy.acgn.anime.service.RssService
-import dev.sunriseydy.acgn.anime.tools.QbTool
+import dev.sunriseydy.acgn.server.anime.service.RssService
+import dev.sunriseydy.acgn.server.anime.tools.QbTool
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

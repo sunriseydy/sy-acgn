@@ -15,6 +15,8 @@ object LocalizationTool {
 
     private val localizations = mutableMapOf<String, String>()
 
+    fun putAll(localizations: Map<String, String>) = this.localizations.putAll(localizations)
+
     fun putLocalization(key: String, value: String) {
         localizations[key] = value
     }

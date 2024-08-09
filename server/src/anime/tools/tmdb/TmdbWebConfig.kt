@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb
+package dev.sunriseydy.acgn.server.anime.tools.tmdb
 
 internal object TmdbWebConfig {
     const val TMDB_HOST = "api.themoviedb.org"

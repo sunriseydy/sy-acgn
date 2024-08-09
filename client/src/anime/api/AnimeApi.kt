@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.api
+package dev.sunriseydy.acgn.client.anime.api
 
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.dto.Anime
@@ -6,7 +6,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
-import dev.sunriseydy.acgn.animeModuleApiEndPoint
+import dev.sunriseydy.acgn.client.animeModuleApiEndPoint
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder

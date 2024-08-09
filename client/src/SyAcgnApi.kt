@@ -1,14 +1,14 @@
-package dev.sunriseydy.acgn
+package dev.sunriseydy.acgn.client
 
-import dev.sunriseydy.acgn.anime.api.AnimeApi
-import dev.sunriseydy.acgn.anime.api.RssApi
-import dev.sunriseydy.acgn.common.api.CommonApi
-import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
+import dev.sunriseydy.acgn.client.anime.api.AnimeApi
+import dev.sunriseydy.acgn.client.anime.api.RssApi
+import dev.sunriseydy.acgn.client.common.api.CommonApi
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.appendPathSegments
+import io.ktor.http.takeFrom
 
 /**
  * @author SunriseYDY
@@ -18,7 +18,9 @@ class SyAcgnApi {
     private val httpClient by lazy {
         HttpClientFactory.buildHttpClient {
             defaultRequest {
-                url(CommonModuleAppConfig.AppServer.configValue)
+                url {
+                    takeFrom(getLocalServerConfig())
+                }
             }
         }
     }

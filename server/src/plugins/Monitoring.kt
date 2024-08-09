@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.plugins
+package dev.sunriseydy.acgn.server.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*

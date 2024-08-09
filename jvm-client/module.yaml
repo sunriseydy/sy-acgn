@@ -1,10 +1,10 @@
 product: jvm/app
 
 apply:
-  - ../ui.module-template.yaml
+  - ../client.module-template.yaml
   - ../compose.module-template.yaml
   - ../jvm.module-template.yaml
   - ../maven.module-template.yaml
 settings:
   jvm:
-    mainClass: dev.sunriseydy.acgn.ui.JvmUIMainKt
+    mainClass: dev.sunriseydy.acgn.client.JvmUIMainKt

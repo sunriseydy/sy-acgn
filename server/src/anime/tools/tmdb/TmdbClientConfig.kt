@@ -1,6 +1,6 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb
+package dev.sunriseydy.acgn.server.anime.tools.tmdb
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.TmdbDsl
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.TmdbDsl
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.logging.*

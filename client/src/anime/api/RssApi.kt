@@ -1,10 +1,10 @@
-package dev.sunriseydy.acgn.anime.api
+package dev.sunriseydy.acgn.client.anime.api
 
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.anime.dto.TorrentAdd
-import dev.sunriseydy.acgn.animeModuleApiEndPoint
+import dev.sunriseydy.acgn.client.animeModuleApiEndPoint
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder

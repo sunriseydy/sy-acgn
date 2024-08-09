@@ -1,16 +1,16 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.discover
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.discover
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.currentLocalDate
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.minusWeeks
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.plusDays
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.plusWeeks
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbDiscover
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbDiscoverFilter
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbDiscoverMovieSortBy
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbDiscoverShowSortBy
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbDiscoverTimeRange
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMediaType
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbReleaseType
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.currentLocalDate
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.minusWeeks
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.plusDays
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.plusWeeks
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbDiscover
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbDiscoverFilter
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbDiscoverMovieSortBy
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbDiscoverShowSortBy
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbDiscoverTimeRange
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMediaType
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbReleaseType
 
 object DiscoverFactory {
 
@@ -118,7 +118,11 @@ object DiscoverFactory {
         )
     }
 
-    fun createOnStreaming(mediaType: TmdbMediaType, watchProviders: TmdbDiscoverFilter<Int>, watchRegion: String): TmdbDiscover {
+    fun createOnStreaming(
+        mediaType: TmdbMediaType,
+        watchProviders: TmdbDiscoverFilter<Int>,
+        watchRegion: String
+    ): TmdbDiscover {
         return when (mediaType) {
             TmdbMediaType.MOVIE -> TmdbDiscover.Movie(
                 sortBy = TmdbDiscoverMovieSortBy.POPULARITY,

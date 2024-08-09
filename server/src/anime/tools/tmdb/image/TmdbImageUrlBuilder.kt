@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.image
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.image
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.TmdbWebConfig
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbBackdropItem
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbPosterItem
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbVideo
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.TmdbWebConfig
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbBackdropItem
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbPosterItem
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbVideo
 
 object TmdbImageUrlBuilder {
 

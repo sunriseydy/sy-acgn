@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.model
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.model
 
 import kotlinx.datetime.LocalDate
 
@@ -84,11 +84,11 @@ sealed interface TmdbDiscover {
             params[DiscoverParam.VOTE_COUNT_LTE] = it.toString()
         }
 
-        withGenres?.let{
+        withGenres?.let {
             params[DiscoverParam.WITH_GENRES] = it.items.joinToString(it.separator.value)
         }
 
-       withoutGenres?.let {
+        withoutGenres?.let {
             params[DiscoverParam.WITHOUT_GENRES] = it.items.joinToString(it.separator.value)
         }
 
@@ -141,13 +141,16 @@ sealed interface TmdbDiscover {
                     params[DiscoverParam.Movie.RELEASE_DATE_GTE] = releaseDate.firstDayOfYear
                     params[DiscoverParam.Movie.RELEASE_DATE_LTE] = releaseDate.lastDayOfYear
                 }
+
                 is TmdbDiscoverTimeRange.OneYear -> {
                     params[DiscoverParam.Movie.PRIMARY_RELEASE_YEAR] = releaseDate.year.toString()
                 }
+
                 is TmdbDiscoverTimeRange.Custom -> {
                     params[DiscoverParam.Movie.RELEASE_DATE_GTE] = releaseDate.firstDate
                     params[DiscoverParam.Movie.RELEASE_DATE_LTE] = releaseDate.lastDate
                 }
+
                 else -> {
                     // do nothing
                 }
@@ -200,13 +203,16 @@ sealed interface TmdbDiscover {
                     params[DiscoverParam.Show.FIRST_AIR_DATE_GTE] = firstAirDate.firstDayOfYear
                     params[DiscoverParam.Show.FIRST_AIR_DATE_LTE] = firstAirDate.lastDayOfYear
                 }
+
                 is TmdbDiscoverTimeRange.OneYear -> {
                     params[DiscoverParam.Show.FIRST_AIR_DATE_YEAR] = firstAirDate.year.toString()
                 }
+
                 is TmdbDiscoverTimeRange.Custom -> {
                     params[DiscoverParam.Show.FIRST_AIR_DATE_GTE] = firstAirDate.firstDate
                     params[DiscoverParam.Show.FIRST_AIR_DATE_LTE] = firstAirDate.lastDate
                 }
+
                 else -> {
                     // do nothing
                 }

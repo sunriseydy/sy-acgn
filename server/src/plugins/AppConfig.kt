@@ -1,6 +1,6 @@
-package dev.sunriseydy.acgn.plugins
+package dev.sunriseydy.acgn.server.plugins
 
-import dev.sunriseydy.acgn.common.service.AppConfigService
+import dev.sunriseydy.acgn.server.common.service.AppConfigService
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import io.ktor.server.application.Application
 import io.ktor.server.config.yaml.YamlConfig

@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.ui
+package dev.sunriseydy.acgn.client
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application

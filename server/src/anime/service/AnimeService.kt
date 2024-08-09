@@ -1,14 +1,14 @@
-package dev.sunriseydy.acgn.anime.service
+package dev.sunriseydy.acgn.server.anime.service
 
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
-import dev.sunriseydy.acgn.anime.repository.AnimeRepository
-import dev.sunriseydy.acgn.anime.tools.AnimeCacheTool
-import dev.sunriseydy.acgn.anime.tools.FileTool
-import dev.sunriseydy.acgn.common.repository.AdditionalInfoRepository
+import dev.sunriseydy.acgn.server.anime.repository.AnimeRepository
+import dev.sunriseydy.acgn.server.anime.tools.AnimeCacheTool
+import dev.sunriseydy.acgn.server.anime.tools.FileTool
+import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 
 /**
  * @author SunriseYDY

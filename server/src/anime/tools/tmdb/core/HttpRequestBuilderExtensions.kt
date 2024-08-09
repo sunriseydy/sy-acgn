@@ -1,7 +1,7 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.core
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.core
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.TmdbWebConfig
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.AppendResponse
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.TmdbWebConfig
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.AppendResponse
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.parameter
 import io.ktor.http.ContentType

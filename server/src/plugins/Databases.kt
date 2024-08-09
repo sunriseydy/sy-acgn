@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.plugins
+package dev.sunriseydy.acgn.server.plugins
 
-import dev.sunriseydy.acgn.anime.db.animeTables
-import dev.sunriseydy.acgn.anime.db.rssTables
-import dev.sunriseydy.acgn.common.db.commonModuleTables
-import dev.sunriseydy.acgn.config.DatabaseKey
+import dev.sunriseydy.acgn.server.anime.db.animeTables
+import dev.sunriseydy.acgn.server.anime.db.rssTables
+import dev.sunriseydy.acgn.server.common.db.commonModuleTables
+import dev.sunriseydy.acgn.server.constants.DatabaseKey
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

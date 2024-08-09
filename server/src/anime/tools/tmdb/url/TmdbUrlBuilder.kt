@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.url
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.url
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.TmdbWebConfig
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMediaType
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbVideo
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbVideoSite
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.TmdbWebConfig
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMediaType
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbVideo
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbVideoSite
 
 object TmdbUrlBuilder {
 

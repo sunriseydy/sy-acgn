@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools
+package dev.sunriseydy.acgn.server.anime.tools
 
 import dev.sunriseydy.acgn.anime.dto.Anime
 

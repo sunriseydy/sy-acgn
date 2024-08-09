@@ -1,12 +1,12 @@
-package dev.sunriseydy.acgn.anime.repository
+package dev.sunriseydy.acgn.server.anime.repository
 
-import dev.sunriseydy.acgn.anime.db.RssDAO
-import dev.sunriseydy.acgn.anime.db.RssItemDAO
-import dev.sunriseydy.acgn.anime.db.RssItemTable
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
-import dev.sunriseydy.acgn.plugins.paging
-import dev.sunriseydy.acgn.plugins.suspendTransaction
+import dev.sunriseydy.acgn.server.anime.db.RssDAO
+import dev.sunriseydy.acgn.server.anime.db.RssItemDAO
+import dev.sunriseydy.acgn.server.anime.db.RssItemTable
+import dev.sunriseydy.acgn.server.plugins.paging
+import dev.sunriseydy.acgn.server.plugins.suspendTransaction
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and

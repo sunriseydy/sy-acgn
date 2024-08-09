@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.ui.utils
+package dev.sunriseydy.acgn.client.utils
 
 /**
  * @author SunriseYDY

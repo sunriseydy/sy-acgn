@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.routes
+package dev.sunriseydy.acgn.server.anime.routes
 
 import io.ktor.server.routing.*
 

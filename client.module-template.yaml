@@ -1,4 +1,4 @@
 dependencies:
-  - ./ui
+  - ./client
 test-dependencies:
-  - ./ui
+  - ./client

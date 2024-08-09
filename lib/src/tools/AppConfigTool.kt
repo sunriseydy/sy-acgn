@@ -1,6 +1,7 @@
 package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.common.dto.AppConfig
+import kotlin.collections.mutableMapOf
 
 /**
  * @author SunriseYDY
@@ -24,6 +25,8 @@ object AppConfigTool {
     fun putAppConfigFromDB(key: String, value: AppConfig) {
         appConfigs[key] = Pair(value, appConfigs[key]?.second)
     }
+
+    fun putAll(appConfigs: Map<String, Pair<AppConfig?, String?>>) = this.appConfigs.putAll(appConfigs)
 
     fun fromAppConfigList(appConfigList: List<AppConfig>) {
         appConfigList.forEach {

@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.api
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.api
 
 import io.ktor.client.*
 

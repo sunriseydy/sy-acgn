@@ -1,8 +1,9 @@
-package dev.sunriseydy.acgn.common.repository
+package dev.sunriseydy.acgn.server.common.repository
 
-import dev.sunriseydy.acgn.common.db.AppConfigDAO
 import dev.sunriseydy.acgn.common.dto.AppConfig
-import dev.sunriseydy.acgn.plugins.suspendTransaction
+import dev.sunriseydy.acgn.server.common.db.AppConfigDAO
+import dev.sunriseydy.acgn.server.plugins.suspendTransaction
+
 
 /**
  * @author SunriseYDY

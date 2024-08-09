@@ -1,10 +1,10 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.api
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.api
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.*
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.endPointV3
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.parameterAppendResponses
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.parameterIncludeImageLanguage
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.parameterLanguage
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.*
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.endPointV3
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.parameterAppendResponses
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.parameterIncludeImageLanguage
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.parameterLanguage
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -24,10 +24,11 @@ class TmdbShowSeasonsApi(private val client: HttpClient) {
         parameterIncludeImageLanguage(includeImageLanguages)
     }.body()
 
-    suspend fun getVideos(showId: Int, seasonNumber: Int, language: String? = null): TmdbResult<TmdbVideo> = client.get {
-        endPointSeason(showId, seasonNumber, "videos")
-        parameterLanguage(language)
-    }.body()
+    suspend fun getVideos(showId: Int, seasonNumber: Int, language: String? = null): TmdbResult<TmdbVideo> =
+        client.get {
+            endPointSeason(showId, seasonNumber, "videos")
+            parameterLanguage(language)
+        }.body()
 
     suspend fun getTranslations(showId: Int, seasonNumber: Int): TmdbTranslations = client.get {
         endPointSeason(showId, seasonNumber, "translations")

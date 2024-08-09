@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.api
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.api
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.discover.DiscoverCategory
-import dev.sunriseydy.acgn.anime.tools.tmdb.discover.DiscoverFactory
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.*
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.*
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.discover.DiscoverCategory
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.discover.DiscoverFactory
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.*
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -36,6 +36,7 @@ class TmdbDiscoverApi internal constructor(private val client: HttpClient) {
                 region = region,
                 discover = tmdbDiscover
             )
+
             is TmdbDiscover.Show -> discoverShow(
                 page = page,
                 language = language,

@@ -1,6 +1,6 @@
 // ktlint-disable filename
 
-package dev.sunriseydy.acgn.anime.tools.tmdb.model
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.model
 
 enum class TmdbListSortBy(val value: String) {
     ORIGINAL_TITLE("original_title"),

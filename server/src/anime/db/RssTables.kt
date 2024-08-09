@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.db
+package dev.sunriseydy.acgn.server.anime.db
 
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem

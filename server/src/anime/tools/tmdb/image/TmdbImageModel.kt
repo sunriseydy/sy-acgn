@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.image
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.image
 
 enum class TmdbImageType {
     POSTER, BACKDROP, PROFILE, LOGO;

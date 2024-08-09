@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn
+package dev.sunriseydy.acgn.server
 
 import dev.sunriseydy.acgn.common.dto.AppInfo
 import kotlinx.serialization.encodeToString

@@ -28,4 +28,4 @@ test-dependencies:
   - $kotlin-test-junit
 settings:
   jvm:
-    mainClass: dev.sunriseydy.acgn.ServerMainKt
+    mainClass: dev.sunriseydy.acgn.server.ServerMainKt

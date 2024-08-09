@@ -1,14 +1,14 @@
-package dev.sunriseydy.acgn.anime.repository
+package dev.sunriseydy.acgn.server.anime.repository
 
-import dev.sunriseydy.acgn.anime.db.AnimeDAO
-import dev.sunriseydy.acgn.anime.db.AnimeEpisodeDAO
-import dev.sunriseydy.acgn.anime.db.AnimeEpisodeTable
-import dev.sunriseydy.acgn.anime.db.AnimeSeasonDAO
-import dev.sunriseydy.acgn.anime.db.AnimeSeasonTable
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
-import dev.sunriseydy.acgn.plugins.suspendTransaction
+import dev.sunriseydy.acgn.server.anime.db.AnimeDAO
+import dev.sunriseydy.acgn.server.anime.db.AnimeEpisodeDAO
+import dev.sunriseydy.acgn.server.anime.db.AnimeEpisodeTable
+import dev.sunriseydy.acgn.server.anime.db.AnimeSeasonDAO
+import dev.sunriseydy.acgn.server.anime.db.AnimeSeasonTable
+import dev.sunriseydy.acgn.server.plugins.suspendTransaction
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 

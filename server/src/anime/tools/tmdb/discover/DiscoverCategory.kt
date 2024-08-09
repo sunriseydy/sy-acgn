@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.discover
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.discover
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbDiscoverFilter
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMediaType
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbNetworkId
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbWatchProviderId
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbDiscoverFilter
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMediaType
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbNetworkId
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbWatchProviderId
 
 sealed interface DiscoverCategory {
 

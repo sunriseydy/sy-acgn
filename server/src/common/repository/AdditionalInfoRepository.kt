@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.common.repository
+package dev.sunriseydy.acgn.server.common.repository
 
-import dev.sunriseydy.acgn.common.db.AdditionalInfoDAO
-import dev.sunriseydy.acgn.common.db.AdditionalInfoTable
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
-import dev.sunriseydy.acgn.plugins.suspendTransaction
+import dev.sunriseydy.acgn.server.common.db.AdditionalInfoDAO
+import dev.sunriseydy.acgn.server.common.db.AdditionalInfoTable
+import dev.sunriseydy.acgn.server.plugins.suspendTransaction
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and

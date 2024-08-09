@@ -1,13 +1,13 @@
-package dev.sunriseydy.acgn.ui.navigation
+package dev.sunriseydy.acgn.client.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import dev.sunriseydy.acgn.ui.components.EmptyComingSoon
-import dev.sunriseydy.acgn.ui.utils.AcgnContentType
-import dev.sunriseydy.acgn.ui.utils.AcgnNavigationType
+import dev.sunriseydy.acgn.client.components.EmptyComingSoon
+import dev.sunriseydy.acgn.client.utils.AcgnContentType
+import dev.sunriseydy.acgn.client.utils.AcgnNavigationType
 
 /**
  * @author SunriseYDY

@@ -1,9 +1,9 @@
 @file:Suppress("ktlint:trailing-comma-on-declaration-site", "ktlint:no-semi")
 
-package dev.sunriseydy.acgn.anime.tools.tmdb.model
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.model
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.image.TmdbImage
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.LocalDateSerializer
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.image.TmdbImage
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.LocalDateSerializer
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerialName

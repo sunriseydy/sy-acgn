@@ -1,6 +1,6 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.model
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.model
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.LocalDateSerializer
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.LocalDateSerializer
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
@@ -214,7 +214,7 @@ data class TmdbPersonTranslation(
 
 @Serializable
 data class TmdbPersonTranslationData(
-    @SerialName("biography")  val biography: String
+    @SerialName("biography") val biography: String
 )
 
 @Serializable
@@ -301,7 +301,7 @@ sealed interface TmdbPersonCredit : TmdbAnyItem, TmdbBackdropItem, TmdbPosterIte
     @Serializable
     @SerialName("tv")
     data class Show(
-        @SerialName("poster_path") override val posterPath: String?  = null,
+        @SerialName("poster_path") override val posterPath: String? = null,
         @SerialName("popularity") override val popularity: Float? = null,
         @SerialName("id") override val id: Int,
         @SerialName("adult") override val adult: Boolean = false,

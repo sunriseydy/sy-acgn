@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.plugins
+package dev.sunriseydy.acgn.server.plugins
 
 import dev.sunriseydy.acgn.Result
-import dev.sunriseydy.acgn.anime.routes.configureAnimeModuleRoutes
-import dev.sunriseydy.acgn.common.routes.configureCommonModuleRoutes
 import dev.sunriseydy.acgn.exception.CommonModuleException
+import dev.sunriseydy.acgn.server.anime.routes.configureAnimeModuleRoutes
+import dev.sunriseydy.acgn.server.common.routes.configureCommonModuleRoutes
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.http.content.staticResources

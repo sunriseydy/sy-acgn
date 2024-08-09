@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.ui.components
+package dev.sunriseydy.acgn.client.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

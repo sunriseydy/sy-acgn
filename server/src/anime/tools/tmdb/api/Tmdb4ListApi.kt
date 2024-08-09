@@ -1,10 +1,10 @@
-package dev.sunriseydy.acgn.anime.tools.tmdb.api
+package dev.sunriseydy.acgn.server.anime.tools.tmdb.api
 
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.*
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.endPointV4
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.json
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.parameterLanguage
-import dev.sunriseydy.acgn.anime.tools.tmdb.core.parameterPage
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.*
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.endPointV4
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.json
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.parameterLanguage
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.parameterPage
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*

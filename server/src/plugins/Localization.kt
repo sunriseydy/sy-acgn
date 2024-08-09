@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.plugins
+package dev.sunriseydy.acgn.server.plugins
 
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 import dev.sunriseydy.acgn.enums.Language

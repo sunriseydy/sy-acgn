@@ -1,15 +1,15 @@
-package dev.sunriseydy.acgn.anime.tools
+package dev.sunriseydy.acgn.server.anime.tools
 
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
-import dev.sunriseydy.acgn.anime.tools.tmdb.Tmdb3
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovie
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbMovieDetail
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbSeasonDetail
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShow
-import dev.sunriseydy.acgn.anime.tools.tmdb.model.TmdbShowDetail
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.Tmdb3
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMovie
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMovieDetail
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbSeasonDetail
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbShow
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbShowDetail
 import dev.sunriseydy.acgn.tools.LocalizationTool
 
 /**

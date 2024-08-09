@@ -1,8 +1,8 @@
-package dev.sunriseydy.acgn.anime.service
+package dev.sunriseydy.acgn.server.anime.service
 
 import dev.sunriseydy.acgn.anime.dto.Rss
-import dev.sunriseydy.acgn.anime.repository.RssRepository
-import dev.sunriseydy.acgn.anime.tools.RssTool
+import dev.sunriseydy.acgn.server.anime.repository.RssRepository
+import dev.sunriseydy.acgn.server.anime.tools.RssTool
 import kotlinx.datetime.Clock
 import java.util.UUID
 

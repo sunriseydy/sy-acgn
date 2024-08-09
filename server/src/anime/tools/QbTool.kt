@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.anime.tools
+package dev.sunriseydy.acgn.server.anime.tools
 
 import anime.tools.torrent.TorrentParser
 import dev.sunriseydy.acgn.anime.dto.TorrentAdd
