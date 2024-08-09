@@ -3,10 +3,9 @@ package dev.sunriseydy.acgn.client
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import dev.sunriseydy.acgn.client.components.ServerConfig
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationWrapper
 import dev.sunriseydy.acgn.tools.AppConfigTool
@@ -20,25 +19,11 @@ private val logger = KotlinLogging.logger { }
 fun App() {
     MaterialTheme {
         Surface {
-            var showServerConfig by remember { mutableStateOf(false) }
-            val server = getLocalServerConfig()
-            if (server == null) {
-                showServerConfig = true
-            } else {
-                runBlocking {
-                    try {
-                        val (version, configs, localizations) = SyAcgnApi().common.getAppInfo().checkSuccessAndNotNull()
-                        AppConfigTool.putAll(configs)
-                        LocalizationTool.putAll(localizations)
-                    } catch (e: Exception) {
-                        logger.error(e) { "error: ${e.message}" }
-                        showServerConfig = true
-                    }
-                }
-            }
-            if (showServerConfig) {
+            val showServerConfig = remember { mutableStateOf(true) }
+            if (showServerConfig.value) {
+                checkServer(showServerConfig)
                 ServerConfig {
-                    showServerConfig = false
+                    checkServer(showServerConfig)
                 }
             } else {
                 AcgnNavigationWrapper()
@@ -46,3 +31,15 @@ fun App() {
         }
     }
 }
+
+private fun checkServer(showServerConfig: MutableState<Boolean>) =
+    runBlocking {
+        try {
+            val (_, configs, localizations) = SyAcgnApi().common.getAppInfo().checkSuccessAndNotNull()
+            AppConfigTool.putAll(configs)
+            LocalizationTool.putAll(localizations)
+            showServerConfig.component2()(false)
+        } catch (e: Exception) {
+            showServerConfig.component2()(true)
+        }
+    }

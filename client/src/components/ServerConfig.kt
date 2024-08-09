@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.client.components
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import dev.sunriseydy.acgn.client.getLocalServerConfigOrNull
 import dev.sunriseydy.acgn.client.setLocalServerConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -14,13 +15,14 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 @Composable
-fun ServerConfig(unShow: () -> Unit) {
+fun ServerConfig(onClick: () -> Unit) {
     Button(
         onClick = {
             setLocalServerConfig("http://localhost:9390")
-            unShow()
+            onClick()
         }
     ) {
-        Text("test")
+        Text(getLocalServerConfigOrNull() ?: "")
     }
 }
+
