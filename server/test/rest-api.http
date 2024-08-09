@@ -14,12 +14,12 @@ Accept: application/json
 
 ### app info
 # @no-log
-GET localhost:9390/api/common/info
+GET localhost:9390/api/common/info?language=ENGLISH
 Accept: application/json
 
 ### get localizations
 # @no-log
-GET http://localhost:9390/api/common/localizations
+GET http://localhost:9390/api/common/localization
 Accept: application/json
 
 ### get config map

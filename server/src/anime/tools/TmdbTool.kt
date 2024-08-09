@@ -17,7 +17,7 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
  * @date 2024-07-16 19:46
  */
 class TmdbTool {
-    private val language = LocalizationTool.currentLanguage.language
+    private val language = LocalizationTool.currentLanguage.hyphenCode
     private val ANIME_GENRE_ID: Int = 16
 
     private val tmdbClient = Tmdb3 {

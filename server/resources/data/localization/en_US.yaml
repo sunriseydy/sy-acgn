@@ -1,0 +1,22 @@
+enum:
+  COMMON:
+    Language:
+      SIMPLIFIED_CHINESE: "Chinese"
+      ENGLISH: "English"
+  ANIME:
+    AnimeAssociatedType:
+      ANIME: "动画"
+      ANIME_SEASON: "动画季度"
+      ANIME_EPISODE: "动画集"
+      ANIME_MOVIE: "动画电影"
+
+message:
+  error:
+    COMMON:
+      test: "通用模块测试异常"
+
+config:
+  COMMON:
+    AppName:
+      meaning: "应用名称"
+      description: "应用的名称"
