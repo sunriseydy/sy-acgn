@@ -21,6 +21,7 @@ object HttpClientFactory {
                 ignoreUnknownKeys = true
                 isLenient = true
                 explicitNulls = false
+                encodeDefaults = true
             })
             xml(format = XML {
                 defaultPolicy {
