@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.getLocalServerConfigOrNull
+import dev.sunriseydy.acgn.client.setLocalServerConfig
 import dev.sunriseydy.acgn.enums.Language
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -32,9 +34,11 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 @Composable
-fun ServerConfig(onClick: () -> Pair<Boolean, String>) {
+fun ServerConfig(onClick: () -> Pair<Boolean, String>, showError: Boolean, errorMessage: String) {
     var selectedLanguage by remember { mutableStateOf(Language.SIMPLIFIED_CHINESE) }
     var serverAddress by remember { mutableStateOf(getLocalServerConfigOrNull() ?: "") }
+    var showError by remember { mutableStateOf(!showError) }
+    var errorMessage by remember { mutableStateOf(errorMessage) }
 
     Row(
         modifier = Modifier.fillMaxSize(),
@@ -54,11 +58,18 @@ fun ServerConfig(onClick: () -> Pair<Boolean, String>) {
                 label = { Text("服务器地址") },
             )
             Spacer(modifier = Modifier.height(16.dp))
+            if (showError) {
+                Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
             Button(
                 onClick = {
-                    println("语言: $selectedLanguage, 服务器地址: $serverAddress")
-                    // setLocalServerConfig("http://localhost:9390")
-                    // val (success, message) = onClick()
+                    setLocalServerConfig(serverAddress)
+                    val (success, message) = onClick()
+                    if (!success) {
+                        showError = true
+                        errorMessage = message
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

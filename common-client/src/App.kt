@@ -20,9 +20,15 @@ fun App() {
     MaterialTheme {
         Surface {
             val showServerConfig = remember { mutableStateOf(true) }
+            println("ydy1:${showServerConfig.value}")
             if (showServerConfig.value) {
-                checkServer(showServerConfig)
-                ServerConfig(onClick = { checkServer(showServerConfig) })
+                val (success, message) = checkServer(showServerConfig)
+                println("ydy2:${showServerConfig.value}")
+                if (showServerConfig.value) {
+                    ServerConfig(onClick = { checkServer(showServerConfig) }, success, message)
+                } else {
+                    AcgnNavigationWrapper()
+                }
             } else {
                 AcgnNavigationWrapper()
             }
@@ -35,6 +41,9 @@ private fun checkServer(showServerConfig: MutableState<Boolean>) =
         try {
             val (_, configs, localizations) = SyAcgnApi().common.getAppInfo().checkSuccessAndNotNull()
             AppConfigTool.putAll(configs)
+            if (localizations.isEmpty()) {
+                throw error("localization is empty")
+            }
             LocalizationTool.putAll(localizations)
             showServerConfig.component2()(false)
             return@runBlocking Pair(true, "连接服务器成功")
