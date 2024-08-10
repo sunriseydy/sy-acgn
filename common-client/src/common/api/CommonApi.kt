@@ -5,6 +5,7 @@ import dev.sunriseydy.acgn.client.commonModuleApiEndPoint
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.common.dto.AppInfo
+import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.interfaces.AdditionTypeInterface
 import dev.sunriseydy.acgn.interfaces.AssociatedTypeInterface
 import io.ktor.client.HttpClient
@@ -22,8 +23,9 @@ import io.ktor.client.request.setBody
  */
 class CommonApi internal constructor(private val httpClient: HttpClient) {
 
-    suspend fun getAppInfo(): Result<AppInfo> = httpClient.get {
+    suspend fun getAppInfo(language: Language? = null): Result<AppInfo> = httpClient.get {
         commonModuleApiEndPoint("info")
+        language?.let { parameter("language", language.name) }
     }.body()
 
     suspend fun getLocalizations(): Result<MutableMap<String, String>> = httpClient.get {

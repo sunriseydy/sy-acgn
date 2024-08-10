@@ -34,10 +34,10 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 @Composable
-fun ServerConfig(onClick: () -> Pair<Boolean, String>, showError: Boolean, errorMessage: String) {
+fun ServerConfig(onClick: (Language) -> Pair<Boolean, String>, success: Boolean, errorMessage: String) {
     var selectedLanguage by remember { mutableStateOf(Language.SIMPLIFIED_CHINESE) }
     var serverAddress by remember { mutableStateOf(getLocalServerConfigOrNull() ?: "") }
-    var showError by remember { mutableStateOf(!showError) }
+    var showError by remember { mutableStateOf(!success) }
     var errorMessage by remember { mutableStateOf(errorMessage) }
 
     Row(
@@ -65,7 +65,7 @@ fun ServerConfig(onClick: () -> Pair<Boolean, String>, showError: Boolean, error
             Button(
                 onClick = {
                     setLocalServerConfig(serverAddress)
-                    val (success, message) = onClick()
+                    val (success, message) = onClick(selectedLanguage)
                     if (!success) {
                         showError = true
                         errorMessage = message

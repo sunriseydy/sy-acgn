@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import dev.sunriseydy.acgn.client.components.ServerConfig
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationWrapper
+import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -20,12 +21,10 @@ fun App() {
     MaterialTheme {
         Surface {
             val showServerConfig = remember { mutableStateOf(true) }
-            println("ydy1:${showServerConfig.value}")
             if (showServerConfig.value) {
                 val (success, message) = checkServer(showServerConfig)
-                println("ydy2:${showServerConfig.value}")
                 if (showServerConfig.value) {
-                    ServerConfig(onClick = { checkServer(showServerConfig) }, success, message)
+                    ServerConfig(onClick = { checkServer(showServerConfig, it) }, success, message)
                 } else {
                     AcgnNavigationWrapper()
                 }
@@ -36,10 +35,10 @@ fun App() {
     }
 }
 
-private fun checkServer(showServerConfig: MutableState<Boolean>) =
+private fun checkServer(showServerConfig: MutableState<Boolean>, language: Language? = null) =
     runBlocking {
         try {
-            val (_, configs, localizations) = SyAcgnApi().common.getAppInfo().checkSuccessAndNotNull()
+            val (_, configs, localizations) = SyAcgnApi().common.getAppInfo(language).checkSuccessAndNotNull()
             AppConfigTool.putAll(configs)
             if (localizations.isEmpty()) {
                 throw error("localization is empty")
