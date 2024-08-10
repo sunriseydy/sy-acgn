@@ -1,10 +1,27 @@
 package dev.sunriseydy.acgn.client.components
 
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.getLocalServerConfigOrNull
-import dev.sunriseydy.acgn.client.setLocalServerConfig
+import dev.sunriseydy.acgn.enums.Language
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
@@ -15,14 +32,53 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 @Composable
-fun ServerConfig(onClick: () -> Unit) {
-    Button(
-        onClick = {
-            setLocalServerConfig("http://localhost:9390")
-            onClick()
-        }
+fun ServerConfig(onClick: () -> Pair<Boolean, String>) {
+    var selectedLanguage by remember { mutableStateOf(Language.SIMPLIFIED_CHINESE) }
+    var serverAddress by remember { mutableStateOf(getLocalServerConfigOrNull() ?: "") }
+
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(getLocalServerConfigOrNull() ?: "")
+        Column(
+            modifier = Modifier.width(300.dp)
+        ) {
+            Text("选择语言：")
+            Spacer(modifier = Modifier.height(8.dp))
+            LanguageRadioButtonGroup(selectedLanguage) { selectedLanguage = it }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = serverAddress,
+                onValueChange = { serverAddress = it },
+                label = { Text("服务器地址") },
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    println("语言: $selectedLanguage, 服务器地址: $serverAddress")
+                    // setLocalServerConfig("http://localhost:9390")
+                    // val (success, message) = onClick()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("提交")
+            }
+        }
     }
 }
 
+@Composable
+fun LanguageRadioButtonGroup(selectedLanguage: Language, onLanguageSelected: (Language) -> Unit) {
+    Column {
+        Language.entries.forEach { language ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = (language == selectedLanguage),
+                    onClick = { onLanguageSelected(language) }
+                )
+                Text(text = language.originName)
+            }
+        }
+    }
+}

@@ -7,7 +7,8 @@ import dev.sunriseydy.acgn.interfaces.EnumLocalizable
  * @author SunriseYDY
  * @date 2024-07-09 15:38
  */
-enum class Language(val underlineCode: String, val hyphenCode: String) : CommonModuleLocalizable, EnumLocalizable {
-    SIMPLIFIED_CHINESE("zh_CN", "zh-CN"),
-    ENGLISH("en_US", "en-US"),
+enum class Language(val underlineCode: String, val hyphenCode: String, val originName: String) :
+    CommonModuleLocalizable, EnumLocalizable {
+    SIMPLIFIED_CHINESE("zh_CN", "zh-CN", "简体中文"),
+    ENGLISH("en_US", "en-US", "English"),
 }

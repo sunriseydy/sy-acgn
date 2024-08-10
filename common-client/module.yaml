@@ -11,7 +11,6 @@ apply:
 dependencies:
   - $compose.foundation: exported
   - $compose.material3: exported
-  - $compose.desktop.currentOs: exported
   - $compose.components.resources: exported
   - $compose.animation: exported
   - $compose.materialIconsExtended: exported

@@ -22,9 +22,7 @@ fun App() {
             val showServerConfig = remember { mutableStateOf(true) }
             if (showServerConfig.value) {
                 checkServer(showServerConfig)
-                ServerConfig {
-                    checkServer(showServerConfig)
-                }
+                ServerConfig(onClick = { checkServer(showServerConfig) })
             } else {
                 AcgnNavigationWrapper()
             }
@@ -39,7 +37,9 @@ private fun checkServer(showServerConfig: MutableState<Boolean>) =
             AppConfigTool.putAll(configs)
             LocalizationTool.putAll(localizations)
             showServerConfig.component2()(false)
+            return@runBlocking Pair(true, "连接服务器成功")
         } catch (e: Exception) {
             showServerConfig.component2()(true)
+            return@runBlocking Pair(false, "连接服务器失败：${e.message}")
         }
     }
