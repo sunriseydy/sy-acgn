@@ -16,7 +16,8 @@ fun Application.configureLocalization() {
 
 fun LocalizationTool.loadLocalizations(language: Language = DEFAULT_LANGUAGE) {
     currentLanguage = language
-    val yamlConfig = YamlConfig("data/localization/${currentLanguage.underlineCode}.yaml") ?: return
+    val yamlConfig =
+        YamlConfig("data/localization/${currentLanguage.languageCode}-${currentLanguage.regionalCode}.yaml") ?: return
     yamlConfig.keys().forEach {
         putLocalization(it, yamlConfig.property(it).getString())
     }
