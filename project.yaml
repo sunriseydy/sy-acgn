@@ -1,5 +1,4 @@
 modules:
-  - ./jvm-client
   - ./server
   - ./lib
   - ./*-client
