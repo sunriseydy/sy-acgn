@@ -1,4 +1,4 @@
 dependencies:
-  - ./client
+  - ./common-client
 test-dependencies:
-  - ./client
+  - ./common-client
