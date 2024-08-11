@@ -21,8 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.sunriseydy.acgn.client.getLocalServerConfigOrNull
-import dev.sunriseydy.acgn.client.setLocalServerConfig
+import dev.sunriseydy.acgn.client.utils.getLocalServerConfigOrNull
+import dev.sunriseydy.acgn.client.utils.setLocalServerConfig
 import dev.sunriseydy.acgn.enums.Language
 import io.github.oshai.kotlinlogging.KotlinLogging
 

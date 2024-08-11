@@ -2,12 +2,10 @@ package dev.sunriseydy.acgn.client.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dev.sunriseydy.acgn.client.anime.components.Rss
 import dev.sunriseydy.acgn.client.components.EmptyComingSoon
-import dev.sunriseydy.acgn.client.utils.AcgnContentType
-import dev.sunriseydy.acgn.client.utils.AcgnNavigationType
 
 /**
  * @author SunriseYDY
@@ -15,18 +13,16 @@ import dev.sunriseydy.acgn.client.utils.AcgnNavigationType
  */
 @Composable
 fun AcgnNavHost(
-    navController: NavHostController,
-    contentType: AcgnContentType,
-    navigationType: AcgnNavigationType,
+    appState: AppState,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
         modifier = modifier,
-        navController = navController,
+        navController = appState.navController,
         startDestination = AcgnNavigationRoute.RSS.name,
     ) {
         composable(AcgnNavigationRoute.RSS.name) {
-            EmptyComingSoon()
+            Rss(appState)
         }
         composable(AcgnNavigationRoute.ANIME.name) {
             EmptyComingSoon()

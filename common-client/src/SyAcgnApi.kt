@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.client
 import dev.sunriseydy.acgn.client.anime.api.AnimeApi
 import dev.sunriseydy.acgn.client.anime.api.RssApi
 import dev.sunriseydy.acgn.client.common.api.CommonApi
+import dev.sunriseydy.acgn.client.utils.getLocalServerConfig
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.defaultRequest

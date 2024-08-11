@@ -28,6 +28,8 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -42,14 +44,17 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.sunriseydy.acgn.client.components.AcgnSnackbarHost
 import dev.sunriseydy.acgn.client.utils.AcgnNavigationContentPosition
 import dev.sunriseydy.acgn.client.utils.AcgnNavigationType
 import dev.sunriseydy.acgn.client.utils.getContentType
 import dev.sunriseydy.acgn.client.utils.getNavigationContentPosition
 import dev.sunriseydy.acgn.client.utils.getNavigationType
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * @author SunriseYDY
@@ -78,8 +83,16 @@ fun AcgnNavigationWrapper() {
     val selectedDestination =
         navBackStackEntry?.destination?.route ?: AcgnNavigationRoute.RSS.name
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    val appState = AppState(navController, navigationAction, snackbarHostState, scope)
+
     when (navigationType) {
         AcgnNavigationType.BOTTOM_NAVIGATION -> Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
             bottomBar = {
                 AcgnBottomNavigationBar(
                     selectedDestination = selectedDestination,
@@ -88,9 +101,7 @@ fun AcgnNavigationWrapper() {
             },
             content = { contentPadding ->
                 AcgnNavHost(
-                    navController = navController,
-                    contentType = contentType,
-                    navigationType = navigationType,
+                    appState = appState,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(contentPadding)
@@ -98,26 +109,28 @@ fun AcgnNavigationWrapper() {
             }
         )
 
-        AcgnNavigationType.PERMANENT_NAVIGATION_DRAWER -> PermanentNavigationDrawer(
-            drawerContent = {
-                PermanentNavigationDrawerContent(
-                    selectedDestination = selectedDestination,
-                    navigationContentPosition = navContentPosition,
-                    navigateToTopLevelDestination = navigationAction::navigateTo,
-                    modifier = Modifier.width(150.dp)
-                )
-            },
-            content = {
-                AcgnNavHost(
-                    navController = navController,
-                    contentType = contentType,
-                    navigationType = navigationType,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = MaterialTheme.colorScheme.surface)
-                )
-            }
-        )
+        AcgnNavigationType.PERMANENT_NAVIGATION_DRAWER -> Scaffold(
+            snackbarHost = { AcgnSnackbarHost(appState) },
+        ) {
+            PermanentNavigationDrawer(
+                drawerContent = {
+                    PermanentNavigationDrawerContent(
+                        selectedDestination = selectedDestination,
+                        navigationContentPosition = navContentPosition,
+                        navigateToTopLevelDestination = navigationAction::navigateTo,
+                        modifier = Modifier.width(150.dp)
+                    )
+                },
+                content = {
+                    AcgnNavHost(
+                        appState = appState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = MaterialTheme.colorScheme.surface)
+                    )
+                }
+            )
+        }
 
         else -> throw IllegalArgumentException("Invalid navigation type")
     }
@@ -368,3 +381,10 @@ fun navigationMeasurePolicy(
 enum class LayoutType {
     HEADER, CONTENT
 }
+
+data class AppState(
+    val navController: NavHostController,
+    val navigationAction: AcgnNavigationAction,
+    val snackbarHostState: SnackbarHostState,
+    val scope: CoroutineScope,
+)

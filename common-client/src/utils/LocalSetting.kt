@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.client
+package dev.sunriseydy.acgn.client.utils
 
 import com.russhwolf.settings.Settings
 
