@@ -24,7 +24,10 @@ object LocalizationTool {
     fun getLocalizations() = localizations
 
     fun getLocalization(key: String, defaultValue: String = key): String {
-        return localizations.getOrDefault(key, defaultValue)
+        return localizations.getOrElse(key) {
+            println("the key [$key] on current language [${currentLanguage.originName}] doesn't have a localization")
+            defaultValue
+        }
     }
 
     fun getLocalizationKeyFromEnum(enum: EnumLocalizable): String {

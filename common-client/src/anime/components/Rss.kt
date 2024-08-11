@@ -1,11 +1,27 @@
 package dev.sunriseydy.acgn.client.anime.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import dev.sunriseydy.acgn.client.components.showError
-import dev.sunriseydy.acgn.client.components.showMessage
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import dev.sunriseydy.acgn.client.anime.enums.RssString
+import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.client.navigation.AppState
 
 /**
@@ -14,20 +30,53 @@ import dev.sunriseydy.acgn.client.navigation.AppState
  */
 @Composable
 fun Rss(appState: AppState) {
+    val rssList = rememberLazyListState()
+    val rssId = remember { mutableStateOf(ULong.MIN_VALUE) }
+    val rssState = RssState(rssList, rssId)
     Row {
-        Button(
-            onClick = {
-                appState.showMessage("message")
+        RssList(Modifier.fillMaxWidth(0.5f), rssState, appState)
+        RssItemList(Modifier.fillMaxWidth(0.5f), rssState, appState)
+    }
+}
+
+@Composable
+fun RssList(modifier: Modifier, rssState: RssState, appState: AppState) {
+
+    Column(modifier = modifier) {
+        Card {
+            Row {
+                Text(RssString.RSS_TITLE.localization)
+                Row(horizontalArrangement = Arrangement.End) {
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Default.Refresh, CommonString.REFRESH.localization)
+                    }
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Default.Add, CommonString.ADD.localization)
+                    }
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Default.Delete, CommonString.DELETE.localization)
+                    }
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Default.Check, RssString.RSS_READ.localization)
+                    }
+                }
             }
-        ) {
-            Text("message")
-        }
-        Button(
-            onClick = {
-                appState.showError("error")
-            }
-        ) {
-            Text("error")
         }
     }
 }
+
+@Composable
+fun RssItemList(modifier: Modifier, rssState: RssState, appState: AppState) {
+    Column(modifier = modifier) {
+        Card {
+            Row {
+                Text("订阅条目")
+            }
+        }
+    }
+}
+
+data class RssState(
+    val rssList: LazyListState,
+    val rssId: MutableState<ULong>,
+)
