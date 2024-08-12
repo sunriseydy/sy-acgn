@@ -1,17 +1,23 @@
 package dev.sunriseydy.acgn.client
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.navigation.NavHostController
+import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.client.components.ServerConfig
+import dev.sunriseydy.acgn.client.components.showError
+import dev.sunriseydy.acgn.client.navigation.AcgnNavigationAction
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationWrapper
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 
 private val logger = KotlinLogging.logger { }
@@ -51,3 +57,32 @@ private fun checkServer(showServerConfig: MutableState<Boolean>, language: Langu
             return@runBlocking Pair(false, "连接服务器失败：${e.message}")
         }
     }
+
+enum class LayoutType {
+    HEADER, CONTENT
+}
+
+data class AppState(
+    val navController: NavHostController,
+    val navigationAction: AcgnNavigationAction,
+    val snackbarHostState: SnackbarHostState,
+    val scope: CoroutineScope,
+    val api: SyAcgnApi,
+)
+
+fun <T> Result<T>.onSuccess(appState: AppState, onSuccess: () -> Unit = { }) {
+    try {
+        this.checkSuccess()
+        onSuccess()
+    } catch (e: Exception) {
+        appState.showError(e.message ?: "")
+    }
+}
+
+fun <T> Result<T>.onSuccess(appState: AppState, onSuccess: (T) -> Unit = { }) {
+    try {
+        onSuccess(this.checkSuccessAndNotNull())
+    } catch (e: Exception) {
+        appState.showError(e.message ?: "")
+    }
+}

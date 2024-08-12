@@ -44,9 +44,11 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.sunriseydy.acgn.client.AppState
+import dev.sunriseydy.acgn.client.LayoutType
+import dev.sunriseydy.acgn.client.SyAcgnApi
 import dev.sunriseydy.acgn.client.components.AcgnSnackbarHost
 import dev.sunriseydy.acgn.client.utils.AcgnNavigationContentPosition
 import dev.sunriseydy.acgn.client.utils.AcgnNavigationType
@@ -54,7 +56,6 @@ import dev.sunriseydy.acgn.client.utils.getContentType
 import dev.sunriseydy.acgn.client.utils.getNavigationContentPosition
 import dev.sunriseydy.acgn.client.utils.getNavigationType
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * @author SunriseYDY
@@ -84,9 +85,14 @@ fun AcgnNavigationWrapper() {
         navBackStackEntry?.destination?.route ?: AcgnNavigationRoute.RSS.name
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
-    val appState = AppState(navController, navigationAction, snackbarHostState, scope)
+    val appState = AppState(
+        navController = navController,
+        navigationAction = navigationAction,
+        snackbarHostState = snackbarHostState,
+        scope = rememberCoroutineScope(),
+        api = SyAcgnApi()
+    )
 
     when (navigationType) {
         AcgnNavigationType.BOTTOM_NAVIGATION -> Scaffold(
@@ -377,14 +383,3 @@ fun navigationMeasurePolicy(
         contentPlaceable.placeRelative(0, contentPlaceableY)
     }
 }
-
-enum class LayoutType {
-    HEADER, CONTENT
-}
-
-data class AppState(
-    val navController: NavHostController,
-    val navigationAction: AcgnNavigationAction,
-    val snackbarHostState: SnackbarHostState,
-    val scope: CoroutineScope,
-)

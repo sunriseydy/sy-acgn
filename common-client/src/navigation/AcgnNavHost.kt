@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.components.Rss
 import dev.sunriseydy.acgn.client.components.EmptyComingSoon
 
