@@ -9,5 +9,6 @@ import dev.sunriseydy.acgn.interfaces.EnumLocalizable
  */
 enum class RssString : AnimeModuleLocalizable, EnumLocalizable {
     RSS_TITLE,
+    RSS_ITEM_TITLE,
     RSS_READ,
 }

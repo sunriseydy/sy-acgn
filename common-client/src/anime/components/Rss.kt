@@ -1,6 +1,5 @@
 package dev.sunriseydy.acgn.client.anime.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,10 +10,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import dev.sunriseydy.acgn.client.anime.enums.RssString
 import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.navigation.AppState
 
 /**
@@ -35,7 +33,7 @@ fun Rss(appState: AppState) {
     val rssState = RssState(rssList, rssId)
     Row {
         RssList(Modifier.fillMaxWidth(0.5f), rssState, appState)
-        RssItemList(Modifier.fillMaxWidth(0.5f), rssState, appState)
+        RssItemList(Modifier.fillMaxWidth(), rssState, appState)
     }
 }
 
@@ -43,23 +41,18 @@ fun Rss(appState: AppState) {
 fun RssList(modifier: Modifier, rssState: RssState, appState: AppState) {
 
     Column(modifier = modifier) {
-        Card {
-            Row {
-                Text(RssString.RSS_TITLE.localization)
-                Row(horizontalArrangement = Arrangement.End) {
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Default.Refresh, CommonString.REFRESH.localization)
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Default.Add, CommonString.ADD.localization)
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Default.Delete, CommonString.DELETE.localization)
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Default.Check, RssString.RSS_READ.localization)
-                    }
-                }
+        PageTitle(RssString.RSS_TITLE.localization) {
+            IconButton(onClick = { }) {
+                Icon(Icons.Default.Refresh, CommonString.REFRESH.localization)
+            }
+            IconButton(onClick = { }) {
+                Icon(Icons.Default.Add, CommonString.ADD.localization)
+            }
+            IconButton(onClick = { }) {
+                Icon(Icons.Default.Delete, CommonString.DELETE.localization)
+            }
+            IconButton(onClick = { }) {
+                Icon(Icons.Default.Check, RssString.RSS_READ.localization)
             }
         }
     }
@@ -68,11 +61,7 @@ fun RssList(modifier: Modifier, rssState: RssState, appState: AppState) {
 @Composable
 fun RssItemList(modifier: Modifier, rssState: RssState, appState: AppState) {
     Column(modifier = modifier) {
-        Card {
-            Row {
-                Text("订阅条目")
-            }
-        }
+        PageTitle(RssString.RSS_ITEM_TITLE.localization)
     }
 }
 

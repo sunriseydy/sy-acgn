@@ -18,7 +18,7 @@ enum:
     RssString:
       RSS_TITLE: "订阅"
       RSS_READ: "已读"
-
+      RSS_ITEM_TITLE: "订阅条目"
 message:
   error:
     COMMON:
