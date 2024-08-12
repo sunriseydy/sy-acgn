@@ -86,25 +86,21 @@ fun RssList(modifier: Modifier, rssState: RssState, appState: AppState) {
                 modifier = Modifier.fillMaxSize(),
                 state = rssState.rssListState,
                 contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 items(rssState.rssList.value, key = { it.id }) { rss ->
                     Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 8.dp)) {
                             Row(
-                                modifier = Modifier.fillMaxHeight().padding(start = 8.dp, top = 8.dp),
-                                horizontalArrangement = Arrangement.Start,
-                                verticalAlignment = Alignment.CenterVertically
+                                modifier = Modifier.fillMaxWidth(0.5f).padding(top = 12.dp),
                             ) {
-                                Text(text = rss.title)
+                                Text(text = rss.title, style = MaterialTheme.typography.titleSmall)
                             }
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 IconButton(onClick = { }) {
                                     Icon(Icons.Default.Delete, CommonString.DELETE.localization)
