@@ -27,7 +27,7 @@ fun PageTitle(title: String, actions: @Composable (() -> Unit)? = null) {
                 modifier = Modifier
                     .fillMaxWidth(if (actions == null) 1f else 0.3f)
                     .fillMaxHeight()
-                    .padding(start = 4.dp),
+                    .padding(start = 8.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -35,7 +35,10 @@ fun PageTitle(title: String, actions: @Composable (() -> Unit)? = null) {
             }
             actions?.let {
                 Row(
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(end = 8.dp),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
