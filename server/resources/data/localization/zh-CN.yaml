@@ -9,6 +9,13 @@ enum:
       REFRESH: "刷新"
       ADD: "添加"
       DELETE: "删除"
+      UPDATE: "更新"
+      CANCEL: "取消"
+      SAVE: "保存"
+      SUBMIT: "提交"
+      CONFIRM: "确定"
+      IS_BLANK: "为空"
+      API_ERROR: "调用API异常"
   ANIME:
     AnimeAssociatedType:
       ANIME: "动画"
@@ -19,6 +26,9 @@ enum:
       RSS_TITLE: "订阅"
       RSS_READ: "已读"
       RSS_ITEM_TITLE: "订阅条目"
+      RSS_FIELD_LINK: "订阅链接"
+      RSS_FIELD_TITLE: "订阅标题"
+
 message:
   error:
     COMMON:

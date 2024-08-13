@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import dev.sunriseydy.acgn.Result
+import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.client.components.ServerConfig
 import dev.sunriseydy.acgn.client.components.showError
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationAction
@@ -50,10 +51,10 @@ private fun checkServer(showServerConfig: MutableState<Boolean>, language: Langu
                 throw error("localization is empty")
             }
             LocalizationTool.putAll(localizations)
-            showServerConfig.component2()(false)
+            showServerConfig.value = false
             return@runBlocking Pair(true, "连接服务器成功")
         } catch (e: Exception) {
-            showServerConfig.component2()(true)
+            showServerConfig.value = true
             return@runBlocking Pair(false, "连接服务器失败：${e.message}")
         }
     }
@@ -70,19 +71,27 @@ data class AppState(
     val api: SyAcgnApi,
 )
 
-fun <T> Result<T>.onSuccess(appState: AppState, onSuccess: () -> Unit = { }) {
+fun <T> Result<T>.onSuccess(appState: AppState? = null, onSuccess: () -> Unit = { }, onError: (String) -> Unit = { }) {
     try {
         this.checkSuccess()
         onSuccess()
     } catch (e: Exception) {
-        appState.showError(e.message ?: "")
+        val message = e.message ?: CommonString.API_ERROR.localization
+        appState?.showError(message)
+        onError(message)
     }
 }
 
-fun <T> Result<T>.onSuccess(appState: AppState, onSuccess: (T) -> Unit = { }) {
+fun <T> Result<T>.onSuccessData(
+    appState: AppState? = null,
+    onSuccess: (T) -> Unit = { },
+    onError: (String) -> Unit = { }
+) {
     try {
         onSuccess(this.checkSuccessAndNotNull())
     } catch (e: Exception) {
-        appState.showError(e.message ?: "")
+        val message = e.message ?: CommonString.API_ERROR.localization
+        appState?.showError(message)
+        onError(message)
     }
 }

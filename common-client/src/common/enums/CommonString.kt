@@ -15,4 +15,7 @@ enum class CommonString : CommonModuleLocalizable, EnumLocalizable {
     SAVE,
     SUBMIT,
     DELETE,
+    CONFIRM,
+    IS_BLANK,
+    API_ERROR,
 }

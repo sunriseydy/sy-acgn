@@ -8,7 +8,9 @@ import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.http.ContentType
 import io.ktor.http.appendPathSegments
+import io.ktor.http.contentType
 import io.ktor.http.takeFrom
 
 /**
@@ -22,6 +24,7 @@ class SyAcgnApi {
                 url {
                     takeFrom(getLocalServerConfig())
                 }
+                contentType(ContentType.Application.Json)
             }
         }
     }

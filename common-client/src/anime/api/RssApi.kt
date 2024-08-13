@@ -62,8 +62,8 @@ class RssApi internal constructor(private val httpClient: HttpClient) {
     }.body()
 
     suspend fun markRssItemReadByIdOrRssId(
-        id: UUID?,
-        rssId: ULong?
+        id: UUID? = null,
+        rssId: ULong? = null
     ): Result<Int> = httpClient.put {
         animeRssApiEndPoint("item", "read")
         parameter("id", id)

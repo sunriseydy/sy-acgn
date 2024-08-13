@@ -35,7 +35,7 @@ fun Application.configureRouting() {
 suspend fun handleError(call: ApplicationCall, cause: Throwable) {
     call.application.log.error("exception", cause)
     call.respond(
-        HttpStatusCode.InternalServerError,
+        HttpStatusCode.OK,
         Result<Unit>(failed = true, message = cause.message ?: cause.toString())
     )
 }
