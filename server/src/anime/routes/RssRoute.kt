@@ -39,15 +39,13 @@ fun Routing.rssRoutes(rssService: RssService = RssService()) {
 
         route("/item") {
             get {
-                val page = call.parameters["page"]?.toLong() ?: 0
-                val size = call.parameters["size"]?.toInt() ?: 10
                 call.respond(
                     Result(
                         data = rssService.getRssItemByRssIdOrIsRead(
                             rssId = call.parameters["rssId"]?.toULong(),
                             isRead = call.parameters["isRead"]?.toBoolean(),
-                            page = page,
-                            size = size,
+                            page = call.parameters["page"]?.toLong(),
+                            size = call.parameters["size"]?.toInt(),
                         )
                     )
                 )

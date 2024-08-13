@@ -63,8 +63,8 @@ class RssService(val rssRepository: RssRepository = RssRepository()) {
     suspend fun getRssItemByRssIdOrIsRead(
         rssId: ULong?,
         isRead: Boolean?,
-        page: Long = 0,
-        size: Int = 10
+        page: Long? = null,
+        size: Int? = null,
     ) = rssRepository.selectRssItemByRssIdOrIsRead(rssId, isRead, page, size)
 
     suspend fun markRssItemReadByIdOrRssId(

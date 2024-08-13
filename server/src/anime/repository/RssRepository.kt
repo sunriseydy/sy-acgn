@@ -52,7 +52,7 @@ class RssRepository {
         RssDAO.findById(id)?.delete() ?: throw NoSuchElementException()
     }
 
-    suspend fun selectRssItemByRssIdOrIsRead(rssId: ULong?, isRead: Boolean?, page: Long = 0, size: Int = 10) =
+    suspend fun selectRssItemByRssIdOrIsRead(rssId: ULong?, isRead: Boolean?, page: Long? = null, size: Int? = null) =
         suspendTransaction {
             RssItemDAO.find {
                 (rssId?.let { RssItemTable.rssId eq it } ?: Op.TRUE) and

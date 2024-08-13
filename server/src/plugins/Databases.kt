@@ -62,9 +62,9 @@ fun Application.initializeDatabase() {
 suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
     newSuspendedTransaction(Dispatchers.IO, statement = block)
 
-fun <T> SizedIterable<T>.paging(page: Long = 0, size: Int = 10) =
-    if (page > 0) {
-        this.limit(size, (page - 1) * size)
-    } else {
+fun <T> SizedIterable<T>.paging(page: Long? = null, size: Int? = null) =
+    if (page == null || size == null || page <= 0) {
         this
+    } else {
+        this.limit(size, (page - 1) * size)
     }

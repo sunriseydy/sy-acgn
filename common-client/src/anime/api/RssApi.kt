@@ -51,8 +51,8 @@ class RssApi internal constructor(private val httpClient: HttpClient) {
     suspend fun getRssItemByRssIdOrIsRead(
         rssId: ULong?,
         isRead: Boolean?,
-        page: Long = 0,
-        size: Int = 10
+        page: Long,
+        size: Int,
     ): Result<List<RssItem>> = httpClient.get {
         animeRssApiEndPoint("item")
         parameter("rssId", rssId)
