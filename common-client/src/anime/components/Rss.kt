@@ -19,8 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -104,7 +104,7 @@ fun RssList(modifier: Modifier, rssState: RssState, appState: AppState) {
                                     Icon(Icons.Default.Delete, CommonString.DELETE.localization)
                                 }
                                 IconButton(onClick = { }) {
-                                    Icon(Icons.Default.Update, CommonString.UPDATE.localization)
+                                    Icon(Icons.Default.Edit, CommonString.UPDATE.localization)
                                 }
                                 IconButton(onClick = { }) {
                                     Icon(Icons.Default.Check, RssString.RSS_READ.localization)
