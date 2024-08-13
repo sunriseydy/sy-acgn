@@ -48,6 +48,8 @@ import dev.sunriseydy.acgn.client.components.FormDialog
 import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.onSuccess
 import dev.sunriseydy.acgn.client.onSuccessData
+import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
+import dev.sunriseydy.acgn.client.utils.SupportingText
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -80,6 +82,27 @@ fun RssList(modifier: Modifier, appState: AppState) {
     val editRss: MutableState<Rss?> = remember { mutableStateOf(null) }
     val isError = rememberSaveable { mutableStateOf(false) }
     val errorMessage = rememberSaveable { mutableStateOf("") }
+
+    fun setError(message: String) {
+        isError.value = true
+        errorMessage.value = message
+    }
+
+    fun clearError() {
+        isError.value = false
+        errorMessage.value = ""
+    }
+
+    fun closeAddRssDialog() {
+        newLink.value = ""
+        addRssDialogVisible.value = false
+    }
+
+    fun closeEditRssDialog() {
+        newTitle.value = ""
+        editRss.value = null
+        editRssDialogVisible.value = false
+    }
 
     getAllRss(appState, rssList, true, init)
     Column(modifier = modifier) {
@@ -154,43 +177,33 @@ fun RssList(modifier: Modifier, appState: AppState) {
             formDialogVisible = addRssDialogVisible,
             onConfirmation = {
                 if (newLink.value.isBlank()) {
-                    isError.value = true
-                    errorMessage.value = "${RssString.RSS_FIELD_LINK.localization}${CommonString.IS_BLANK.localization}"
+                    setError(RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization)
                 } else {
                     runBlocking {
                         appState.api.rss.createRss(newLink.value).onSuccess(
                             onSuccess = {
-                                isError.value = false
-                                errorMessage.value = ""
-                                newLink.value = ""
-                                addRssDialogVisible.value = false
+                                clearError()
+                                closeAddRssDialog()
                                 getAllRss(appState, rssList, false, init)
                             },
                             onError = {
-                                isError.value = true
-                                errorMessage.value = it
+                                setError(it)
                             },
                         )
                     }
                 }
             },
             onDismissRequest = {
-                addRssDialogVisible.value = false
-                isError.value = false
-                errorMessage.value = ""
-                newLink.value = ""
+                closeAddRssDialog()
+                clearError()
             },
         ) {
             OutlinedTextField(
                 value = newLink.value,
                 onValueChange = { newLink.value = it },
-                label = { Text(RssString.RSS_FIELD_LINK.localization + "*") },
+                label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.localization) },
                 isError = isError.value,
-                supportingText = {
-                    if (isError.value) {
-                        Text(errorMessage.value, color = MaterialTheme.colorScheme.error)
-                    }
-                }
+                supportingText = { SupportingText(isError.value, errorMessage.value) }
             )
         }
         // 删除 RSS 弹窗
@@ -212,45 +225,32 @@ fun RssList(modifier: Modifier, appState: AppState) {
             formDialogVisible = editRssDialogVisible,
             onConfirmation = {
                 if (newTitle.value.isBlank()) {
-                    isError.value = true
-                    errorMessage.value =
-                        "${RssString.RSS_FIELD_TITLE.localization}${CommonString.IS_BLANK.localization}"
+                    setError(RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization)
                 } else {
                     editRss.value?.also {
                         runBlocking {
                             appState.api.rss.saveRss(it.id, it.copy(title = newTitle.value)).onSuccess(onSuccess = {
-                                isError.value = false
-                                errorMessage.value = ""
-                                newTitle.value = ""
-                                editRss.value = null
-                                editRssDialogVisible.value = false
+                                clearError()
+                                closeEditRssDialog()
                                 getAllRss(appState, rssList, false, init)
                             }, onError = {
-                                isError.value = true
-                                errorMessage.value = it
+                                setError(it)
                             })
                         }
                     }
                 }
             },
             onDismissRequest = {
-                editRssDialogVisible.value = false
-                isError.value = false
-                errorMessage.value = ""
-                newTitle.value = ""
-                editRss.value = null
+                clearError()
+                closeEditRssDialog()
             },
         ) {
             OutlinedTextField(
                 value = newTitle.value,
                 onValueChange = { newTitle.value = it },
-                label = { Text(RssString.RSS_FIELD_TITLE.localization + "*") },
+                label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.localization) },
                 isError = isError.value,
-                supportingText = {
-                    if (isError.value) {
-                        Text(errorMessage.value, color = MaterialTheme.colorScheme.error)
-                    }
-                }
+                supportingText = { SupportingText(isError.value, errorMessage.value) },
             )
         }
     }
