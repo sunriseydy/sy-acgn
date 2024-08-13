@@ -27,7 +27,7 @@ class RssApi internal constructor(private val httpClient: HttpClient) {
         animeRssApiEndPoint()
     }.body()
 
-    suspend fun saveRss(id: ULong, rss: Rss): Result<Rss> = httpClient.put {
+    suspend fun saveRss(id: ULong, rss: Rss): Result<Unit> = httpClient.put {
         animeRssApiEndPoint(id.toString())
         setBody(rss)
     }.body()

@@ -73,7 +73,7 @@ fun RssList(modifier: Modifier, appState: AppState) {
     val editRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val deleteRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val rssListState: LazyListState = rememberLazyListState()
-    val rssList: MutableList<Rss> = remember { mutableListOf<Rss>() }
+    val rssList: MutableState<List<Rss>> = remember { mutableStateOf(listOf()) }
     val newLink = remember { mutableStateOf("") }
     val newTitle = remember { mutableStateOf("") }
     val deleteRss: MutableState<Rss?> = remember { mutableStateOf(null) }
@@ -93,6 +93,7 @@ fun RssList(modifier: Modifier, appState: AppState) {
             IconButton(onClick = {
                 runBlocking {
                     appState.api.rss.markRssItemReadByIdOrRssId()
+                    getAllRss(appState, rssList, false, init)
                 }
             }) {
                 Icon(Icons.Default.Check, RssString.RSS_READ.localization)
@@ -104,7 +105,7 @@ fun RssList(modifier: Modifier, appState: AppState) {
                 state = rssListState,
                 contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
             ) {
-                items(rssList, key = { it.id }) { rss ->
+                items(rssList.value, key = { it.id }) { rss ->
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Row(modifier = Modifier.padding(start = 8.dp)) {
                             Row(modifier = Modifier.fillMaxWidth(0.5f).padding(top = 12.dp)) {
@@ -122,6 +123,7 @@ fun RssList(modifier: Modifier, appState: AppState) {
                                 }
                                 IconButton(onClick = {
                                     editRss.value = rss
+                                    newTitle.value = rss.title
                                     editRssDialogVisible.value = true
                                 }) {
                                     Icon(Icons.Default.Edit, CommonString.UPDATE.localization)
@@ -129,6 +131,7 @@ fun RssList(modifier: Modifier, appState: AppState) {
                                 IconButton(onClick = {
                                     runBlocking {
                                         appState.api.rss.markRssItemReadByIdOrRssId(rssId = rss.id)
+                                        getAllRss(appState, rssList, false, init)
                                     }
                                 }) {
                                     Icon(Icons.Default.Check, RssString.RSS_READ.localization)
@@ -159,6 +162,7 @@ fun RssList(modifier: Modifier, appState: AppState) {
                             onSuccess = {
                                 isError.value = false
                                 errorMessage.value = ""
+                                newLink.value = ""
                                 addRssDialogVisible.value = false
                                 getAllRss(appState, rssList, false, init)
                             },
@@ -174,6 +178,7 @@ fun RssList(modifier: Modifier, appState: AppState) {
                 addRssDialogVisible.value = false
                 isError.value = false
                 errorMessage.value = ""
+                newLink.value = ""
             },
         ) {
             OutlinedTextField(
@@ -196,6 +201,7 @@ fun RssList(modifier: Modifier, appState: AppState) {
                     runBlocking {
                         appState.api.rss.deleteRss(it.id)
                         deleteRssDialogVisible.value = false
+                        getAllRss(appState, rssList, false, init)
                     }
                 }
             },
@@ -215,6 +221,8 @@ fun RssList(modifier: Modifier, appState: AppState) {
                             appState.api.rss.saveRss(it.id, it.copy(title = newTitle.value)).onSuccess(onSuccess = {
                                 isError.value = false
                                 errorMessage.value = ""
+                                newTitle.value = ""
+                                editRss.value = null
                                 editRssDialogVisible.value = false
                                 getAllRss(appState, rssList, false, init)
                             }, onError = {
@@ -229,6 +237,8 @@ fun RssList(modifier: Modifier, appState: AppState) {
                 editRssDialogVisible.value = false
                 isError.value = false
                 errorMessage.value = ""
+                newTitle.value = ""
+                editRss.value = null
             },
         ) {
             OutlinedTextField(
@@ -255,15 +265,14 @@ fun RssItemList(modifier: Modifier, appState: AppState) {
 
 private fun getAllRss(
     appState: AppState,
-    rssList: MutableList<Rss>,
+    rssList: MutableState<List<Rss>>,
     isCheckInit: Boolean = false,
     init: MutableState<Boolean>,
 ) {
     if (isCheckInit && init.value) return
     runBlocking {
         appState.api.rss.getAllRss().onSuccessData(appState, onSuccess = { data ->
-            rssList.clear()
-            rssList.addAll(data)
+            rssList.value = data
             if (isCheckInit) init.value = true
         })
     }
