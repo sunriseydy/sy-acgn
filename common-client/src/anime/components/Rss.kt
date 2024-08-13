@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -61,10 +62,7 @@ fun Rss(appState: AppState) {
 
 @Composable
 fun RssList(modifier: Modifier, rssState: RssState, appState: AppState) {
-    // 首次加载
-    if (rssState.rssList.value.isEmpty()) {
-        getAllRss(appState, rssState)
-    }
+    getAllRss(appState, rssState)
     Column(modifier = modifier) {
         PageTitle(RssString.RSS_TITLE.localization) {
             IconButton(onClick = {
@@ -104,6 +102,9 @@ fun RssList(modifier: Modifier, rssState: RssState, appState: AppState) {
                             ) {
                                 IconButton(onClick = { }) {
                                     Icon(Icons.Default.Delete, CommonString.DELETE.localization)
+                                }
+                                IconButton(onClick = { }) {
+                                    Icon(Icons.Default.Update, CommonString.UPDATE.localization)
                                 }
                                 IconButton(onClick = { }) {
                                     Icon(Icons.Default.Check, RssString.RSS_READ.localization)

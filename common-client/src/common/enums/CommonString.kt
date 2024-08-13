@@ -10,5 +10,9 @@ import dev.sunriseydy.acgn.interfaces.EnumLocalizable
 enum class CommonString : CommonModuleLocalizable, EnumLocalizable {
     REFRESH,
     ADD,
+    UPDATE,
+    CANCEL,
+    SAVE,
+    SUBMIT,
     DELETE,
 }
