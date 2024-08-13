@@ -5,9 +5,11 @@ import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.server.anime.db.RssDAO
 import dev.sunriseydy.acgn.server.anime.db.RssItemDAO
 import dev.sunriseydy.acgn.server.anime.db.RssItemTable
+import dev.sunriseydy.acgn.server.anime.db.RssTable
 import dev.sunriseydy.acgn.server.plugins.paging
 import dev.sunriseydy.acgn.server.plugins.suspendTransaction
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -20,7 +22,7 @@ import java.util.UUID
  */
 class RssRepository {
     suspend fun selectAllRss(): List<Rss> = suspendTransaction {
-        RssDAO.all().map(RssDAO::toDTO)
+        RssDAO.all().orderBy(Pair(RssTable.id, SortOrder.ASC)).map(RssDAO::toDTO)
     }
 
     suspend fun selectRssById(id: ULong) = suspendTransaction {
