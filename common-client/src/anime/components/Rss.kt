@@ -21,10 +21,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -143,9 +145,9 @@ fun RssList(
                             getRssItem(appState, rssItemList, rssId.value, isRead = false, isInit = true, init = null)
                         }
                     ) {
-                        Row(modifier = Modifier.padding(start = 8.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(0.5f).padding(top = 12.dp)) {
-                                Text(text = rss.title, style = MaterialTheme.typography.titleSmall)
+                        Row(modifier = Modifier.padding(8.dp)) {
+                            Row(modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.CenterVertically)) {
+                                Text(text = rss.title, style = MaterialTheme.typography.titleLarge)
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -288,12 +290,31 @@ fun RssItemList(
                 state = rssItemListState,
                 contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
             ) {
-                items(rssItemList.value, key = { it.id }) { rss ->
+                items(rssItemList.value, key = { it.id }) { rssItem ->
                     Card(modifier = Modifier.fillMaxWidth()) {
-                        Row(modifier = Modifier.padding(start = 8.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(0.5f).padding(top = 12.dp)) {
-                                Text(text = rss.title, style = MaterialTheme.typography.titleSmall)
+                        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                            Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
+                                Text(text = rssItem.title, style = MaterialTheme.typography.titleLarge)
                             }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End,
+                            ) {
+                                IconButton(
+                                    onClick = { }
+                                ) {
+                                    Icon(Icons.Default.Download, contentDescription = null)
+                                }
+                                IconButton(
+                                    onClick = { }
+                                ) {
+                                    Icon(Icons.Default.Check, contentDescription = null)
+                                }
+                            }
+                        }
+                        HorizontalDivider(thickness = 4.dp)
+                        Row(modifier = Modifier.padding(8.dp)) {
+                            Text(text = rssItem.description ?: "")
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
