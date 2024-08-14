@@ -57,7 +57,6 @@ import dev.sunriseydy.acgn.client.onSuccessData
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.utils.SupportingText
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 /**
  * @author SunriseYDY
@@ -74,6 +73,35 @@ fun Rss(appState: AppState) {
             appState.api.rss.getAllRss().onSuccessData(appState, onSuccess = { data ->
                 rssList.value = data
             })
+        }
+    }
+
+    fun createRss(
+        link: String,
+        onSuccess: () -> Unit = { },
+        onError: (String) -> Unit = { },
+    ) {
+        appState.scope.launch {
+            appState.api.rss.createRss(link)
+                .onSuccess(appState, onSuccess = onSuccess, onError = onError)
+        }
+    }
+
+    fun deleteRss(id: ULong, onSuccess: () -> Unit) {
+        appState.scope.launch {
+            appState.api.rss.deleteRss(id)
+            onSuccess()
+        }
+    }
+
+    fun updateRss(
+        rss: Rss,
+        onSuccess: () -> Unit = { },
+        onError: (String) -> Unit = { },
+    ) {
+        appState.scope.launch {
+            appState.api.rss.saveRss(rss.id, rss)
+                .onSuccess(appState, onSuccess, onError)
         }
     }
 
@@ -94,6 +122,18 @@ fun Rss(appState: AppState) {
             size = pager.size,
         ).checkSuccessAndNotNull()
     }
+
+    fun markRssItemReadByIdOrRssId(
+        id: String? = null,
+        rssId: ULong? = null
+    ) {
+        appState.scope.launch {
+            appState.api.rss.markRssItemReadByIdOrRssId(id, rssId)
+            loadRss()
+            rssItemPager.loadInit()
+        }
+    }
+
     // 加载数据
     if (rssList.value.isEmpty()) {
         loadRss()
@@ -103,16 +143,35 @@ fun Rss(appState: AppState) {
     }
     // 渲染页面
     Row {
-        RssList(Modifier.fillMaxWidth(0.5f), appState, rssList,
+        RssList(
+            Modifier.fillMaxWidth(0.5f), rssList,
             loadRss = { loadRss() },
             loadRssItem = { it ->
                 rssId.value = it
                 appState.scope.launch {
                     rssItemPager.loadInit()
                 }
-            })
+            },
+            markRssItemReadByIdOrRssId = { id, rssId -> markRssItemReadByIdOrRssId(id, rssId) },
+            createRss = { link, onSuccess, onError -> createRss(link, onSuccess, onError) },
+            deleteRss = { id, onSuccess -> deleteRss(id, onSuccess) },
+            updateRss = { rss, onSuccess, onError -> updateRss(rss, onSuccess, onError) },
+        )
         VerticalDivider(thickness = 2.dp)
-        RssItemList(Modifier.fillMaxWidth(), appState, isOnlyUnread, rssItemPager.data)
+        RssItemList(
+            Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data,
+            markRssItemReadByIdOrRssId = { id, rssId -> markRssItemReadByIdOrRssId(id, rssId) },
+            load = {
+                appState.scope.launch {
+                    rssItemPager.loadInit()
+                }
+            },
+            loadMore = {
+                appState.scope.launch {
+                    rssItemPager.loadNext()
+                }
+            },
+        )
     }
 }
 
@@ -120,12 +179,14 @@ fun Rss(appState: AppState) {
 @OptIn(ExperimentalMaterial3Api::class)
 fun RssList(
     modifier: Modifier,
-    appState: AppState,
     rssList: MutableState<List<Rss>>,
     loadRss: () -> Unit,
     loadRssItem: (ULong) -> Unit,
+    markRssItemReadByIdOrRssId: (String?, ULong?) -> Unit,
+    createRss: (String, () -> Unit, (String) -> Unit) -> Unit,
+    deleteRss: (ULong, () -> Unit) -> Unit,
+    updateRss: (Rss, () -> Unit, (String) -> Unit) -> Unit,
 ) {
-    val init: MutableState<Boolean> = remember { mutableStateOf(false) }
     val addRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val editRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val deleteRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -166,12 +227,7 @@ fun RssList(
             IconButton(onClick = { addRssDialogVisible.value = true }) {
                 Icon(Icons.Default.Add, CommonString.ADD.localization)
             }
-            IconButton(onClick = {
-                runBlocking {
-                    appState.api.rss.markRssItemReadByIdOrRssId()
-                    loadRss()
-                }
-            }) {
+            IconButton(onClick = { markRssItemReadByIdOrRssId(null, null) }) {
                 Icon(Icons.Default.Check, RssString.RSS_READ.localization)
             }
         }
@@ -209,12 +265,7 @@ fun RssList(
                                 }) {
                                     Icon(Icons.Default.Edit, CommonString.UPDATE.localization)
                                 }
-                                IconButton(onClick = {
-                                    runBlocking {
-                                        appState.api.rss.markRssItemReadByIdOrRssId(rssId = rss.id)
-                                        loadRss()
-                                    }
-                                }) {
+                                IconButton(onClick = { markRssItemReadByIdOrRssId(null, rss.id) }) {
                                     Icon(Icons.Default.Check, RssString.RSS_READ.localization)
                                 }
                             }
@@ -237,18 +288,17 @@ fun RssList(
                 if (newLink.value.isBlank()) {
                     setError(RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization)
                 } else {
-                    runBlocking {
-                        appState.api.rss.createRss(newLink.value).onSuccess(
-                            onSuccess = {
-                                clearError()
-                                closeAddRssDialog()
-                                loadRss()
-                            },
-                            onError = {
-                                setError(it)
-                            },
-                        )
-                    }
+                    createRss(
+                        newLink.value,
+                        {
+                            clearError()
+                            closeAddRssDialog()
+                            loadRss()
+                        },
+                        {
+                            setError(it)
+                        },
+                    )
                 }
             },
             onDismissRequest = {
@@ -269,8 +319,7 @@ fun RssList(
             alertDialogVisible = deleteRssDialogVisible,
             onConfirmation = {
                 deleteRss.value?.also {
-                    runBlocking {
-                        appState.api.rss.deleteRss(it.id)
+                    deleteRss(it.id) {
                         deleteRssDialogVisible.value = false
                         loadRss()
                     }
@@ -286,15 +335,17 @@ fun RssList(
                     setError(RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization)
                 } else {
                     editRss.value?.also {
-                        runBlocking {
-                            appState.api.rss.saveRss(it.id, it.copy(title = newTitle.value)).onSuccess(onSuccess = {
+                        updateRss(
+                            it.copy(id = it.id, title = newTitle.value),
+                            {
                                 clearError()
                                 closeEditRssDialog()
                                 loadRss()
-                            }, onError = {
+                            },
+                            {
                                 setError(it)
-                            })
-                        }
+                            }
+                        )
                     }
                 }
             },
@@ -317,9 +368,11 @@ fun RssList(
 @Composable
 fun RssItemList(
     modifier: Modifier,
-    appState: AppState,
     isOnlyUnread: MutableState<Boolean>,
     rssItemList: MutableState<List<RssItem>>,
+    markRssItemReadByIdOrRssId: (String?, ULong?) -> Unit,
+    load: () -> Unit,
+    loadMore: () -> Unit,
 ) {
     val rssItemListState: LazyListState = rememberLazyListState()
 
@@ -331,7 +384,10 @@ fun RssItemList(
                 Text(RssString.IS_ONLY_UNREAD.localization)
                 Checkbox(
                     checked = isOnlyUnread.value,
-                    onCheckedChange = { isOnlyUnread.value = it }
+                    onCheckedChange = {
+                        isOnlyUnread.value = it
+                        load()
+                    }
                 )
             }
         }
@@ -356,9 +412,7 @@ fun RssItemList(
                                 ) {
                                     Icon(Icons.Default.Download, contentDescription = null)
                                 }
-                                IconButton(
-                                    onClick = { }
-                                ) {
+                                IconButton(onClick = { markRssItemReadByIdOrRssId(rssItem.id, null) }) {
                                     Icon(Icons.Default.Check, contentDescription = null)
                                 }
                             }

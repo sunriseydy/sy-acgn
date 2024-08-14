@@ -16,7 +16,6 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import java.util.UUID
 
 /**
  * @author SunriseYDY
@@ -62,7 +61,7 @@ class RssApi internal constructor(private val httpClient: HttpClient) {
     }.body()
 
     suspend fun markRssItemReadByIdOrRssId(
-        id: UUID? = null,
+        id: String? = null,
         rssId: ULong? = null
     ): Result<Int> = httpClient.put {
         animeRssApiEndPoint("item", "read")
