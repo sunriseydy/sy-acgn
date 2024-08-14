@@ -28,6 +28,7 @@ enum:
       RSS_ITEM_TITLE: "订阅条目"
       RSS_FIELD_LINK: "订阅链接"
       RSS_FIELD_TITLE: "订阅标题"
+      IS_ONLY_UNREAD: "仅显示未读"
 
 message:
   error:

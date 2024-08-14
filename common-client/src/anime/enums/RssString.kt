@@ -13,4 +13,5 @@ enum class RssString : AnimeModuleLocalizable, EnumLocalizable {
     RSS_READ,
     RSS_FIELD_LINK,
     RSS_FIELD_TITLE,
+    IS_ONLY_UNREAD,
 }
