@@ -46,6 +46,10 @@ class AnimeApi internal constructor(private val httpClient: HttpClient) {
         animeSeasonApiEndPoint(id.toString())
     }.body()
 
+    suspend fun getAnimeYears(): Result<List<Int>> = httpClient.get {
+        animeSeasonApiEndPoint("years")
+    }.body()
+
     suspend fun getAnimeSeasonsByAnimeId(animeId: ULong): Result<List<AnimeSeason>> = httpClient.get {
         animeSeasonApiEndPoint("by-anime-id")
         parameter("animeId", animeId)

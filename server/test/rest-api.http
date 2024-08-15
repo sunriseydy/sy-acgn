@@ -107,6 +107,10 @@ GET http://localhost:9390/api/anime/anime/season/by-anime-id?animeId=1
 # @no-log
 GET http://localhost:9390/api/anime/anime/season/1
 
+### get anime season years
+# @no-log
+GET http://localhost:9390/api/anime/anime/season/years
+
 ### get anime season by year and month type
 # @no-log
 GET http://localhost:9390/api/anime/anime/season/by-year-and-month-type?year=2024&monthType=SPRING

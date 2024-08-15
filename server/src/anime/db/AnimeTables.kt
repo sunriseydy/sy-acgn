@@ -66,7 +66,10 @@ object AnimeSeasonTable : ULongIdTable("anime_season") {
     val bgmId = ulong("bmg_id").nullable().uniqueIndex()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
-    val un = uniqueIndex(animeId, season)
+
+    init {
+        uniqueIndex(animeId, season)
+    }
 }
 
 class AnimeSeasonDAO(id: EntityID<ULong>) : ULongEntity(id) {
@@ -113,7 +116,10 @@ object AnimeEpisodeTable : ULongIdTable("anime_episode") {
     val bgmId = ulong("bmg_id").nullable().uniqueIndex()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
-    val un = uniqueIndex(animeId, animeSeasonId, episode)
+
+    init {
+        uniqueIndex(animeId, animeSeasonId, episode)
+    }
 }
 
 class AnimeEpisodeDAO(id: EntityID<ULong>) : ULongEntity(id) {

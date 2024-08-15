@@ -43,6 +43,9 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
                     call.parameters["id"]!!.toULong()
                 call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonId)))
             }
+            get("/years") {
+                call.respond(Result(data = animeService.getAnimeSeasonYears()))
+            }
             get("/by-anime-id") {
                 val animeId =
                     call.parameters["animeId"]!!.toULong()
@@ -50,7 +53,7 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
             }
             get("/by-year-and-month-type") {
                 val year = call.parameters["year"]!!.toInt()
-                val monthType = call.parameters["monthType"]!!.let {
+                val monthType = call.parameters["monthType"]?.let {
                     AnimeMonthType.valueOf(it)
                 }
                 call.respond(

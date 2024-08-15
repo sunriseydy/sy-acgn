@@ -27,5 +27,5 @@ object AnimeAdditionType {
 }
 
 enum class AnimeMonthType(val months: List<Int>) : AnimeModuleLocalizable, EnumLocalizable {
-    SPRING(listOf(4, 5, 6)), SUMMER(listOf(7, 8, 9)), FALL(listOf(10, 11, 12)), WINTER(listOf(1, 2, 3)),
+    WINTER(listOf(1, 2, 3)), SPRING(listOf(4, 5, 6)), SUMMER(listOf(7, 8, 9)), FALL(listOf(10, 11, 12)),
 }

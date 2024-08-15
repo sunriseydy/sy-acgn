@@ -62,7 +62,10 @@ object RssItemTable : UUIDTable("anime_rss_item") {
     val publishedAt = timestamp("published_at").index()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
-    val u1 = index(isUnique = true, rssId, guid)
+
+    init {
+        uniqueIndex(rssId, guid)
+    }
 }
 
 class RssItemDAO(id: EntityID<UUID>) : UUIDEntity(id) {

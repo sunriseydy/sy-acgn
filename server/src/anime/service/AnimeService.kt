@@ -73,11 +73,13 @@ class AnimeService(
                 )
             }
 
+    suspend fun getAnimeSeasonYears() = animeRepository.selectAnimeSeasonYears()
+
     suspend fun getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(
         year: Int,
-        monthType: AnimeMonthType
+        monthType: AnimeMonthType? = null
     ): List<AnimeSeason> {
-        return animeRepository.selectAnimeSeasonsByYearAndMonth(year, monthType.months)
+        return animeRepository.selectAnimeSeasonsByYearAndMonth(year, monthType?.months)
             .map {
                 it.copy(
                     additions = additionalInfoRepository.selectAdditionalInfos(
