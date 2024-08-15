@@ -51,6 +51,7 @@ import dev.sunriseydy.acgn.client.components.AcgnAlertDialog
 import dev.sunriseydy.acgn.client.components.FormDialog
 import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.components.showError
+import dev.sunriseydy.acgn.client.interfaces.Paging
 import dev.sunriseydy.acgn.client.interfaces.getPager
 import dev.sunriseydy.acgn.client.onSuccess
 import dev.sunriseydy.acgn.client.onSuccessData
@@ -66,8 +67,298 @@ import kotlinx.coroutines.launch
 fun Rss(appState: AppState) {
     val rssId: MutableState<ULong> = remember { mutableStateOf(ULong.MIN_VALUE) }
     val rssList: MutableState<List<Rss>> = remember { mutableStateOf(listOf()) }
-    val isOnlyUnread = remember { mutableStateOf(true) }
+    val isOnlyUnread: MutableState<Boolean> = remember { mutableStateOf(true) }
 
+    val rssItemPager: Paging<RssItem> = getPager<RssItem>(
+        page = remember { mutableStateOf(1L) },
+        size = 50,
+        data = remember { mutableStateOf(listOf()) },
+        loading = remember { mutableStateOf(false) },
+        finished = remember { mutableStateOf(false) },
+        onError = { e ->
+            appState.showError(e.message ?: CommonString.API_ERROR.localization)
+        },
+    ) { pager ->
+        appState.api.rss.getRssItemByRssIdOrIsRead(
+            rssId = if (rssId.value == ULong.MIN_VALUE) null else rssId.value,
+            isRead = if (isOnlyUnread.value == true) false else null,
+            page = pager.page.value,
+            size = pager.size,
+        ).checkSuccessAndNotNull()
+    }
+
+    val rssOperator: RssOperator = RssOperator(appState, rssList, rssItemPager, rssId)
+
+    // 加载数据
+    rssOperator.loadData()
+
+    // 渲染页面
+    Row {
+        RssList(Modifier.fillMaxWidth(0.5f), rssList, rssOperator)
+        VerticalDivider(thickness = 2.dp)
+        RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, rssOperator)
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun RssList(
+    modifier: Modifier,
+    rssList: MutableState<List<Rss>>,
+    rssOperator: RssOperator,
+) {
+    val addRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val editRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val deleteRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val rssListState: LazyListState = rememberLazyListState()
+    val newLink = remember { mutableStateOf("") }
+    val newTitle = remember { mutableStateOf("") }
+    val deleteRss: MutableState<Rss?> = remember { mutableStateOf(null) }
+    val editRss: MutableState<Rss?> = remember { mutableStateOf(null) }
+    val isError = rememberSaveable { mutableStateOf(false) }
+    val errorMessage = rememberSaveable { mutableStateOf("") }
+
+    fun setError(message: String) {
+        isError.value = true
+        errorMessage.value = message
+    }
+
+    fun clearError() {
+        isError.value = false
+        errorMessage.value = ""
+    }
+
+    fun closeAddRssDialog() {
+        newLink.value = ""
+        addRssDialogVisible.value = false
+    }
+
+    fun closeEditRssDialog() {
+        newTitle.value = ""
+        editRss.value = null
+        editRssDialogVisible.value = false
+    }
+
+    Column(modifier = modifier) {
+        PageTitle(RssString.RSS_TITLE.localization) {
+            IconButton(onClick = { rssOperator.loadRss() }) {
+                Icon(Icons.Default.Refresh, CommonString.REFRESH.localization)
+            }
+            IconButton(onClick = { addRssDialogVisible.value = true }) {
+                Icon(Icons.Default.Add, CommonString.ADD.localization)
+            }
+            IconButton(onClick = { rssOperator.markRssItemReadByIdOrRssId(null, null) }) {
+                Icon(Icons.Default.Check, RssString.RSS_READ.localization)
+            }
+        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = rssListState,
+                contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+            ) {
+                items(rssList.value, key = { it.id }) { rss ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            rssOperator.loadRssItem(rss.id)
+                        }
+                    ) {
+                        Row(modifier = Modifier.padding(8.dp)) {
+                            Row(modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.CenterVertically)) {
+                                Text(text = rss.title, style = MaterialTheme.typography.titleLarge)
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End,
+                            ) {
+                                IconButton(onClick = {
+                                    deleteRss.value = rss
+                                    deleteRssDialogVisible.value = true
+                                }) {
+                                    Icon(Icons.Default.Delete, CommonString.DELETE.localization)
+                                }
+                                IconButton(onClick = {
+                                    editRss.value = rss
+                                    newTitle.value = rss.title
+                                    editRssDialogVisible.value = true
+                                }) {
+                                    Icon(Icons.Default.Edit, CommonString.UPDATE.localization)
+                                }
+                                IconButton(onClick = { rssOperator.markRssItemReadByIdOrRssId(null, rss.id) }) {
+                                    Icon(Icons.Default.Check, RssString.RSS_READ.localization)
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+            VerticalScrollbar(
+                modifier = Modifier.padding(end = 4.dp).align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(
+                    scrollState = rssListState
+                )
+            )
+        }
+        // 创建 RSS 弹窗
+        FormDialog(
+            formDialogVisible = addRssDialogVisible,
+            onConfirmation = {
+                if (newLink.value.isBlank()) {
+                    setError(RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization)
+                } else {
+                    rssOperator.createRss(
+                        newLink.value,
+                        onSuccess = {
+                            clearError()
+                            closeAddRssDialog()
+                            rssOperator.loadRss()
+                        },
+                        onError = {
+                            setError(it)
+                        },
+                    )
+                }
+            },
+            onDismissRequest = {
+                closeAddRssDialog()
+                clearError()
+            },
+        ) {
+            OutlinedTextField(
+                value = newLink.value,
+                onValueChange = { newLink.value = it },
+                label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.localization) },
+                isError = isError.value,
+                supportingText = { SupportingText(isError.value, errorMessage.value) }
+            )
+        }
+        // 删除 RSS 弹窗
+        AcgnAlertDialog(
+            alertDialogVisible = deleteRssDialogVisible,
+            onConfirmation = {
+                deleteRss.value?.also {
+                    rssOperator.deleteRss(it.id) {
+                        deleteRssDialogVisible.value = false
+                        rssOperator.loadRss()
+                    }
+                }
+            },
+            dialogTitle = CommonString.DELETE.localization + deleteRss.value?.title,
+        )
+        // 更新 RSS 弹窗
+        FormDialog(
+            formDialogVisible = editRssDialogVisible,
+            onConfirmation = {
+                if (newTitle.value.isBlank()) {
+                    setError(RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization)
+                } else {
+                    editRss.value?.also {
+                        rssOperator.updateRss(
+                            it.copy(id = it.id, title = newTitle.value),
+                            onSuccess = {
+                                clearError()
+                                closeEditRssDialog()
+                                rssOperator.loadRss()
+                            },
+                            onError = {
+                                setError(it)
+                            }
+                        )
+                    }
+                }
+            },
+            onDismissRequest = {
+                clearError()
+                closeEditRssDialog()
+            },
+        ) {
+            OutlinedTextField(
+                value = newTitle.value,
+                onValueChange = { newTitle.value = it },
+                label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.localization) },
+                isError = isError.value,
+                supportingText = { SupportingText(isError.value, errorMessage.value) },
+            )
+        }
+    }
+}
+
+@Composable
+fun RssItemList(
+    modifier: Modifier,
+    isOnlyUnread: MutableState<Boolean>,
+    rssItemList: MutableState<List<RssItem>>,
+    rssOperator: RssOperator,
+) {
+    val rssItemListState: LazyListState = rememberLazyListState()
+
+    Column(modifier = modifier) {
+        PageTitle(RssString.RSS_ITEM_TITLE.localization) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(RssString.IS_ONLY_UNREAD.localization)
+                Checkbox(
+                    checked = isOnlyUnread.value,
+                    onCheckedChange = {
+                        isOnlyUnread.value = it
+                        rssOperator.loadRssItem()
+                    }
+                )
+            }
+        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = rssItemListState,
+                contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+            ) {
+                items(rssItemList.value, key = { it.id }) { rssItem ->
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                            Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
+                                Text(text = rssItem.title, style = MaterialTheme.typography.titleLarge)
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End,
+                            ) {
+                                IconButton(
+                                    onClick = { }
+                                ) {
+                                    Icon(Icons.Default.Download, contentDescription = null)
+                                }
+                                IconButton(onClick = { rssOperator.markRssItemReadByIdOrRssId(rssItem.id, null) }) {
+                                    Icon(Icons.Default.Check, contentDescription = null)
+                                }
+                            }
+                        }
+                        HorizontalDivider(thickness = 4.dp)
+                        Row(modifier = Modifier.padding(8.dp)) {
+                            Text(text = rssItem.description ?: "")
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+            VerticalScrollbar(
+                modifier = Modifier.padding(end = 4.dp).align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(
+                    scrollState = rssItemListState
+                )
+            )
+        }
+    }
+}
+
+class RssOperator(
+    val appState: AppState,
+    val rssList: MutableState<List<Rss>>,
+    val rssItemPager: Paging<RssItem>,
+    val rssIdState: MutableState<ULong>,
+) {
     fun loadRss() {
         appState.scope.launch {
             appState.api.rss.getAllRss().onSuccessData(appState, onSuccess = { data ->
@@ -105,332 +396,31 @@ fun Rss(appState: AppState) {
         }
     }
 
-    val rssItemPager = getPager<RssItem>(
-        page = remember { mutableStateOf(1L) },
-        size = 50,
-        data = remember { mutableStateOf(listOf()) },
-        loading = remember { mutableStateOf(false) },
-        finished = remember { mutableStateOf(false) },
-        onError = { e ->
-            appState.showError(e.message ?: CommonString.API_ERROR.localization)
-        },
-    ) { pager ->
-        appState.api.rss.getRssItemByRssIdOrIsRead(
-            rssId = if (rssId.value == ULong.MIN_VALUE) null else rssId.value,
-            isRead = if (isOnlyUnread.value == true) false else null,
-            page = pager.page.value,
-            size = pager.size,
-        ).checkSuccessAndNotNull()
-    }
-
     fun markRssItemReadByIdOrRssId(
         id: String? = null,
         rssId: ULong? = null
     ) {
         appState.scope.launch {
             appState.api.rss.markRssItemReadByIdOrRssId(id, rssId)
-            loadRss()
+            loadData()
+        }
+    }
+
+    fun loadRssItem() {
+        appState.scope.launch {
             rssItemPager.loadInit()
         }
     }
 
-    // 加载数据
-    if (rssList.value.isEmpty()) {
-        loadRss()
-    }
-    appState.scope.launch {
-        rssItemPager.loadInit()
-    }
-    // 渲染页面
-    Row {
-        RssList(
-            Modifier.fillMaxWidth(0.5f), rssList,
-            loadRss = { loadRss() },
-            loadRssItem = { it ->
-                rssId.value = it
-                appState.scope.launch {
-                    rssItemPager.loadInit()
-                }
-            },
-            markRssItemReadByIdOrRssId = { id, rssId -> markRssItemReadByIdOrRssId(id, rssId) },
-            createRss = { link, onSuccess, onError -> createRss(link, onSuccess, onError) },
-            deleteRss = { id, onSuccess -> deleteRss(id, onSuccess) },
-            updateRss = { rss, onSuccess, onError -> updateRss(rss, onSuccess, onError) },
-        )
-        VerticalDivider(thickness = 2.dp)
-        RssItemList(
-            Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data,
-            markRssItemReadByIdOrRssId = { id, rssId -> markRssItemReadByIdOrRssId(id, rssId) },
-            load = {
-                appState.scope.launch {
-                    rssItemPager.loadInit()
-                }
-            },
-            loadMore = {
-                appState.scope.launch {
-                    rssItemPager.loadNext()
-                }
-            },
-        )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun RssList(
-    modifier: Modifier,
-    rssList: MutableState<List<Rss>>,
-    loadRss: () -> Unit,
-    loadRssItem: (ULong) -> Unit,
-    markRssItemReadByIdOrRssId: (String?, ULong?) -> Unit,
-    createRss: (String, () -> Unit, (String) -> Unit) -> Unit,
-    deleteRss: (ULong, () -> Unit) -> Unit,
-    updateRss: (Rss, () -> Unit, (String) -> Unit) -> Unit,
-) {
-    val addRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val editRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val deleteRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val rssListState: LazyListState = rememberLazyListState()
-    val newLink = remember { mutableStateOf("") }
-    val newTitle = remember { mutableStateOf("") }
-    val deleteRss: MutableState<Rss?> = remember { mutableStateOf(null) }
-    val editRss: MutableState<Rss?> = remember { mutableStateOf(null) }
-    val isError = rememberSaveable { mutableStateOf(false) }
-    val errorMessage = rememberSaveable { mutableStateOf("") }
-
-    fun setError(message: String) {
-        isError.value = true
-        errorMessage.value = message
+    fun loadRssItem(rssId: ULong) {
+        rssIdState.value = rssId
+        loadRssItem()
     }
 
-    fun clearError() {
-        isError.value = false
-        errorMessage.value = ""
-    }
-
-    fun closeAddRssDialog() {
-        newLink.value = ""
-        addRssDialogVisible.value = false
-    }
-
-    fun closeEditRssDialog() {
-        newTitle.value = ""
-        editRss.value = null
-        editRssDialogVisible.value = false
-    }
-
-    Column(modifier = modifier) {
-        PageTitle(RssString.RSS_TITLE.localization) {
-            IconButton(onClick = { loadRss() }) {
-                Icon(Icons.Default.Refresh, CommonString.REFRESH.localization)
-            }
-            IconButton(onClick = { addRssDialogVisible.value = true }) {
-                Icon(Icons.Default.Add, CommonString.ADD.localization)
-            }
-            IconButton(onClick = { markRssItemReadByIdOrRssId(null, null) }) {
-                Icon(Icons.Default.Check, RssString.RSS_READ.localization)
-            }
+    fun loadData() {
+        if (rssList.value.isEmpty()) {
+            loadRss()
         }
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = rssListState,
-                contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-            ) {
-                items(rssList.value, key = { it.id }) { rss ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            loadRssItem(rss.id)
-                        }
-                    ) {
-                        Row(modifier = Modifier.padding(8.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.CenterVertically)) {
-                                Text(text = rss.title, style = MaterialTheme.typography.titleLarge)
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End,
-                            ) {
-                                IconButton(onClick = {
-                                    deleteRss.value = rss
-                                    deleteRssDialogVisible.value = true
-                                }) {
-                                    Icon(Icons.Default.Delete, CommonString.DELETE.localization)
-                                }
-                                IconButton(onClick = {
-                                    editRss.value = rss
-                                    newTitle.value = rss.title
-                                    editRssDialogVisible.value = true
-                                }) {
-                                    Icon(Icons.Default.Edit, CommonString.UPDATE.localization)
-                                }
-                                IconButton(onClick = { markRssItemReadByIdOrRssId(null, rss.id) }) {
-                                    Icon(Icons.Default.Check, RssString.RSS_READ.localization)
-                                }
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-            VerticalScrollbar(
-                modifier = Modifier.padding(end = 4.dp).align(Alignment.CenterEnd).fillMaxHeight(),
-                adapter = rememberScrollbarAdapter(
-                    scrollState = rssListState
-                )
-            )
-        }
-        // 创建 RSS 弹窗
-        FormDialog(
-            formDialogVisible = addRssDialogVisible,
-            onConfirmation = {
-                if (newLink.value.isBlank()) {
-                    setError(RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization)
-                } else {
-                    createRss(
-                        newLink.value,
-                        {
-                            clearError()
-                            closeAddRssDialog()
-                            loadRss()
-                        },
-                        {
-                            setError(it)
-                        },
-                    )
-                }
-            },
-            onDismissRequest = {
-                closeAddRssDialog()
-                clearError()
-            },
-        ) {
-            OutlinedTextField(
-                value = newLink.value,
-                onValueChange = { newLink.value = it },
-                label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.localization) },
-                isError = isError.value,
-                supportingText = { SupportingText(isError.value, errorMessage.value) }
-            )
-        }
-        // 删除 RSS 弹窗
-        AcgnAlertDialog(
-            alertDialogVisible = deleteRssDialogVisible,
-            onConfirmation = {
-                deleteRss.value?.also {
-                    deleteRss(it.id) {
-                        deleteRssDialogVisible.value = false
-                        loadRss()
-                    }
-                }
-            },
-            dialogTitle = CommonString.DELETE.localization + deleteRss.value?.title,
-        )
-        // 更新 RSS 弹窗
-        FormDialog(
-            formDialogVisible = editRssDialogVisible,
-            onConfirmation = {
-                if (newTitle.value.isBlank()) {
-                    setError(RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization)
-                } else {
-                    editRss.value?.also {
-                        updateRss(
-                            it.copy(id = it.id, title = newTitle.value),
-                            {
-                                clearError()
-                                closeEditRssDialog()
-                                loadRss()
-                            },
-                            {
-                                setError(it)
-                            }
-                        )
-                    }
-                }
-            },
-            onDismissRequest = {
-                clearError()
-                closeEditRssDialog()
-            },
-        ) {
-            OutlinedTextField(
-                value = newTitle.value,
-                onValueChange = { newTitle.value = it },
-                label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.localization) },
-                isError = isError.value,
-                supportingText = { SupportingText(isError.value, errorMessage.value) },
-            )
-        }
-    }
-}
-
-@Composable
-fun RssItemList(
-    modifier: Modifier,
-    isOnlyUnread: MutableState<Boolean>,
-    rssItemList: MutableState<List<RssItem>>,
-    markRssItemReadByIdOrRssId: (String?, ULong?) -> Unit,
-    load: () -> Unit,
-    loadMore: () -> Unit,
-) {
-    val rssItemListState: LazyListState = rememberLazyListState()
-
-    Column(modifier = modifier) {
-        PageTitle(RssString.RSS_ITEM_TITLE.localization) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(RssString.IS_ONLY_UNREAD.localization)
-                Checkbox(
-                    checked = isOnlyUnread.value,
-                    onCheckedChange = {
-                        isOnlyUnread.value = it
-                        load()
-                    }
-                )
-            }
-        }
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = rssItemListState,
-                contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-            ) {
-                items(rssItemList.value, key = { it.id }) { rssItem ->
-                    Card(modifier = Modifier.fillMaxWidth()) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
-                                Text(text = rssItem.title, style = MaterialTheme.typography.titleLarge)
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End,
-                            ) {
-                                IconButton(
-                                    onClick = { }
-                                ) {
-                                    Icon(Icons.Default.Download, contentDescription = null)
-                                }
-                                IconButton(onClick = { markRssItemReadByIdOrRssId(rssItem.id, null) }) {
-                                    Icon(Icons.Default.Check, contentDescription = null)
-                                }
-                            }
-                        }
-                        HorizontalDivider(thickness = 4.dp)
-                        Row(modifier = Modifier.padding(8.dp)) {
-                            Text(text = rssItem.description ?: "")
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-            VerticalScrollbar(
-                modifier = Modifier.padding(end = 4.dp).align(Alignment.CenterEnd).fillMaxHeight(),
-                adapter = rememberScrollbarAdapter(
-                    scrollState = rssItemListState
-                )
-            )
-        }
+        loadRssItem()
     }
 }
