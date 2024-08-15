@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.client.AppState
+import dev.sunriseydy.acgn.client.components.AcgnLazyColumn
 import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationRoute
 import dev.sunriseydy.acgn.client.onSuccessData
@@ -69,18 +72,34 @@ private fun YearMonth(appState: AppState, year: Int, monthType: AnimeMonthType) 
 
     if (seasonList.value.isEmpty()) {
         operator.loadSeasons(year, monthType) {
-            seasonList.value
+            seasonList.value = it
         }
     }
 
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    ) {
-        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-            Text(text = monthType.localization, style = MaterialTheme.typography.titleLarge)
+    if (seasonList.value.isNotEmpty()) {
+        Card(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp).fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        ) {
+            Row(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
+                Text(text = monthType.localization, style = MaterialTheme.typography.titleLarge)
+            }
+            AcgnLazyColumn(modifier = Modifier.height(500.dp).fillMaxWidth(), lazyListState = seasonListState) {
+                items(seasonList.value) { season ->
+                    Card(
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp).fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    ) {
+                        Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
+                            Text(text = season.name, style = MaterialTheme.typography.titleLarge)
+                            Text(text = season.description ?: "", style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
+                }
+            }
         }
     }
+
 }
 
 private class AnimeSeasonOperator(
