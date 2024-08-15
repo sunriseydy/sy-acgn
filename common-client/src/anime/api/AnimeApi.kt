@@ -58,6 +58,8 @@ class AnimeApi internal constructor(private val httpClient: HttpClient) {
     suspend fun getAnimeSeasonsByYearAndMonth(year: Int, monthType: AnimeMonthType): Result<List<AnimeSeason>> =
         httpClient.get {
             animeSeasonApiEndPoint("by-year-and-month-type")
+            parameter("year", year)
+            parameter("monthType", monthType)
         }.body()
 
     suspend fun saveAnimeSeason(animeSeason: AnimeSeason): Result<AnimeSeason> = httpClient.post {

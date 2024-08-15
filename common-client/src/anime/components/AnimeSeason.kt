@@ -17,6 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.components.AcgnLazyColumn
 import dev.sunriseydy.acgn.client.components.PageTitle
@@ -32,9 +34,13 @@ import kotlinx.coroutines.launch
 fun AnimeSeason(appState: AppState) {
     val yearListState: LazyListState = rememberLazyListState()
     val yearList: MutableState<List<Int>> = remember { mutableStateOf(listOf()) }
-    val operator = AnimeSeasonOperator(appState, yearList)
+    val operator = AnimeSeasonOperator(appState)
 
-    operator.loadYears()
+    if (yearList.value.isEmpty()) {
+        operator.loadYears {
+            yearList.value = it
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         PageTitle(AcgnNavigationRoute.ANIME_SEASON.localization)
@@ -44,20 +50,50 @@ fun AnimeSeason(appState: AppState) {
                     Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
                         Text(text = year.toString(), style = MaterialTheme.typography.titleLarge)
                     }
+                    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                        AnimeMonthType.entries.forEach { monthType ->
+                            YearMonth(appState, year, monthType)
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-class AnimeSeasonOperator(val appState: AppState, val yearList: MutableState<List<Int>>) {
-    fun loadYears() {
-        if (yearList.value.isNotEmpty()) return
+@Composable
+private fun YearMonth(appState: AppState, year: Int, monthType: AnimeMonthType) {
+    val seasonListState: LazyListState = rememberLazyListState()
+    val seasonList: MutableState<List<AnimeSeason>> = remember { mutableStateOf(listOf()) }
+    val operator = AnimeSeasonOperator(appState)
+
+    if (seasonList.value.isEmpty()) {
+        operator.loadSeasons(year, monthType) {
+            seasonList.value
+        }
+    }
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Text(text = monthType.localization, style = MaterialTheme.typography.titleLarge)
+        }
+    }
+}
+
+private class AnimeSeasonOperator(
+    val appState: AppState,
+) {
+    fun loadYears(onSuccess: (List<Int>) -> Unit) {
         appState.scope.launch {
             appState.api.anime.getAnimeYears()
-                .onSuccessData(appState, onSuccess = {
-                    yearList.value = it
-                })
+                .onSuccessData(appState, onSuccess)
+        }
+    }
+
+    fun loadSeasons(year: Int, monthType: AnimeMonthType, onSuccess: (List<AnimeSeason>) -> Unit) {
+        appState.scope.launch {
+            appState.api.anime.getAnimeSeasonsByYearAndMonth(year, monthType)
+                .onSuccessData(appState, onSuccess = onSuccess)
         }
     }
 }
