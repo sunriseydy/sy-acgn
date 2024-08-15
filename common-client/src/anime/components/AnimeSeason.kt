@@ -2,7 +2,6 @@ package dev.sunriseydy.acgn.client.anime.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -56,9 +55,7 @@ fun AnimeSeason(appState: AppState) {
         AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = lazyListState) {
             sectionMapState.value.forEach { sectionMap ->
                 stickyHeader(key = sectionMap.key) {
-                    Row(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
-                        Text(text = sectionMap.key, style = MaterialTheme.typography.titleLarge)
-                    }
+                    PageTitle(sectionMap.key)
                 }
                 items(sectionMap.value) { season ->
                     Card(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp).fillMaxWidth()) {
