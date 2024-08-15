@@ -2,12 +2,16 @@ package dev.sunriseydy.acgn.client.anime.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
@@ -23,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.client.AppState
-import dev.sunriseydy.acgn.client.components.AcgnLazyColumn
 import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationRoute
 import dev.sunriseydy.acgn.client.onSuccessData
@@ -38,7 +41,7 @@ import kotlinx.coroutines.launch
 fun AnimeSeason(appState: AppState) {
     val sectionMapState: MutableState<MutableMap<String, List<AnimeSeason>>> =
         remember { mutableStateOf(mutableMapOf()) }
-    val lazyListState: LazyListState = rememberLazyListState()
+    val state: LazyStaggeredGridState = rememberLazyStaggeredGridState()
     val init = remember { mutableStateOf(false) }
     val loading = remember { mutableStateOf(false) }
     val operator = AnimeSeasonOperator(appState)
@@ -66,13 +69,18 @@ fun AnimeSeason(appState: AppState) {
                 Icon(Icons.Default.Refresh, null)
             }
         }
-        AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = lazyListState) {
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(4),
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            contentPadding = PaddingValues(8.dp),
+        ) {
             sectionMapState.value.forEach { sectionMap ->
-                stickyHeader(key = sectionMap.key) {
+                item(span = StaggeredGridItemSpan.FullLine) {
                     PageTitle(sectionMap.key)
                 }
                 items(sectionMap.value) { season ->
-                    Card(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp).fillMaxWidth()) {
+                    Card(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
                         Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
                             Text(text = season.name, style = MaterialTheme.typography.titleLarge)
                             Text(text = season.description ?: "", style = MaterialTheme.typography.bodyLarge)
