@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.icons.Icons
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -336,7 +339,7 @@ fun RssItemList(
                 state = rssItemListState,
                 contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
             ) {
-                items(rssItemList.value, key = { it.id }) { rssItem ->
+                itemsIndexed(rssItemList.value, key = { index, rssItem -> rssItem.id }) { index, rssItem ->
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
                             Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
@@ -367,6 +370,21 @@ fun RssItemList(
                                 rssItem.rss?.let { Text(it.title) }
                             }
                             rssItem.description?.let { Text(it) }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        if (index == rssItemList.value.lastIndex) {
+                            IconButton(
+                                onClick = {
+                                    rssOperator.loadMoreRssItem()
+                                }
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowDown, null, modifier = Modifier.size(48.dp))
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -437,6 +455,12 @@ class RssOperator(
     fun loadRssItem() {
         appState.scope.launch {
             rssItemPager.loadInit()
+        }
+    }
+
+    fun loadMoreRssItem() {
+        appState.scope.launch {
+            rssItemPager.loadNext()
         }
     }
 
