@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,19 +43,29 @@ fun AnimeSeason(appState: AppState) {
     val loading = remember { mutableStateOf(false) }
     val operator = AnimeSeasonOperator(appState)
 
-    // 加载数据
-    if (!loading.value && !init.value && sectionMapState.value.isEmpty()) {
-        loading.value = true
-        operator.loadData(onSuccess = {
-            sectionMapState.value = it
-            init.value = true
-            loading.value = false
-        }, onError = { loading.value = false })
+    fun loadData() {
+        if (!loading.value && !init.value) {
+            loading.value = true
+            operator.loadData(onSuccess = {
+                sectionMapState.value = it
+                init.value = true
+                loading.value = false
+            }, onError = { loading.value = false })
+        }
     }
+    // 加载数据
+    loadData()
 
     // 渲染组件
     Column(modifier = Modifier.fillMaxSize()) {
-        PageTitle(AcgnNavigationRoute.ANIME_SEASON.localization)
+        PageTitle(AcgnNavigationRoute.ANIME_SEASON.localization) {
+            IconButton(onClick = {
+                init.value = false
+                loadData()
+            }) {
+                Icon(Icons.Default.Refresh, null)
+            }
+        }
         AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = lazyListState) {
             sectionMapState.value.forEach { sectionMap ->
                 stickyHeader(key = sectionMap.key) {
