@@ -4,7 +4,7 @@ enum:
       SIMPLIFIED_CHINESE: "简体中文"
     AcgnNavigationRoute:
       RSS: "订阅"
-      ANIME: "动画"
+      ANIME_SEASON: "动画季度"
     CommonString:
       REFRESH: "刷新"
       ADD: "添加"
@@ -23,6 +23,11 @@ enum:
       ANIME_SEASON: "动画季度"
       ANIME_EPISODE: "动画集"
       ANIME_MOVIE: "动画电影"
+    AnimeMonthType:
+      WINTER: "冬季动画"
+      SPRING: "春季动画"
+      SUMMER: "夏季动画"
+      FALL: "秋季动画"
     RssString:
       RSS_TITLE: "订阅"
       RSS_READ: "已读"

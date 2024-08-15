@@ -11,5 +11,5 @@ import dev.sunriseydy.acgn.interfaces.EnumLocalizable
 
 enum class AcgnNavigationRoute(val icon: ImageVector? = null) : CommonModuleLocalizable, EnumLocalizable {
     RSS,
-    ANIME,
+    ANIME_SEASON,
 }

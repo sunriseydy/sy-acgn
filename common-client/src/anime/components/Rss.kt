@@ -1,24 +1,17 @@
 package dev.sunriseydy.acgn.client.anime.components
 
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -53,6 +46,7 @@ import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.enums.RssString
 import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.client.components.AcgnAlertDialog
+import dev.sunriseydy.acgn.client.components.AcgnLazyColumn
 import dev.sunriseydy.acgn.client.components.FormDialog
 import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.components.showError
@@ -167,63 +161,51 @@ fun RssList(
                 Icon(Icons.Default.Check, RssString.RSS_READ.localization)
             }
         }
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = rssListState,
-                contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-            ) {
-                items(rssList.value, key = { it.id }) { rss ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            currentRss.value = rss
-                            rssOperator.loadRssItem()
-                        },
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (rss.id == currentRss.value.id)
-                                MaterialTheme.colorScheme.primaryContainer
-                            else
-                                MaterialTheme.colorScheme.surfaceVariant,
-                        ),
-                    ) {
-                        Row(modifier = Modifier.padding(8.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.CenterVertically)) {
-                                Text(text = rss.title, style = MaterialTheme.typography.titleLarge)
-                                Text(text = "(${rss.unreadCount})")
+        AcgnLazyColumn(rssListState) {
+            items(rssList.value, key = { it.id }) { rss ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        currentRss.value = rss
+                        rssOperator.loadRssItem()
+                    },
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (rss.id == currentRss.value.id)
+                            MaterialTheme.colorScheme.primaryContainer
+                        else
+                            MaterialTheme.colorScheme.surfaceVariant,
+                    ),
+                ) {
+                    Row(modifier = Modifier.padding(8.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.CenterVertically)) {
+                            Text(text = rss.title, style = MaterialTheme.typography.titleLarge)
+                            Text(text = "(${rss.unreadCount})")
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                        ) {
+                            IconButton(onClick = {
+                                deleteRss.value = rss
+                                deleteRssDialogVisible.value = true
+                            }) {
+                                Icon(Icons.Default.Delete, CommonString.DELETE.localization)
                             }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End,
-                            ) {
-                                IconButton(onClick = {
-                                    deleteRss.value = rss
-                                    deleteRssDialogVisible.value = true
-                                }) {
-                                    Icon(Icons.Default.Delete, CommonString.DELETE.localization)
-                                }
-                                IconButton(onClick = {
-                                    editRss.value = rss
-                                    newTitle.value = rss.title
-                                    editRssDialogVisible.value = true
-                                }) {
-                                    Icon(Icons.Default.Edit, CommonString.UPDATE.localization)
-                                }
-                                IconButton(onClick = { rssOperator.markRssItemReadByIdOrRssId(null, rss.id) }) {
-                                    Icon(Icons.Default.Check, RssString.RSS_READ.localization)
-                                }
+                            IconButton(onClick = {
+                                editRss.value = rss
+                                newTitle.value = rss.title
+                                editRssDialogVisible.value = true
+                            }) {
+                                Icon(Icons.Default.Edit, CommonString.UPDATE.localization)
+                            }
+                            IconButton(onClick = { rssOperator.markRssItemReadByIdOrRssId(null, rss.id) }) {
+                                Icon(Icons.Default.Check, RssString.RSS_READ.localization)
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
+                Spacer(modifier = Modifier.height(8.dp))
             }
-            VerticalScrollbar(
-                modifier = Modifier.padding(end = 4.dp).align(Alignment.CenterEnd).fillMaxHeight(),
-                adapter = rememberScrollbarAdapter(
-                    scrollState = rssListState
-                )
-            )
         }
     }
     // 创建 RSS 弹窗
@@ -336,72 +318,60 @@ fun RssItemList(
                 )
             }
         }
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = rssItemListState,
-                contentPadding = PaddingValues(start = 8.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-            ) {
-                itemsIndexed(rssItemList.value, key = { index, rssItem -> rssItem.id }) { index, rssItem ->
-                    Card(modifier = Modifier.fillMaxWidth()) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-                            Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
-                                Text(text = rssItem.title, style = MaterialTheme.typography.titleLarge)
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End,
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        downloadRssItem.value = rssItem
-                                        downloadDialogVisible.value = true
-                                    }
-                                ) {
-                                    Icon(Icons.Default.Download, contentDescription = null)
-                                }
-                                IconButton(onClick = { rssOperator.markRssItemReadByIdOrRssId(rssItem.id, null) }) {
-                                    Icon(Icons.Default.Check, contentDescription = null)
-                                }
-                            }
+        AcgnLazyColumn(rssItemListState) {
+            itemsIndexed(rssItemList.value, key = { index, rssItem -> rssItem.id }) { index, rssItem ->
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
+                            Text(text = rssItem.title, style = MaterialTheme.typography.titleLarge)
                         }
-                        HorizontalDivider(thickness = 4.dp)
-                        Column(modifier = Modifier.padding(8.dp)) {
-                            Text(
-                                rssItem.publishedAt.toLocalDateTime(
-                                    TimeZone.currentSystemDefault()
-                                ).toString()
-                            )
-                            if (currentRss.value.id == ULong.MIN_VALUE) {
-                                rssItem.rss?.let { Text(it.title) }
-                            }
-                            rssItem.description?.let { Text(it) }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        if (index == rssItemList.value.lastIndex) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                        ) {
                             IconButton(
                                 onClick = {
-                                    rssOperator.loadMoreRssItem()
+                                    downloadRssItem.value = rssItem
+                                    downloadDialogVisible.value = true
                                 }
                             ) {
-                                Icon(Icons.Default.KeyboardArrowDown, null, modifier = Modifier.size(48.dp))
+                                Icon(Icons.Default.Download, contentDescription = null)
+                            }
+                            IconButton(onClick = { rssOperator.markRssItemReadByIdOrRssId(rssItem.id, null) }) {
+                                Icon(Icons.Default.Check, contentDescription = null)
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    HorizontalDivider(thickness = 4.dp)
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            rssItem.publishedAt.toLocalDateTime(
+                                TimeZone.currentSystemDefault()
+                            ).toString()
+                        )
+                        if (currentRss.value.id == ULong.MIN_VALUE) {
+                            rssItem.rss?.let { Text(it.title) }
+                        }
+                        rssItem.description?.let { Text(it) }
+                    }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    if (index == rssItemList.value.lastIndex) {
+                        IconButton(
+                            onClick = {
+                                rssOperator.loadMoreRssItem()
+                            }
+                        ) {
+                            Icon(Icons.Default.KeyboardArrowDown, null, modifier = Modifier.size(48.dp))
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
-            VerticalScrollbar(
-                modifier = Modifier.padding(end = 4.dp).align(Alignment.CenterEnd).fillMaxHeight(),
-                adapter = rememberScrollbarAdapter(
-                    scrollState = rssItemListState
-                )
-            )
         }
     }
     // 下载弹窗

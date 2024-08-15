@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.sunriseydy.acgn.client.AppState
+import dev.sunriseydy.acgn.client.anime.components.AnimeSeason
 import dev.sunriseydy.acgn.client.anime.components.Rss
-import dev.sunriseydy.acgn.client.components.EmptyComingSoon
 
 /**
  * @author SunriseYDY
@@ -20,13 +20,13 @@ fun AcgnNavHost(
     NavHost(
         modifier = modifier,
         navController = appState.navController,
-        startDestination = AcgnNavigationRoute.RSS.name,
+        startDestination = AcgnNavigationRoute.ANIME_SEASON.name,
     ) {
         composable(AcgnNavigationRoute.RSS.name) {
             Rss(appState)
         }
-        composable(AcgnNavigationRoute.ANIME.name) {
-            EmptyComingSoon()
+        composable(AcgnNavigationRoute.ANIME_SEASON.name) {
+            AnimeSeason(appState)
         }
     }
 }
