@@ -94,4 +94,8 @@ class RssRepository {
     suspend fun deleteRssItemByRssId(rssId: ULong): Unit = suspendTransaction {
         RssItemTable.deleteWhere { RssItemTable.rssId eq rssId }
     }
+
+    suspend fun getUnreadRssItemCount(rssId: ULong) = suspendTransaction {
+        RssItemDAO.count(RssItemTable.rssId eq rssId and (RssItemTable.isRead eq false))
+    }
 }

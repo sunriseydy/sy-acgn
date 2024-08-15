@@ -186,6 +186,7 @@ fun RssList(
                         Row(modifier = Modifier.padding(8.dp)) {
                             Row(modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.CenterVertically)) {
                                 Text(text = rss.title, style = MaterialTheme.typography.titleLarge)
+                                Text(text = "(${rss.unreadCount})")
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),

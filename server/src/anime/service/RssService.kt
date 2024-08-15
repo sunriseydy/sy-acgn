@@ -15,6 +15,9 @@ class RssService(val rssRepository: RssRepository = RssRepository()) {
     private val rssCache = mutableMapOf<ULong, Rss>()
 
     suspend fun getAllRss() = rssRepository.selectAllRss().also {
+        it.forEach { rss ->
+            rss.unreadCount = getUnreadRssItemCount(rss.id)
+        }
         rssCache.clear()
         rssCache.putAll(it.associateBy { it.id })
     }
@@ -80,4 +83,6 @@ class RssService(val rssRepository: RssRepository = RssRepository()) {
         id: UUID?,
         rssId: ULong?
     ) = rssRepository.updateRssItemReadByIdOrRssId(id, rssId)
+
+    suspend fun getUnreadRssItemCount(rssId: ULong) = rssRepository.getUnreadRssItemCount(rssId)
 }

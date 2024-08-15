@@ -19,6 +19,7 @@ data class Rss(
     val updatedAt: Instant = Clock.System.now(),
 ) {
     var items: List<RssItem> = emptyList()
+    var unreadCount: Long = 0
 }
 
 /**
