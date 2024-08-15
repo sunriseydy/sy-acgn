@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -161,7 +162,7 @@ fun RssList(
                 Icon(Icons.Default.Check, RssString.RSS_READ.localization)
             }
         }
-        AcgnLazyColumn(rssListState) {
+        AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssListState) {
             items(rssList.value, key = { it.id }) { rss ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -318,7 +319,7 @@ fun RssItemList(
                 )
             }
         }
-        AcgnLazyColumn(rssItemListState) {
+        AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssItemListState) {
             itemsIndexed(rssItemList.value, key = { index, rssItem -> rssItem.id }) { index, rssItem ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {

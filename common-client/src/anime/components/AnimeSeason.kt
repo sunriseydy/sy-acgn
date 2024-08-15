@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.client.AppState
-import dev.sunriseydy.acgn.client.components.AcgnLazyColumn
 import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationRoute
 import dev.sunriseydy.acgn.client.onSuccessData
@@ -32,7 +33,6 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun AnimeSeason(appState: AppState) {
-    val yearListState: LazyListState = rememberLazyListState()
     val yearList: MutableState<List<Int>> = remember { mutableStateOf(listOf()) }
     val operator = AnimeSeasonOperator(appState)
 
@@ -42,18 +42,18 @@ fun AnimeSeason(appState: AppState) {
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         PageTitle(AcgnNavigationRoute.ANIME_SEASON.localization)
-        AcgnLazyColumn(yearListState) {
-            items(items = yearList.value, key = { it }) { year ->
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-                        Text(text = year.toString(), style = MaterialTheme.typography.titleLarge)
-                    }
-                    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-                        AnimeMonthType.entries.forEach { monthType ->
-                            YearMonth(appState, year, monthType)
-                        }
+        yearList.value.forEach { year ->
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(8.dp),
+            ) {
+                Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                    Text(text = year.toString(), style = MaterialTheme.typography.titleLarge)
+                }
+                Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                    AnimeMonthType.entries.forEach { monthType ->
+                        YearMonth(appState, year, monthType)
                     }
                 }
             }
@@ -73,7 +73,10 @@ private fun YearMonth(appState: AppState, year: Int, monthType: AnimeMonthType) 
         }
     }
 
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    ) {
         Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
             Text(text = monthType.localization, style = MaterialTheme.typography.titleLarge)
         }
