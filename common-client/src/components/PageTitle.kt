@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun PageTitle(title: String, actions: @Composable (() -> Unit)? = null) {
-    Card(modifier = Modifier.fillMaxWidth().requiredHeight(50.dp), shape = RectangleShape) {
+    Card(modifier = Modifier.fillMaxWidth().height(64.dp), shape = RectangleShape) {
         Row(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
             Row(
                 modifier = Modifier

@@ -153,13 +153,13 @@ fun RssList(
     Column(modifier = modifier) {
         PageTitle(RssString.RSS_TITLE.localization) {
             IconButton(onClick = { rssOperator.loadRss() }) {
-                Icon(Icons.Default.Refresh, CommonString.REFRESH.localization)
+                Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
             }
             IconButton(onClick = { addRssDialogVisible.value = true }) {
-                Icon(Icons.Default.Add, CommonString.ADD.localization)
+                Icon(Icons.Default.Add, null, modifier = Modifier.size(48.dp))
             }
             IconButton(onClick = { rssOperator.markRssItemReadByIdOrRssId(null, null) }) {
-                Icon(Icons.Default.Check, RssString.RSS_READ.localization)
+                Icon(Icons.Default.Check, null, modifier = Modifier.size(48.dp))
             }
         }
         AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssListState) {

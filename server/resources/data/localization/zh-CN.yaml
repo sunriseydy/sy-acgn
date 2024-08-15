@@ -36,6 +36,11 @@ enum:
       RSS_FIELD_TITLE: "订阅标题"
       IS_ONLY_UNREAD: "仅显示未读"
       RSS_ITEM_FIELD_PUBLISH_AT: "发布时间"
+    AnimeString:
+      SEASON_FIELD_IS_CREATE_ANIME: "是否创建动画系列"
+      SEASON_FIELD_ANIME_NAME: "动画名称"
+      SEASON_FIELD_SEASON_NUMBER: "季度"
+      SEASON_FIELD_SEASON_NAME: "季度名称"
 
 message:
   error:
