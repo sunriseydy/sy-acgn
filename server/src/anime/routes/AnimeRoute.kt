@@ -65,6 +65,9 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
                     )
                 )
             }
+            get("/section-map") {
+                call.respond(Result(data = animeService.getAnimeSeasonSectionMap()))
+            }
             post {
                 call.respond(Result(data = animeService.saveAnimeSeason(call.receive())))
             }

@@ -91,6 +91,22 @@ class AnimeService(
             }
     }
 
+    suspend fun getAnimeSeasonSectionMap(): MutableMap<String, List<AnimeSeason>> {
+        val sectionMap: MutableMap<String, List<AnimeSeason>> = mutableMapOf()
+        getAnimeSeasonYears().let { years ->
+            years.forEach { year ->
+                AnimeMonthType.entries.forEach { month ->
+                    getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, month).let { seasons ->
+                        if (seasons.isNotEmpty()) {
+                            sectionMap["$year - ${month.localization}"] = seasons
+                        }
+                    }
+                }
+            }
+        }
+        return sectionMap
+    }
+
     suspend fun createAnime(anime: Anime): Anime =
         check(anime.id == ULong.MIN_VALUE) { "只能新增数据" }
             .let {
