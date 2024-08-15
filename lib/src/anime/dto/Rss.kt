@@ -38,7 +38,9 @@ data class RssItem(
     val publishedAt: Instant,
     val createdAt: Instant = Clock.System.now(),
     val updatedAt: Instant = Clock.System.now(),
-)
+) {
+    var rss: Rss? = null
+}
 
 @Serializable
 data class TorrentAdd(

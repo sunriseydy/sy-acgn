@@ -12,7 +12,12 @@ import java.util.UUID
  */
 class RssService(val rssRepository: RssRepository = RssRepository()) {
 
-    suspend fun getAllRss() = rssRepository.selectAllRss()
+    private val rssCache = mutableMapOf<ULong, Rss>()
+
+    suspend fun getAllRss() = rssRepository.selectAllRss().also {
+        rssCache.clear()
+        rssCache.putAll(it.associateBy { it.id })
+    }
 
     suspend fun createRss(link: String): Rss {
         // 1. 从 url 中获取 rss
@@ -65,7 +70,11 @@ class RssService(val rssRepository: RssRepository = RssRepository()) {
         isRead: Boolean?,
         page: Long? = null,
         size: Int? = null,
-    ) = rssRepository.selectRssItemByRssIdOrIsRead(rssId, isRead, page, size)
+    ) = rssRepository.selectRssItemByRssIdOrIsRead(rssId, isRead, page, size).also {
+        it.forEach { rssItem ->
+            rssItem.rss = rssCache[rssItem.rssId]
+        }
+    }
 
     suspend fun markRssItemReadByIdOrRssId(
         id: UUID?,

@@ -59,6 +59,8 @@ import dev.sunriseydy.acgn.client.onSuccessData
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.utils.SupportingText
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 /**
  * @author SunriseYDY
@@ -66,7 +68,15 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun Rss(appState: AppState) {
-    val rssId: MutableState<ULong> = remember { mutableStateOf(ULong.MIN_VALUE) }
+    val currentRss: MutableState<Rss> = remember {
+        mutableStateOf(
+            Rss(
+                id = ULong.MIN_VALUE,
+                link = "",
+                title = "",
+            )
+        )
+    }
     val rssList: MutableState<List<Rss>> = remember { mutableStateOf(listOf()) }
     val isOnlyUnread: MutableState<Boolean> = remember { mutableStateOf(true) }
 
@@ -81,7 +91,7 @@ fun Rss(appState: AppState) {
         },
     ) { pager ->
         appState.api.rss.getRssItemByRssIdOrIsRead(
-            rssId = if (rssId.value == ULong.MIN_VALUE) null else rssId.value,
+            rssId = if (currentRss.value.id == ULong.MIN_VALUE) null else currentRss.value.id,
             isRead = if (isOnlyUnread.value == true) false else null,
             page = pager.page.value,
             size = pager.size,
@@ -95,9 +105,9 @@ fun Rss(appState: AppState) {
 
     // 渲染页面
     Row {
-        RssList(Modifier.fillMaxWidth(0.5f), rssList, rssId, rssOperator)
+        RssList(Modifier.fillMaxWidth(0.5f), rssList, currentRss, rssOperator)
         VerticalDivider(thickness = 2.dp)
-        RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, rssOperator)
+        RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, currentRss, rssOperator)
     }
 }
 
@@ -106,7 +116,7 @@ fun Rss(appState: AppState) {
 fun RssList(
     modifier: Modifier,
     rssList: MutableState<List<Rss>>,
-    rssId: MutableState<ULong>,
+    currentRss: MutableState<Rss>,
     rssOperator: RssOperator,
 ) {
     val addRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -163,11 +173,11 @@ fun RssList(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            rssId.value = rss.id
+                            currentRss.value = rss
                             rssOperator.loadRssItem()
                         },
                         colors = CardDefaults.cardColors(
-                            containerColor = if (rss.id == rssId.value)
+                            containerColor = if (rss.id == currentRss.value.id)
                                 MaterialTheme.colorScheme.primaryContainer
                             else
                                 MaterialTheme.colorScheme.surfaceVariant,
@@ -299,6 +309,7 @@ fun RssItemList(
     modifier: Modifier,
     isOnlyUnread: MutableState<Boolean>,
     rssItemList: MutableState<List<RssItem>>,
+    currentRss: MutableState<Rss>,
     rssOperator: RssOperator,
 ) {
     val rssItemListState: LazyListState = rememberLazyListState()
@@ -345,8 +356,16 @@ fun RssItemList(
                             }
                         }
                         HorizontalDivider(thickness = 4.dp)
-                        Row(modifier = Modifier.padding(8.dp)) {
-                            Text(text = rssItem.description ?: "")
+                        Column(modifier = Modifier.padding(8.dp)) {
+                            Text(
+                                rssItem.publishedAt.toLocalDateTime(
+                                    TimeZone.currentSystemDefault()
+                                ).toString()
+                            )
+                            if (currentRss.value.id == ULong.MIN_VALUE) {
+                                rssItem.rss?.let { Text(it.title) }
+                            }
+                            rssItem.description?.let { Text(it) }
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
