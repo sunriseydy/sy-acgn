@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -87,14 +88,14 @@ fun Rss(appState: AppState) {
         ).checkSuccessAndNotNull()
     }
 
-    val rssOperator: RssOperator = RssOperator(appState, rssList, rssItemPager, rssId)
+    val rssOperator: RssOperator = RssOperator(appState, rssList, rssItemPager)
 
     // 加载数据
     rssOperator.loadData()
 
     // 渲染页面
     Row {
-        RssList(Modifier.fillMaxWidth(0.5f), rssList, rssOperator)
+        RssList(Modifier.fillMaxWidth(0.5f), rssList, rssId, rssOperator)
         VerticalDivider(thickness = 2.dp)
         RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, rssOperator)
     }
@@ -105,6 +106,7 @@ fun Rss(appState: AppState) {
 fun RssList(
     modifier: Modifier,
     rssList: MutableState<List<Rss>>,
+    rssId: MutableState<ULong>,
     rssOperator: RssOperator,
 ) {
     val addRssDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -161,8 +163,15 @@ fun RssList(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            rssOperator.loadRssItem(rss.id)
-                        }
+                            rssId.value = rss.id
+                            rssOperator.loadRssItem()
+                        },
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (rss.id == rssId.value)
+                                MaterialTheme.colorScheme.primaryContainer
+                            else
+                                MaterialTheme.colorScheme.surfaceVariant,
+                        ),
                     ) {
                         Row(modifier = Modifier.padding(8.dp)) {
                             Row(modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.CenterVertically)) {
@@ -357,7 +366,6 @@ class RssOperator(
     val appState: AppState,
     val rssList: MutableState<List<Rss>>,
     val rssItemPager: Paging<RssItem>,
-    val rssIdState: MutableState<ULong>,
 ) {
     fun loadRss() {
         appState.scope.launch {
@@ -410,11 +418,6 @@ class RssOperator(
         appState.scope.launch {
             rssItemPager.loadInit()
         }
-    }
-
-    fun loadRssItem(rssId: ULong) {
-        rssIdState.value = rssId
-        loadRssItem()
     }
 
     fun loadData() {
