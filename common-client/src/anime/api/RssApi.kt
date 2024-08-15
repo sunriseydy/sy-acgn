@@ -70,7 +70,7 @@ class RssApi internal constructor(private val httpClient: HttpClient) {
     }.body()
 
     suspend fun addQbTorrent(torrentAdd: TorrentAdd): Result<String> = httpClient.post {
-        animeRssApiEndPoint()
+        animeQbApiEndPoint()
         setBody(torrentAdd)
     }.body()
 

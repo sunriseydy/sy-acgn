@@ -16,6 +16,7 @@ enum:
       CONFIRM: "确定"
       IS_BLANK: "为空"
       API_ERROR: "调用API异常"
+      DOWNLOAD: "下载"
   ANIME:
     AnimeAssociatedType:
       ANIME: "动画"

@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
+import dev.sunriseydy.acgn.anime.dto.TorrentAdd
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.enums.RssString
 import dev.sunriseydy.acgn.client.common.enums.CommonString
@@ -224,87 +225,87 @@ fun RssList(
                 )
             )
         }
-        // 创建 RSS 弹窗
-        FormDialog(
-            formDialogVisible = addRssDialogVisible,
-            onConfirmation = {
-                if (newLink.value.isBlank()) {
-                    setError(RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization)
-                } else {
-                    rssOperator.createRss(
-                        newLink.value,
+    }
+    // 创建 RSS 弹窗
+    FormDialog(
+        formDialogVisible = addRssDialogVisible,
+        onConfirmation = {
+            if (newLink.value.isBlank()) {
+                setError(RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization)
+            } else {
+                rssOperator.createRss(
+                    newLink.value,
+                    onSuccess = {
+                        clearError()
+                        closeAddRssDialog()
+                        rssOperator.loadRss()
+                    },
+                    onError = {
+                        setError(it)
+                    },
+                )
+            }
+        },
+        onDismissRequest = {
+            closeAddRssDialog()
+            clearError()
+        },
+    ) {
+        OutlinedTextField(
+            value = newLink.value,
+            onValueChange = { newLink.value = it },
+            label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.localization) },
+            isError = isError.value,
+            supportingText = { SupportingText(isError.value, errorMessage.value) }
+        )
+    }
+    // 删除 RSS 弹窗
+    AcgnAlertDialog(
+        alertDialogVisible = deleteRssDialogVisible,
+        onConfirmation = {
+            deleteRss.value?.also {
+                rssOperator.deleteRss(it.id) {
+                    deleteRssDialogVisible.value = false
+                    rssOperator.loadRss()
+                }
+            }
+        },
+        dialogTitle = CommonString.DELETE.localization + deleteRss.value?.title,
+    )
+    // 更新 RSS 弹窗
+    FormDialog(
+        formDialogVisible = editRssDialogVisible,
+        onConfirmation = {
+            if (newTitle.value.isBlank()) {
+                setError(RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization)
+            } else {
+                editRss.value?.also {
+                    rssOperator.updateRss(
+                        it.copy(id = it.id, title = newTitle.value),
                         onSuccess = {
                             clearError()
-                            closeAddRssDialog()
+                            closeEditRssDialog()
                             rssOperator.loadRss()
                         },
                         onError = {
                             setError(it)
-                        },
+                        }
                     )
                 }
-            },
-            onDismissRequest = {
-                closeAddRssDialog()
-                clearError()
-            },
-        ) {
-            OutlinedTextField(
-                value = newLink.value,
-                onValueChange = { newLink.value = it },
-                label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.localization) },
-                isError = isError.value,
-                supportingText = { SupportingText(isError.value, errorMessage.value) }
-            )
-        }
-        // 删除 RSS 弹窗
-        AcgnAlertDialog(
-            alertDialogVisible = deleteRssDialogVisible,
-            onConfirmation = {
-                deleteRss.value?.also {
-                    rssOperator.deleteRss(it.id) {
-                        deleteRssDialogVisible.value = false
-                        rssOperator.loadRss()
-                    }
-                }
-            },
-            dialogTitle = CommonString.DELETE.localization + deleteRss.value?.title,
+            }
+        },
+        onDismissRequest = {
+            clearError()
+            closeEditRssDialog()
+        },
+    ) {
+        OutlinedTextField(
+            value = newTitle.value,
+            onValueChange = { newTitle.value = it },
+            label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.localization) },
+            isError = isError.value,
+            supportingText = { SupportingText(isError.value, errorMessage.value) },
         )
-        // 更新 RSS 弹窗
-        FormDialog(
-            formDialogVisible = editRssDialogVisible,
-            onConfirmation = {
-                if (newTitle.value.isBlank()) {
-                    setError(RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization)
-                } else {
-                    editRss.value?.also {
-                        rssOperator.updateRss(
-                            it.copy(id = it.id, title = newTitle.value),
-                            onSuccess = {
-                                clearError()
-                                closeEditRssDialog()
-                                rssOperator.loadRss()
-                            },
-                            onError = {
-                                setError(it)
-                            }
-                        )
-                    }
-                }
-            },
-            onDismissRequest = {
-                clearError()
-                closeEditRssDialog()
-            },
-        ) {
-            OutlinedTextField(
-                value = newTitle.value,
-                onValueChange = { newTitle.value = it },
-                label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.localization) },
-                isError = isError.value,
-                supportingText = { SupportingText(isError.value, errorMessage.value) },
-            )
-        }
     }
 }
 
@@ -317,6 +318,8 @@ fun RssItemList(
     rssOperator: RssOperator,
 ) {
     val rssItemListState: LazyListState = rememberLazyListState()
+    val downloadDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val downloadRssItem: MutableState<RssItem?> = remember { mutableStateOf(null) }
 
     Column(modifier = modifier) {
         PageTitle(RssString.RSS_ITEM_TITLE.localization) {
@@ -350,7 +353,10 @@ fun RssItemList(
                                 horizontalArrangement = Arrangement.End,
                             ) {
                                 IconButton(
-                                    onClick = { }
+                                    onClick = {
+                                        downloadRssItem.value = rssItem
+                                        downloadDialogVisible.value = true
+                                    }
                                 ) {
                                     Icon(Icons.Default.Download, contentDescription = null)
                                 }
@@ -398,6 +404,20 @@ fun RssItemList(
             )
         }
     }
+    // 下载弹窗
+    AcgnAlertDialog(
+        alertDialogVisible = downloadDialogVisible,
+        onConfirmation = {
+            downloadRssItem.value?.also {
+                rssOperator.download(it.link) {
+                    rssOperator.markRssItemReadByIdOrRssId(id = it.id)
+                }
+                downloadRssItem.value = null
+                downloadDialogVisible.value = false
+            }
+        },
+        dialogTitle = CommonString.DOWNLOAD.localization + downloadRssItem.value?.title,
+    )
 }
 
 class RssOperator(
@@ -426,8 +446,7 @@ class RssOperator(
 
     fun deleteRss(id: ULong, onSuccess: () -> Unit) {
         appState.scope.launch {
-            appState.api.rss.deleteRss(id)
-            onSuccess()
+            appState.api.rss.deleteRss(id).onSuccess(appState, onSuccess)
         }
     }
 
@@ -447,8 +466,7 @@ class RssOperator(
         rssId: ULong? = null
     ) {
         appState.scope.launch {
-            appState.api.rss.markRssItemReadByIdOrRssId(id, rssId)
-            loadData()
+            appState.api.rss.markRssItemReadByIdOrRssId(id, rssId).onSuccess(appState, onSuccess = { loadData() })
         }
     }
 
@@ -469,5 +487,11 @@ class RssOperator(
             loadRss()
         }
         loadRssItem()
+    }
+
+    fun download(link: String, onSuccess: () -> Unit) {
+        appState.scope.launch {
+            appState.api.rss.addQbTorrent(TorrentAdd(url = link)).onSuccess(appState, onSuccess)
+        }
     }
 }

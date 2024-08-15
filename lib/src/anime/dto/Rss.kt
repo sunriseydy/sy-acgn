@@ -46,6 +46,6 @@ data class RssItem(
 @Serializable
 data class TorrentAdd(
     val url: String,
-    val category: String?,
+    val category: String? = null,
     val autoTMM: Boolean = true,
 )

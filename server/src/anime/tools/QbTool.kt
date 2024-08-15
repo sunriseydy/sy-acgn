@@ -109,6 +109,7 @@ class QbTool {
                 url = apiBaseUrl + QbUrl.QB_TORRENT_ADD,
                 formData = formData {
                     bytes?.let { append("torrents", it) } ?: append("urls", torrentAdd.url)
+                    TODO("默认分类")
                     torrentAdd.category?.let { append("category", it) }
                     append("autoTMM", torrentAdd.autoTMM.toString())
                 }
