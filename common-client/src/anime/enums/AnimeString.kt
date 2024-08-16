@@ -10,6 +10,9 @@ import dev.sunriseydy.acgn.interfaces.EnumLocalizable
 enum class AnimeString : AnimeModuleLocalizable, EnumLocalizable {
     SEASON_FIELD_IS_CREATE_ANIME,
     SEASON_FIELD_ANIME_NAME,
+    SEASON_FIELD_ANIME_NAME_SEARCH,
     SEASON_FIELD_SEASON_NUMBER,
     SEASON_FIELD_SEASON_NAME,
+    SEARCH_TMDB,
+    SEARCH_LOCAL,
 }

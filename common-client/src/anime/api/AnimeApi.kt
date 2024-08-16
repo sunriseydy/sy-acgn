@@ -22,12 +22,16 @@ import io.ktor.client.request.setBody
  */
 class AnimeApi internal constructor(private val httpClient: HttpClient) {
     suspend fun getAnimeNameAndId(name: String): Result<Map<ULong, String>> = httpClient.get {
-        animeApiEndPoint("/name-id-map")
+        animeApiEndPoint("name-id-map")
         parameter("name", name)
     }.body()
 
+    suspend fun getAnimeById(animeId: ULong): Result<Anime> = httpClient.get {
+        animeApiEndPoint(animeId.toString())
+    }.body()
+
     suspend fun getAllAnimeFromCache(): Result<List<Anime>> = httpClient.get {
-        animeApiEndPoint("/cache")
+        animeApiEndPoint("cache")
     }.body()
 
     suspend fun getAllAnimeFromDb(): Result<List<Anime>> = httpClient.get {
@@ -85,7 +89,7 @@ class AnimeApi internal constructor(private val httpClient: HttpClient) {
         parameter("query", query)
     }.body()
 
-    suspend fun getTmdbAnimeTvDetail(id: Int): Result<Anime> = httpClient.get {
+    suspend fun getTmdbAnimeTvDetail(id: ULong): Result<Anime> = httpClient.get {
         animeTmdbApiEndPoint("tv-detail")
         parameter("id", id)
     }.body()

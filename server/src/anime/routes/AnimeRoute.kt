@@ -28,6 +28,11 @@ fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
         get {
             call.respond(Result(data = animeService.getAllAnimeWithAdditionFromDB()))
         }
+        get("/{animeId}") {
+            val animeId =
+                call.parameters["animeId"]!!.toULong()
+            call.respond(Result(data = animeService.getAnimeById(animeId)))
+        }
         put("/refresh") {
             call.respond(Result(data = animeService.refreshAnimeCache()))
         }

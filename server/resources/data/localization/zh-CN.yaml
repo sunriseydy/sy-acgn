@@ -17,6 +17,7 @@ enum:
       IS_BLANK: "为空"
       API_ERROR: "调用API异常"
       DOWNLOAD: "下载"
+      NO_DATA: "无数据"
   ANIME:
     AnimeAssociatedType:
       ANIME: "动画"
@@ -39,8 +40,11 @@ enum:
     AnimeString:
       SEASON_FIELD_IS_CREATE_ANIME: "是否创建动画系列"
       SEASON_FIELD_ANIME_NAME: "动画名称"
+      SEASON_FIELD_ANIME_NAME_SEARCH: "动画名称，搜索"
       SEASON_FIELD_SEASON_NUMBER: "季度"
       SEASON_FIELD_SEASON_NAME: "季度名称"
+      SEARCH_TMDB: "TMDB"
+      SEARCH_LOCAL: "本地"
 
 message:
   error:

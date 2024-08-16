@@ -24,7 +24,7 @@ object AnimeCacheTool {
             if (name == null) {
                 true
             } else {
-                it.name.contains(name)
+                it.name.contains(name, ignoreCase = true)
             }
-        }.mapValues { "${it.key}-${it.value.name}" }
+        }.mapValues { it.value.name }
 }

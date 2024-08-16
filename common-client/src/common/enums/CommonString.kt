@@ -19,4 +19,5 @@ enum class CommonString : CommonModuleLocalizable, EnumLocalizable {
     IS_BLANK,
     API_ERROR,
     DOWNLOAD,
+    NO_DATA,
 }
