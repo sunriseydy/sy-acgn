@@ -141,6 +141,8 @@ private fun CreateAnimeSeason(
     val animeSeasonSearchVisible = remember { mutableStateOf(false) }
     val animeSeasonSearchResult: MutableState<List<AnimeSeason>> = remember { mutableStateOf(emptyList()) }
 
+    val errorMessage: MutableState<String?> = remember { mutableStateOf(null) }
+
     fun closeCreateDialog() {
         createDialogVisible.value = false
         isCreateAnime.value = false
@@ -155,6 +157,8 @@ private fun CreateAnimeSeason(
 
         animeSeasonSearchVisible.value = false
         animeSeasonSearchResult.value = emptyList()
+
+        errorMessage.value = null
     }
 
     FormDialog(
@@ -191,10 +195,21 @@ private fun CreateAnimeSeason(
             },
             leadingIcon = {
                 IconButton(onClick = {
-                    operator.searchAnime(name = animeNameSearch.value ?: "") {
-                        animeSearchResult.value = it
+                    if (isCreateAnime.value) {
+                        operator.searchAnimeFromTMDB(name = animeNameSearch.value ?: "", onSuccess = {
+                            animeSearchResult.value = it
+                            animeSearchVisible.value = true
+                        }, onError = {
+                            errorMessage.value = it
+                        })
+                    } else {
+                        operator.searchAnime(name = animeNameSearch.value ?: "", onSuccess = {
+                            animeSearchResult.value = it
+                            animeSearchVisible.value = true
+                        }, onError = {
+                            errorMessage.value = it
+                        })
                     }
-                    animeSearchVisible.value = true
                 }) {
                     Icon(Icons.Default.Search, null)
                 }
@@ -212,12 +227,14 @@ private fun CreateAnimeSeason(
                     DropdownMenuItem(
                         text = { Text(animeMap.value) },
                         onClick = {
-                            operator.getAnimeById(animeMap.key) {
+                            operator.getAnimeById(animeMap.key, onSuccess = {
                                 anime.value = it
                                 animeNameSearch.value = it.name
                                 animeSearchVisible.value = false
                                 animeSearchResult.value = emptyMap()
-                            }
+                            }, onError = {
+                                errorMessage.value = it
+                            })
                         },
                     )
                 }
@@ -241,10 +258,12 @@ private fun CreateAnimeSeason(
                         animeSeasonSearchVisible.value = true
                     } else if (anime.value != null && anime.value?.tmdbId != null) {
                         // 否则如果动画有tmdbId，则取tmdb动画季度
-                        operator.getAnimeByTmdbId(anime.value!!.tmdbId!!) {
+                        operator.getAnimeByTmdbId(anime.value!!.tmdbId!!, onSuccess = {
                             animeSeasonSearchResult.value = it.animeSeasons
                             animeSeasonSearchVisible.value = true
-                        }
+                        }, onError = {
+                            errorMessage.value = it
+                        })
                     }
                 }) {
                     Icon(Icons.Default.Search, null)
@@ -274,6 +293,14 @@ private fun CreateAnimeSeason(
                 }
             }
         }
+        // 错误提示
+        errorMessage.value?.let {
+            Text(
+                text = "${CommonString.API_ERROR.localization}: ${errorMessage.value ?: ""}",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.width(fieldWidth),
+            )
+        }
     }
 }
 
@@ -286,27 +313,27 @@ private class AnimeSeasonOperator(
         }
     }
 
-    fun searchAnime(name: String, onSuccess: (Map<ULong, String>) -> Unit) {
+    fun searchAnime(name: String, onSuccess: (Map<ULong, String>) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
-            appState.api.anime.getAnimeNameAndId(name).onSuccessData(appState, onSuccess)
+            appState.api.anime.getAnimeNameAndId(name).onSuccessData(null, onSuccess, onError)
         }
     }
 
-    fun searchAnimeFromTMDB(name: String, onSuccess: (List<Anime>) -> Unit) {
+    fun searchAnimeFromTMDB(name: String, onSuccess: (List<Anime>) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
-            appState.api.anime.searchTmdbAnimeTv(name).onSuccessData(appState, onSuccess)
+            appState.api.anime.searchTmdbAnimeTv(name).onSuccessData(null, onSuccess, onError)
         }
     }
 
-    fun getAnimeByTmdbId(id: ULong, onSuccess: (Anime) -> Unit) {
+    fun getAnimeByTmdbId(id: ULong, onSuccess: (Anime) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
-            appState.api.anime.getTmdbAnimeTvDetail(id).onSuccessData(appState, onSuccess)
+            appState.api.anime.getTmdbAnimeTvDetail(id).onSuccessData(null, onSuccess, onError)
         }
     }
 
-    fun getAnimeById(id: ULong, onSuccess: (Anime) -> Unit) {
+    fun getAnimeById(id: ULong, onSuccess: (Anime) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
-            appState.api.anime.getAnimeById(id).onSuccessData(appState, onSuccess)
+            appState.api.anime.getAnimeById(id).onSuccessData(null, onSuccess, onError)
         }
     }
 }
