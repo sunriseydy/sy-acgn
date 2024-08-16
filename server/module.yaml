@@ -15,16 +15,16 @@ dependencies:
   - io.ktor:ktor-server-cio:3.0.0-beta-2
   - io.ktor:ktor-server-config-yaml:3.0.0-beta-2
   - ch.qos.logback:logback-classic:1.4.14
-  - org.jetbrains.exposed:exposed-core:0.52.0
-  - org.jetbrains.exposed:exposed-jdbc:0.52.0
-  - org.jetbrains.exposed:exposed-dao:0.52.0
-  - org.jetbrains.exposed:exposed-kotlin-datetime:0.52.0
-  - org.jetbrains.exposed:exposed-json:0.52.0
+  - org.jetbrains.exposed:exposed-core:0.53.0
+  - org.jetbrains.exposed:exposed-jdbc:0.53.0
+  - org.jetbrains.exposed:exposed-dao:0.53.0
+  - org.jetbrains.exposed:exposed-kotlin-datetime:0.53.0
+  - org.jetbrains.exposed:exposed-json:0.53.0
   - org.postgresql:postgresql:42.7.3
   - commons-io:commons-io:2.4
   - org.jetbrains.kotlinx:kotlinx-io-core:0.5.1
 test-dependencies:
-  #  - io.ktor:ktor-server-tests-jvm:3.0.0-beta-2
+  # - io.ktor:ktor-server-tests-jvm:3.0.0-beta-2
   - $kotlin-test-junit
 settings:
   jvm:
