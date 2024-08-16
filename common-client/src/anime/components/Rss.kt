@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -324,7 +325,9 @@ fun RssItemList(
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
-                            Text(text = rssItem.title, style = MaterialTheme.typography.titleLarge)
+                            SelectionContainer {
+                                Text(text = rssItem.title, style = MaterialTheme.typography.titleLarge)
+                            }
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth(),

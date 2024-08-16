@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
@@ -96,7 +97,9 @@ fun AnimeSeason(appState: AppState) {
                 items(sectionMap.value) { season ->
                     Card(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
                         Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
-                            Text(text = season.name, style = MaterialTheme.typography.titleLarge)
+                            SelectionContainer {
+                                Text(text = season.name, style = MaterialTheme.typography.titleLarge)
+                            }
                             Text(text = season.description ?: "", style = MaterialTheme.typography.bodyLarge)
                         }
                     }
