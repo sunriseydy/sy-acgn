@@ -47,6 +47,7 @@ import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.client.components.FormDialog
 import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationRoute
+import dev.sunriseydy.acgn.client.onSuccess
 import dev.sunriseydy.acgn.client.onSuccessData
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import kotlinx.coroutines.launch
@@ -120,8 +121,11 @@ fun AnimeSeason(appState: AppState) {
         }
     }
     // 创建动画季度弹窗
-    CreateAnimeSeason(operator, createDialogVisible, onSuccess = { anime, animeSeason ->
-        null
+    CreateAnimeSeason(operator, createDialogVisible, onConfirmation = { animeSeason ->
+        println(animeSeason)
+        var errorMessage: String? = null
+        operator.saveAnimeSeason(animeSeason, onError = { errorMessage = it })
+        errorMessage
     })
 }
 
@@ -129,7 +133,7 @@ fun AnimeSeason(appState: AppState) {
 private fun CreateAnimeSeason(
     operator: AnimeSeasonOperator,
     createDialogVisible: MutableState<Boolean>,
-    onSuccess: (Anime, AnimeSeason) -> String? = { anime, animeSeason -> null },
+    onConfirmation: (AnimeSeason) -> String? = { animeSeason -> null },
 ) {
     val isCreateAnime = remember { mutableStateOf(false) }
 
@@ -189,7 +193,7 @@ private fun CreateAnimeSeason(
             checkAnimeField()
             checkAnimeSeasonField()
             if (errorMessage.value.isNullOrBlank()) {
-                onSuccess(anime.value!!, animeSeason.value!!).let {
+                onConfirmation(animeSeason.value!!).let {
                     if (it.isNullOrBlank()) {
                         // 如果异常消息为空，则关闭弹窗
                         closeCreateDialog()
@@ -321,7 +325,7 @@ private fun CreateAnimeSeason(
                     DropdownMenuItem(
                         text = { Text(it.season.toString() + it.name) },
                         onClick = {
-                            animeSeason.value = it
+                            animeSeason.value = it.copy(animeId = anime.value!!.id, anime = anime.value)
                             animeSeasonSearchVisible.value = false
                             animeSeasonSearchResult.value = emptyList()
                         },
@@ -352,6 +356,12 @@ private class AnimeSeasonOperator(
         }
     }
 
+    fun saveAnimeSeason(animeSeason: AnimeSeason, onSuccess: () -> Unit = { }, onError: (String) -> Unit = { }) {
+        appState.scope.launch {
+            appState.api.anime.saveAnimeSeason(animeSeason).onSuccess(appState, onSuccess, onError)
+        }
+    }
+
     fun searchAnime(name: String, onSuccess: (List<Anime>) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
             appState.api.anime.searchAnimeByName(name).onSuccessData(null, onSuccess, onError)
@@ -367,12 +377,6 @@ private class AnimeSeasonOperator(
     fun getAnimeByTmdbId(id: ULong, onSuccess: (Anime) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
             appState.api.anime.getTmdbAnimeTvDetail(id).onSuccessData(null, onSuccess, onError)
-        }
-    }
-
-    fun getAnimeById(id: ULong, onSuccess: (Anime) -> Unit, onError: (String) -> Unit = { }) {
-        appState.scope.launch {
-            appState.api.anime.getAnimeById(id).onSuccessData(null, onSuccess, onError)
         }
     }
 }
