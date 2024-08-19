@@ -197,7 +197,13 @@ private fun CreateAnimeSeason(
                 IconButton(onClick = {
                     if (isCreateAnime.value) {
                         operator.searchAnimeFromTMDB(name = animeNameSearch.value ?: "", onSuccess = {
-                            animeSearchResult.value = it
+                            animeSearchResult.value =
+                                it.fold(mutableMapOf<ULong, String>()) { acc, anime ->
+                                    if (anime.tmdbId != null) {
+                                        acc.put(anime.tmdbId!!, anime.name)
+                                    }
+                                    acc
+                                }
                             animeSearchVisible.value = true
                         }, onError = {
                             errorMessage.value = it
