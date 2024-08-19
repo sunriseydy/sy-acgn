@@ -21,8 +21,8 @@ import io.ktor.client.request.setBody
  * @date 2024-07-23 19:54
  */
 class AnimeApi internal constructor(private val httpClient: HttpClient) {
-    suspend fun getAnimeNameAndId(name: String): Result<Map<ULong, String>> = httpClient.get {
-        animeApiEndPoint("name-id-map")
+    suspend fun searchAnimeByName(name: String): Result<List<Anime>> = httpClient.get {
+        animeApiEndPoint("name")
         parameter("name", name)
     }.body()
 

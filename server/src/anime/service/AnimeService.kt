@@ -29,22 +29,26 @@ class AnimeService(
         }
     }
 
+    suspend fun searchAnimeByName(name: String?): List<Anime> {
+        if (AnimeCacheTool.isEmpty()) {
+            this.refreshAnimeCache()
+        }
+        return if (name.isNullOrBlank()) {
+            AnimeCacheTool.getAnimeList()
+        } else {
+            AnimeCacheTool.getAnimeList().filter { it.name.contains(name, ignoreCase = true) }
+        }
+    }
+
     suspend fun getAllAnimeWithAdditionFromCache(): List<Anime> {
-        if (AnimeCacheTool.getAnimeIdAndNameMap().isEmpty()) {
+        if (AnimeCacheTool.isEmpty()) {
             this.refreshAnimeCache()
         }
         return AnimeCacheTool.getAnimeList()
     }
 
-    suspend fun getAnimeNameAndId(name: String? = null): Map<ULong, String> {
-        if (AnimeCacheTool.getAnimeIdAndNameMap().isEmpty()) {
-            this.refreshAnimeCache()
-        }
-        return AnimeCacheTool.getAnimeIdAndNameMap(name)
-    }
-
     suspend fun getAnimeById(id: ULong): Anime? {
-        if (AnimeCacheTool.getAnimeIdAndNameMap().isEmpty()) {
+        if (AnimeCacheTool.isEmpty()) {
             this.refreshAnimeCache()
         }
         return AnimeCacheTool.getAnimeById(id)

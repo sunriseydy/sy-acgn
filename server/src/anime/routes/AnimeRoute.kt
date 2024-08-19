@@ -19,8 +19,8 @@ import io.ktor.server.routing.route
  */
 fun Routing.animeRoutes(animeService: AnimeService = AnimeService()) {
     route("/anime") {
-        get("/name-id-map") {
-            call.respond(Result(data = animeService.getAnimeNameAndId(call.parameters["name"])))
+        get("/name") {
+            call.respond(Result(data = animeService.searchAnimeByName(call.parameters["name"])))
         }
         get("/cache") {
             call.respond(Result(data = animeService.getAllAnimeWithAdditionFromCache()))

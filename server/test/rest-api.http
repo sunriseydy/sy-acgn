@@ -95,9 +95,9 @@ Content-Type: application/json
 # @no-log
 PUT http://localhost:9390/api/anime/anime/refresh
 
-### get anime name-id map
+### search anime by name
 # @no-log
-GET http://localhost:9390/api/anime/anime/name-id-map
+GET http://localhost:9390/api/anime/anime/name?name=11
 
 ### get anime season by anime id
 # @no-log

@@ -7,24 +7,15 @@ import dev.sunriseydy.acgn.anime.dto.Anime
  * @date 2024-07-16 17:32
  */
 object AnimeCacheTool {
-    private val animeMap: MutableMap<ULong, Anime> = mutableMapOf()
+    private var animes: List<Anime> = listOf()
+
+    fun isEmpty() = animes.isEmpty()
+
     fun refreshAnimeMap(animeList: List<Anime>) {
-        animeMap.clear()
-        animeList.forEach {
-            animeMap[it.id] = it
-        }
+        animes = animeList
     }
 
-    fun getAnimeList() = animeMap.values.toList()
+    fun getAnimeList() = animes
 
-    fun getAnimeById(id: ULong): Anime? = animeMap[id]
-
-    fun getAnimeIdAndNameMap(name: String? = null): Map<ULong, String> =
-        animeMap.filterValues {
-            if (name == null) {
-                true
-            } else {
-                it.name.contains(name, ignoreCase = true)
-            }
-        }.mapValues { it.value.name }
+    fun getAnimeById(id: ULong): Anime? = animes.find { it.id == id }
 }
