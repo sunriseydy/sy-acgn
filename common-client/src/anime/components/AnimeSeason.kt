@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DriveFolderUpload
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.enums.AnimeString
 import dev.sunriseydy.acgn.client.common.enums.CommonString
@@ -70,6 +72,10 @@ fun AnimeSeason(appState: AppState) {
     val loading = remember { mutableStateOf(false) }
     val createDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val deleteDialogVisible = remember { mutableStateOf(false) }
+    val handleFileDialogVisible = remember { mutableStateOf(false) }
+    val filePath = remember { mutableStateOf("") }
+    val isDeleteSource = remember { mutableStateOf(false) }
+    val isDeleteTarget = remember { mutableStateOf(false) }
     val currentSeason: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
     val operator = AnimeSeasonOperator(appState)
 
@@ -82,6 +88,13 @@ fun AnimeSeason(appState: AppState) {
                 loading.value = false
             }, onError = { loading.value = false })
         }
+    }
+
+    fun openHandleFileDialog() {
+        handleFileDialogVisible.value = true
+        filePath.value = ""
+        isDeleteSource.value = false
+        isDeleteTarget.value = false
     }
 
     // 加载数据
@@ -137,6 +150,12 @@ fun AnimeSeason(appState: AppState) {
                                     }) {
                                         Icon(Icons.Default.Edit, null)
                                     }
+                                    IconButton(onClick = {
+                                        currentSeason.value = season
+                                        openHandleFileDialog()
+                                    }) {
+                                        Icon(Icons.Default.DriveFolderUpload, null)
+                                    }
                                 }
                             }
                         }
@@ -166,6 +185,24 @@ fun AnimeSeason(appState: AppState) {
         },
         dialogTitle = CommonString.DELETE.localization + currentSeason.value?.name,
     )
+    // 处理文件弹窗
+    FormDialog(
+        formDialogVisible = handleFileDialogVisible,
+        onConfirmation = {
+            currentSeason.value?.let {
+                println(
+                    AnimeSeasonFile(
+                        id = it.id,
+                        path = filePath.value,
+                        isDeleteSource = isDeleteSource.value,
+                        isDeleteTarget = isDeleteTarget.value,
+                    )
+                )
+            }
+        },
+    ) {
+
+    }
 }
 
 @Composable
