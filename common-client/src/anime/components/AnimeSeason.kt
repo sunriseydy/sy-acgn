@@ -21,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -44,6 +45,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.enums.AnimeString
 import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.components.AcgnAlertDialog
 import dev.sunriseydy.acgn.client.components.FormDialog
 import dev.sunriseydy.acgn.client.components.PageTitle
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationRoute
@@ -66,6 +68,8 @@ fun AnimeSeason(appState: AppState) {
     val init = remember { mutableStateOf(false) }
     val loading = remember { mutableStateOf(false) }
     val createDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val deleteDialogVisible = remember { mutableStateOf(false) }
+    val currentSeason: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
     val operator = AnimeSeasonOperator(appState)
 
     fun loadData() {
@@ -108,12 +112,26 @@ fun AnimeSeason(appState: AppState) {
                     PageTitle(sectionMap.key)
                 }
                 items(sectionMap.value) { season ->
-                    Card(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
+                    val buttonGroupVisible = remember { mutableStateOf(false) }
+                    Card(
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                        onClick = { buttonGroupVisible.value = !buttonGroupVisible.value }
+                    ) {
                         Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
                             SelectionContainer {
                                 Text(text = season.name, style = MaterialTheme.typography.titleLarge)
                             }
                             Text(text = season.description ?: "", style = MaterialTheme.typography.bodyLarge)
+                            if (buttonGroupVisible.value) {
+                                Row {
+                                    IconButton(onClick = {
+                                        currentSeason.value = season
+                                        deleteDialogVisible.value = true
+                                    }) {
+                                        Icon(Icons.Default.Delete, null)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -127,6 +145,19 @@ fun AnimeSeason(appState: AppState) {
         operator.saveAnimeSeason(animeSeason, onError = { errorMessage = it })
         errorMessage
     })
+    // 删除动画季度弹窗
+    AcgnAlertDialog(
+        alertDialogVisible = deleteDialogVisible,
+        onConfirmation = {
+            currentSeason.value?.also {
+                operator.deleteSeason(it.id)
+                currentSeason.value = null
+                deleteDialogVisible.value = false
+                loadData()
+            }
+        },
+        dialogTitle = CommonString.DELETE.localization + currentSeason.value?.name,
+    )
 }
 
 @Composable
@@ -377,6 +408,12 @@ private class AnimeSeasonOperator(
     fun getAnimeByTmdbId(id: ULong, onSuccess: (Anime) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
             appState.api.anime.getTmdbAnimeTvDetail(id).onSuccessData(null, onSuccess, onError)
+        }
+    }
+
+    fun deleteSeason(id: ULong, onSuccess: () -> Unit = { }) {
+        appState.scope.launch {
+            appState.api.anime.removeAnimeSeasonById(id).onSuccess(appState, onSuccess)
         }
     }
 }
