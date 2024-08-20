@@ -69,7 +69,6 @@ fun AnimeSeason(appState: AppState) {
     val init = remember { mutableStateOf(false) }
     val loading = remember { mutableStateOf(false) }
     val createDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val updateDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val deleteDialogVisible = remember { mutableStateOf(false) }
     val currentSeason: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
     val operator = AnimeSeasonOperator(appState)
@@ -134,7 +133,7 @@ fun AnimeSeason(appState: AppState) {
                                     }
                                     IconButton(onClick = {
                                         currentSeason.value = season
-                                        updateDialogVisible.value = true
+                                        createDialogVisible.value = true
                                     }) {
                                         Icon(Icons.Default.Edit, null)
                                     }
@@ -150,16 +149,8 @@ fun AnimeSeason(appState: AppState) {
     CreateAnimeSeason(operator, createDialogVisible, onConfirmation = { animeSeason ->
         println(animeSeason)
         var errorMessage: String? = null
-        operator.saveAnimeSeason(animeSeason, onError = { errorMessage = it })
-        errorMessage
-    })
-    // 更新动画季度弹窗
-    CreateAnimeSeason(operator, updateDialogVisible, onConfirmation = { animeSeason ->
-        println(animeSeason)
-        var errorMessage: String? = null
-        currentSeason.value?.let {
-            operator.saveAnimeSeason(animeSeason.copy(id = it.id), onError = { errorMessage = it })
-        }
+        operator.saveAnimeSeason(currentSeason.value?.let { animeSeason.copy(id = it.id) } ?: animeSeason,
+            onError = { errorMessage = it })
         errorMessage
     })
     // 删除动画季度弹窗
