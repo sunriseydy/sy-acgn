@@ -101,6 +101,34 @@ class AnimeRepository {
         }.toDTO()
     }
 
+    suspend fun updateAnime(anime: Anime): Anime = suspendTransaction {
+        AnimeDAO.findByIdAndUpdate(anime.id) {
+            it.name = anime.name
+            it.description = anime.description
+            it.firstAirDate = anime.firstAirDate
+            it.lastAirDate = anime.lastAirDate
+            it.numberOfSeasons = anime.numberOfSeasons
+            it.numberOfEpisodes = anime.numberOfEpisodes
+            anime.tmdbId?.apply { it.tmdbId = anime.tmdbId }
+            anime.bgmId?.apply { it.bgmId = anime.bgmId }
+        }?.toDTO() ?: throw NoSuchElementException()
+    }
+
+    suspend fun updateAnimeSeason(animeSeason: AnimeSeason): AnimeSeason = suspendTransaction {
+        AnimeSeasonDAO.findByIdAndUpdate(animeSeason.id) {
+            it.animeId = animeSeason.animeId
+            it.name = animeSeason.name
+            it.description = animeSeason.description
+            it.season = animeSeason.season
+            it.numberOfEpisodes = animeSeason.numberOfEpisodes
+            it.year = animeSeason.year
+            it.month = animeSeason.month
+            it.airDate = animeSeason.airDate
+            animeSeason.tmdbId?.apply { it.tmdbId = animeSeason.tmdbId }
+            animeSeason.bgmId?.apply { it.bgmId = animeSeason.bgmId }
+        }?.toDTO() ?: throw NoSuchElementException()
+    }
+
     suspend fun deleteAnimeById(id: ULong): Unit = suspendTransaction {
         AnimeDAO.findById(id)?.delete() ?: throw NoSuchElementException()
     }

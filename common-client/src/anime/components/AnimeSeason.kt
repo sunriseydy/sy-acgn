@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -68,6 +69,7 @@ fun AnimeSeason(appState: AppState) {
     val init = remember { mutableStateOf(false) }
     val loading = remember { mutableStateOf(false) }
     val createDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val updateDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val deleteDialogVisible = remember { mutableStateOf(false) }
     val currentSeason: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
     val operator = AnimeSeasonOperator(appState)
@@ -130,6 +132,12 @@ fun AnimeSeason(appState: AppState) {
                                     }) {
                                         Icon(Icons.Default.Delete, null)
                                     }
+                                    IconButton(onClick = {
+                                        currentSeason.value = season
+                                        updateDialogVisible.value = true
+                                    }) {
+                                        Icon(Icons.Default.Edit, null)
+                                    }
                                 }
                             }
                         }
@@ -143,6 +151,15 @@ fun AnimeSeason(appState: AppState) {
         println(animeSeason)
         var errorMessage: String? = null
         operator.saveAnimeSeason(animeSeason, onError = { errorMessage = it })
+        errorMessage
+    })
+    // 更新动画季度弹窗
+    CreateAnimeSeason(operator, updateDialogVisible, onConfirmation = { animeSeason ->
+        println(animeSeason)
+        var errorMessage: String? = null
+        currentSeason.value?.let {
+            operator.saveAnimeSeason(animeSeason.copy(id = it.id), onError = { errorMessage = it })
+        }
         errorMessage
     })
     // 删除动画季度弹窗

@@ -117,6 +117,7 @@ class AnimeService(
                 animeRepository.insertAnime(anime)
                     .also {
                         additionalInfoRepository.saveAdditionalInfos(anime.additions, it.id)
+                        this.refreshAnimeCache()
                     }
             }
 
@@ -130,30 +131,46 @@ class AnimeService(
                     }
             }
 
-    suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason =
-        // 只能新增数据
-        check(season.id == ULong.MIN_VALUE) { "只能新增数据" }
+    suspend fun updateAnime(anime: Anime): Anime =
+        check(anime.id != ULong.MIN_VALUE) { "只能更新数据" }
             .let {
-                season.copy(animeId =
-                if (season.animeId == ULong.MIN_VALUE) {
-                    // 动画系列也要新增
-                    var anime = season.anime
-                    checkNotNull(anime) { "新增动画时的动画数据为空" }
-                    this.createAnime(anime).also {
+                animeRepository.updateAnime(anime)
+                    .also {
+                        additionalInfoRepository.saveAdditionalInfos(anime.additions, it.id)
                         this.refreshAnimeCache()
-                    }.id
-                } else {
-                    // 动画系列已存在
-                    season.animeId
-                }
-                ).let {
-                    check(it.animeId != ULong.MIN_VALUE) { "必须关联动画" }
-                    this.createAnimeSeason(it)
-                        .let {
-                            this.getAnimeSeasonsWithAdditionAndAnimeById(it.id)
-                        }
-                }
+                    }
             }
+
+    suspend fun updateAnimeSeason(season: AnimeSeason): AnimeSeason =
+        check(season.id != ULong.MIN_VALUE) { "只能更新数据" }
+            .let {
+                animeRepository.updateAnimeSeason(season)
+                    .also {
+                        additionalInfoRepository.saveAdditionalInfos(season.additions, it.id)
+                    }
+            }
+
+    suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason =
+        season.copy(animeId =
+        if (season.animeId == ULong.MIN_VALUE) {
+            // 新增动画系列
+            var anime = season.anime
+            checkNotNull(anime) { "新增动画时的动画数据为空" }
+            this.createAnime(anime).id
+        } else {
+            // 动画系列已存在
+            season.animeId
+        }
+        ).let {
+            check(it.animeId != ULong.MIN_VALUE) { "必须关联动画" }
+            (if (it.id == ULong.MIN_VALUE) {
+                this.createAnimeSeason(it)
+            } else {
+                this.updateAnimeSeason(it)
+            }).let {
+                this.getAnimeSeasonsWithAdditionAndAnimeById(it.id)
+            }
+        }
 
     suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile) =
         this.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonFile.id)

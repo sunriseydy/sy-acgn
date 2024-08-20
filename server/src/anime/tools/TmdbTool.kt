@@ -100,7 +100,7 @@ class TmdbTool {
             name = this.title,
             description = this.overview,
             releaseDate = this.releaseDate,
-            tmdbId = this.id.toULong()
+            tmdbId = this.id.toULong(),
         )
 
     private fun TmdbShowDetail.toAnime() =
@@ -116,14 +116,15 @@ class TmdbTool {
             animeSeasons = this.seasons.map {
                 AnimeSeason(
                     id = ULong.MIN_VALUE,
-                    airDate = it.airDate,
-                    numberOfEpisodes = it.numberOfEpisodes,
-                    name = it.name,
-                    season = it.seasonNumber,
-                    description = it.overview,
                     animeId = ULong.MIN_VALUE,
+                    name = it.name,
+                    description = it.overview,
+                    season = it.seasonNumber,
+                    numberOfEpisodes = it.numberOfEpisodes,
                     year = it.airDate?.year ?: 0,
                     month = it.airDate?.monthNumber ?: 0,
+                    airDate = it.airDate,
+                    tmdbId = it.id.toULong(),
                 )
             }
         )
@@ -131,14 +132,15 @@ class TmdbTool {
     private fun TmdbSeasonDetail.toAnimeSeason() =
         AnimeSeason(
             id = ULong.MIN_VALUE,
-            airDate = this.airDate,
-            numberOfEpisodes = this.numberOfEpisodes,
-            name = this.name,
-            season = this.seasonNumber,
-            description = this.overview,
             animeId = ULong.MIN_VALUE,
+            name = this.name,
+            description = this.overview,
+            season = this.seasonNumber,
+            numberOfEpisodes = this.numberOfEpisodes,
             year = this.airDate?.year ?: 0,
             month = this.airDate?.monthNumber ?: 0,
+            airDate = this.airDate,
+            tmdbId = this.id.toULong(),
         )
 
     private fun TmdbMovieDetail.toAnimeMovie() =
@@ -147,6 +149,6 @@ class TmdbTool {
             name = this.title,
             description = this.overview,
             releaseDate = this.releaseDate,
-            tmdbId = this.id.toULong()
+            tmdbId = this.id.toULong(),
         )
 }
