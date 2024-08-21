@@ -55,6 +55,7 @@ import dev.sunriseydy.acgn.client.navigation.AcgnNavigationRoute
 import dev.sunriseydy.acgn.client.onSuccess
 import dev.sunriseydy.acgn.client.onSuccessData
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
+import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
 import kotlinx.coroutines.launch
 import kotlin.collections.List
 
@@ -190,18 +191,45 @@ fun AnimeSeason(appState: AppState) {
         formDialogVisible = handleFileDialogVisible,
         onConfirmation = {
             currentSeason.value?.let {
-                println(
+                operator.handleAnimeSeasonFile(
                     AnimeSeasonFile(
                         id = it.id,
                         path = filePath.value,
                         isDeleteSource = isDeleteSource.value,
                         isDeleteTarget = isDeleteTarget.value,
-                    )
+                    ),
+                    onSuccess = { handleFileDialogVisible.value = false },
+                    onError = { throw error(it) }
                 )
             }
         },
     ) {
-
+        OutlinedTextField(
+            value = filePath.value,
+            onValueChange = { filePath.value = it },
+            label = { RequiredFieldLabel(CommonString.FILE_PATH.localization) },
+            supportingText = { RequiredSupportingText(filePath, CommonString.FILE_PATH.localization) }
+        )
+        Row {
+            Text(
+                CommonString.DELETE_SOURCE.localization,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            Checkbox(
+                checked = isDeleteSource.value,
+                onCheckedChange = { isDeleteSource.value = it },
+            )
+        }
+        Row {
+            Text(
+                CommonString.DELETE_TARGET.localization,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            Checkbox(
+                checked = isDeleteTarget.value,
+                onCheckedChange = { isDeleteTarget.value = it },
+            )
+        }
     }
 }
 
@@ -214,7 +242,7 @@ private fun CreateAnimeSeason(
     val isCreateAnime = remember { mutableStateOf(false) }
 
     val animeSearchVisible = remember { mutableStateOf(false) }
-    val animeNameSearch: MutableState<String?> = remember { mutableStateOf(null) }
+    val animeNameSearch: MutableState<String> = remember { mutableStateOf("") }
     val animeSearchResult: MutableState<List<Anime>> = remember { mutableStateOf(emptyList()) }
 
     val anime: MutableState<Anime?> = remember { mutableStateOf(null) }
@@ -224,25 +252,9 @@ private fun CreateAnimeSeason(
     val animeSeasonSearchVisible = remember { mutableStateOf(false) }
     val animeSeasonSearchResult: MutableState<List<AnimeSeason>> = remember { mutableStateOf(emptyList()) }
 
-    val errorMessage: MutableState<String?> = remember { mutableStateOf(null) }
-
-    fun checkAnimeField() {
-        if (anime.value == null) {
-            errorMessage.value =
-                AnimeString.SEASON_FIELD_ANIME_NAME.localization + CommonString.IS_BLANK.localization
-        }
-    }
-
-    fun checkAnimeSeasonField() {
-        if (animeSeason.value == null) {
-            errorMessage.value =
-                AnimeString.SEASON_FIELD_SEASON_NAME.localization + CommonString.IS_BLANK.localization
-        }
-    }
-
     fun resetField() {
         animeSearchVisible.value = false
-        animeNameSearch.value = null
+        animeNameSearch.value = ""
         animeSearchResult.value = emptyList()
 
         anime.value = null
@@ -251,8 +263,6 @@ private fun CreateAnimeSeason(
 
         animeSeasonSearchVisible.value = false
         animeSeasonSearchResult.value = emptyList()
-
-        errorMessage.value = null
     }
 
     fun closeCreateDialog() {
@@ -266,18 +276,13 @@ private fun CreateAnimeSeason(
         formDialogVisible = createDialogVisible,
         onDismissRequest = { closeCreateDialog() },
         onConfirmation = {
-            checkAnimeField()
-            checkAnimeSeasonField()
-            if (errorMessage.value.isNullOrBlank()) {
-                onConfirmation(animeSeason.value!!).let {
-                    if (it.isNullOrBlank()) {
-                        // 如果异常消息为空，则关闭弹窗
-                        closeCreateDialog()
-                    } else {
-                        errorMessage.value = it
-                    }
+            requireNotNull(anime.value) { AnimeString.SEASON_FIELD_ANIME_NAME.localization + CommonString.IS_BLANK.localization }
+            requireNotNull(animeSeason.value,
+                lazyMessage = { AnimeString.SEASON_FIELD_SEASON_NAME.localization + CommonString.IS_BLANK.localization })
+                .let {
+                    onConfirmation(it)
+                    closeCreateDialog()
                 }
-            }
         },
     ) {
         val fieldWidth = 300.dp
@@ -297,7 +302,7 @@ private fun CreateAnimeSeason(
 
         // 动画名称搜索框
         OutlinedTextField(
-            value = animeNameSearch.value ?: "",
+            value = animeNameSearch.value,
             onValueChange = { animeNameSearch.value = it },
             modifier = Modifier.width(fieldWidth),
             label = {
@@ -306,27 +311,26 @@ private fun CreateAnimeSeason(
                             if (isCreateAnime.value) AnimeString.SEARCH_TMDB.localization else AnimeString.SEARCH_LOCAL.localization
                 )
             },
+            supportingText = {
+                RequiredSupportingText(
+                    animeNameSearch,
+                    AnimeString.SEASON_FIELD_ANIME_NAME_SEARCH.localization
+                )
+            },
             leadingIcon = {
                 IconButton(onClick = {
-                    if (animeNameSearch.value.isNullOrBlank()) {
-                        errorMessage.value =
-                            AnimeString.SEASON_FIELD_ANIME_NAME.localization + CommonString.IS_BLANK.localization
-                    } else if (isCreateAnime.value) {
-                        operator.searchAnimeFromTMDB(name = animeNameSearch.value!!, onSuccess = {
-                            animeSearchResult.value = it
-                            animeSearchVisible.value = true
-                            errorMessage.value = null
-                        }, onError = {
-                            errorMessage.value = it
-                        })
-                    } else {
-                        operator.searchAnime(name = animeNameSearch.value!!, onSuccess = {
-                            animeSearchResult.value = it
-                            animeSearchVisible.value = true
-                            errorMessage.value = null
-                        }, onError = {
-                            errorMessage.value = it
-                        })
+                    if (animeNameSearch.value.isNotBlank()) {
+                        if (isCreateAnime.value) {
+                            operator.searchAnimeFromTMDB(name = animeNameSearch.value, onSuccess = {
+                                animeSearchResult.value = it
+                                animeSearchVisible.value = true
+                            })
+                        } else {
+                            operator.searchAnime(name = animeNameSearch.value, onSuccess = {
+                                animeSearchResult.value = it
+                                animeSearchVisible.value = true
+                            })
+                        }
                     }
                 }) {
                     Icon(Icons.Default.Search, null)
@@ -366,22 +370,19 @@ private fun CreateAnimeSeason(
             readOnly = true,
             leadingIcon = {
                 IconButton(onClick = {
-                    checkAnimeField()
-                    if (errorMessage.value.isNullOrBlank()) {
-                        if (isCreateAnime.value && anime.value!!.animeSeasons.isNotEmpty()) {
+                    anime.value?.let { anime ->
+                        if (isCreateAnime.value && anime.animeSeasons.isNotEmpty()) {
                             // 如果创建动画，则直接取tmdb动画搜索结果的季度
-                            animeSeasonSearchResult.value = anime.value!!.animeSeasons
+                            animeSeasonSearchResult.value = anime.animeSeasons
                             animeSeasonSearchVisible.value = true
-                            errorMessage.value = null
-                        } else if (anime.value!!.tmdbId != null) {
-                            // 否则如果动画有tmdbId，则取tmdb动画季度
-                            operator.getAnimeByTmdbId(anime.value!!.tmdbId!!, onSuccess = {
-                                animeSeasonSearchResult.value = it.animeSeasons
-                                animeSeasonSearchVisible.value = true
-                                errorMessage.value = null
-                            }, onError = {
-                                errorMessage.value = it
-                            })
+                        } else {
+                            anime.tmdbId?.let {
+                                // 否则如果动画有tmdbId，则取tmdb动画季度
+                                operator.getAnimeByTmdbId(it, onSuccess = {
+                                    animeSeasonSearchResult.value = it.animeSeasons
+                                    animeSeasonSearchVisible.value = true
+                                }, onError = { throw error(it) })
+                            }
                         }
                     }
                 }) {
@@ -412,14 +413,6 @@ private fun CreateAnimeSeason(
                 }
             }
         }
-        // 错误提示
-        errorMessage.value?.let {
-            Text(
-                text = errorMessage.value ?: "",
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.width(fieldWidth),
-            )
-        }
     }
 }
 
@@ -440,25 +433,36 @@ private class AnimeSeasonOperator(
 
     fun searchAnime(name: String, onSuccess: (List<Anime>) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
-            appState.api.anime.searchAnimeByName(name).onSuccessData(null, onSuccess, onError)
+            appState.api.anime.searchAnimeByName(name).onSuccessData(appState, onSuccess, onError)
         }
     }
 
     fun searchAnimeFromTMDB(name: String, onSuccess: (List<Anime>) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
-            appState.api.anime.searchTmdbAnimeTv(name).onSuccessData(null, onSuccess, onError)
+            appState.api.anime.searchTmdbAnimeTv(name).onSuccessData(appState, onSuccess, onError)
         }
     }
 
     fun getAnimeByTmdbId(id: ULong, onSuccess: (Anime) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
-            appState.api.anime.getTmdbAnimeTvDetail(id).onSuccessData(null, onSuccess, onError)
+            appState.api.anime.getTmdbAnimeTvDetail(id).onSuccessData(appState, onSuccess, onError)
         }
     }
 
     fun deleteSeason(id: ULong, onSuccess: () -> Unit = { }) {
         appState.scope.launch {
             appState.api.anime.removeAnimeSeasonById(id).onSuccess(appState, onSuccess)
+        }
+    }
+
+    fun handleAnimeSeasonFile(
+        seasonFile: AnimeSeasonFile,
+        onSuccess: () -> Unit = { },
+        onError: (String) -> Unit = { }
+    ) {
+        appState.scope.launch {
+            appState.api.anime.handleAnimeSeasonFile(seasonFile)
+                .onSuccess(appState, onSuccess = onSuccess, onError = onError)
         }
     }
 }

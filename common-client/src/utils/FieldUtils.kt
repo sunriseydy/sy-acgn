@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import dev.sunriseydy.acgn.client.common.enums.CommonString
 
 /**
  * @author SunriseYDY
@@ -15,11 +17,15 @@ fun RequiredFieldLabel(label: String) {
 }
 
 @Composable
-fun SupportingText(isError: Boolean, errorMessage: String, supportingText: @Composable () -> Unit = { }) {
+fun RequiredSupportingText(
+    fieldValue: MutableState<String>,
+    fieldName: String = "",
+    supportingText: @Composable () -> Unit = { }
+) {
     Column {
         supportingText()
-        if (isError) {
-            Text(errorMessage, color = MaterialTheme.colorScheme.error)
+        if (fieldValue.value.isBlank()) {
+            Text(fieldName + CommonString.IS_BLANK.localization, color = MaterialTheme.colorScheme.error)
         }
     }
 }

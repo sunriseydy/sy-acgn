@@ -20,4 +20,7 @@ enum class CommonString : CommonModuleLocalizable, EnumLocalizable {
     API_ERROR,
     DOWNLOAD,
     NO_DATA,
+    FILE_PATH,
+    DELETE_SOURCE,
+    DELETE_TARGET,
 }

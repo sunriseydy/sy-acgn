@@ -57,7 +57,7 @@ import dev.sunriseydy.acgn.client.interfaces.getPager
 import dev.sunriseydy.acgn.client.onSuccess
 import dev.sunriseydy.acgn.client.onSuccessData
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
-import dev.sunriseydy.acgn.client.utils.SupportingText
+import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -128,17 +128,6 @@ fun RssList(
     val deleteRss: MutableState<Rss?> = remember { mutableStateOf(null) }
     val editRss: MutableState<Rss?> = remember { mutableStateOf(null) }
     val isError = rememberSaveable { mutableStateOf(false) }
-    val errorMessage = rememberSaveable { mutableStateOf("") }
-
-    fun setError(message: String) {
-        isError.value = true
-        errorMessage.value = message
-    }
-
-    fun clearError() {
-        isError.value = false
-        errorMessage.value = ""
-    }
 
     fun closeAddRssDialog() {
         newLink.value = ""
@@ -214,33 +203,27 @@ fun RssList(
     FormDialog(
         formDialogVisible = addRssDialogVisible,
         onConfirmation = {
-            if (newLink.value.isBlank()) {
-                setError(RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization)
-            } else {
-                rssOperator.createRss(
-                    newLink.value,
-                    onSuccess = {
-                        clearError()
-                        closeAddRssDialog()
-                        rssOperator.loadRss()
-                    },
-                    onError = {
-                        setError(it)
-                    },
-                )
-            }
+            require(newLink.value.isNotBlank()) { RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization }
+            rssOperator.createRss(
+                newLink.value,
+                onSuccess = {
+                    closeAddRssDialog()
+                    rssOperator.loadRss()
+                },
+                onError = {
+                    throw error(it)
+                },
+            )
         },
         onDismissRequest = {
             closeAddRssDialog()
-            clearError()
         },
     ) {
         OutlinedTextField(
             value = newLink.value,
             onValueChange = { newLink.value = it },
             label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.localization) },
-            isError = isError.value,
-            supportingText = { SupportingText(isError.value, errorMessage.value) }
+            supportingText = { RequiredSupportingText(newLink, RssString.RSS_FIELD_LINK.localization) }
         )
     }
     // 删除 RSS 弹窗
@@ -260,26 +243,21 @@ fun RssList(
     FormDialog(
         formDialogVisible = editRssDialogVisible,
         onConfirmation = {
-            if (newTitle.value.isBlank()) {
-                setError(RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization)
-            } else {
-                editRss.value?.also {
-                    rssOperator.updateRss(
-                        it.copy(id = it.id, title = newTitle.value),
-                        onSuccess = {
-                            clearError()
-                            closeEditRssDialog()
-                            rssOperator.loadRss()
-                        },
-                        onError = {
-                            setError(it)
-                        }
-                    )
-                }
+            require(newTitle.value.isNotBlank()) { RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization }
+            editRss.value?.also {
+                rssOperator.updateRss(
+                    it.copy(id = it.id, title = newTitle.value),
+                    onSuccess = {
+                        closeEditRssDialog()
+                        rssOperator.loadRss()
+                    },
+                    onError = {
+                        throw error(it)
+                    }
+                )
             }
         },
         onDismissRequest = {
-            clearError()
             closeEditRssDialog()
         },
     ) {
@@ -287,8 +265,7 @@ fun RssList(
             value = newTitle.value,
             onValueChange = { newTitle.value = it },
             label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.localization) },
-            isError = isError.value,
-            supportingText = { SupportingText(isError.value, errorMessage.value) },
+            supportingText = { RequiredSupportingText(newTitle, RssString.RSS_FIELD_TITLE.localization) },
         )
     }
 }
@@ -414,7 +391,7 @@ class RssOperator(
     ) {
         appState.scope.launch {
             appState.api.rss.createRss(link)
-                .onSuccess(appState, onSuccess = onSuccess, onError = onError)
+                .onSuccess(null, onSuccess = onSuccess, onError = onError)
         }
     }
 

@@ -18,6 +18,9 @@ enum:
       API_ERROR: "调用API异常"
       DOWNLOAD: "下载"
       NO_DATA: "无数据"
+      FILE_PATH: "文件路径"
+      DELETE_SOURCE: "删除源路径"
+      DELETE_TARGET: "删除目标路径"
   ANIME:
     AnimeAssociatedType:
       ANIME: "动画"
@@ -45,6 +48,7 @@ enum:
       SEASON_FIELD_SEASON_NAME: "季度名称"
       SEARCH_TMDB: "TMDB"
       SEARCH_LOCAL: "本地"
+      FIELD_SEASON_FILE_PATH: "文件路径"
 
 message:
   error:

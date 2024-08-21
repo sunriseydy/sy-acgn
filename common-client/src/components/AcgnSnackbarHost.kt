@@ -96,7 +96,7 @@ class SnackbarVisualsWithError(override val message: String) :
         get() = true
 
     override val duration: SnackbarDuration
-        get() = SnackbarDuration.Indefinite
+        get() = SnackbarDuration.Short
 }
 
 fun AppState.showMessage(

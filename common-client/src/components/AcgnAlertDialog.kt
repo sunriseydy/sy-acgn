@@ -1,13 +1,19 @@
 package dev.sunriseydy.acgn.client.components
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.common.enums.CommonString
 
 /**
@@ -18,6 +24,7 @@ import dev.sunriseydy.acgn.client.common.enums.CommonString
 @Composable
 fun AcgnAlertDialog(
     alertDialogVisible: MutableState<Boolean>,
+    errorMessage: MutableState<String?> = mutableStateOf(null),
     onDismissRequest: () -> Unit = { alertDialogVisible.value = false },
     onConfirmation: () -> Unit,
     dialogTitle: String,
@@ -41,14 +48,26 @@ fun AcgnAlertDialog(
                 dialogText?.let {
                     Text(it)
                 }
+                errorMessage.value?.let {
+                    Text(it, color = MaterialTheme.colorScheme.error)
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
             },
             onDismissRequest = {
-                onDismissRequest()
+                try {
+                    onDismissRequest()
+                } catch (e: Exception) {
+                    errorMessage.value = e.message
+                }
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        onConfirmation()
+                        try {
+                            onConfirmation()
+                        } catch (e: Exception) {
+                            errorMessage.value = e.message
+                        }
                     }
                 ) {
                     Text(CommonString.CONFIRM.localization)
@@ -57,7 +76,11 @@ fun AcgnAlertDialog(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        onDismissRequest()
+                        try {
+                            onDismissRequest()
+                        } catch (e: Exception) {
+                            errorMessage.value = e.message
+                        }
                     }
                 ) {
                     Text(CommonString.CANCEL.localization)
