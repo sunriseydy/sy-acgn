@@ -37,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -130,7 +129,6 @@ fun RssList(
     val newTitle = remember { mutableStateOf("") }
     val deleteRss: MutableState<Rss?> = remember { mutableStateOf(null) }
     val editRss: MutableState<Rss?> = remember { mutableStateOf(null) }
-    val isError = rememberSaveable { mutableStateOf(false) }
 
     fun closeAddRssDialog() {
         newLink.value = ""
