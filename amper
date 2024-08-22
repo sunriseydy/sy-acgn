@@ -19,8 +19,6 @@
 
 set -e -u
 
-AMPER_JAVA_HOME=${AMPER_JAVA_HOME:-/usr/lib/jvm/java-21-openjdk-amd64}
-
 amper_version=0.4.0
 amper_url="${AMPER_DOWNLOAD_ROOT:-https://packages.jetbrains.team/maven/p/amper/amper}/org/jetbrains/amper/cli/$amper_version/cli-$amper_version-dist.zip"
 amper_jre_download_root="${AMPER_JRE_DOWNLOAD_ROOT:-https:/}"
