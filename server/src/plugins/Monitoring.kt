@@ -15,10 +15,8 @@ fun Application.configureMonitoring() {
         filter { call -> call.request.path().startsWith("/") }
     }
     install(CallId) {
+        retrieveFromHeader(HttpHeaders.XRequestId)
         generate { UUID.randomUUID().toString().replace("-", "") }
-        header(HttpHeaders.XRequestId)
-        verify { callId: String ->
-            callId.isNotEmpty()
-        }
+        replyToHeader(HttpHeaders.XRequestId)
     }
 }
