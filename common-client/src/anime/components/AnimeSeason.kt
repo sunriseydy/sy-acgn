@@ -56,8 +56,10 @@ import dev.sunriseydy.acgn.client.onSuccess
 import dev.sunriseydy.acgn.client.onSuccessData
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
-import kotlinx.coroutines.launch
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.collections.List
+
+private val logger = KotlinLogging.logger { }
 
 /**
  * @author SunriseYDY
@@ -420,39 +422,27 @@ private class AnimeSeasonOperator(
     val appState: AppState,
 ) {
     fun loadData(onSuccess: (MutableMap<String, List<AnimeSeason>>) -> Unit, onError: (String) -> Unit = { }) {
-        appState.scope.launch {
-            appState.api.anime.getAnimeSeasonSectionMap().onSuccessData(appState, onSuccess, onError)
-        }
+        appState.api.anime.getAnimeSeasonSectionMap().onSuccessData(appState, onSuccess, onError)
     }
 
     fun saveAnimeSeason(animeSeason: AnimeSeason, onSuccess: () -> Unit = { }, onError: (String) -> Unit = { }) {
-        appState.scope.launch {
-            appState.api.anime.saveAnimeSeason(animeSeason).onSuccess(appState, onSuccess, onError)
-        }
+        appState.api.anime.saveAnimeSeason(animeSeason).onSuccess(appState, onSuccess, onError)
     }
 
     fun searchAnime(name: String, onSuccess: (List<Anime>) -> Unit, onError: (String) -> Unit = { }) {
-        appState.scope.launch {
-            appState.api.anime.searchAnimeByName(name).onSuccessData(appState, onSuccess, onError)
-        }
+        appState.api.anime.searchAnimeByName(name).onSuccessData(appState, onSuccess, onError)
     }
 
     fun searchAnimeFromTMDB(name: String, onSuccess: (List<Anime>) -> Unit, onError: (String) -> Unit = { }) {
-        appState.scope.launch {
-            appState.api.anime.searchTmdbAnimeTv(name).onSuccessData(appState, onSuccess, onError)
-        }
+        appState.api.anime.searchTmdbAnimeTv(name).onSuccessData(appState, onSuccess, onError)
     }
 
     fun getAnimeByTmdbId(id: ULong, onSuccess: (Anime) -> Unit, onError: (String) -> Unit = { }) {
-        appState.scope.launch {
-            appState.api.anime.getTmdbAnimeTvDetail(id).onSuccessData(appState, onSuccess, onError)
-        }
+        appState.api.anime.getTmdbAnimeTvDetail(id).onSuccessData(appState, onSuccess, onError)
     }
 
     fun deleteSeason(id: ULong, onSuccess: () -> Unit = { }) {
-        appState.scope.launch {
-            appState.api.anime.removeAnimeSeasonById(id).onSuccess(appState, onSuccess)
-        }
+        appState.api.anime.removeAnimeSeasonById(id).onSuccess(appState, onSuccess)
     }
 
     fun handleAnimeSeasonFile(
@@ -460,9 +450,7 @@ private class AnimeSeasonOperator(
         onSuccess: () -> Unit = { },
         onError: (String) -> Unit = { }
     ) {
-        appState.scope.launch {
-            appState.api.anime.handleAnimeSeasonFile(seasonFile)
-                .onSuccess(appState, onSuccess = onSuccess, onError = onError)
-        }
+        appState.api.anime.handleAnimeSeasonFile(seasonFile)
+            .onSuccess(appState, onSuccess = onSuccess, onError = onError)
     }
 }

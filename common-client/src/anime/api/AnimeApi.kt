@@ -15,100 +15,139 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import kotlinx.coroutines.runBlocking
 
 /**
  * @author SunriseYDY
  * @date 2024-07-23 19:54
  */
 class AnimeApi internal constructor(private val httpClient: HttpClient) {
-    suspend fun searchAnimeByName(name: String): Result<List<Anime>> = httpClient.get {
-        animeApiEndPoint("name")
-        parameter("name", name)
-    }.body()
-
-    suspend fun getAnimeById(animeId: ULong): Result<Anime> = httpClient.get {
-        animeApiEndPoint(animeId.toString())
-    }.body()
-
-    suspend fun getAllAnimeFromCache(): Result<List<Anime>> = httpClient.get {
-        animeApiEndPoint("cache")
-    }.body()
-
-    suspend fun getAllAnimeFromDb(): Result<List<Anime>> = httpClient.get {
-        animeApiEndPoint()
-    }.body()
-
-    suspend fun refreshAnimeCache(): Result<Unit> = httpClient.get {
-        animeApiEndPoint("refresh")
-    }.body()
-
-    suspend fun removeAnimeById(animeId: ULong): Result<Unit> = httpClient.delete {
-        animeApiEndPoint(animeId.toString())
-    }.body()
-
-    suspend fun getAnimeSeasonsById(id: ULong): Result<AnimeSeason> = httpClient.get {
-        animeSeasonApiEndPoint(id.toString())
-    }.body()
-
-    suspend fun getAnimeYears(): Result<List<Int>> = httpClient.get {
-        animeSeasonApiEndPoint("years")
-    }.body()
-
-    suspend fun getAnimeSeasonsByAnimeId(animeId: ULong): Result<List<AnimeSeason>> = httpClient.get {
-        animeSeasonApiEndPoint("by-anime-id")
-        parameter("animeId", animeId)
-    }.body()
-
-    suspend fun getAnimeSeasonsByYearAndMonth(year: Int, monthType: AnimeMonthType): Result<List<AnimeSeason>> =
+    fun searchAnimeByName(name: String): Result<List<Anime>> = runBlocking {
         httpClient.get {
-            animeSeasonApiEndPoint("by-year-and-month-type")
-            parameter("year", year)
-            parameter("monthType", monthType)
+            animeApiEndPoint("name")
+            parameter("name", name)
         }.body()
+    }
 
-    suspend fun getAnimeSeasonSectionMap(): Result<MutableMap<String, List<AnimeSeason>>> = httpClient.get {
-        animeSeasonApiEndPoint("section-map")
-    }.body()
+    fun getAnimeById(animeId: ULong): Result<Anime> = runBlocking {
+        httpClient.get {
+            animeApiEndPoint(animeId.toString())
+        }.body()
+    }
 
-    suspend fun saveAnimeSeason(animeSeason: AnimeSeason): Result<AnimeSeason> = httpClient.post {
-        animeSeasonApiEndPoint()
-        setBody(animeSeason)
-    }.body()
+    fun getAllAnimeFromCache(): Result<List<Anime>> = runBlocking {
+        httpClient.get {
+            animeApiEndPoint("cache")
+        }.body()
+    }
 
-    suspend fun removeAnimeSeasonById(seasonId: ULong): Result<Unit> = httpClient.delete {
-        animeSeasonApiEndPoint(seasonId.toString())
-    }.body()
+    fun getAllAnimeFromDb(): Result<List<Anime>> = runBlocking {
+        httpClient.get {
+            animeApiEndPoint()
+        }.body()
+    }
 
-    suspend fun searchTmdbAnimeTv(query: String): Result<List<Anime>> = httpClient.get {
-        animeTmdbApiEndPoint("search-anime-tv")
-        parameter("query", query)
-    }.body()
+    fun refreshAnimeCache(): Result<Unit> = runBlocking {
+        httpClient.get {
+            animeApiEndPoint("refresh")
+        }.body()
+    }
 
-    suspend fun searchTmdbAnimeMovie(query: String): Result<List<Anime>> = httpClient.get {
-        animeTmdbApiEndPoint("search-anime-movie")
-        parameter("query", query)
-    }.body()
+    fun removeAnimeById(animeId: ULong): Result<Unit> = runBlocking {
+        httpClient.delete {
+            animeApiEndPoint(animeId.toString())
+        }.body()
+    }
 
-    suspend fun getTmdbAnimeTvDetail(id: ULong): Result<Anime> = httpClient.get {
-        animeTmdbApiEndPoint("tv-detail")
-        parameter("id", id)
-    }.body()
+    fun getAnimeSeasonsById(id: ULong): Result<AnimeSeason> = runBlocking {
+        httpClient.get {
+            animeSeasonApiEndPoint(id.toString())
+        }.body()
+    }
 
-    suspend fun getTmdbAnimeSeasonDetail(showId: Int, season: String): Result<AnimeSeason> = httpClient.get {
-        animeTmdbApiEndPoint("season-detail")
-        parameter("showId", showId)
-        parameter("season", season)
-    }.body()
+    fun getAnimeYears(): Result<List<Int>> = runBlocking {
+        httpClient.get {
+            animeSeasonApiEndPoint("years")
+        }.body()
+    }
 
-    suspend fun getTmdbAnimeMovieDetail(id: Int): Result<AnimeMovie> = httpClient.get {
-        animeTmdbApiEndPoint("movie-detail")
-        parameter("id", id)
-    }.body()
+    fun getAnimeSeasonsByAnimeId(animeId: ULong): Result<List<AnimeSeason>> = runBlocking {
+        httpClient.get {
+            animeSeasonApiEndPoint("by-anime-id")
+            parameter("animeId", animeId)
+        }.body()
+    }
 
-    suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile): Result<Unit> = httpClient.post {
-        animeFileApiEndPoint("season-file")
-        setBody(animeSeasonFile)
-    }.body()
+    fun getAnimeSeasonsByYearAndMonth(year: Int, monthType: AnimeMonthType): Result<List<AnimeSeason>> =
+        runBlocking {
+            httpClient.get {
+                animeSeasonApiEndPoint("by-year-and-month-type")
+                parameter("year", year)
+                parameter("monthType", monthType)
+            }.body()
+        }
+
+    fun getAnimeSeasonSectionMap(): Result<MutableMap<String, List<AnimeSeason>>> = runBlocking {
+        httpClient.get {
+            animeSeasonApiEndPoint("section-map")
+        }.body()
+    }
+
+    fun saveAnimeSeason(animeSeason: AnimeSeason): Result<AnimeSeason> = runBlocking {
+        httpClient.post {
+            animeSeasonApiEndPoint()
+            setBody(animeSeason)
+        }.body()
+    }
+
+    fun removeAnimeSeasonById(seasonId: ULong): Result<Unit> = runBlocking {
+        httpClient.delete {
+            animeSeasonApiEndPoint(seasonId.toString())
+        }.body()
+    }
+
+    fun searchTmdbAnimeTv(query: String): Result<List<Anime>> = runBlocking {
+        httpClient.get {
+            animeTmdbApiEndPoint("search-anime-tv")
+            parameter("query", query)
+        }.body()
+    }
+
+    fun searchTmdbAnimeMovie(query: String): Result<List<Anime>> = runBlocking {
+        httpClient.get {
+            animeTmdbApiEndPoint("search-anime-movie")
+            parameter("query", query)
+        }.body()
+    }
+
+    fun getTmdbAnimeTvDetail(id: ULong): Result<Anime> = runBlocking {
+        httpClient.get {
+            animeTmdbApiEndPoint("tv-detail")
+            parameter("id", id)
+        }.body()
+    }
+
+    fun getTmdbAnimeSeasonDetail(showId: Int, season: String): Result<AnimeSeason> = runBlocking {
+        httpClient.get {
+            animeTmdbApiEndPoint("season-detail")
+            parameter("showId", showId)
+            parameter("season", season)
+        }.body()
+    }
+
+    fun getTmdbAnimeMovieDetail(id: Int): Result<AnimeMovie> = runBlocking {
+        httpClient.get {
+            animeTmdbApiEndPoint("movie-detail")
+            parameter("id", id)
+        }.body()
+    }
+
+    fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile): Result<Unit> = runBlocking {
+        httpClient.post {
+            animeFileApiEndPoint("season-file")
+            setBody(animeSeasonFile)
+        }.body()
+    }
 
     private fun HttpRequestBuilder.animeApiEndPoint(vararg paths: String) {
         animeModuleApiEndPoint("anime", *paths)

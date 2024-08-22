@@ -12,18 +12,19 @@ interface Paging<T> {
     val data: MutableState<List<T>>
     val loading: MutableState<Boolean>
     val finished: MutableState<Boolean>
-    suspend fun getData(paging: Paging<T>): List<T>
+    fun getData(paging: Paging<T>): List<T>
 
     fun onError(e: Exception)
 
-    suspend fun load(init: Boolean) {
+    fun load(init: Boolean) {
         if (loading.value) return
+        if (finished.value) return
         loading.value = true
         if (init) page.value = 1L
         try {
             getData(this).also {
-                if (init) data.value = it else data.value += it
                 if (it.isEmpty()) finished.value = true
+                if (init) data.value = it else data.value += it
             }
         } catch (e: Exception) {
             onError(e)
@@ -32,13 +33,12 @@ interface Paging<T> {
         }
     }
 
-    suspend fun loadNext() {
-        if (finished.value) return
+    fun loadNext() {
         page.value++
         load(init = false)
     }
 
-    suspend fun loadInit() {
+    fun loadInit() {
         finished.value = false
         load(init = true)
     }
@@ -51,7 +51,7 @@ fun <T> getPager(
     loading: MutableState<Boolean>,
     finished: MutableState<Boolean>,
     onError: (Exception) -> Unit,
-    getData: suspend (Paging<T>) -> List<T>,
+    getData: (Paging<T>) -> List<T>,
 ): Paging<T> = object : Paging<T> {
     override val page: MutableState<Long>
         get() = page
@@ -66,5 +66,5 @@ fun <T> getPager(
 
     override fun onError(e: Exception) = onError(e)
 
-    override suspend fun getData(paging: Paging<T>): List<T> = getData(this)
+    override fun getData(paging: Paging<T>): List<T> = getData(this)
 }

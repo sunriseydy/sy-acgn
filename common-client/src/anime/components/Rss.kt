@@ -58,7 +58,6 @@ import dev.sunriseydy.acgn.client.onSuccess
 import dev.sunriseydy.acgn.client.onSuccessData
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
-import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -79,6 +78,7 @@ fun Rss(appState: AppState) {
     }
     val rssList: MutableState<List<Rss>> = remember { mutableStateOf(listOf()) }
     val isOnlyUnread: MutableState<Boolean> = remember { mutableStateOf(true) }
+    val init: MutableState<Boolean> = remember { mutableStateOf(false) }
 
     val rssItemPager: Paging<RssItem> = getPager<RssItem>(
         page = remember { mutableStateOf(1L) },
@@ -101,7 +101,10 @@ fun Rss(appState: AppState) {
     val rssOperator: RssOperator = RssOperator(appState, rssList, rssItemPager)
 
     // 加载数据
-    rssOperator.loadData()
+    if (!init.value) {
+        init.value = true
+        rssOperator.loadData()
+    }
 
     // 渲染页面
     Row {
@@ -142,7 +145,7 @@ fun RssList(
 
     Column(modifier = modifier) {
         PageTitle(RssString.RSS_TITLE.localization) {
-            IconButton(onClick = { rssOperator.loadRss() }) {
+            IconButton(onClick = { rssOperator.loadData() }) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
             }
             IconButton(onClick = { addRssDialogVisible.value = true }) {
@@ -377,11 +380,9 @@ class RssOperator(
     val rssItemPager: Paging<RssItem>,
 ) {
     fun loadRss() {
-        appState.scope.launch {
-            appState.api.rss.getAllRss().onSuccessData(appState, onSuccess = { data ->
-                rssList.value = data
-            })
-        }
+        appState.api.rss.getAllRss().onSuccessData(appState, onSuccess = { data ->
+            rssList.value = data
+        })
     }
 
     fun createRss(
@@ -389,16 +390,12 @@ class RssOperator(
         onSuccess: () -> Unit = { },
         onError: (String) -> Unit = { },
     ) {
-        appState.scope.launch {
-            appState.api.rss.createRss(link)
-                .onSuccess(null, onSuccess = onSuccess, onError = onError)
-        }
+        appState.api.rss.createRss(link)
+            .onSuccess(null, onSuccess = onSuccess, onError = onError)
     }
 
     fun deleteRss(id: ULong, onSuccess: () -> Unit) {
-        appState.scope.launch {
-            appState.api.rss.deleteRss(id).onSuccess(appState, onSuccess)
-        }
+        appState.api.rss.deleteRss(id).onSuccess(appState, onSuccess)
     }
 
     fun updateRss(
@@ -406,43 +403,31 @@ class RssOperator(
         onSuccess: () -> Unit = { },
         onError: (String) -> Unit = { },
     ) {
-        appState.scope.launch {
-            appState.api.rss.saveRss(rss.id, rss)
-                .onSuccess(appState, onSuccess, onError)
-        }
+        appState.api.rss.saveRss(rss.id, rss)
+            .onSuccess(appState, onSuccess, onError)
     }
 
     fun markRssItemReadByIdOrRssId(
         id: String? = null,
         rssId: ULong? = null
     ) {
-        appState.scope.launch {
-            appState.api.rss.markRssItemReadByIdOrRssId(id, rssId).onSuccess(appState, onSuccess = { loadData() })
-        }
+        appState.api.rss.markRssItemReadByIdOrRssId(id, rssId).onSuccess(appState, onSuccess = { loadData() })
     }
 
     fun loadRssItem() {
-        appState.scope.launch {
-            rssItemPager.loadInit()
-        }
+        rssItemPager.loadInit()
     }
 
     fun loadMoreRssItem() {
-        appState.scope.launch {
-            rssItemPager.loadNext()
-        }
+        rssItemPager.loadNext()
     }
 
     fun loadData() {
-        if (rssList.value.isEmpty()) {
-            loadRss()
-        }
+        loadRss()
         loadRssItem()
     }
 
     fun download(link: String, onSuccess: () -> Unit) {
-        appState.scope.launch {
-            appState.api.rss.addQbTorrent(TorrentAdd(url = link)).onSuccess(appState, onSuccess)
-        }
+        appState.api.rss.addQbTorrent(TorrentAdd(url = link)).onSuccess(appState, onSuccess)
     }
 }

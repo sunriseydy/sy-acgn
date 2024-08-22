@@ -19,7 +19,6 @@ import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
 
 private val logger = KotlinLogging.logger { }
 
@@ -43,20 +42,18 @@ fun App() {
 }
 
 private fun checkServer(showServerConfig: MutableState<Boolean>, language: Language? = null) =
-    runBlocking {
-        try {
-            val (_, configs, localizations) = SyAcgnApi().common.getAppInfo(language).checkSuccessAndNotNull()
-            AppConfigTool.putAll(configs)
-            if (localizations.isEmpty()) {
-                throw error("localization is empty")
-            }
-            LocalizationTool.putAll(localizations)
-            showServerConfig.value = false
-            return@runBlocking Pair(true, "连接服务器成功")
-        } catch (e: Exception) {
-            showServerConfig.value = true
-            return@runBlocking Pair(false, "连接服务器失败：${e.message}")
+    try {
+        val (_, configs, localizations) = SyAcgnApi().common.getAppInfo(language).checkSuccessAndNotNull()
+        AppConfigTool.putAll(configs)
+        if (localizations.isEmpty()) {
+            throw error("localization is empty")
         }
+        LocalizationTool.putAll(localizations)
+        showServerConfig.value = false
+        Pair(true, "连接服务器成功")
+    } catch (e: Exception) {
+        showServerConfig.value = true
+        Pair(false, "连接服务器失败：${e.message}")
     }
 
 enum class LayoutType {
@@ -71,7 +68,11 @@ data class AppState(
     val api: SyAcgnApi,
 )
 
-fun <T> Result<T>.onSuccess(appState: AppState? = null, onSuccess: () -> Unit = { }, onError: (String) -> Unit = { }) {
+fun <T> Result<T>.onSuccess(
+    appState: AppState? = null,
+    onSuccess: () -> Unit = { },
+    onError: (String) -> Unit = { }
+) {
     try {
         this.checkSuccess()
         onSuccess()
