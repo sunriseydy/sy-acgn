@@ -9,9 +9,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import java.util.UUID
+import java.util.*
 
-fun Routing.rssRoutes(rssService: RssService = RssService()) {
+fun Route.rssRoutes(rssService: RssService = RssService()) {
     route("/rss") {
         get {
             call.respond(Result(data = rssService.getAllRss()))

@@ -5,16 +5,16 @@ apply:
   - ../lib.module-template.yaml
 
 dependencies:
-  - io.ktor:ktor-server-core-jvm:3.0.0-beta-2
-  - io.ktor:ktor-server-content-negotiation-jvm:3.0.0-beta-2
-  - io.ktor:ktor-server-call-logging-jvm:3.0.0-beta-2
-  - io.ktor:ktor-server-call-id:3.0.0-beta-2
-  - io.ktor:ktor-server-forwarded-header-jvm:3.0.0-beta-2
-  - io.ktor:ktor-server-cors-jvm:3.0.0-beta-2
-  - io.ktor:ktor-server-status-pages-jvm:3.0.0-beta-2
-  - io.ktor:ktor-server-resources:3.0.0-beta-2
-  - io.ktor:ktor-server-cio:3.0.0-beta-2
-  - io.ktor:ktor-server-config-yaml:3.0.0-beta-2
+  - io.ktor:ktor-server-core-jvm:3.0.1
+  - io.ktor:ktor-server-content-negotiation-jvm:3.0.1
+  - io.ktor:ktor-server-call-logging-jvm:3.0.1
+  - io.ktor:ktor-server-call-id:3.0.1
+  - io.ktor:ktor-server-forwarded-header-jvm:3.0.1
+  - io.ktor:ktor-server-cors-jvm:3.0.1
+  - io.ktor:ktor-server-status-pages-jvm:3.0.1
+  - io.ktor:ktor-server-resources:3.0.1
+  - io.ktor:ktor-server-cio:3.0.1
+  - io.ktor:ktor-server-config-yaml:3.0.1
   - ch.qos.logback:logback-classic:1.4.14
   - org.jetbrains.exposed:exposed-core:0.53.0
   - org.jetbrains.exposed:exposed-jdbc:0.53.0
@@ -25,7 +25,7 @@ dependencies:
   - commons-io:commons-io:2.16.1
   - org.jetbrains.kotlinx:kotlinx-io-core:0.5.1
 test-dependencies:
-  # - io.ktor:ktor-server-tests-jvm:3.0.0-beta-2
+  # - io.ktor:ktor-server-tests-jvm:3.0.1
   - $kotlin-test-junit
 settings:
   jvm:

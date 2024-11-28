@@ -9,19 +9,15 @@ import dev.sunriseydy.acgn.server.common.service.AppConfigService
 import dev.sunriseydy.acgn.server.plugins.loadLocalizations
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
-import io.ktor.server.routing.Routing
-import io.ktor.server.routing.delete
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.route
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 /**
  * @author SunriseYDY
  * @date 2024-07-12 11:55
  */
-fun Routing.configureCommonModuleRoutes() {
+fun Route.configureCommonModuleRoutes() {
     route("/common") {
         get("/info") {
             call.parameters["language"]?.let {
