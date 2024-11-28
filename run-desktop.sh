@@ -1,2 +1,2 @@
 AMPER_BOOTSTRAP_CACHE_DIR=${PWD}/build
-./amper --shared-caches-root=./build task :desktop-client:runJvm
+./amper --shared-caches-root="${AMPER_BOOTSTRAP_CACHE_DIR}" task :desktop-client:runJvm
