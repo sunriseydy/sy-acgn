@@ -17,8 +17,8 @@ dependencies:
   - $compose.uiTooling: exported
   - $compose.ui: exported
   - $compose.preview: exported
-  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0: exported
-  - org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07: exported
+  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2: exported
+  - org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10: exported
   - io.github.oshai:kotlin-logging:7.0.0: exported
   - com.russhwolf:multiplatform-settings:1.1.1: exported
   - com.russhwolf:multiplatform-settings-no-arg:1.1.1: exported
