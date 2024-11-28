@@ -1,1 +1,2 @@
-AMPER_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ./amper task :desktop-client:runJvm
+AMPER_BOOTSTRAP_CACHE_DIR=${PWD}/build
+./amper --shared-caches-root=./build task :desktop-client:runJvm

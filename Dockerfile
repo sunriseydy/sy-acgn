@@ -1,5 +1,6 @@
-FROM registry.cn-shanghai.aliyuncs.com/sunriseydy/amazoncorretto:21.0.4
+FROM alpine:3.20
+RUN apk add --no-cache curl
 COPY . /opt/sy-acgn
-ENV AMPER_JAVA_HOME=/etc/alternatives/java_sdk
-RUN /opt/sy-acgn/amper task :server:compileJvm
-ENTRYPOINT [ "/opt/sy-acgn/amper", "task", ":server:runJvm" ]
+ENV AMPER_BOOTSTRAP_CACHE_DIR=/opt/sy-acgn/build
+RUN cd /opt/sy-acgn && ./amper --shared-caches-root=/opt/sy-acgn/build task :server:compileJvm
+ENTRYPOINT [ "/opt/sy-acgn/amper", "--root=/opt/sy-acgn", "--shared-caches-root=/opt/sy-acgn/build", "task", ":server:runJvm" ]

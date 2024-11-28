@@ -22,7 +22,7 @@ dependencies:
   - org.jetbrains.exposed:exposed-kotlin-datetime:0.53.0
   - org.jetbrains.exposed:exposed-json:0.53.0
   - org.postgresql:postgresql:42.7.3
-  - commons-io:commons-io:2.4
+  - commons-io:commons-io:2.16.1
   - org.jetbrains.kotlinx:kotlinx-io-core:0.5.1
 test-dependencies:
   # - io.ktor:ktor-server-tests-jvm:3.0.0-beta-2
