@@ -5,6 +5,7 @@ apply:
   - ../lib.module-template.yaml
 
 dependencies:
+  # https://github.com/ktorio/ktor
   - io.ktor:ktor-server-core-jvm:3.0.1
   - io.ktor:ktor-server-content-negotiation-jvm:3.0.1
   - io.ktor:ktor-server-call-logging-jvm:3.0.1
