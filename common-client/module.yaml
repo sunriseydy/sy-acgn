@@ -19,6 +19,7 @@ dependencies:
   - $compose.preview: exported
   - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4: exported
   - org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10: exported
+  # https://github.com/oshai/kotlin-logging
   - io.github.oshai:kotlin-logging:7.0.0: exported
   # https://github.com/russhwolf/multiplatform-settings
   - com.russhwolf:multiplatform-settings:1.3.0: exported
