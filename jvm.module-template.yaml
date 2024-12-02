@@ -1,3 +1,5 @@
 settings:
   kotlin:
     serialization: json
+  jvm:
+    release: 21
