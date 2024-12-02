@@ -1,4 +1,5 @@
 settings:
   compose:
     enabled: true
+    # https://github.com/JetBrains/compose-multiplatform
     version: 1.7.1
