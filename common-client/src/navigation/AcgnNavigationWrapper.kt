@@ -31,21 +31,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
+import androidx.compose.ui.unit.toSize
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.window.core.layout.WindowWidthSizeClass
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.LayoutType
 import dev.sunriseydy.acgn.client.SyAcgnApi
@@ -63,9 +70,21 @@ import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
  */
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AcgnNavigationWrapper() {
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val windowSize = with(LocalDensity.current) {
+        LocalWindowInfo.current.containerSize.toSize()
+    }
+    println(windowSize.height)
+    println(windowSize.width)
+
     val navigationType = getNavigationType()
+    val navigationSuiteType = when {
+        adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT -> NavigationSuiteType.NavigationBar
+        else -> NavigationSuiteType.NavigationDrawer
+    }
     val navContentPosition = getNavigationContentPosition()
     val contentType = getContentType()
 
@@ -143,66 +162,6 @@ fun AcgnNavigationWrapper() {
 }
 
 @Composable
-fun AcgnNavigationRail(
-    selectedDestination: String,
-    navigationContentPosition: AcgnNavigationContentPosition,
-    navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit,
-    onDrawerClicked: () -> Unit = {},
-) {
-    NavigationRail(
-        modifier = Modifier.fillMaxHeight(),
-        containerColor = MaterialTheme.colorScheme.inverseOnSurface,
-        header = {
-            Column(
-                modifier = Modifier.layoutId(LayoutType.HEADER),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                NavigationRailItem(
-                    selected = false,
-                    onClick = onDrawerClicked,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = null
-                        )
-                    }
-                )
-            }
-        }
-    ) {
-        Column(
-            modifier = Modifier.layoutId(LayoutType.CONTENT),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            AcgnNavigationRoute.entries.forEach { destination ->
-                NavigationRailItem(
-                    selected = selectedDestination == destination.name,
-                    onClick = { navigateToTopLevelDestination(destination) },
-                    icon = {
-                        destination.icon?.apply {
-                            Icon(
-                                imageVector = destination.icon,
-                                contentDescription = destination.localization
-                            )
-                        }
-                    },
-                    label = {
-                        if (destination.icon == null) {
-                            Text(
-                                text = destination.localization,
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun AcgnBottomNavigationBar(
     selectedDestination: String,
     navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit
@@ -258,51 +217,6 @@ fun PermanentNavigationDrawerContent(
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                }
-                NavigationDrawerItems(selectedDestination, navigateToTopLevelDestination)
-            },
-            measurePolicy = navigationMeasurePolicy(navigationContentPosition)
-        )
-    }
-}
-
-@Composable
-fun ModalNavigationDrawerContent(
-    selectedDestination: String,
-    navigationContentPosition: AcgnNavigationContentPosition,
-    navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit,
-    onDrawerClicked: () -> Unit = {}
-) {
-    ModalDrawerSheet {
-        Layout(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(16.dp),
-            content = {
-                Column(
-                    modifier = Modifier.layoutId(LayoutType.HEADER),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = CommonModuleAppConfig.AppName.configValue.uppercase(),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        IconButton(onClick = onDrawerClicked) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.MenuOpen,
-                                contentDescription = null
-                            )
-                        }
-                    }
                 }
                 NavigationDrawerItems(selectedDestination, navigateToTopLevelDestination)
             },
