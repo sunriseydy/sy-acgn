@@ -15,13 +15,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -55,6 +49,7 @@ import dev.sunriseydy.acgn.client.interfaces.Paging
 import dev.sunriseydy.acgn.client.interfaces.getPager
 import dev.sunriseydy.acgn.client.onSuccess
 import dev.sunriseydy.acgn.client.onSuccessData
+import dev.sunriseydy.acgn.client.utils.AcgnContentType
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
 import kotlinx.datetime.TimeZone
@@ -91,7 +86,7 @@ fun Rss(appState: AppState) {
     ) { pager ->
         appState.api.rss.getRssItemByRssIdOrIsRead(
             rssId = if (currentRss.value.id == ULong.MIN_VALUE) null else currentRss.value.id,
-            isRead = if (isOnlyUnread.value == true) false else null,
+            isRead = if (isOnlyUnread.value) false else null,
             page = pager.page.value,
             size = pager.size,
         ).checkSuccessAndNotNull()
@@ -106,11 +101,22 @@ fun Rss(appState: AppState) {
     }
 
     // 渲染页面
-    Row {
-        RssList(Modifier.fillMaxWidth(0.5f), rssList, currentRss, rssOperator)
-        VerticalDivider(thickness = 2.dp)
-        RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, currentRss, rssOperator)
+    if (appState.contentType == AcgnContentType.DUAL_PANE) {
+        Row {
+            RssList(Modifier.fillMaxWidth(0.5f), rssList, currentRss, rssOperator)
+            VerticalDivider(thickness = 2.dp)
+            RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, currentRss, rssOperator)
+        }
+    } else {
+        if (currentRss.value.id == ULong.MIN_VALUE) {
+            // 渲染订阅列表
+            RssList(Modifier.fillMaxWidth(), rssList, currentRss, rssOperator)
+        } else {
+            // 渲染订阅内容
+            RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, currentRss, rssOperator)
+        }
     }
+
 }
 
 @Composable
@@ -296,10 +302,20 @@ fun RssItemList(
                         rssOperator.loadRssItem()
                     }
                 )
+                if (currentRss.value.id != ULong.MIN_VALUE) {
+                    IconButton(
+                        onClick = {
+                            currentRss.value = Rss(id = ULong.MIN_VALUE, title = "", link = "")
+                            rssOperator.loadData()
+                        }
+                    ) {
+                        Icon(Icons.Default.Close, null, modifier = Modifier.size(48.dp))
+                    }
+                }
             }
         }
         AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssItemListState) {
-            itemsIndexed(rssItemList.value, key = { index, rssItem -> rssItem.id }) { index, rssItem ->
+            itemsIndexed(rssItemList.value, key = { _, rssItem -> rssItem.id }) { index, rssItem ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
@@ -373,9 +389,9 @@ fun RssItemList(
 }
 
 class RssOperator(
-    val appState: AppState,
-    val rssList: MutableState<List<Rss>>,
-    val rssItemPager: Paging<RssItem>,
+    private val appState: AppState,
+    private val rssList: MutableState<List<Rss>>,
+    private val rssItemPager: Paging<RssItem>,
 ) {
     fun loadRss() {
         appState.api.rss.getAllRss().onSuccessData(appState, onSuccess = { data ->

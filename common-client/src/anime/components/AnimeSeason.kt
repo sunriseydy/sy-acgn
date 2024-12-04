@@ -279,7 +279,8 @@ private fun CreateAnimeSeason(
         onDismissRequest = { closeCreateDialog() },
         onConfirmation = {
             requireNotNull(anime.value) { AnimeString.SEASON_FIELD_ANIME_NAME.localization + CommonString.IS_BLANK.localization }
-            requireNotNull(animeSeason.value,
+            requireNotNull(
+                animeSeason.value,
                 lazyMessage = { AnimeString.SEASON_FIELD_SEASON_NAME.localization + CommonString.IS_BLANK.localization })
                 .let {
                     onConfirmation(it)

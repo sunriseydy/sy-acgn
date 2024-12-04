@@ -14,6 +14,7 @@ import dev.sunriseydy.acgn.client.components.ServerConfig
 import dev.sunriseydy.acgn.client.components.showError
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationAction
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationWrapper
+import dev.sunriseydy.acgn.client.utils.AcgnContentType
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
@@ -65,6 +66,7 @@ data class AppState(
     val navigationAction: AcgnNavigationAction,
     val snackbarHostState: SnackbarHostState,
     val scope: CoroutineScope,
+    val contentType: AcgnContentType,
     val api: SyAcgnApi,
 )
 
