@@ -5,7 +5,7 @@ product:
 apply:
   - ../lib.module-template.yaml
   - ../compose.module-template.yaml
-  - ../jvm.module-template.yaml
+  - ../kotlin.module-template.yaml
   - ../maven.module-template.yaml
 
 dependencies:

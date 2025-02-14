@@ -1,6 +1,7 @@
 product: jvm/app
 apply:
   - ../jvm.module-template.yaml
+  - ../kotlin.module-template.yaml
   - ../maven.module-template.yaml
   - ../lib.module-template.yaml
 

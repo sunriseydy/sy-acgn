@@ -3,7 +3,7 @@ product:
   platforms: [ jvm ]
 
 apply:
-  - ../jvm.module-template.yaml
+  - ../kotlin.module-template.yaml
   - ../maven.module-template.yaml
 
 dependencies:
