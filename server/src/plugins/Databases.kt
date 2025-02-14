@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.server.plugins
 
+import MigrationUtils
 import dev.sunriseydy.acgn.server.anime.db.animeTables
 import dev.sunriseydy.acgn.server.anime.db.rssTables
 import dev.sunriseydy.acgn.server.common.db.commonModuleTables
@@ -43,14 +44,19 @@ fun Application.initializeDatabase() {
             SchemaUtils.listDatabases().firstOrNull { it == database } ?: run {
                 SchemaUtils.createDatabase(database)
             }
-            // create tables
-            SchemaUtils.createMissingTablesAndColumns(
+            // migrate tables
+            MigrationUtils.statementsRequiredForDatabaseMigration(
                 *(listOf(
                     rssTables(),
                     animeTables(),
                     commonModuleTables()
                 ).flatMap { it }.toTypedArray())
-            )
+            ).also {
+                environment.log.info("database migration: $it")
+                if (it.isNotEmpty()) {
+                    execInBatch(it)
+                }
+            }
         }
     }
 }
@@ -66,5 +72,5 @@ fun <T> SizedIterable<T>.paging(page: Long? = null, size: Int? = null) =
     if (page == null || size == null || page <= 0) {
         this
     } else {
-        this.limit(size, (page - 1) * size)
+        this.limit(size).offset((page - 1) * size)
     }
