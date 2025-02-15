@@ -88,7 +88,7 @@ fun <T> Result<T>.onSuccess(
 fun <T> Result<T>.onSuccessData(
     appState: AppState? = null,
     onSuccess: (T) -> Unit = { },
-    onError: (String) -> Unit = { }
+    onError: (String) -> Unit = { throw error(it) }
 ) {
     try {
         onSuccess(this.checkSuccessAndNotNull())

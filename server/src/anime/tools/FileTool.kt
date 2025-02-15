@@ -37,8 +37,9 @@ class FileTool {
         val animeSeasonDirectory = Path(mediaTargetDirectory, animeDirectoryName, seasonDirectoryName)
         // 生成文件名
         val newVideoPairs = generateEpisodeVideosByNameSort(videos, animeSeason.season, animeSeasonDirectory)
-        val newSubtitlePairs =
+        val newSubtitlePairs = if (subtitles.isNotEmpty()) {
             generateEpisodeSubtitlesByVideos(newVideoPairs, subtitles, animeSeasonDirectory)
+        } else emptyList()
         val newOtherPairs = generateOthers(others, animeSeasonDirectory)
         if (exists(animeSeasonDirectory) && isDirectory(animeSeasonDirectory)) {
             if (animeSeasonFile.isDeleteTarget) {
@@ -55,9 +56,7 @@ class FileTool {
         }
         // 移动文件
         listOf(
-            *newVideoPairs.toTypedArray(),
-            *newSubtitlePairs.toTypedArray(),
-            *newOtherPairs.toTypedArray()
+            *newVideoPairs.toTypedArray(), *newSubtitlePairs.toTypedArray(), *newOtherPairs.toTypedArray()
         ).forEach {
             moveFile(it.first, it.second)
         }
@@ -75,12 +74,11 @@ class FileTool {
     fun listFiles(path: Path) = SystemFileSystem.list(path).sortedBy { it.name }
     fun listVideos(files: List<Path>) = files.filter { isVideo(it) }
     fun listSubtitles(files: List<Path>) = files.filter { isSubtitle(it) }
-    fun generateAnimeDirectoryName(anime: Anime) =
-        buildString {
-            append(anime.name)
-            anime.firstAirDate?.let { append(" (${anime.firstAirDate!!.year})") }
-            anime.tmdbId?.let { append(" [tmdbid-${anime.tmdbId}]") }
-        }
+    fun generateAnimeDirectoryName(anime: Anime) = buildString {
+        append(anime.name)
+        anime.firstAirDate?.let { append(" (${anime.firstAirDate!!.year})") }
+        anime.tmdbId?.let { append(" [tmdbid-${anime.tmdbId}]") }
+    }
 
     fun generateSeasonDirectoryName(animeSeason: AnimeSeason) =
         "Season ${animeSeason.season.toString().padStart(2, '0')}"
@@ -97,35 +95,28 @@ class FileTool {
         }
 
     fun generateEpisodeSubtitlesByVideos(
-        videos: List<Pair<Path, Path>>,
-        subtitles: List<Path>,
-        animeSeasonDirectory: Path
-    ) =
-        check(videos.size == subtitles.size) { "videos and subtitles size not match" }
-            .run {
-                videos.mapIndexed { index, video ->
-                    val subtitle = subtitles[index]
-                    val subtitleExt = subtitle.name.substringAfterLast(".")
-                    val videoName = video.second.name.substringBeforeLast(".")
-                    return@mapIndexed subtitle to Path(animeSeasonDirectory, "$videoName.$subtitleExt")
-                }
-            }
-
-    fun generateOthers(others: List<Path>, animeSeasonDirectory: Path) =
-        others.map {
-            if (isDirectory(it)) {
-                it to Path(animeSeasonDirectory, ".${it.name}")
-            } else {
-                it to Path(animeSeasonDirectory, SP_DIR_NAME, it.name)
+        videos: List<Pair<Path, Path>>, subtitles: List<Path>, animeSeasonDirectory: Path
+    ) = check(videos.size == subtitles.size) { "videos and subtitles size not match" }.run {
+            videos.mapIndexed { index, video ->
+                val subtitle = subtitles[index]
+                val subtitleExt = subtitle.name.substringAfterLast(".")
+                val videoName = video.second.name.substringBeforeLast(".")
+                return@mapIndexed subtitle to Path(animeSeasonDirectory, "$videoName.$subtitleExt")
             }
         }
+
+    fun generateOthers(others: List<Path>, animeSeasonDirectory: Path) = others.map {
+        if (isDirectory(it)) {
+            it to Path(animeSeasonDirectory, ".${it.name}")
+        } else {
+            it to Path(animeSeasonDirectory, SP_DIR_NAME, it.name)
+        }
+    }
 
 }
 
 enum class Extension(val exts: Set<String>) {
-    VIDEO(setOf("mp4", "mkv")),
-    SUBTITLE(setOf("ass", "srt"))
-    ;
+    VIDEO(setOf("mp4", "mkv")), SUBTITLE(setOf("ass", "srt"));
 
     fun isExtMatch(ext: String) = exts.contains(ext)
     fun isPathMatch(path: String) = isExtMatch(path.substringAfterLast("."))
