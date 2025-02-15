@@ -3,14 +3,14 @@ package dev.sunriseydy.acgn.server.anime.tools
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
+import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
+import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.Tmdb3
-import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMovie
-import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbMovieDetail
-import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbSeasonDetail
-import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbShow
-import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.TmdbShowDetail
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.*
 import dev.sunriseydy.acgn.tools.LocalizationTool
+import kotlinx.serialization.json.Json
 
 /**
  * @author SunriseYDY
@@ -91,7 +91,16 @@ class TmdbTool {
             name = this.name,
             description = this.overview,
             firstAirDate = this.firstAirDate,
-            tmdbId = this.id.toULong()
+            tmdbId = this.id.toULong(),
+            additions = listOf(
+                AdditionalInfo(
+                    "",
+                    ULong.MIN_VALUE,
+                    AnimeAssociatedType.ANIME.localizationKey,
+                    AnimeAdditionType.TmdbJson.key,
+                    Json.encodeToString(this),
+                )
+            ),
         )
 
     private fun TmdbMovie.toAnimeMovie() =
@@ -101,6 +110,15 @@ class TmdbTool {
             description = this.overview,
             releaseDate = this.releaseDate,
             tmdbId = this.id.toULong(),
+            additions = listOf(
+                AdditionalInfo(
+                    "",
+                    ULong.MIN_VALUE,
+                    AnimeAssociatedType.ANIME_MOVIE.localizationKey,
+                    AnimeAdditionType.TmdbJson.key,
+                    Json.encodeToString(this),
+                )
+            ),
         )
 
     private fun TmdbShowDetail.toAnime() =
@@ -125,8 +143,26 @@ class TmdbTool {
                     month = it.airDate?.monthNumber ?: 0,
                     airDate = it.airDate,
                     tmdbId = it.id.toULong(),
+                    additions = listOf(
+                        AdditionalInfo(
+                            "",
+                            ULong.MIN_VALUE,
+                            AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                            AnimeAdditionType.TmdbJson.key,
+                            Json.encodeToString(it),
+                        )
+                    ),
                 )
-            }
+            },
+            additions = listOf(
+                AdditionalInfo(
+                    "",
+                    ULong.MIN_VALUE,
+                    AnimeAssociatedType.ANIME.localizationKey,
+                    AnimeAdditionType.TmdbJson.key,
+                    Json.encodeToString(this),
+                )
+            ),
         )
 
     private fun TmdbSeasonDetail.toAnimeSeason() =
@@ -141,6 +177,15 @@ class TmdbTool {
             month = this.airDate?.monthNumber ?: 0,
             airDate = this.airDate,
             tmdbId = this.id.toULong(),
+            additions = listOf(
+                AdditionalInfo(
+                    "",
+                    ULong.MIN_VALUE,
+                    AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                    AnimeAdditionType.TmdbJson.key,
+                    Json.encodeToString(this),
+                )
+            ),
         )
 
     private fun TmdbMovieDetail.toAnimeMovie() =
@@ -150,5 +195,14 @@ class TmdbTool {
             description = this.overview,
             releaseDate = this.releaseDate,
             tmdbId = this.id.toULong(),
+            additions = listOf(
+                AdditionalInfo(
+                    "",
+                    ULong.MIN_VALUE,
+                    AnimeAssociatedType.ANIME_MOVIE.localizationKey,
+                    AnimeAdditionType.TmdbJson.key,
+                    Json.encodeToString(this),
+                )
+            ),
         )
 }

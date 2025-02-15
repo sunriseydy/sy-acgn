@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
-import java.util.UUID
+import java.util.*
 
 /**
  * @author SunriseYDY
@@ -28,7 +28,7 @@ class AdditionalInfoRepository {
         if (additionalInfo.id.isEmpty()) {
             this.insertAdditionalInfo(associatedId?.let { additionalInfo.copy(associatedId = it) } ?: additionalInfo)
         } else {
-            this.updateAdditionalInfo(associatedId?.let { additionalInfo.copy(associatedId = it) } ?: additionalInfo)
+            this.updateAdditionalValue(additionalInfo.id, additionalInfo.additionalValue)
         }
 
     suspend fun saveAdditionalInfos(additionalInfos: List<AdditionalInfo>, associatedId: ULong? = null) =
@@ -44,10 +44,9 @@ class AdditionalInfoRepository {
         }.id.toString()
     }
 
-    suspend fun updateAdditionalInfo(additionalInfo: AdditionalInfo) = suspendTransaction {
-        check(additionalInfo.associatedId != ULong.MIN_VALUE) { "associatedId 为 0" }
-        AdditionalInfoDAO.findByIdAndUpdate(UUID.fromString(additionalInfo.id)) {
-            it.additionalValue = additionalInfo.additionalValue
+    suspend fun updateAdditionalValue(id: String, value: String) = suspendTransaction {
+        AdditionalInfoDAO.findByIdAndUpdate(UUID.fromString(id)) {
+            it.additionalValue = value
         }?.id?.toString() ?: throw NoSuchElementException()
     }
 

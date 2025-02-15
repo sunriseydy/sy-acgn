@@ -55,7 +55,7 @@ class AnimeDAO(id: EntityID<ULong>) : ULongEntity(id) {
 
 object AnimeSeasonTable : ULongIdTable("anime_season") {
     val animeId = ulong("anime_id")
-    val name = varchar("name", 1024).uniqueIndex()
+    val name = varchar("name", 1024)
     val description = text("description", eagerLoading = true).nullable()
     val season = integer("season")
     val numberOfEpisodes = integer("number_of_episodes").default(0)

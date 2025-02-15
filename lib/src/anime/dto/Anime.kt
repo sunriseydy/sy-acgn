@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.anime.dto
 
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
+import dev.sunriseydy.acgn.enums.Status
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
@@ -24,6 +25,9 @@ data class Anime(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
+    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
 }
 
 @Serializable
@@ -46,6 +50,9 @@ data class AnimeSeason(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
+    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
 }
 
 @Serializable
@@ -64,6 +71,9 @@ data class AnimeEpisode(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
+    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
 }
 
 @Serializable
@@ -79,6 +89,9 @@ data class AnimeMovie(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
+    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
 }
 
 @Serializable

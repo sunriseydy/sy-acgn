@@ -31,7 +31,8 @@ import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
 fun CreateAnimeSeason(
     animeSeasonService: AnimeSeasonService,
     createDialogVisible: MutableState<Boolean>,
-    onSuccess: (AnimeSeason) -> Unit = { }
+    onSuccess: (AnimeSeason) -> Unit = { },
+    isDialog: Boolean = true,
 ) {
     val isCreateAnime: MutableState<Boolean> = remember { mutableStateOf(false) }
 

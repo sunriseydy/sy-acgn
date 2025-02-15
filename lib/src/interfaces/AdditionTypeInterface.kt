@@ -9,12 +9,21 @@ import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 interface AdditionTypeInterface : Localizable {
     override val localizationKey get() = "addition.${this.moduleName}.${this::class.simpleName}"
     val key: String get() = this.localizationKey
+    val additionalInfo: (List<AdditionalInfo>) -> AdditionalInfo?
+        get() = {
+            it.find { addition -> addition.additionalType == this.key }
+        }
     val stringValueOf: (List<AdditionalInfo>) -> String?
         get() = {
-            it.find { addition -> addition.additionalType == this.key }?.additionalValue
+            additionalInfo(it)?.additionalValue
         }
     val valueOf: (List<AdditionalInfo>) -> Any?
         get() = {
             stringValueOf(it)
         }
+}
+
+interface StatusAdditionType : AdditionTypeInterface {
+    override val valueOf: (List<AdditionalInfo>) -> String?
+        get() = { this.stringValueOf(it) }
 }

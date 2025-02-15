@@ -3,8 +3,11 @@ package dev.sunriseydy.acgn.server.anime.service
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
+import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
+import dev.sunriseydy.acgn.common.dto.AdditionalInfo
+import dev.sunriseydy.acgn.enums.Status
 import dev.sunriseydy.acgn.server.anime.repository.AnimeRepository
 import dev.sunriseydy.acgn.server.anime.tools.AnimeCacheTool
 import dev.sunriseydy.acgn.server.anime.tools.FileTool
@@ -151,16 +154,17 @@ class AnimeService(
             }
 
     suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason =
-        season.copy(animeId =
-        if (season.animeId == ULong.MIN_VALUE) {
-            // 新增动画系列
-            var anime = season.anime
-            checkNotNull(anime) { "新增动画时的动画数据为空" }
-            this.createAnime(anime).id
-        } else {
-            // 动画系列已存在
-            season.animeId
-        }
+        season.copy(
+            animeId =
+                if (season.animeId == ULong.MIN_VALUE) {
+                    // 新增动画系列
+                    var anime = season.anime
+                    checkNotNull(anime) { "新增动画时的动画数据为空" }
+                    this.createAnime(anime).id
+                } else {
+                    // 动画系列已存在
+                    season.animeId
+                }
         ).let {
             check(it.animeId != ULong.MIN_VALUE) { "必须关联动画" }
             (if (it.id == ULong.MIN_VALUE) {
@@ -172,11 +176,23 @@ class AnimeService(
             }
         }
 
-    suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile) =
+    suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile) {
         this.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonFile.id)
             .let {
                 FileTool().handleAnimeSeasonFile(it, animeSeasonFile)
+                // 更新文件状态
+                val addition = AnimeAdditionType.FileStatus.additionalInfo(it.additions)
+                    ?.copy(additionalValue = Status.PROCESSED.localizationKey)
+                    ?: AdditionalInfo(
+                        "",
+                        it.id,
+                        AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                        AnimeAdditionType.FileStatus.key,
+                        Status.PROCESSED.localizationKey
+                    )
+                additionalInfoRepository.saveAdditionalInfo(addition)
             }
+    }
 
     suspend fun refreshAnimeCache() = AnimeCacheTool.refreshAnimeMap(this.getAllAnimeWithAdditionFromDB())
 

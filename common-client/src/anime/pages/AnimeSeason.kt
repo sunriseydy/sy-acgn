@@ -51,8 +51,8 @@ fun AnimeSeason(appState: AppState) {
     val currentSeason: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
     val animeSeasonService = AnimeSeasonService(appState)
 
-    fun loadData() {
-        if (!loading.value && !init.value) {
+    fun loadData(force: Boolean = false) {
+        if (force || !loading.value && !init.value) {
             loading.value = true
             animeSeasonService.loadData(onSuccess = {
                 sectionMapState.value = it
@@ -76,8 +76,7 @@ fun AnimeSeason(appState: AppState) {
     Column(modifier = Modifier.fillMaxSize()) {
         PageTitle(AcgnNavigationRoute.ANIME_SEASON.localization) {
             IconButton(onClick = {
-                init.value = false
-                loadData()
+                loadData(true)
             }) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
             }
@@ -98,6 +97,7 @@ fun AnimeSeason(appState: AppState) {
                     PageTitle(sectionMap.key)
                 }
                 items(sectionMap.value) { season ->
+                    // 动画季度列表
                     val buttonGroupVisible = remember { mutableStateOf(false) }
                     Card(
                         modifier = Modifier.padding(12.dp).fillMaxWidth(),
@@ -110,7 +110,18 @@ fun AnimeSeason(appState: AppState) {
                                     style = MaterialTheme.typography.titleLarge
                                 )
                             }
-                            Text(text = season.description ?: "", style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                text = if (season.description.isNullOrBlank()) {
+                                    if (season.anime?.description.isNullOrBlank()) {
+                                        ""
+                                    } else {
+                                        season.anime!!.description!!
+                                    }
+                                } else {
+                                    season.description!!
+                                },
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                             if (buttonGroupVisible.value) {
                                 Row {
                                     IconButton(onClick = {
@@ -140,7 +151,7 @@ fun AnimeSeason(appState: AppState) {
         }
     }
     // 创建动画季度弹窗
-    CreateAnimeSeason(animeSeasonService, createDialogVisible)
+    CreateAnimeSeason(animeSeasonService, createDialogVisible, onSuccess = { loadData(true) })
     // 删除动画季度弹窗
     AcgnAlertDialog(
         alertDialogVisible = deleteDialogVisible,
@@ -149,7 +160,7 @@ fun AnimeSeason(appState: AppState) {
                 animeSeasonService.deleteSeason(it.id)
                 currentSeason.value = null
                 deleteDialogVisible.value = false
-                loadData()
+                loadData(true)
             }
         },
         dialogTitle = CommonString.DELETE.localization + currentSeason.value?.name,
