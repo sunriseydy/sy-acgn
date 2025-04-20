@@ -8,7 +8,6 @@ apply:
   - ../maven.module-template.yaml
 dependencies:
   - $compose.desktop.currentOs
-  - ch.qos.logback:logback-classic:1.4.14
 settings:
   jvm:
     mainClass: dev.sunriseydy.acgn.client.DesktopClientMainKt
