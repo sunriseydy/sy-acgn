@@ -1,12 +1,13 @@
 package dev.sunriseydy.acgn.server.plugins
 
 import dev.sunriseydy.acgn.Result
-import dev.sunriseydy.acgn.exception.CommonModuleException
+import dev.sunriseydy.acgn.common.enums.CommonModuleError
+import dev.sunriseydy.acgn.exception.MessageException
 import dev.sunriseydy.acgn.server.anime.routes.configureAnimeModuleRoutes
 import dev.sunriseydy.acgn.server.common.routes.configureCommonModuleRoutes
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.http.content.staticResources
+import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
@@ -24,7 +25,7 @@ fun Application.configureRouting() {
                 call.respond(Pair("SY ACGN", "Hello, World!"))
             }
             get("/error") {
-                throw CommonModuleException("test")
+                throw MessageException(CommonModuleError.TEST)
             }
             configureCommonModuleRoutes()
             configureAnimeModuleRoutes()

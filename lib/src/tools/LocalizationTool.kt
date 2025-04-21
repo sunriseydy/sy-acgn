@@ -1,8 +1,6 @@
 package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.enums.Language
-import dev.sunriseydy.acgn.exception.LocalizableException
-import dev.sunriseydy.acgn.interfaces.EnumLocalizable
 
 
 /**
@@ -28,18 +26,6 @@ object LocalizationTool {
             println("the key [$key] on current language [${currentLanguage.originName}] doesn't have a localization")
             defaultValue
         }
-    }
-
-    fun getLocalizationKeyFromEnum(enum: EnumLocalizable): String {
-        if (enum is Enum<*>) {
-            return "enum.${enum.moduleName.name}.${enum::class.simpleName}.${enum.name}"
-        } else {
-            throw IllegalArgumentException("$enum is not a Localizable enum")
-        }
-    }
-
-    fun getLocalizationKeyFromException(exception: LocalizableException): String {
-        return "message.error.${exception.moduleName}.${exception.exceptionCode}"
     }
 }
 

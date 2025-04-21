@@ -2,24 +2,17 @@ package dev.sunriseydy.acgn.server.anime.tools
 
 import anime.tools.torrent.TorrentParser
 import dev.sunriseydy.acgn.anime.dto.TorrentAdd
+import dev.sunriseydy.acgn.anime.enums.AnimeModuleError
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
-import dev.sunriseydy.acgn.exception.AnimeModuleException
+import dev.sunriseydy.acgn.exception.MessageException
 import dev.sunriseydy.acgn.tools.HttpClientFactory
-import io.ktor.client.call.body
-import io.ktor.client.plugins.cookies.HttpCookies
-import io.ktor.client.plugins.cookies.cookies
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.request.get
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.appendPathSegments
-import io.ktor.http.isSuccess
-import io.ktor.http.parameters
+import io.ktor.client.call.*
+import io.ktor.client.plugins.cookies.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.io.ByteArrayInputStream
@@ -62,7 +55,7 @@ class QbTool {
             }
         )
         if (!checkCookie()) {
-            throw AnimeModuleException("qb_login_failed")
+            throw MessageException(AnimeModuleError.QB_LOGIN_FAILED)
         }
     }
 
@@ -79,7 +72,7 @@ class QbTool {
                 login()
                 return invoke(block)
             } else {
-                throw AnimeModuleException("qb_request_failed")
+                throw MessageException(AnimeModuleError.QB_REQUEST_FAILED)
             }
         }
     }
@@ -90,19 +83,20 @@ class QbTool {
         if (torrentAdd.url.startsWith("http")) {
             val response = httpClient.get(torrentAdd.url)
             if (!response.status.isSuccess()) {
-                throw AnimeModuleException("qb_download_torrent_failed")
+                throw MessageException(AnimeModuleError.QB_DOWNLOAD_TORRENT_FAILED)
             }
             bytes = response.body()
             val torrent = TorrentParser.parseTorrent(ByteArrayInputStream(bytes))
             if (torrent == null) {
-                throw AnimeModuleException("qb_parse_torrent_failed")
+                throw MessageException(AnimeModuleError.QB_PARSE_TORRENT_FAILED)
             } else {
                 hash = torrent.info_hash
             }
         } else if (torrentAdd.url.startsWith("magnet:")) {
-            hash = this.extractInfoHash(torrentAdd.url) ?: throw AnimeModuleException("qb_parse_magnet_failed")
+            hash =
+                this.extractInfoHash(torrentAdd.url) ?: throw MessageException(AnimeModuleError.QB_PARSE_MAGNET_FAILED)
         } else {
-            throw AnimeModuleException("qb_parse_hash_failed")
+            throw MessageException(AnimeModuleError.QB_PARSE_HASH_FAILED)
         }
         invoke {
             httpClient.submitFormWithBinaryData(

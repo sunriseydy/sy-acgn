@@ -74,7 +74,7 @@ fun AnimeSeason(appState: AppState) {
 
     // 渲染组件
     Column(modifier = Modifier.fillMaxSize()) {
-        PageTitle(AcgnNavigationRoute.ANIME_SEASON.localization) {
+        PageTitle(AcgnNavigationRoute.ANIME_SEASON.meaning) {
             IconButton(onClick = {
                 loadData(true)
             }) {
@@ -163,7 +163,7 @@ fun AnimeSeason(appState: AppState) {
                 loadData(true)
             }
         },
-        dialogTitle = CommonString.DELETE.localization + currentSeason.value?.name,
+        dialogTitle = CommonString.DELETE.meaning + currentSeason.value?.name,
     )
     // 处理文件弹窗
     FormDialog(
@@ -185,12 +185,12 @@ fun AnimeSeason(appState: AppState) {
         OutlinedTextField(
             value = filePath.value,
             onValueChange = { filePath.value = it },
-            label = { RequiredFieldLabel(CommonString.FILE_PATH.localization) },
-            supportingText = { RequiredSupportingText(filePath, CommonString.FILE_PATH.localization) }
+            label = { RequiredFieldLabel(CommonString.FILE_PATH.meaning) },
+            supportingText = { RequiredSupportingText(filePath, CommonString.FILE_PATH.meaning) }
         )
         Row {
             Text(
-                CommonString.DELETE_SOURCE.localization,
+                CommonString.DELETE_SOURCE.meaning,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Checkbox(
@@ -200,7 +200,7 @@ fun AnimeSeason(appState: AppState) {
         }
         Row {
             Text(
-                CommonString.DELETE_TARGET.localization,
+                CommonString.DELETE_TARGET.meaning,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Checkbox(

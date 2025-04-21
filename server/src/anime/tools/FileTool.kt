@@ -3,8 +3,9 @@ package dev.sunriseydy.acgn.server.anime.tools
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
+import dev.sunriseydy.acgn.anime.enums.AnimeModuleError
 import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
-import dev.sunriseydy.acgn.exception.AnimeModuleException
+import dev.sunriseydy.acgn.exception.MessageException
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 
@@ -45,7 +46,7 @@ class FileTool {
             if (animeSeasonFile.isDeleteTarget) {
                 deleteFile(animeSeasonDirectory)
             } else {
-                throw AnimeModuleException("target_dir_exists")
+                throw MessageException(AnimeModuleError.TARGET_DIR_EXISTS)
             }
         }
         // 创建目录
@@ -97,13 +98,13 @@ class FileTool {
     fun generateEpisodeSubtitlesByVideos(
         videos: List<Pair<Path, Path>>, subtitles: List<Path>, animeSeasonDirectory: Path
     ) = check(videos.size == subtitles.size) { "videos and subtitles size not match" }.run {
-            videos.mapIndexed { index, video ->
-                val subtitle = subtitles[index]
-                val subtitleExt = subtitle.name.substringAfterLast(".")
-                val videoName = video.second.name.substringBeforeLast(".")
-                return@mapIndexed subtitle to Path(animeSeasonDirectory, "$videoName.$subtitleExt")
-            }
+        videos.mapIndexed { index, video ->
+            val subtitle = subtitles[index]
+            val subtitleExt = subtitle.name.substringAfterLast(".")
+            val videoName = video.second.name.substringBeforeLast(".")
+            return@mapIndexed subtitle to Path(animeSeasonDirectory, "$videoName.$subtitleExt")
         }
+    }
 
     fun generateOthers(others: List<Path>, animeSeasonDirectory: Path) = others.map {
         if (isDirectory(it)) {

@@ -16,7 +16,7 @@ fun FormDialog(
     errorMessage: MutableState<String?> = mutableStateOf(null),
     onDismissRequest: () -> Unit = { formDialogVisible.value = false },
     onConfirmation: () -> Unit,
-    confirmationText: String = CommonString.SUBMIT.localization,
+    confirmationText: String = CommonString.SUBMIT.meaning,
     content: @Composable () -> Unit,
 ) {
     if (formDialogVisible.value) {

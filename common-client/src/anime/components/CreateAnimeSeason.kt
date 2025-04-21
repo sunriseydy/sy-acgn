@@ -68,10 +68,10 @@ fun CreateAnimeSeason(
     }
 
     fun handleSave() {
-        requireNotNull(anime.value) { AnimeString.SEASON_FIELD_ANIME_NAME.localization + CommonString.IS_BLANK.localization }
+        requireNotNull(anime.value) { AnimeString.SEASON_FIELD_ANIME_NAME.meaning + CommonString.IS_BLANK.meaning }
         requireNotNull(
             animeSeason.value,
-            lazyMessage = { AnimeString.SEASON_FIELD_SEASON_NAME.localization + CommonString.IS_BLANK.localization })
+            lazyMessage = { AnimeString.SEASON_FIELD_SEASON_NAME.meaning + CommonString.IS_BLANK.meaning })
             .let {
                 animeSeasonService.saveAnimeSeason(it, onSuccess)
                 closeCreateDialog()
@@ -122,7 +122,7 @@ fun CreateAnimeSeason(
             val fieldWidth = 300.dp
             Row {
                 Text(
-                    AnimeString.SEASON_FIELD_IS_CREATE_ANIME.localization,
+                    AnimeString.SEASON_FIELD_IS_CREATE_ANIME.meaning,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Checkbox(
@@ -141,14 +141,14 @@ fun CreateAnimeSeason(
                 modifier = Modifier.width(fieldWidth),
                 label = {
                     RequiredFieldLabel(
-                        AnimeString.SEASON_FIELD_ANIME_NAME_SEARCH.localization +
-                                if (isCreateAnime.value) AnimeString.SEARCH_TMDB.localization else AnimeString.SEARCH_LOCAL.localization
+                        AnimeString.SEASON_FIELD_ANIME_NAME_SEARCH.meaning +
+                                if (isCreateAnime.value) AnimeString.SEARCH_TMDB.meaning else AnimeString.SEARCH_LOCAL.meaning
                     )
                 },
                 supportingText = {
                     RequiredSupportingText(
                         animeNameSearch,
-                        AnimeString.SEASON_FIELD_ANIME_NAME_SEARCH.localization
+                        AnimeString.SEASON_FIELD_ANIME_NAME_SEARCH.meaning
                     )
                 },
                 leadingIcon = {
@@ -179,7 +179,7 @@ fun CreateAnimeSeason(
                         )
                     }
                     if (animeSearchResult.value.isEmpty()) {
-                        Text(CommonString.NO_DATA.localization, modifier = Modifier.padding(8.dp))
+                        Text(CommonString.NO_DATA.meaning, modifier = Modifier.padding(8.dp))
                     }
                 }
             }
@@ -187,7 +187,7 @@ fun CreateAnimeSeason(
             OutlinedTextField(
                 value = if (animeSeason.value == null) "" else "${animeSeason.value!!.season} - ${animeSeason.value!!.name}",
                 onValueChange = { },
-                label = { RequiredFieldLabel(AnimeString.SEASON_FIELD_SEASON_NAME.localization) },
+                label = { RequiredFieldLabel(AnimeString.SEASON_FIELD_SEASON_NAME.meaning) },
                 modifier = Modifier.width(fieldWidth),
                 readOnly = true,
                 leadingIcon = {
@@ -217,7 +217,7 @@ fun CreateAnimeSeason(
                         )
                     }
                     if (animeSeasonSearchResult.value.isEmpty()) {
-                        Text(CommonString.NO_DATA.localization, modifier = Modifier.padding(8.dp))
+                        Text(CommonString.NO_DATA.meaning, modifier = Modifier.padding(8.dp))
                     }
                 }
             }

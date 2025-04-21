@@ -2,7 +2,7 @@ package dev.sunriseydy.acgn.common.config
 
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.interfaces.AppConfigInterface
-import dev.sunriseydy.acgn.interfaces.CommonModuleLocalizable
+import dev.sunriseydy.acgn.interfaces.CommonModule
 import dev.sunriseydy.acgn.tools.LocalizationTool
 
 /**
@@ -11,15 +11,15 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
  */
 object CommonModuleAppConfig {
 
-    object AppName : CommonModuleAppConfigInterface {
+    object AppName : AppConfigInterface, CommonModule {
         override val configValue: String get() = this.stringValue ?: "SY ACGN"
     }
 
-    object AppServer : CommonModuleAppConfigInterface {
+    object AppServer : AppConfigInterface, CommonModule {
         override val configValue: String? get() = this.stringValue
     }
 
-    object AppLanguage : CommonModuleAppConfigInterface {
+    object AppLanguage : AppConfigInterface, CommonModule {
         override val configValue: Language
             get() = if (this.stringValue == null) {
                 LocalizationTool.DEFAULT_LANGUAGE
@@ -28,5 +28,3 @@ object CommonModuleAppConfig {
             }
     }
 }
-
-interface CommonModuleAppConfigInterface : AppConfigInterface, CommonModuleLocalizable

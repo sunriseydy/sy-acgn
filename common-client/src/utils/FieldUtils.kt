@@ -25,7 +25,7 @@ fun RequiredSupportingText(
     Column {
         supportingText()
         if (fieldValue.value.isBlank()) {
-            Text(fieldName + CommonString.IS_BLANK.localization, color = MaterialTheme.colorScheme.error)
+            Text(fieldName + CommonString.IS_BLANK.meaning, color = MaterialTheme.colorScheme.error)
         }
     }
 }

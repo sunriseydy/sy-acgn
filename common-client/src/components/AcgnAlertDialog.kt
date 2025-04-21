@@ -2,12 +2,7 @@ package dev.sunriseydy.acgn.client.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -70,7 +65,7 @@ fun AcgnAlertDialog(
                         }
                     }
                 ) {
-                    Text(CommonString.CONFIRM.localization)
+                    Text(CommonString.CONFIRM.meaning)
                 }
             },
             dismissButton = {
@@ -83,7 +78,7 @@ fun AcgnAlertDialog(
                         }
                     }
                 ) {
-                    Text(CommonString.CANCEL.localization)
+                    Text(CommonString.CANCEL.meaning)
                 }
             }
         )

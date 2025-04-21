@@ -25,9 +25,9 @@ data class Anime(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
-    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
-    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
-    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
 }
 
 @Serializable
@@ -50,9 +50,9 @@ data class AnimeSeason(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
-    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
-    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
-    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
 }
 
 @Serializable
@@ -71,9 +71,9 @@ data class AnimeEpisode(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
-    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
-    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
-    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
 }
 
 @Serializable
@@ -89,9 +89,9 @@ data class AnimeMovie(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
-    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
-    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
-    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.localizationKey
+    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
 }
 
 @Serializable

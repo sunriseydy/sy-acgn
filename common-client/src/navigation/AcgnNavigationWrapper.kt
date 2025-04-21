@@ -1,40 +1,13 @@
 package dev.sunriseydy.acgn.client.navigation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.MenuOpen
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.PermanentDrawerSheet
-import androidx.compose.material3.PermanentNavigationDrawer
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -46,11 +19,8 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
-import androidx.compose.ui.unit.toSize
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowHeightSizeClass
@@ -58,8 +28,10 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.LayoutType
 import dev.sunriseydy.acgn.client.SyAcgnApi
-import dev.sunriseydy.acgn.client.components.AcgnSnackbarHost
-import dev.sunriseydy.acgn.client.utils.*
+import dev.sunriseydy.acgn.client.utils.AcgnContentType
+import dev.sunriseydy.acgn.client.utils.AcgnNavigationContentPosition
+import dev.sunriseydy.acgn.client.utils.AcgnNavigationType
+import dev.sunriseydy.acgn.client.utils.isCompact
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 
 /**
@@ -151,14 +123,14 @@ fun AcgnBottomNavigationBar(
                     destination.icon?.apply {
                         Icon(
                             imageVector = destination.icon,
-                            contentDescription = destination.localization
+                            contentDescription = destination.meaning
                         )
                     }
                 },
                 label = {
                     if (destination.icon == null) {
                         Text(
-                            text = destination.localization,
+                            text = destination.meaning,
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
@@ -217,7 +189,7 @@ fun NavigationDrawerItems(
             selected = selectedDestination == destination.name,
             label = {
                 Text(
-                    text = destination.localization,
+                    text = destination.meaning,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             },
@@ -225,7 +197,7 @@ fun NavigationDrawerItems(
                 destination.icon?.apply {
                     Icon(
                         imageVector = destination.icon,
-                        contentDescription = destination.localization
+                        contentDescription = destination.meaning
                     )
                 }
             },

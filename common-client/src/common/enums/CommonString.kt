@@ -1,13 +1,13 @@
 package dev.sunriseydy.acgn.client.common.enums
 
-import dev.sunriseydy.acgn.interfaces.CommonModuleLocalizable
-import dev.sunriseydy.acgn.interfaces.EnumLocalizable
+import dev.sunriseydy.acgn.interfaces.CommonModule
+import dev.sunriseydy.acgn.interfaces.EnumKey
 
 /**
  * @author SunriseYDY
  * @date 2024-08-11 22:26
  */
-enum class CommonString : CommonModuleLocalizable, EnumLocalizable {
+enum class CommonString : CommonModule, EnumKey {
     REFRESH,
     ADD,
     UPDATE,

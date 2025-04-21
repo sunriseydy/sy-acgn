@@ -22,7 +22,7 @@ fun FormCard(
     errorMessage: MutableState<String?> = mutableStateOf(null),
     onDismissRequest: (() -> Unit)?,
     onConfirmation: () -> Unit,
-    confirmationText: String = CommonString.SUBMIT.localization,
+    confirmationText: String = CommonString.SUBMIT.meaning,
     content: @Composable () -> Unit,
 ) {
     Card {
@@ -43,7 +43,7 @@ fun FormCard(
                                 errorMessage.value = e.message
                             }
                         },
-                    ) { Text(CommonString.CANCEL.localization) }
+                    ) { Text(CommonString.CANCEL.meaning) }
                     Spacer(modifier = Modifier.width(4.dp))
                 }
                 TextButton(

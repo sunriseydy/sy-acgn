@@ -57,7 +57,7 @@ fun Rss(appState: AppState) {
         loading = remember { mutableStateOf(false) },
         finished = remember { mutableStateOf(false) },
         onError = { e ->
-            appState.showError(e.message ?: CommonString.API_ERROR.localization)
+            appState.showError(e.message ?: CommonString.API_ERROR.meaning)
         },
     ) { pager ->
         appState.api.rss.getRssItemByRssIdOrIsRead(
@@ -124,7 +124,7 @@ fun RssList(
     }
 
     Column(modifier = modifier) {
-        PageTitle(RssString.RSS_TITLE.localization) {
+        PageTitle(RssString.RSS_TITLE.meaning) {
             IconButton(onClick = { rssService.loadData() }) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
             }
@@ -163,17 +163,17 @@ fun RssList(
                                 deleteRss.value = rss
                                 deleteRssDialogVisible.value = true
                             }) {
-                                Icon(Icons.Default.Delete, CommonString.DELETE.localization)
+                                Icon(Icons.Default.Delete, CommonString.DELETE.meaning)
                             }
                             IconButton(onClick = {
                                 editRss.value = rss
                                 newTitle.value = rss.title
                                 editRssDialogVisible.value = true
                             }) {
-                                Icon(Icons.Default.Edit, CommonString.UPDATE.localization)
+                                Icon(Icons.Default.Edit, CommonString.UPDATE.meaning)
                             }
                             IconButton(onClick = { rssService.markRssItemReadByIdOrRssId(null, rss.id) }) {
-                                Icon(Icons.Default.Check, RssString.RSS_READ.localization)
+                                Icon(Icons.Default.Check, RssString.RSS_READ.meaning)
                             }
                         }
                     }
@@ -186,7 +186,7 @@ fun RssList(
     FormDialog(
         formDialogVisible = addRssDialogVisible,
         onConfirmation = {
-            require(newLink.value.isNotBlank()) { RssString.RSS_FIELD_LINK.localization + CommonString.IS_BLANK.localization }
+            require(newLink.value.isNotBlank()) { RssString.RSS_FIELD_LINK.meaning + CommonString.IS_BLANK.meaning }
             rssService.createRss(
                 newLink.value,
                 onSuccess = {
@@ -202,8 +202,8 @@ fun RssList(
         OutlinedTextField(
             value = newLink.value,
             onValueChange = { newLink.value = it },
-            label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.localization) },
-            supportingText = { RequiredSupportingText(newLink, RssString.RSS_FIELD_LINK.localization) }
+            label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.meaning) },
+            supportingText = { RequiredSupportingText(newLink, RssString.RSS_FIELD_LINK.meaning) }
         )
     }
     // 删除 RSS 弹窗
@@ -217,13 +217,13 @@ fun RssList(
                 }
             }
         },
-        dialogTitle = CommonString.DELETE.localization + deleteRss.value?.title,
+        dialogTitle = CommonString.DELETE.meaning + deleteRss.value?.title,
     )
     // 更新 RSS 弹窗
     FormDialog(
         formDialogVisible = editRssDialogVisible,
         onConfirmation = {
-            require(newTitle.value.isNotBlank()) { RssString.RSS_FIELD_TITLE.localization + CommonString.IS_BLANK.localization }
+            require(newTitle.value.isNotBlank()) { RssString.RSS_FIELD_TITLE.meaning + CommonString.IS_BLANK.meaning }
             editRss.value?.also {
                 rssService.updateRss(
                     it.copy(id = it.id, title = newTitle.value),
@@ -241,8 +241,8 @@ fun RssList(
         OutlinedTextField(
             value = newTitle.value,
             onValueChange = { newTitle.value = it },
-            label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.localization) },
-            supportingText = { RequiredSupportingText(newTitle, RssString.RSS_FIELD_TITLE.localization) },
+            label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.meaning) },
+            supportingText = { RequiredSupportingText(newTitle, RssString.RSS_FIELD_TITLE.meaning) },
         )
     }
 }
@@ -260,11 +260,11 @@ fun RssItemList(
     val downloadRssItem: MutableState<RssItem?> = remember { mutableStateOf(null) }
 
     Column(modifier = modifier) {
-        PageTitle(RssString.RSS_ITEM_TITLE.localization) {
+        PageTitle(RssString.RSS_ITEM_TITLE.meaning) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(RssString.IS_ONLY_UNREAD.localization)
+                Text(RssString.IS_ONLY_UNREAD.meaning)
                 Checkbox(
                     checked = isOnlyUnread.value,
                     onCheckedChange = {
@@ -354,6 +354,6 @@ fun RssItemList(
                 downloadDialogVisible.value = false
             }
         },
-        dialogTitle = CommonString.DOWNLOAD.localization + downloadRssItem.value?.title,
+        dialogTitle = CommonString.DOWNLOAD.meaning + downloadRssItem.value?.title,
     )
 }

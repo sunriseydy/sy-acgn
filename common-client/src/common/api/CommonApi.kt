@@ -8,14 +8,9 @@ import dev.sunriseydy.acgn.common.dto.AppInfo
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.interfaces.AdditionTypeInterface
 import dev.sunriseydy.acgn.interfaces.AssociatedTypeInterface
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -63,7 +58,7 @@ class CommonApi internal constructor(private val httpClient: HttpClient) {
     ): Result<List<AdditionalInfo>> = runBlocking {
         httpClient.get {
             additionApiEndPoint()
-            parameter("associatedType", associatedType.localizationKey)
+            parameter("associatedType", associatedType.key)
             parameter("associatedId", associatedId)
             parameter("additionalType", additionalType?.key)
         }.body()

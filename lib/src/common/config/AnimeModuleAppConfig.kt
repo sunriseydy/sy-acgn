@@ -1,6 +1,6 @@
 package dev.sunriseydy.acgn.common.config
 
-import dev.sunriseydy.acgn.interfaces.AnimeModuleLocalizable
+import dev.sunriseydy.acgn.interfaces.AnimeModule
 import dev.sunriseydy.acgn.interfaces.AppConfigInterface
 
 /**
@@ -8,23 +8,23 @@ import dev.sunriseydy.acgn.interfaces.AppConfigInterface
  * @date 2024-07-16 20:03
  */
 object AnimeModuleAppConfig {
-    object TmdbApiKey : AppConfigInterface, AnimeModuleLocalizable {
+    object TmdbApiKey : AppConfigInterface, AnimeModule {
         override val configValue: String? get() = this.stringValue
     }
 
-    object QbApiBaseUrl : AppConfigInterface, AnimeModuleLocalizable {
+    object QbApiBaseUrl : AppConfigInterface, AnimeModule {
         override val configValue: String? get() = this.stringValue
     }
 
-    object QbUserName : AppConfigInterface, AnimeModuleLocalizable {
+    object QbUserName : AppConfigInterface, AnimeModule {
         override val configValue: String? get() = this.stringValue
     }
 
-    object QbPassword : AppConfigInterface, AnimeModuleLocalizable {
+    object QbPassword : AppConfigInterface, AnimeModule {
         override val configValue: String? get() = this.stringValue
     }
 
-    object MediaTargetDirectory : AppConfigInterface, AnimeModuleLocalizable {
+    object MediaTargetDirectory : AppConfigInterface, AnimeModule {
         override val configValue: String? get() = this.stringValue
     }
 }

@@ -25,7 +25,7 @@ class AnimeService(
         return animeRepository.selectAllAnime().map {
             it.copy(
                 additions = additionalInfoRepository.selectAdditionalInfos(
-                    AnimeAssociatedType.ANIME.localizationKey,
+                    AnimeAssociatedType.ANIME.key,
                     it.id
                 )
             )
@@ -61,7 +61,7 @@ class AnimeService(
         return animeRepository.selectAnimeSeasonById(id).let {
             it.copy(
                 additions = additionalInfoRepository.selectAdditionalInfos(
-                    AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                    AnimeAssociatedType.ANIME_SEASON.key,
                     it.id
                 ),
                 anime = this.getAnimeById(it.animeId)
@@ -74,7 +74,7 @@ class AnimeService(
             .map {
                 it.copy(
                     additions = additionalInfoRepository.selectAdditionalInfos(
-                        AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                        AnimeAssociatedType.ANIME_SEASON.key,
                         it.id
                     ),
                 )
@@ -90,7 +90,7 @@ class AnimeService(
             .map {
                 it.copy(
                     additions = additionalInfoRepository.selectAdditionalInfos(
-                        AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                        AnimeAssociatedType.ANIME_SEASON.key,
                         it.id
                     ),
                     anime = this.getAnimeById(it.animeId)
@@ -105,7 +105,7 @@ class AnimeService(
                 AnimeMonthType.entries.forEach { month ->
                     getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, month).let { seasons ->
                         if (seasons.isNotEmpty()) {
-                            sectionMap["$year - ${month.localization}"] = seasons
+                            sectionMap["$year - ${month.meaning}"] = seasons
                         }
                     }
                 }
@@ -182,13 +182,13 @@ class AnimeService(
                 FileTool().handleAnimeSeasonFile(it, animeSeasonFile)
                 // 更新文件状态
                 val addition = AnimeAdditionType.FileStatus.additionalInfo(it.additions)
-                    ?.copy(additionalValue = Status.PROCESSED.localizationKey)
+                    ?.copy(additionalValue = Status.PROCESSED.key)
                     ?: AdditionalInfo(
                         "",
                         it.id,
-                        AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                        AnimeAssociatedType.ANIME_SEASON.key,
                         AnimeAdditionType.FileStatus.key,
-                        Status.PROCESSED.localizationKey
+                        Status.PROCESSED.key
                     )
                 additionalInfoRepository.saveAdditionalInfo(addition)
             }

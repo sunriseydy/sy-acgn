@@ -9,7 +9,7 @@ import kotlinx.serialization.json.jsonObject
 /**
  * 关联类型
  */
-enum class AnimeAssociatedType : AnimeModuleLocalizable, AssociatedTypeInterface {
+enum class AnimeAssociatedType : AnimeModule, AssociatedTypeInterface {
     ANIME, ANIME_SEASON, ANIME_EPISODE, ANIME_MOVIE,
 }
 
@@ -17,16 +17,16 @@ enum class AnimeAssociatedType : AnimeModuleLocalizable, AssociatedTypeInterface
  * 附加类型
  */
 object AnimeAdditionType {
-    object TmdbJson : AnimeModuleLocalizable, AdditionTypeInterface {
+    object TmdbJson : AnimeModule, AdditionTypeInterface {
         override val valueOf: (List<AdditionalInfo>) -> JsonObject? =
             { this.stringValueOf(it)?.let { Json.parseToJsonElement(it).jsonObject } }
     }
 
-    object DownloadStatus : AnimeModuleLocalizable, StatusAdditionType
-    object FileStatus : AnimeModuleLocalizable, StatusAdditionType
-    object WatchStatus : AnimeModuleLocalizable, StatusAdditionType
+    object DownloadStatus : AnimeModule, StatusAdditionType
+    object FileStatus : AnimeModule, StatusAdditionType
+    object WatchStatus : AnimeModule, StatusAdditionType
 }
 
-enum class AnimeMonthType(val months: List<Int>) : AnimeModuleLocalizable, EnumLocalizable {
+enum class AnimeMonthType(val months: List<Int>) : AnimeModule, EnumKey {
     WINTER(listOf(1, 2, 3)), SPRING(listOf(4, 5, 6)), SUMMER(listOf(7, 8, 9)), FALL(listOf(10, 11, 12)),
 }

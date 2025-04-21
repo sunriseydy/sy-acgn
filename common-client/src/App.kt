@@ -79,7 +79,7 @@ fun <T> Result<T>.onSuccess(
         this.checkSuccess()
         onSuccess()
     } catch (e: Exception) {
-        val message = e.message ?: CommonString.API_ERROR.localization
+        val message = e.message ?: CommonString.API_ERROR.meaning
         appState?.showError(message)
         onError(message)
     }
@@ -93,7 +93,7 @@ fun <T> Result<T>.onSuccessData(
     try {
         onSuccess(this.checkSuccessAndNotNull())
     } catch (e: Exception) {
-        val message = "${CommonString.API_ERROR.localization}: ${e.message ?: ""}"
+        val message = "${CommonString.API_ERROR.meaning}: ${e.message ?: ""}"
         appState?.showError(message)
         onError(message)
     }

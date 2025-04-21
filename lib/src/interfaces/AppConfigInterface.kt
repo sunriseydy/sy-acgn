@@ -7,9 +7,9 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
  * @author SunriseYDY
  * @date 2024-07-12 15:07
  */
-interface AppConfigInterface : Localizable {
+interface AppConfigInterface : Key {
     val configKey get() = "config.${this.moduleName}.${this::class.simpleName}"
-    override val localizationKey get() = "${this.configKey}.meaning"
+    override val key get() = "${this.configKey}.meaning"
     val descriptionKey get() = "${this.configKey}.description"
     val description get() = LocalizationTool.getLocalization(this.descriptionKey)
 

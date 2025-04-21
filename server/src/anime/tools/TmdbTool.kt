@@ -96,7 +96,7 @@ class TmdbTool {
                 AdditionalInfo(
                     "",
                     ULong.MIN_VALUE,
-                    AnimeAssociatedType.ANIME.localizationKey,
+                    AnimeAssociatedType.ANIME.key,
                     AnimeAdditionType.TmdbJson.key,
                     Json.encodeToString(this),
                 )
@@ -114,7 +114,7 @@ class TmdbTool {
                 AdditionalInfo(
                     "",
                     ULong.MIN_VALUE,
-                    AnimeAssociatedType.ANIME_MOVIE.localizationKey,
+                    AnimeAssociatedType.ANIME_MOVIE.key,
                     AnimeAdditionType.TmdbJson.key,
                     Json.encodeToString(this),
                 )
@@ -147,7 +147,7 @@ class TmdbTool {
                         AdditionalInfo(
                             "",
                             ULong.MIN_VALUE,
-                            AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                            AnimeAssociatedType.ANIME_SEASON.key,
                             AnimeAdditionType.TmdbJson.key,
                             Json.encodeToString(it),
                         )
@@ -158,7 +158,7 @@ class TmdbTool {
                 AdditionalInfo(
                     "",
                     ULong.MIN_VALUE,
-                    AnimeAssociatedType.ANIME.localizationKey,
+                    AnimeAssociatedType.ANIME.key,
                     AnimeAdditionType.TmdbJson.key,
                     Json.encodeToString(this),
                 )
@@ -181,7 +181,7 @@ class TmdbTool {
                 AdditionalInfo(
                     "",
                     ULong.MIN_VALUE,
-                    AnimeAssociatedType.ANIME_SEASON.localizationKey,
+                    AnimeAssociatedType.ANIME_SEASON.key,
                     AnimeAdditionType.TmdbJson.key,
                     Json.encodeToString(this),
                 )
@@ -199,7 +199,7 @@ class TmdbTool {
                 AdditionalInfo(
                     "",
                     ULong.MIN_VALUE,
-                    AnimeAssociatedType.ANIME_MOVIE.localizationKey,
+                    AnimeAssociatedType.ANIME_MOVIE.key,
                     AnimeAdditionType.TmdbJson.key,
                     Json.encodeToString(this),
                 )

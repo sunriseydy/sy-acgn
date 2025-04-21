@@ -53,7 +53,7 @@ enum:
 message:
   error:
     COMMON:
-      test: "通用模块测试异常"
+      TEST: "通用模块测试异常"
 
 config:
   COMMON:
