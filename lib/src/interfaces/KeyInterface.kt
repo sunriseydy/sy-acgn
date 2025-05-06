@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.interfaces
 
+import dev.sunriseydy.acgn.enums.MessageLevel
 import dev.sunriseydy.acgn.enums.ModuleName
 import dev.sunriseydy.acgn.tools.LocalizationTool
 
@@ -8,8 +9,19 @@ import dev.sunriseydy.acgn.tools.LocalizationTool
  * @date 2025-04-20 23:53
  */
 interface Key {
+    /**
+     * 模块枚举,[ModuleName]
+     */
     val moduleName: ModuleName
+
+    /**
+     * 键
+     */
     val key: String
+
+    /**
+     * 含义
+     */
     val meaning: String get() = LocalizationTool.getLocalization(this.key)
 }
 
@@ -18,14 +30,14 @@ interface EnumKey : Key {
 }
 
 interface Message : Key {
-    val level: String
+    val level: MessageLevel
     override val key: String
         get() = this.getMessageKey(this)
 }
 
 interface ErrorMessage : Message {
-    override val level: String
-        get() = "error"
+    override val level: MessageLevel
+        get() = MessageLevel.ERROR
 }
 
 interface CommonModule : Key {
@@ -46,7 +58,7 @@ fun EnumKey.getEnumKey(enum: EnumKey): String {
 
 fun Message.getMessageKey(enum: Message): String {
     if (enum is Enum<*>) {
-        return "message.$level.${enum.moduleName.name}.${enum.name}"
+        return "message.${level.name}.${enum.moduleName.name}.${enum.name}"
     } else {
         throw IllegalArgumentException("$enum is not an enum")
     }
