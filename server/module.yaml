@@ -29,3 +29,4 @@ dependencies:
 settings:
   jvm:
     mainClass: dev.sunriseydy.acgn.server.ServerMainKt
+  ktor: enabled
