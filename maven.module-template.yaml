@@ -1,3 +1,4 @@
 repositories:
+  - 'mavenLocal'
   - 'https://maven.aliyun.com/repository/public'
   - 'https://maven.aliyun.com/repository/google'
