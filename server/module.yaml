@@ -19,12 +19,12 @@ dependencies:
   - $ktor.server.cio: exported
   - $ktor.server.configYaml: exported
   # https://github.com/JetBrains/Exposed
-  - org.jetbrains.exposed:exposed-core:0.60.0
-  - org.jetbrains.exposed:exposed-jdbc:0.60.0
-  - org.jetbrains.exposed:exposed-dao:0.60.0
-  - org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0
-  - org.jetbrains.exposed:exposed-json:0.60.0
-  - org.jetbrains.exposed:exposed-migration:0.60.0
+  - org.jetbrains.exposed:exposed-core:0.61.0
+  - org.jetbrains.exposed:exposed-jdbc:0.61.0
+  - org.jetbrains.exposed:exposed-dao:0.61.0
+  - org.jetbrains.exposed:exposed-kotlin-datetime:0.61.0
+  - org.jetbrains.exposed:exposed-json:0.61.0
+  - org.jetbrains.exposed:exposed-migration:0.61.0
   - org.postgresql:postgresql:42.7.7
   - commons-io:commons-io:2.16.1
 settings:
