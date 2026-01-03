@@ -7,16 +7,17 @@ apply:
 
 dependencies:
   # https://github.com/ktorio/ktor
-  - io.ktor:ktor-server-core-jvm:3.1.2
-  - io.ktor:ktor-server-content-negotiation-jvm:3.1.2
-  - io.ktor:ktor-server-call-logging-jvm:3.1.2
-  - io.ktor:ktor-server-call-id:3.1.2
-  - io.ktor:ktor-server-forwarded-header-jvm:3.1.2
-  - io.ktor:ktor-server-cors-jvm:3.1.2
-  - io.ktor:ktor-server-status-pages-jvm:3.1.2
-  - io.ktor:ktor-server-resources:3.1.2
-  - io.ktor:ktor-server-cio:3.1.2
-  - io.ktor:ktor-server-config-yaml:3.1.2
+  - bom: $ktor.bom
+  - io.ktor:ktor-server-core-jvm: exported
+  - io.ktor:ktor-server-content-negotiation-jvm: exported
+  - io.ktor:ktor-server-call-logging-jvm: exported
+  - $ktor.server.callId: exported
+  - io.ktor:ktor-server-forwarded-header-jvm: exported
+  - io.ktor:ktor-server-cors-jvm: exported
+  - io.ktor:ktor-server-status-pages-jvm: exported
+  - $ktor.server.resources: exported
+  - $ktor.server.cio: exported
+  - $ktor.server.configYaml: exported
   # https://github.com/JetBrains/Exposed
   - org.jetbrains.exposed:exposed-core:0.60.0
   - org.jetbrains.exposed:exposed-jdbc:0.60.0
@@ -29,4 +30,6 @@ dependencies:
 settings:
   jvm:
     mainClass: dev.sunriseydy.acgn.server.ServerMainKt
-  ktor: enabled
+  ktor:
+    enabled: true
+    version: 3.3.3
