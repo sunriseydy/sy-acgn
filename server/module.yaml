@@ -25,7 +25,7 @@ dependencies:
   - org.jetbrains.exposed:exposed-kotlin-datetime:0.60.0
   - org.jetbrains.exposed:exposed-json:0.60.0
   - org.jetbrains.exposed:exposed-migration:0.60.0
-  - org.postgresql:postgresql:42.7.5
+  - org.postgresql:postgresql:42.7.7
   - commons-io:commons-io:2.16.1
 settings:
   jvm:
