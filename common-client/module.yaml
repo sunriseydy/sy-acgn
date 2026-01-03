@@ -1,29 +1,27 @@
 product:
   type: lib
   platforms: [ jvm ]
-
 apply:
-  - ../lib.module-template.yaml
   - ../compose.module-template.yaml
+  - ../lib.module-template.yaml
   - ../kotlin.module-template.yaml
   - ../maven.module-template.yaml
 
 dependencies:
   - $compose.foundation: exported
-  - $compose.material3: exported
+  - org.jetbrains.compose.material3:material3:1.10.0-alpha05: exported
   - $compose.components.resources: exported
   - $compose.animation: exported
-  - $compose.materialIconsExtended: exported
   - $compose.uiTooling: exported
   - $compose.ui: exported
   - $compose.preview: exported
   # https://github.com/JetBrains/compose-multiplatform
-  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0: exported
-  - org.jetbrains.androidx.navigation:navigation-compose:2.9.0-beta02: exported
-  - org.jetbrains.compose.material3.adaptive:adaptive:1.0.1: exported
-  - org.jetbrains.compose.material3.adaptive:adaptive-layout:1.0.1: exported
-  - org.jetbrains.compose.material3.adaptive:adaptive-navigation:1.1.1: exported
-  - org.jetbrains.compose.material3:material3-adaptive-navigation-suite:1.8.1: exported
+  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0-alpha06: exported
+  - org.jetbrains.androidx.navigation:navigation-compose:2.9.1: exported
+  - org.jetbrains.compose.material3.adaptive:adaptive:1.3.0-alpha02: exported
+  - org.jetbrains.compose.material3.adaptive:adaptive-layout:1.3.0-alpha02: exported
+  - org.jetbrains.compose.material3.adaptive:adaptive-navigation:1.3.0-alpha02: exported
+  - org.jetbrains.compose.material3:material3-adaptive-navigation-suite:1.10.0-alpha05: exported
   # https://github.com/oshai/kotlin-logging
   - io.github.oshai:kotlin-logging:7.0.0: exported
   # https://github.com/russhwolf/multiplatform-settings
