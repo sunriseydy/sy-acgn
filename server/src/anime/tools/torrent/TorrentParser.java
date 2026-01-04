@@ -2,22 +2,13 @@ package anime.tools.torrent;
 
 import anime.tools.torrent.bencoding.Reader;
 import anime.tools.torrent.bencoding.Utils;
-import anime.tools.torrent.bencoding.types.BByteString;
-import anime.tools.torrent.bencoding.types.BDictionary;
-import anime.tools.torrent.bencoding.types.BInt;
-import anime.tools.torrent.bencoding.types.BList;
-import anime.tools.torrent.bencoding.types.IBencodable;
+import anime.tools.torrent.bencoding.types.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by christophe on 17.01.15.
@@ -36,15 +27,14 @@ public class TorrentParser
         return parseTorrent(r);
     }
 
-    public static Torrent parseTorrent(Reader r) throws IOException
-    {
+    public static Torrent parseTorrent(Reader r) {
         List<IBencodable> x = r.read();
         // A valid torrentfile should only return a single dictionary.
         if (x.size() != 1)
             throw new Error("Parsing .torrent yielded wrong number of bencoding structs.");
         try
         {
-            return parseTorrent(x.get(0));
+            return parseTorrent(x.getFirst());
         } catch (ParseException e)
         {
             System.err.println("Error parsing torrent!");
@@ -54,9 +44,8 @@ public class TorrentParser
 
     private static Torrent parseTorrent(Object o) throws ParseException
     {
-        if (o instanceof BDictionary)
+        if (o instanceof BDictionary torrentDictionary)
         {
-            BDictionary torrentDictionary = (BDictionary) o;
             BDictionary infoDictionary = parseInfoDictionary(torrentDictionary);
 
             Torrent t = new Torrent();
@@ -65,7 +54,9 @@ public class TorrentParser
             //// OBLIGATED FIELDS /////////////
             ///////////////////////////////////
             t.setAnnounce(parseAnnounce(torrentDictionary));
-            t.setInfo_hash(Utils.SHAsum(infoDictionary.bencode()));
+            if (infoDictionary != null) {
+                t.setInfo_hash(Utils.SHAsum(infoDictionary.bencode()));
+            }
             t.setName(parseTorrentLocation(infoDictionary));
             t.setPieceLength( parsePieceLength(infoDictionary));
             t.setPieces(parsePiecesHashes(infoDictionary));
@@ -195,7 +186,7 @@ public class TorrentParser
     {
         if (null != info.find(new BByteString("pieces")))
         {
-            return ((BByteString) info.find(new BByteString("pieces"))).getData();
+            return ((BByteString) info.find(new BByteString("pieces"))).data();
         } else
         {
             throw new Error("Info dictionary does not contain pieces bytestring!");
@@ -211,8 +202,8 @@ public class TorrentParser
     {
         if (null != info.find(new BByteString("pieces")))
         {
-            List<String> sha1HexRenders = new ArrayList<String>();
-            byte[] piecesBlob = ((BByteString) info.find(new BByteString("pieces"))).getData();
+            List<String> sha1HexRenders = new ArrayList<>();
+            byte[] piecesBlob = ((BByteString) info.find(new BByteString("pieces"))).data();
             // Split the piecesData into multiple hashes. 1 hash = 20 bytes.
             if (piecesBlob.length % 20 == 0)
             {
@@ -242,20 +233,19 @@ public class TorrentParser
     {
         if (null != info.find(new BByteString("files")))
         {
-            List<TorrentFile> fileList = new ArrayList<TorrentFile>();
+            List<TorrentFile> fileList = new ArrayList<>();
             BList filesBList = (BList) info.find(new BByteString("files"));
 
             Iterator<IBencodable> fileBDicts = filesBList.getIterator();
             while (fileBDicts.hasNext())
             {
                 Object fileObject = fileBDicts.next();
-                if (fileObject instanceof BDictionary)
+                if (fileObject instanceof BDictionary fileBDict)
                 {
-                    BDictionary fileBDict = (BDictionary) fileObject;
                     BList filePaths = (BList) fileBDict.find(new BByteString("path"));
                     BInt fileLength = (BInt) fileBDict.find(new BByteString("length"));
                     // Pick out each subdirectory as a string.
-                    List<String> paths = new LinkedList<String>();
+                    List<String> paths = new LinkedList<>();
                     Iterator<IBencodable> filePathsIterator = filePaths.getIterator();
                     while (filePathsIterator.hasNext())
                         paths.add(filePathsIterator.next().toString());
@@ -277,7 +267,7 @@ public class TorrentParser
     {
         if (null != dictionary.find(new BByteString("announce-list")))
         {
-            List<String> announceUrls = new LinkedList<String>();
+            List<String> announceUrls = new LinkedList<>();
 
             BList announceList = (BList) dictionary.find(new BByteString("announce-list"));
             Iterator<IBencodable> subLists = announceList.getIterator();

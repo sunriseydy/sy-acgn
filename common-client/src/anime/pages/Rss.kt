@@ -29,7 +29,6 @@ import dev.sunriseydy.acgn.client.utils.AcgnContentType
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 /**
  * @author SunriseYDY
@@ -50,7 +49,7 @@ fun Rss(appState: AppState) {
     val isOnlyUnread: MutableState<Boolean> = remember { mutableStateOf(true) }
     val init: MutableState<Boolean> = remember { mutableStateOf(false) }
 
-    val rssItemPager: Paging<RssItem> = getPager<RssItem>(
+    val rssItemPager: Paging<RssItem> = getPager(
         page = remember { mutableStateOf(1L) },
         size = 50,
         data = remember { mutableStateOf(listOf()) },
@@ -68,7 +67,7 @@ fun Rss(appState: AppState) {
         ).checkSuccessAndNotNull()
     }
 
-    val rssService: RssService = RssService(appState, rssList, rssItemPager)
+    val rssService = RssService(appState, rssList, rssItemPager)
 
     // 加载数据
     if (!init.value) {

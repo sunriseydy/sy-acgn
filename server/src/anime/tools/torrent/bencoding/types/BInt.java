@@ -30,7 +30,7 @@ public class BInt implements IBencodable
     {
         byte[] sizeInAsciiBytes = Utils.stringToAsciiBytes(value.toString());
 
-        ArrayList<Byte> bytes = new ArrayList<Byte>();
+        ArrayList<Byte> bytes = new ArrayList<>();
 
         bytes.add((byte) 'i');
 

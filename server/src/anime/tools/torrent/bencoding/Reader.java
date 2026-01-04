@@ -3,14 +3,17 @@ package anime.tools.torrent.bencoding;
 import anime.tools.torrent.bencoding.types.*;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Reader
 {
     private int currentByteIndex;
-    private byte[] datablob;
+    private final byte[] datablob;
 
     ////////////////////////////////////////////////////////////////////////////
     //// CONSTRUCTORS //////////////////////////////////////////////////////////
@@ -46,7 +49,7 @@ public class Reader
         this.currentByteIndex = 0;
         long fileSize = datablob.length;
 
-        List<IBencodable> dataTypes = new ArrayList<IBencodable>();
+        List<IBencodable> dataTypes = new ArrayList<>();
         while (currentByteIndex < fileSize)
             dataTypes.add(readSingleType());
 
@@ -64,27 +67,13 @@ public class Reader
     {
         // Read in the byte at current position and dispatch over it.
         byte current = datablob[currentByteIndex];
-        switch (current)
-        {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                return readByteString();
-            case 'd':
-                return readDictionary();
-            case 'i':
-                return readInteger();
-            case 'l':
-                return readList();
-        }
-        throw new Error("Parser in invalid state at byte " + currentByteIndex);
+        return switch (current) {
+            case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> readByteString();
+            case 'd' -> readDictionary();
+            case 'i' -> readInteger();
+            case 'l' -> readList();
+            default -> throw new Error("Parser in invalid state at byte " + currentByteIndex);
+        };
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -131,7 +120,7 @@ public class Reader
      */
     private BByteString readByteString()
     {
-        String lengthAsString = "";
+        StringBuilder lengthAsString = new StringBuilder();
         int lengthAsInt;
         byte[] bsData;
 
@@ -139,11 +128,11 @@ public class Reader
         byte current = readCurrentByte();
         while (current >= 48 && current <= 57)
         {
-            lengthAsString = lengthAsString + Character.toString((char)current);
+            lengthAsString.append((char) current);
             currentByteIndex++;
             current = readCurrentByte();
         }
-        lengthAsInt = Integer.parseInt(lengthAsString);
+        lengthAsInt = Integer.parseInt(lengthAsString.toString());
 
         if (readCurrentByte() != ':')
             throw new Error("Read length of byte string and was expecting ':' but got " + readCurrentByte());
@@ -213,12 +202,12 @@ public class Reader
 
         // Read in the integer number by number.
         // They are represented as ASCII numbers.
-        String intString = "";
+        StringBuilder intString = new StringBuilder();
         byte current = readCurrentByte();
         //45 negative mark
         while (current >= 48 && current <= 57 || current == 45)
         {
-            intString = intString + Character.toString((char)current);
+            intString.append((char) current);
             currentByteIndex++;
             current = readCurrentByte();
         }
@@ -227,7 +216,7 @@ public class Reader
             throw new Error("Error parsing integer. Was expecting 'e' at end but got " + readCurrentByte());
 
         currentByteIndex++; // Skip past 'e'
-        return new BInt(Long.parseLong(intString));
+        return new BInt(Long.parseLong(intString.toString()));
     }
 
     ////////////////////////////////////////////////////////////////////////////

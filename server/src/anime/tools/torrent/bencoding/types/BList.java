@@ -1,6 +1,9 @@
 package anime.tools.torrent.bencoding.types;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by christophe on 15.01.15.
@@ -12,7 +15,7 @@ public class BList implements IBencodable
 
     public BList()
     {
-        this.list = new LinkedList<IBencodable>();
+        this.list = new LinkedList<>();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -49,7 +52,7 @@ public class BList implements IBencodable
     public byte[] bencode()
     {
         // Get the total size of the keys and values.
-        ArrayList<Byte> bytes = new ArrayList<Byte>();
+        ArrayList<Byte> bytes = new ArrayList<>();
         bytes.add((byte) 'l');
         for (IBencodable entry : this.list)
             for (byte b : entry.bencode())

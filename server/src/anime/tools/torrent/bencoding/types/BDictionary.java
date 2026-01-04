@@ -1,6 +1,8 @@
 package anime.tools.torrent.bencoding.types;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 //TODO we don't need this..?
 
@@ -15,7 +17,7 @@ public class BDictionary implements IBencodable
     public BDictionary()
     {
         // LinkedHashMap to preserve order.
-        this.dictionary = new LinkedHashMap<BByteString, IBencodable>();
+        this.dictionary = new LinkedHashMap<>();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -51,7 +53,7 @@ public class BDictionary implements IBencodable
     public byte[] bencode()
     {
         // Get the total size of the keys and values.
-        ArrayList<Byte> bytes = new ArrayList<Byte>();
+        ArrayList<Byte> bytes = new ArrayList<>();
         bytes.add((byte) 'd');
 
         for (Map.Entry<BByteString, IBencodable> entry : this.dictionary.entrySet())

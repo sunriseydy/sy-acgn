@@ -29,7 +29,7 @@ class FileTool {
         val videos = listVideos(fileNames)
         check(videos.isNotEmpty()) { "路径 $path 下没有视频文件" }
         val subtitles = listSubtitles(fileNames)
-        val others = fileNames - videos - subtitles
+        val others = fileNames - videos.toSet() - subtitles.toSet()
         val mediaTargetDirectory = AnimeModuleAppConfig.MediaTargetDirectory.configValue
         requireNotNull(mediaTargetDirectory) { "${AnimeModuleAppConfig.MediaTargetDirectory.configKey}-媒体库目录不能为空" }
         // 生成目录名

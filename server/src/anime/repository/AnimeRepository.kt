@@ -17,7 +17,7 @@ class AnimeRepository {
         AnimeDAO.all().map(AnimeDAO::toDTO)
     }
 
-    suspend fun selectAnimeById(id: ULong): Anime? = suspendTransaction {
+    suspend fun selectAnimeById(id: ULong): Anime = suspendTransaction {
         AnimeDAO.findById(id)?.toDTO() ?: throw NoSuchElementException()
     }
 

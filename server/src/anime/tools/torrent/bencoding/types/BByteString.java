@@ -2,43 +2,33 @@ package anime.tools.torrent.bencoding.types;
 
 import anime.tools.torrent.bencoding.Utils;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class BByteString implements IBencodable
-{
-    private final byte[] data;
+public record BByteString(byte[] data) implements IBencodable {
 
-    public BByteString(byte[] data)
-    {
-        this.data = data;
+    public BByteString(String name) {
+        this(name.getBytes());
     }
 
-    public BByteString(String name)
-    {
-        this.data = name.getBytes();
-    }
+    /// /////////////////////////////////////////////////////////////////////////
+    /// / GETTERS AND SETTERS ///////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////
-    //// GETTERS AND SETTERS ///////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    public byte[] getData()
-    {
+    @Override
+    public byte[] data() {
         return data;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    //// BENCODING /////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////
+    /// / BENCODING /////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////
 
-    public String bencodedString()
-    {
+    public String bencodedString() {
         return data.length + ":" + new String(data);
     }
 
-    public byte[] bencode()
-    {
+    public byte[] bencode() {
 
         byte[] lengthStringAsBytes = Utils.stringToAsciiBytes(Long.toString(data.length));
         byte[] bencoded = new byte[lengthStringAsBytes.length + 1 + data.length];
@@ -53,18 +43,16 @@ public class BByteString implements IBencodable
         return bencoded;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    //// OVERRIDDEN METHODS ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////
+    /// / OVERRIDDEN METHODS ////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////////
     @Override
-    public String toString()
-    {
-        return new String(data, Charset.forName("UTF-8"));
+    public String toString() {
+        return new String(data, StandardCharsets.UTF_8);
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -73,9 +61,4 @@ public class BByteString implements IBencodable
         return Arrays.equals(data, that.data);
     }
 
-    @Override
-    public int hashCode()
-    {
-        return data != null ? Arrays.hashCode(data) : 0;
-    }
 }
