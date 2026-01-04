@@ -2,15 +2,15 @@ package dev.sunriseydy.acgn.server.anime.db
 
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
-import org.jetbrains.exposed.dao.ULongEntity
-import org.jetbrains.exposed.dao.ULongEntityClass
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.ULongIdTable
-import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp
-import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.ULongIdTable
+import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
+import org.jetbrains.exposed.v1.dao.ULongEntity
+import org.jetbrains.exposed.v1.dao.ULongEntityClass
+import org.jetbrains.exposed.v1.dao.UUIDEntity
+import org.jetbrains.exposed.v1.dao.UUIDEntityClass
+import org.jetbrains.exposed.v1.datetime.CurrentTimestampWithTimeZone
+import org.jetbrains.exposed.v1.datetime.timestampWithTimeZone
 import java.util.*
 
 /**
@@ -22,9 +22,9 @@ object RssTable : ULongIdTable("anime_rss") {
     val title = varchar("title", 255)
     val description = text("description", eagerLoading = true).nullable()
     val ttl = integer("ttl")
-    val lastFetchAt = timestamp("last_fetch_at").defaultExpression(CurrentTimestamp)
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
-    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
+    val lastFetchAt = timestampWithTimeZone("last_fetch_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 }
 
 class RssDAO(id: EntityID<ULong>) : ULongEntity(id) {
@@ -59,9 +59,9 @@ object RssItemTable : UUIDTable("anime_rss_item") {
     val content = text("content", eagerLoading = true).nullable()
     val torrent = text("torrent", eagerLoading = true)
     val isRead = bool("is_read")
-    val publishedAt = timestamp("published_at").index()
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
-    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
+    val publishedAt = timestampWithTimeZone("published_at").index()
+    val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 
     init {
         uniqueIndex(rssId, guid)

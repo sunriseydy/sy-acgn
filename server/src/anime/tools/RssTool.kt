@@ -3,15 +3,15 @@ package dev.sunriseydy.acgn.server.anime.tools
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.tools.HttpClientFactory
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.get
-import kotlinx.datetime.format.DateTimeComponents.Formats.RFC_1123
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.adaptivity.xmlutil.serialization.XmlElement
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * @author SunriseYDY
@@ -50,7 +50,7 @@ class RssTool {
                     torrent = it.enclosure.first {
                         it.type == "application/x-bittorrent"
                     }.url,
-                    publishedAt = RFC_1123.parse(it.pubDate).toInstantUsingOffset()
+                    publishedAt = OffsetDateTime.parse(it.pubDate, DateTimeFormatter.RFC_1123_DATE_TIME)
                 )
             }
         }

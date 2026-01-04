@@ -1,12 +1,15 @@
+@file:UseSerializers(OffsetDateTimeSerializer::class)
 package dev.sunriseydy.acgn.anime.dto
 
+import dev.sunriseydy.acgn.OffsetDateTimeSerializer
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.enums.Status
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.JsonObject
+import java.time.OffsetDateTime
 
 @Serializable
 data class Anime(
@@ -19,8 +22,8 @@ data class Anime(
     val numberOfEpisodes: Int = 0,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
-    val createdAt: Instant? = null,
-    val updatedAt: Instant? = null,
+    val createdAt: OffsetDateTime? = null,
+    val updatedAt: OffsetDateTime? = null,
     val animeSeasons: List<AnimeSeason> = emptyList(),
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
@@ -43,8 +46,8 @@ data class AnimeSeason(
     val airDate: LocalDate? = null,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
-    val createdAt: Instant? = null,
-    val updatedAt: Instant? = null,
+    val createdAt: OffsetDateTime? = null,
+    val updatedAt: OffsetDateTime? = null,
     val anime: Anime? = null,
     val animeEpisodes: List<AnimeEpisode> = emptyList(),
     val additions: List<AdditionalInfo> = emptyList(),
@@ -66,8 +69,8 @@ data class AnimeEpisode(
     val airDate: LocalDate? = null,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
-    val createdAt: Instant? = null,
-    val updatedAt: Instant? = null,
+    val createdAt: OffsetDateTime? = null,
+    val updatedAt: OffsetDateTime? = null,
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
@@ -84,8 +87,8 @@ data class AnimeMovie(
     val releaseDate: LocalDate? = null,
     val tmdbId: ULong? = null,
     val bgmId: ULong? = null,
-    val createdAt: Instant? = null,
-    val updatedAt: Instant? = null,
+    val createdAt: OffsetDateTime? = null,
+    val updatedAt: OffsetDateTime? = null,
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)

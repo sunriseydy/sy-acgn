@@ -1,19 +1,16 @@
 package dev.sunriseydy.acgn.server.plugins
 
-import MigrationUtils
 import dev.sunriseydy.acgn.server.anime.db.animeTables
 import dev.sunriseydy.acgn.server.anime.db.rssTables
 import dev.sunriseydy.acgn.server.common.db.commonModuleTables
 import dev.sunriseydy.acgn.server.constants.DatabaseKey
 import io.ktor.server.application.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SizedIterable
-import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.SizedIterable
+import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 
 fun Application.configureDatabases() {
     val db = connectToPostgres()
@@ -38,35 +35,26 @@ fun Application.connectToPostgres(): Database {
 fun Application.initializeDatabase() {
     val database = environment.config.property(DatabaseKey.DATABASE).getString()
 
-    runBlocking {
-        suspendTransaction {
-            // create database if not exists
-            SchemaUtils.listDatabases().firstOrNull { it == database } ?: run {
-                SchemaUtils.createDatabase(database)
-            }
-            // migrate tables
-            MigrationUtils.statementsRequiredForDatabaseMigration(
-                *(listOf(
-                    rssTables(),
-                    animeTables(),
-                    commonModuleTables()
-                ).flatMap { it }.toTypedArray())
-            ).also {
-                environment.log.info("database migration: $it")
-                if (it.isNotEmpty()) {
-                    execInBatch(it)
-                }
+    transaction {
+        // create database if not exists
+        SchemaUtils.listDatabases().firstOrNull { it == database } ?: run {
+            SchemaUtils.createDatabase(database)
+        }
+        // migrate tables
+        MigrationUtils.statementsRequiredForDatabaseMigration(
+            *(listOf(
+                rssTables(),
+                animeTables(),
+                commonModuleTables()
+            ).flatten().toTypedArray())
+        ).also {
+            environment.log.info("database migration: $it")
+            if (it.isNotEmpty()) {
+                this.execInBatch(it)
             }
         }
     }
 }
-
-/**
- * takes a block of code and runs it within a database transaction, through the IO Dispatcher.
- * This is designed to offload blocking jobs of work onto a thread pool
- */
-suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
-    newSuspendedTransaction(Dispatchers.IO, statement = block)
 
 fun <T> SizedIterable<T>.paging(page: Long? = null, size: Int? = null) =
     if (page == null || size == null || page <= 0) {

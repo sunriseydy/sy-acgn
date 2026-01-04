@@ -3,15 +3,10 @@ package dev.sunriseydy.acgn.server.anime.repository
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
-import dev.sunriseydy.acgn.server.anime.db.AnimeDAO
-import dev.sunriseydy.acgn.server.anime.db.AnimeEpisodeDAO
-import dev.sunriseydy.acgn.server.anime.db.AnimeEpisodeTable
-import dev.sunriseydy.acgn.server.anime.db.AnimeSeasonDAO
-import dev.sunriseydy.acgn.server.anime.db.AnimeSeasonTable
-import dev.sunriseydy.acgn.server.plugins.suspendTransaction
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.and
+import dev.sunriseydy.acgn.server.anime.db.*
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.select
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 
 /**
  * @author SunriseYDY

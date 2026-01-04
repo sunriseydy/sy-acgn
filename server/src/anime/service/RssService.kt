@@ -3,8 +3,9 @@ package dev.sunriseydy.acgn.server.anime.service
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.server.anime.repository.RssRepository
 import dev.sunriseydy.acgn.server.anime.tools.RssTool
-import kotlinx.datetime.Clock
-import java.util.UUID
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.*
 
 /**
  * @author SunriseYDY
@@ -60,7 +61,7 @@ class RssService(val rssRepository: RssRepository = RssRepository()) {
         rssRepository.selectRssItemByRssIdAndGuid(rss.id, it.guid) ?: rssRepository.insertRssItem(it)
     }.also {
         // 更新 rss 的 lastFetchAt
-        rssRepository.updateRss(rss.copy(lastFetchAt = Clock.System.now()))
+        rssRepository.updateRss(rss.copy(lastFetchAt = OffsetDateTime.now(ZoneOffset.UTC)))
     }
 
     suspend fun removeRss(id: ULong) {

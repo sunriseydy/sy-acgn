@@ -2,16 +2,16 @@ package dev.sunriseydy.acgn.server.common.db
 
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig
-import org.jetbrains.exposed.dao.ULongEntity
-import org.jetbrains.exposed.dao.ULongEntityClass
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.ULongIdTable
-import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp
-import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
-import java.util.UUID
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.ULongIdTable
+import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
+import org.jetbrains.exposed.v1.dao.ULongEntity
+import org.jetbrains.exposed.v1.dao.ULongEntityClass
+import org.jetbrains.exposed.v1.dao.UUIDEntity
+import org.jetbrains.exposed.v1.dao.UUIDEntityClass
+import org.jetbrains.exposed.v1.datetime.CurrentTimestampWithTimeZone
+import org.jetbrains.exposed.v1.datetime.timestampWithTimeZone
+import java.util.*
 
 /**
  * @author SunriseYDY
@@ -22,8 +22,8 @@ object AdditionalInfoTable : UUIDTable("common_addition") {
     val associatedType = varchar("associated_type", 256)
     val additionalType = varchar("additional_type", 256)
     val additionalValue = text("additional_value", eagerLoading = true)
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
-    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
+    val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 
     init {
         uniqueIndex(associatedType, associatedId, additionalType)
@@ -54,8 +54,8 @@ class AdditionalInfoDAO(id: EntityID<UUID>) : UUIDEntity(id) {
 object AppConfigTable : ULongIdTable("common_config") {
     val configKey = varchar("config_key", 256)
     val configValue = text("config_value", eagerLoading = true)
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
-    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
+    val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 }
 
 class AppConfigDAO(id: EntityID<ULong>) : ULongEntity(id) {

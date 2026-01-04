@@ -8,28 +8,29 @@ apply:
 dependencies:
   # https://github.com/ktorio/ktor
   - bom: $ktor.bom
-  - io.ktor:ktor-server-core-jvm: exported
-  - io.ktor:ktor-server-content-negotiation-jvm: exported
-  - io.ktor:ktor-server-call-logging-jvm: exported
+  - $ktor.server.core: exported
+  - $ktor.server.contentNegotiation: exported
+  - $ktor.server.callLogging: exported
   - $ktor.server.callId: exported
-  - io.ktor:ktor-server-forwarded-header-jvm: exported
-  - io.ktor:ktor-server-cors-jvm: exported
-  - io.ktor:ktor-server-status-pages-jvm: exported
+  - $ktor.server.forwardedHeader: exported
+  - $ktor.server.cors: exported
+  - $ktor.server.statusPages: exported
   - $ktor.server.resources: exported
   - $ktor.server.cio: exported
   - $ktor.server.configYaml: exported
   # https://github.com/JetBrains/Exposed
-  - org.jetbrains.exposed:exposed-core:0.61.0
-  - org.jetbrains.exposed:exposed-jdbc:0.61.0
-  - org.jetbrains.exposed:exposed-dao:0.61.0
-  - org.jetbrains.exposed:exposed-kotlin-datetime:0.61.0
-  - org.jetbrains.exposed:exposed-json:0.61.0
-  - org.jetbrains.exposed:exposed-migration:0.61.0
-  - org.postgresql:postgresql:42.7.7
+  - org.jetbrains.exposed:exposed-core:1.0.0-rc-4
+  - org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-4
+  - org.jetbrains.exposed:exposed-dao:1.0.0-rc-4
+  - org.jetbrains.exposed:exposed-kotlin-datetime:1.0.0-rc-4
+  - org.jetbrains.exposed:exposed-json:1.0.0-rc-4
+  - org.jetbrains.exposed:exposed-migration-core:1.0.0-rc-4
+  - org.jetbrains.exposed:exposed-migration-jdbc:1.0.0-rc-4
+  - org.postgresql:postgresql:42.7.8
   - commons-io:commons-io:2.16.1
 settings:
-  jvm:
-    mainClass: dev.sunriseydy.acgn.server.ServerMainKt
   ktor:
     enabled: true
     version: 3.3.3
+  kotlin:
+    optIns: [ kotlin.time.ExperimentalTime ]

@@ -1,8 +1,11 @@
+@file:UseSerializers(OffsetDateTimeSerializer::class)
 package dev.sunriseydy.acgn.anime.dto
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import dev.sunriseydy.acgn.OffsetDateTimeSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 /**
  * 订阅 DTO
@@ -14,9 +17,9 @@ data class Rss(
     val title: String,
     val description: String? = null,
     val ttl: Int = 3600,
-    val lastFetchAt: Instant = Clock.System.now(),
-    val createdAt: Instant = Clock.System.now(),
-    val updatedAt: Instant = Clock.System.now(),
+    val lastFetchAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
+    val createdAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
+    val updatedAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
 ) {
     var items: List<RssItem> = emptyList()
     var unreadCount: Long = 0
@@ -36,9 +39,9 @@ data class RssItem(
     val content: String? = null,
     val torrent: String,
     val isRead: Boolean = false,
-    val publishedAt: Instant,
-    val createdAt: Instant = Clock.System.now(),
-    val updatedAt: Instant = Clock.System.now(),
+    val publishedAt: OffsetDateTime,
+    val createdAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
+    val updatedAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
 ) {
     var rss: Rss? = null
 }

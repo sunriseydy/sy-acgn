@@ -8,6 +8,3 @@ apply:
   - ../maven.module-template.yaml
 dependencies:
   - $compose.desktop.currentOs
-settings:
-  jvm:
-    mainClass: dev.sunriseydy.acgn.client.DesktopClientMainKt

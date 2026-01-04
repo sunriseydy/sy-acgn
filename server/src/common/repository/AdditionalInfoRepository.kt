@@ -3,11 +3,11 @@ package dev.sunriseydy.acgn.server.common.repository
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.server.common.db.AdditionalInfoDAO
 import dev.sunriseydy.acgn.server.common.db.AdditionalInfoTable
-import dev.sunriseydy.acgn.server.plugins.suspendTransaction
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.v1.core.Op
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import java.util.*
 
 /**

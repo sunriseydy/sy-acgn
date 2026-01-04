@@ -2,7 +2,7 @@ package dev.sunriseydy.acgn.server.common.repository
 
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.server.common.db.AppConfigDAO
-import dev.sunriseydy.acgn.server.plugins.suspendTransaction
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 
 
 /**

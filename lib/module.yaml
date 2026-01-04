@@ -18,6 +18,8 @@ dependencies:
   - $ktor.client.contentNegotiation: exported
   - $ktor.serialization.kotlinx.json: exported
   - $ktor.serialization.kotlinx.xml: exported
+  # https://github.com/oshai/kotlin-logging
+  - io.github.oshai:kotlin-logging:7.0.14: exported
 dependencies@jvm:
   # https:#github.com/qos-ch/logback/releases
   - ch.qos.logback:logback-classic:1.5.18

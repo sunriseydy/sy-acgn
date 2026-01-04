@@ -3,13 +3,13 @@ package dev.sunriseydy.acgn.server.anime.db
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
-import org.jetbrains.exposed.dao.ULongEntity
-import org.jetbrains.exposed.dao.ULongEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.ULongIdTable
-import org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp
-import org.jetbrains.exposed.sql.kotlin.datetime.date
-import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.ULongIdTable
+import org.jetbrains.exposed.v1.dao.ULongEntity
+import org.jetbrains.exposed.v1.dao.ULongEntityClass
+import org.jetbrains.exposed.v1.datetime.CurrentTimestampWithTimeZone
+import org.jetbrains.exposed.v1.datetime.date
+import org.jetbrains.exposed.v1.datetime.timestampWithTimeZone
 
 object AnimeTable : ULongIdTable("anime") {
     val name = varchar("name", 1024).uniqueIndex()
@@ -20,8 +20,8 @@ object AnimeTable : ULongIdTable("anime") {
     val numberOfEpisodes = integer("number_of_episodes").default(0)
     val tmdbId = ulong("tmdb_id").nullable().uniqueIndex()
     val bgmId = ulong("bmg_id").nullable().uniqueIndex()
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
-    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
+    val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 }
 
 class AnimeDAO(id: EntityID<ULong>) : ULongEntity(id) {
@@ -64,8 +64,8 @@ object AnimeSeasonTable : ULongIdTable("anime_season") {
     val airDate = date("air_date").nullable()
     val tmdbId = ulong("tmdb_id").nullable().uniqueIndex()
     val bgmId = ulong("bmg_id").nullable().uniqueIndex()
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
-    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
+    val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 
     init {
         uniqueIndex(animeId, season)
@@ -114,8 +114,8 @@ object AnimeEpisodeTable : ULongIdTable("anime_episode") {
     val airDate = date("air_date").nullable()
     val tmdbId = ulong("tmdb_id").nullable().uniqueIndex()
     val bgmId = ulong("bmg_id").nullable().uniqueIndex()
-    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
-    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp)
+    val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 
     init {
         uniqueIndex(animeId, animeSeasonId, episode)
