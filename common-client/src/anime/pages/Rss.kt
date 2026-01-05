@@ -28,7 +28,6 @@ import dev.sunriseydy.acgn.client.interfaces.getPager
 import dev.sunriseydy.acgn.client.utils.AcgnContentType
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
-import kotlinx.datetime.TimeZone
 
 /**
  * @author SunriseYDY
@@ -312,9 +311,7 @@ fun RssItemList(
                     HorizontalDivider(thickness = 4.dp)
                     Column(modifier = Modifier.padding(8.dp)) {
                         Text(
-                            rssItem.publishedAt.toLocalDateTime(
-                                TimeZone.currentSystemDefault()
-                            ).toString()
+                            rssItem.publishedAt.toLocalDateTime().toString()
                         )
                         if (currentRss.value.id == ULong.MIN_VALUE) {
                             rssItem.rss?.let { Text(it.title) }
