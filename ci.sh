@@ -1,8 +1,6 @@
 #!/bin/sh
 
-set -e
-AMPER_BOOTSTRAP_CACHE_DIR=${PWD}/build
-./amper --shared-caches-root=./build task :server:compileJvm
+./amper package -m server
 
 REG=registry.cn-shanghai.aliyuncs.com/sunriseydy/sy-acgn
 TAG=dev-$(date "+%Y%m%d%H%M%S")

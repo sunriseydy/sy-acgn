@@ -1,6 +1,12 @@
-FROM alpine:3.20
-RUN apk add --no-cache curl
-COPY . /opt/sy-acgn
-ENV AMPER_BOOTSTRAP_CACHE_DIR=/opt/sy-acgn/build
-RUN cd /opt/sy-acgn && ./amper --shared-caches-root="${AMPER_BOOTSTRAP_CACHE_DIR}" task :server:compileJvm
-ENTRYPOINT [ "/opt/sy-acgn/amper", "--root=/opt/sy-acgn", "--shared-caches-root=\"${AMPER_BOOTSTRAP_CACHE_DIR}\"", "task", ":server:runJvm" ]
+FROM azul/zulu-openjdk:25-jre
+
+WORKDIR /opt/sy-acgn
+
+# Copy executable jar
+COPY ./build/tasks/_server_executableJarJvm/server-jvm-executable.jar ./server-jvm-executable.jar
+
+# Expose the server port
+EXPOSE 9390
+
+# Run the server
+ENTRYPOINT ["java", "-jar", "server-jvm-executable.jar"]
