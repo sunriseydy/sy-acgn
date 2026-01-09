@@ -1,6 +1,7 @@
 package dev.sunriseydy.acgn.server.anime.routes
 
 import dev.sunriseydy.acgn.Result
+import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.server.anime.service.RssService
 import dev.sunriseydy.acgn.server.anime.tools.QbTool
 import io.ktor.server.request.*
@@ -13,23 +14,27 @@ import java.util.*
 fun Route.rssRoutes(rssService: RssService = RssService()) {
     route("/rss") {
         get {
-            call.respond(Result(data = ""))
+            call.respond(Result(data = rssService.getAllRss()))
         }
         put("/{id}") {
             call.respond(
-                Result(data = call.parameters["id"]!!.toULong())
+                Result(
+                    data = rssService.saveRss(
+                        call.receive<Rss>().copy(id = call.parameters["id"]!!.toULong())
+                    )
+                )
             )
         }
         put("/fetch") {
-            call.respond(Result(data = call.parameters["rssId"]?.toULong()))
+            call.respond(Result(data = rssService.fetchRss(call.parameters["rssId"]?.toULong())))
         }
         post {
             call.receive(JsonObject::class).getValue("link").also {
-                call.respond(Result(data = it.jsonPrimitive.content))
+                call.respond(Result(data = rssService.createRss(it.jsonPrimitive.content)))
             }
         }
         delete("/{id}") {
-            call.respond(Result(data = call.parameters["id"]!!.toULong()))
+            call.respond(Result(data = rssService.removeRss(call.parameters["id"]!!.toULong())))
         }
 
         route("/item") {

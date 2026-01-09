@@ -2,7 +2,7 @@ enum:
   COMMON:
     Language:
       SIMPLIFIED_CHINESE: "简体中文"
-    AcgnNavigationRoute:
+    TopLevelRouteEnum:
       RSS: "订阅"
       ANIME_SEASON: "动画季度"
     CommonString:
