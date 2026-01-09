@@ -9,7 +9,6 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -21,13 +20,15 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.LayoutType
 import dev.sunriseydy.acgn.client.SyAcgnApi
+import dev.sunriseydy.acgn.client.anime.pages.AnimeSeason
+import dev.sunriseydy.acgn.client.anime.pages.Rss
 import dev.sunriseydy.acgn.client.utils.AcgnContentType
 import dev.sunriseydy.acgn.client.utils.AcgnNavigationContentPosition
 import dev.sunriseydy.acgn.client.utils.AcgnNavigationType
@@ -62,19 +63,15 @@ fun AcgnNavigationWrapper() {
         else -> AcgnContentType.DUAL_PANE
     }
 
-    val navController = rememberNavController()
-    val navigationAction = remember(navController) {
-        AcgnNavigationAction(navController)
+    val navigationAction = remember {
+        NavigationAction(TopLevelRouteEnum.RSS.route)
     }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val selectedDestination =
-        navBackStackEntry?.destination?.route ?: AcgnNavigationRoute.RSS.name
+    val selectedDestination = navigationAction.topLevelKey
 
     // ydy todo
     val snackbarHostState = remember { SnackbarHostState() }
 
     val appState = AppState(
-        navController = navController,
         navigationAction = navigationAction,
         snackbarHostState = snackbarHostState,
         scope = rememberCoroutineScope(),
@@ -88,52 +85,59 @@ fun AcgnNavigationWrapper() {
             when (navigationSuiteType) {
                 NavigationSuiteType.NavigationBar -> AcgnBottomNavigationBar(
                     selectedDestination = selectedDestination,
-                    navigateToTopLevelDestination = navigationAction::navigateTo
+                    navigateToTopLevelDestination = navigationAction::addTopLevel
                 )
 
                 NavigationSuiteType.NavigationDrawer -> PermanentNavigationDrawerContent(
                     selectedDestination = selectedDestination,
                     navigationContentPosition = navContentPosition,
-                    navigateToTopLevelDestination = navigationAction::navigateTo,
+                    navigateToTopLevelDestination = navigationAction::addTopLevel,
                     modifier = Modifier.width(150.dp)
                 )
             }
         }
     ) {
-        AcgnNavHost(
-            appState = appState,
+        NavDisplay(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surface)
+                .background(color = MaterialTheme.colorScheme.surface),
+            backStack = navigationAction.backStack,
+            onBack = { navigationAction.removeLast() },
+            entryProvider = entryProvider {
+                entry<RssRoute> {
+                    Rss(appState)
+                }
+                entry<AnimeSeasonRoute> {
+                    AnimeSeason(appState)
+                }
+            },
         )
     }
 }
 
 @Composable
 fun AcgnBottomNavigationBar(
-    selectedDestination: String,
-    navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit
+    selectedDestination: NavigationRoute,
+    navigateToTopLevelDestination: (NavigationRoute) -> Unit
 ) {
     NavigationBar(modifier = Modifier.fillMaxWidth()) {
-        AcgnNavigationRoute.entries.forEach { destination ->
+        TopLevelRouteEnum.entries.forEach { destination ->
             NavigationBarItem(
-                selected = selectedDestination == destination.name,
-                onClick = { navigateToTopLevelDestination(destination) },
+                selected = selectedDestination == destination.route,
+                onClick = { navigateToTopLevelDestination(destination.route) },
                 icon = {
-                    destination.icon?.apply {
+                    destination.route.icon?.apply {
                         Icon(
-                            imageVector = destination.icon,
+                            imageVector = destination.route.icon!!,
                             contentDescription = destination.meaning
                         )
                     }
                 },
                 label = {
-                    if (destination.icon == null) {
-                        Text(
-                            text = destination.meaning,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
+                    Text(
+                        text = destination.meaning,
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             )
         }
@@ -142,9 +146,9 @@ fun AcgnBottomNavigationBar(
 
 @Composable
 fun PermanentNavigationDrawerContent(
-    selectedDestination: String,
+    selectedDestination: NavigationRoute,
     navigationContentPosition: AcgnNavigationContentPosition,
-    navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit,
+    navigateToTopLevelDestination: (NavigationRoute) -> Unit,
     modifier: Modifier
 ) {
     PermanentDrawerSheet(
@@ -175,36 +179,36 @@ fun PermanentNavigationDrawerContent(
 
 @Composable
 fun NavigationDrawerItems(
-    selectedDestination: String,
-    navigateToTopLevelDestination: (AcgnNavigationRoute) -> Unit,
+    selectedDestination: NavigationRoute,
+    navigateToTopLevelDestination: (NavigationRoute) -> Unit,
 ) = Column(
     modifier = Modifier
         .layoutId(LayoutType.CONTENT)
         .verticalScroll(rememberScrollState()),
     horizontalAlignment = Alignment.CenterHorizontally,
 ) {
-    AcgnNavigationRoute.entries.forEach { destination ->
+    TopLevelRouteEnum.entries.forEach { it ->
         NavigationDrawerItem(
             modifier = Modifier.padding(bottom = 8.dp),
-            selected = selectedDestination == destination.name,
+            selected = selectedDestination == it.route,
             label = {
                 Text(
-                    text = destination.meaning,
+                    text = it.meaning,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             },
             icon = {
-                destination.icon?.apply {
+                it.route.icon?.apply {
                     Icon(
-                        imageVector = destination.icon,
-                        contentDescription = destination.meaning
+                        imageVector = it.route.icon!!,
+                        contentDescription = it.meaning
                     )
                 }
             },
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             ),
-            onClick = { navigateToTopLevelDestination(destination) }
+            onClick = { navigateToTopLevelDestination(it.route) }
         )
     }
 }

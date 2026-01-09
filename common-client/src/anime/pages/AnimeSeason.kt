@@ -23,7 +23,7 @@ import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.client.components.AcgnAlertDialog
 import dev.sunriseydy.acgn.client.components.FormDialog
 import dev.sunriseydy.acgn.client.components.PageTitle
-import dev.sunriseydy.acgn.client.navigation.AcgnNavigationRoute
+import dev.sunriseydy.acgn.client.navigation.TopLevelRouteEnum
 import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -74,7 +74,7 @@ fun AnimeSeason(appState: AppState) {
 
     // 渲染组件
     Column(modifier = Modifier.fillMaxSize()) {
-        PageTitle(AcgnNavigationRoute.ANIME_SEASON.meaning) {
+        PageTitle(TopLevelRouteEnum.ANIME_SEASON.meaning) {
             IconButton(onClick = {
                 loadData(true)
             }) {

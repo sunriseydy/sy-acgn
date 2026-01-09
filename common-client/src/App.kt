@@ -7,13 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.navigation.NavHostController
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.client.components.ServerConfig
 import dev.sunriseydy.acgn.client.components.showError
-import dev.sunriseydy.acgn.client.navigation.AcgnNavigationAction
 import dev.sunriseydy.acgn.client.navigation.AcgnNavigationWrapper
+import dev.sunriseydy.acgn.client.navigation.NavigationAction
+import dev.sunriseydy.acgn.client.navigation.NavigationRoute
 import dev.sunriseydy.acgn.client.utils.AcgnContentType
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.tools.AppConfigTool
@@ -62,8 +62,7 @@ enum class LayoutType {
 }
 
 data class AppState(
-    val navController: NavHostController,
-    val navigationAction: AcgnNavigationAction,
+    val navigationAction: NavigationAction<NavigationRoute>,
     val snackbarHostState: SnackbarHostState,
     val scope: CoroutineScope,
     val contentType: AcgnContentType,
