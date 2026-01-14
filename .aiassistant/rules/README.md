@@ -125,11 +125,20 @@ SY-ACGN 是一个基于 Kotlin 的动漫管理系统，包含 Ktor 后端服务�
     - 模块化 API 访问：`rss`、`anime`、`common`
     - `apiEndPoint()`、`animeModuleApiEndPoint()`、`commonModuleApiEndPoint()` 辅助函数
 
-4. **导航** (`common-client/src/navigation/`)
-    - `AcgnNavigationRoute.kt` - 路由定义
-    - `AcgnNavigationAction.kt` - 导航动作
-    - `AcgnNavigationHost.kt` - Compose 导航主机
-    - `AcgnNavigationWrapper.kt` - 包装器（Snackbar、主题）
+4. **导航 (Navigation 3)** (`common-client/src/navigation/`)
+    - `NavigationRoute.kt` - 密封接口定义路由，包含：
+        - `NavigationRoute` 密封接口（包含 `icon` 属性）
+        - `RssRoute`、`AnimeSeasonRoute` 等数据对象实现
+        - `TopLevelRouteEnum` 枚举定义顶层路由
+    - `NavigationAction.kt` - 基于栈的导航动作处理器
+        - 使用 `LinkedHashMap` 为每个顶层路由维护独立的导航栈
+        - 支持 `addTopLevel()`、`add()`、`removeLast()` 操作
+        - 通过 `backStack` 暴露完整的导航历史
+    - `NavigationWrapper.kt` - 自适应导航包装器
+        - 使用 `NavigationSuiteScaffoldLayout` 实现自适应导航
+        - 根据窗口大小自动切换底部导航栏或永久抽屉式导航
+        - 使用 `NavDisplay` 和 `entryProvider` 进行路由渲染
+        - 包含 `AcgnBottomNavigationBar` 和 `PermanentNavigationDrawerContent` 组件
 
 5. **UI 组件** (`common-client/src/components/`)
     - `AcgnLazyColumn` - 带加载状态的懒加载列表
