@@ -1,8 +1,4 @@
----
-apply: 始终
----
-
-# AI Assistant
+# SY ACGN
 
 ## 项目概述
 
