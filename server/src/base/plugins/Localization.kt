@@ -1,10 +1,10 @@
-package dev.sunriseydy.acgn.server.plugins
+package dev.sunriseydy.acgn.server.base.plugins
 
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.tools.LocalizationTool
-import io.ktor.server.application.Application
-import io.ktor.server.config.yaml.YamlConfig
+import io.ktor.server.application.*
+import io.ktor.server.config.yaml.*
 
 /**
  * @author SunriseYDY

@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.server.plugins
+package dev.sunriseydy.acgn.server.base.plugins
 
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.common.enums.CommonModuleError

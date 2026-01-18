@@ -1,11 +1,11 @@
-package dev.sunriseydy.acgn.server.plugins
+package dev.sunriseydy.acgn.server.base.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callid.*
-import io.ktor.server.plugins.calllogging.CallLogging
+import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.request.*
-import org.slf4j.event.*
+import org.slf4j.event.Level
 import java.util.*
 
 fun Application.configureMonitoring() {

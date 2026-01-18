@@ -1,8 +1,8 @@
 package dev.sunriseydy.acgn.server.common.service
 
 import dev.sunriseydy.acgn.common.dto.AppConfig
+import dev.sunriseydy.acgn.server.base.plugins.loadAppConfigFromDB
 import dev.sunriseydy.acgn.server.common.repository.AppConfigRepository
-import dev.sunriseydy.acgn.server.plugins.loadAppConfigFromDB
 import dev.sunriseydy.acgn.tools.AppConfigTool
 
 /**

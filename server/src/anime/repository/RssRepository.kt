@@ -6,7 +6,7 @@ import dev.sunriseydy.acgn.server.anime.db.RssDAO
 import dev.sunriseydy.acgn.server.anime.db.RssItemDAO
 import dev.sunriseydy.acgn.server.anime.db.RssItemTable
 import dev.sunriseydy.acgn.server.anime.db.RssTable
-import dev.sunriseydy.acgn.server.plugins.paging
+import dev.sunriseydy.acgn.server.base.plugins.paging
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.and

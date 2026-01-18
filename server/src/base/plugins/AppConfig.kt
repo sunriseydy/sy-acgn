@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.server.plugins
+package dev.sunriseydy.acgn.server.base.plugins
 
 import dev.sunriseydy.acgn.server.common.service.AppConfigService
 import dev.sunriseydy.acgn.tools.AppConfigTool
-import io.ktor.server.application.Application
-import io.ktor.server.config.yaml.YamlConfig
+import io.ktor.server.application.*
+import io.ktor.server.config.yaml.*
 import kotlinx.coroutines.runBlocking
 
 /**

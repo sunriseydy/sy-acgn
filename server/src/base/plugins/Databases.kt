@@ -1,9 +1,9 @@
-package dev.sunriseydy.acgn.server.plugins
+package dev.sunriseydy.acgn.server.base.plugins
 
 import dev.sunriseydy.acgn.server.anime.db.animeTables
 import dev.sunriseydy.acgn.server.anime.db.rssTables
+import dev.sunriseydy.acgn.server.base.constants.DatabaseKey
 import dev.sunriseydy.acgn.server.common.db.commonModuleTables
-import dev.sunriseydy.acgn.server.constants.DatabaseKey
 import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils

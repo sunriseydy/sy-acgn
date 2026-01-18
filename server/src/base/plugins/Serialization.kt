@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn.server.plugins
+package dev.sunriseydy.acgn.server.base.plugins
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
