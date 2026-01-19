@@ -1,11 +1,11 @@
 package dev.sunriseydy.acgn.server.anime.tools
 
+import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeModuleError
-import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
-import dev.sunriseydy.acgn.exception.MessageException
+import dev.sunriseydy.acgn.base.exception.MessageException
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 

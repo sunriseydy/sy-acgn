@@ -8,16 +8,16 @@ apply:
 dependencies:
   # https://github.com/ktorio/ktor
   - bom: $ktor.bom
-  - $ktor.server.core: exported
-  - $ktor.server.contentNegotiation: exported
-  - $ktor.server.callLogging: exported
-  - $ktor.server.callId: exported
-  - $ktor.server.forwardedHeader: exported
-  - $ktor.server.cors: exported
-  - $ktor.server.statusPages: exported
-  - $ktor.server.resources: exported
-  - $ktor.server.cio: exported
-  - $ktor.server.configYaml: exported
+  - $ktor.server.core
+  - $ktor.server.contentNegotiation
+  - $ktor.server.callLogging
+  - $ktor.server.callId
+  - $ktor.server.forwardedHeader
+  - $ktor.server.cors
+  - $ktor.server.statusPages
+  - $ktor.server.resources
+  - $ktor.server.cio
+  - $ktor.server.configYaml
   # https://github.com/JetBrains/Exposed
   - org.jetbrains.exposed:exposed-core:1.0.0-rc-4
   - org.jetbrains.exposed:exposed-jdbc:1.0.0-rc-4

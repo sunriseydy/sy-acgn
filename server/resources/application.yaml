@@ -7,10 +7,13 @@ ktor:
     host: 127.0.0.1
   development: true
 
-acgn:
-  postgres:
-    host: localhost
-    port: 5432
-    database: sy_acgn
-    user: sy_acgn
-    password: sy_acgn
+config:
+  db:
+    postgresql:
+      host: "$SY_POSTGRESQL_HOST:localhost"
+      port: "$SY_POSGRESQL_PORT:5432"
+      database: "$SY_POSTGRESQL_DATABASE:sy_acgn"
+      user: "$SY_POSTGRESQL_USER:sy_acgn"
+      password: "$SY_POSTGRESQL_PASSWORD:sy_acgn"
+  ANIME:
+    TmdbApiKey: "$?SY_TMDB_API_KEY"

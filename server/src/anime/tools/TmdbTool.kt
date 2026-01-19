@@ -1,11 +1,11 @@
 package dev.sunriseydy.acgn.server.anime.tools
 
+import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
-import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.Tmdb3
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.*

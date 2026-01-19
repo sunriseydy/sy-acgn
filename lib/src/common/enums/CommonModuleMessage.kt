@@ -1,7 +1,7 @@
 package dev.sunriseydy.acgn.common.enums
 
-import dev.sunriseydy.acgn.interfaces.CommonModule
-import dev.sunriseydy.acgn.interfaces.ErrorMessage
+import dev.sunriseydy.acgn.base.interfaces.CommonModule
+import dev.sunriseydy.acgn.base.interfaces.ErrorMessage
 
 /**
  * @author SunriseYDY

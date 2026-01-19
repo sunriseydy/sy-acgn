@@ -16,6 +16,7 @@ dependencies:
   - $ktor.client.logging: exported
   - $ktor.client.auth: exported
   - $ktor.client.contentNegotiation: exported
+  - $ktor.client.resources: exported
   - $ktor.serialization.kotlinx.json: exported
   - $ktor.serialization.kotlinx.xml: exported
   # https://github.com/oshai/kotlin-logging

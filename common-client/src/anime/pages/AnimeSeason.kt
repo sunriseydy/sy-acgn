@@ -19,13 +19,13 @@ import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.components.CreateAnimeSeason
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
+import dev.sunriseydy.acgn.client.base.components.AcgnAlertDialog
+import dev.sunriseydy.acgn.client.base.components.FormDialog
+import dev.sunriseydy.acgn.client.base.components.PageTitle
+import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
+import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.common.enums.CommonString
-import dev.sunriseydy.acgn.client.components.AcgnAlertDialog
-import dev.sunriseydy.acgn.client.components.FormDialog
-import dev.sunriseydy.acgn.client.components.PageTitle
-import dev.sunriseydy.acgn.client.navigation.TopLevelRouteEnum
-import dev.sunriseydy.acgn.client.utils.RequiredFieldLabel
-import dev.sunriseydy.acgn.client.utils.RequiredSupportingText
+import dev.sunriseydy.acgn.client.base.navigation.TopLevelRouteEnum
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger { }

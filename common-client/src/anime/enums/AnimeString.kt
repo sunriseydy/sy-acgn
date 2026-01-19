@@ -1,7 +1,7 @@
 package dev.sunriseydy.acgn.client.anime.enums
 
-import dev.sunriseydy.acgn.interfaces.AnimeModule
-import dev.sunriseydy.acgn.interfaces.EnumKey
+import dev.sunriseydy.acgn.base.interfaces.AnimeModule
+import dev.sunriseydy.acgn.base.interfaces.EnumKey
 
 /**
  * @author SunriseYDY

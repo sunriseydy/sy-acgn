@@ -1,0 +1,80 @@
+package dev.sunriseydy.acgn.client.base.components
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import dev.sunriseydy.acgn.base.enums.Language
+import dev.sunriseydy.acgn.client.base.utils.getLocalServerConfigOrNull
+import dev.sunriseydy.acgn.client.base.utils.setLocalServerConfig
+import io.github.oshai.kotlinlogging.KotlinLogging
+
+/**
+ * @author SunriseYDY
+ * @date 2024-07-31 16:06
+ */
+
+private val logger = KotlinLogging.logger { }
+
+@Composable
+fun ServerConfig(onClick: (Language) -> Pair<Boolean, String>, success: Boolean, errorMessage: String) {
+    var selectedLanguage by remember { mutableStateOf(Language.SIMPLIFIED_CHINESE) }
+    var serverAddress by remember { mutableStateOf(getLocalServerConfigOrNull() ?: "") }
+    var showError by remember { mutableStateOf(!success) }
+    var errorMessage by remember { mutableStateOf(errorMessage) }
+
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier.width(300.dp)
+        ) {
+            Text("选择语言：")
+            Spacer(modifier = Modifier.height(8.dp))
+            LanguageRadioButtonGroup(selectedLanguage) { selectedLanguage = it }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = serverAddress,
+                onValueChange = { serverAddress = it },
+                label = { Text("服务器地址") },
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            if (showError) {
+                Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            Button(
+                onClick = {
+                    setLocalServerConfig(serverAddress)
+                    val (success, message) = onClick(selectedLanguage)
+                    if (!success) {
+                        showError = true
+                        errorMessage = message
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("提交")
+            }
+        }
+    }
+}
+
+@Composable
+fun LanguageRadioButtonGroup(selectedLanguage: Language, onLanguageSelected: (Language) -> Unit) {
+    Column {
+        Language.entries.forEach { language ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = (language == selectedLanguage),
+                    onClick = { onLanguageSelected(language) }
+                )
+                Text(text = language.originName)
+            }
+        }
+    }
+}

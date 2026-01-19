@@ -1,8 +1,9 @@
 package dev.sunriseydy.acgn.server.base.plugins
 
-import dev.sunriseydy.acgn.Result
+import dev.sunriseydy.acgn.base.ApiResource
+import dev.sunriseydy.acgn.base.Result
+import dev.sunriseydy.acgn.base.exception.MessageException
 import dev.sunriseydy.acgn.common.enums.CommonModuleError
-import dev.sunriseydy.acgn.exception.MessageException
 import dev.sunriseydy.acgn.server.anime.routes.configureAnimeModuleRoutes
 import dev.sunriseydy.acgn.server.common.routes.configureCommonModuleRoutes
 import io.ktor.http.*
@@ -20,16 +21,14 @@ fun Application.configureRouting() {
     install(Resources)
     routing {
         staticResources("/resources", "static")
-        route("/api") {
-            get {
-                call.respond(Pair("SY ACGN", "Hello, World!"))
-            }
-            get("/error") {
-                throw MessageException(CommonModuleError.TEST)
-            }
-            configureCommonModuleRoutes()
-            configureAnimeModuleRoutes()
+        get<ApiResource> {
+            call.respond(Pair("SY ACGN", "Hello, World!"))
         }
+        get<ApiResource.Error> {
+            throw MessageException(CommonModuleError.TEST)
+        }
+        configureCommonModuleRoutes()
+        configureAnimeModuleRoutes()
     }
 }
 

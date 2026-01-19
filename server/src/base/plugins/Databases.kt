@@ -2,7 +2,7 @@ package dev.sunriseydy.acgn.server.base.plugins
 
 import dev.sunriseydy.acgn.server.anime.db.animeTables
 import dev.sunriseydy.acgn.server.anime.db.rssTables
-import dev.sunriseydy.acgn.server.base.constants.DatabaseKey
+import dev.sunriseydy.acgn.server.base.config.PostgresqlConfig
 import dev.sunriseydy.acgn.server.common.db.commonModuleTables
 import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -13,17 +13,17 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 
 fun Application.configureDatabases() {
-    val db = connectToPostgres()
+    val db = connectToPostgresql()
     TransactionManager.defaultDatabase = db
-    initializeDatabase()
+    initializeDatabase(db)
 }
 
-fun Application.connectToPostgres(): Database {
-    val user = environment.config.property(DatabaseKey.USER).getString()
-    val password = environment.config.property(DatabaseKey.PASSWORD).getString()
-    val host = environment.config.property(DatabaseKey.HOST).getString()
-    val port = environment.config.property(DatabaseKey.PORT).getString()
-    val database = environment.config.property(DatabaseKey.DATABASE).getString()
+fun connectToPostgresql(): Database {
+    val user = PostgresqlConfig.user.configValue
+    val password = PostgresqlConfig.password.configValue
+    val host = PostgresqlConfig.host.configValue
+    val port = PostgresqlConfig.port.configValue
+    val database = PostgresqlConfig.database.configValue
 
     return Database.connect(
         url = "jdbc:postgresql://$host:$port/$database",
@@ -32,8 +32,8 @@ fun Application.connectToPostgres(): Database {
     )
 }
 
-fun Application.initializeDatabase() {
-    val database = environment.config.property(DatabaseKey.DATABASE).getString()
+fun Application.initializeDatabase(db: Database) {
+    val database = PostgresqlConfig.database.configValue
 
     transaction {
         // create database if not exists

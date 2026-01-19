@@ -6,8 +6,8 @@ import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
+import dev.sunriseydy.acgn.base.enums.Status
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
-import dev.sunriseydy.acgn.enums.Status
 import dev.sunriseydy.acgn.server.anime.repository.AnimeRepository
 import dev.sunriseydy.acgn.server.anime.repository.AnimeRepositoryImpl
 import dev.sunriseydy.acgn.server.anime.tools.AnimeCacheTool

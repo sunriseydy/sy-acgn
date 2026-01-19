@@ -1,7 +1,7 @@
 package dev.sunriseydy.acgn.client.common.enums
 
-import dev.sunriseydy.acgn.interfaces.CommonModule
-import dev.sunriseydy.acgn.interfaces.EnumKey
+import dev.sunriseydy.acgn.base.interfaces.CommonModule
+import dev.sunriseydy.acgn.base.interfaces.EnumKey
 
 /**
  * @author SunriseYDY

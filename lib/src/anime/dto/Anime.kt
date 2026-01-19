@@ -3,8 +3,8 @@ package dev.sunriseydy.acgn.anime.dto
 
 import dev.sunriseydy.acgn.OffsetDateTimeSerializer
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
+import dev.sunriseydy.acgn.base.enums.Status
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
-import dev.sunriseydy.acgn.enums.Status
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers

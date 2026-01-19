@@ -1,15 +1,16 @@
 package dev.sunriseydy.acgn.client.common.api
 
-import dev.sunriseydy.acgn.Result
-import dev.sunriseydy.acgn.client.commonModuleApiEndPoint
+import dev.sunriseydy.acgn.base.Result
+import dev.sunriseydy.acgn.base.enums.Language
+import dev.sunriseydy.acgn.base.interfaces.AdditionTypeInterface
+import dev.sunriseydy.acgn.base.interfaces.AssociatedTypeInterface
+import dev.sunriseydy.acgn.common.CommonModuleResource
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.common.dto.AppInfo
-import dev.sunriseydy.acgn.enums.Language
-import dev.sunriseydy.acgn.interfaces.AdditionTypeInterface
-import dev.sunriseydy.acgn.interfaces.AssociatedTypeInterface
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 
@@ -20,33 +21,23 @@ import kotlinx.coroutines.runBlocking
 class CommonApi internal constructor(private val httpClient: HttpClient) {
 
     fun getAppInfo(language: Language? = null): Result<AppInfo> = runBlocking {
-        httpClient.get {
-            commonModuleApiEndPoint("info")
-            language?.let { parameter("language", language.name) }
-        }.body()
+        httpClient.get(CommonModuleResource.Info(language = language)).body()
     }
 
     fun getLocalizations(): Result<MutableMap<String, String>> = runBlocking {
-        httpClient.get {
-            commonModuleApiEndPoint("localization")
-        }.body()
+        httpClient.get(CommonModuleResource.Localization()).body()
     }
 
     fun getAllAppConfigFromDB(): Result<List<AppConfig>> = runBlocking {
-        httpClient.get {
-            configApiEndPoint()
-        }.body()
+        httpClient.get(CommonModuleResource.Config()).body()
     }
 
     fun getAppConfigs(): Result<MutableMap<String, Pair<AppConfig?, String?>>> = runBlocking {
-        httpClient.get {
-            configApiEndPoint("map")
-        }.body()
+        httpClient.get(CommonModuleResource.Config.Map()).body()
     }
 
     fun saveAppConfigs(configs: List<AppConfig>): Result<List<AppConfig>> = runBlocking {
-        httpClient.post {
-            configApiEndPoint()
+        httpClient.post(CommonModuleResource.Config()) {
             setBody(configs)
         }.body()
     }
@@ -56,33 +47,22 @@ class CommonApi internal constructor(private val httpClient: HttpClient) {
         associatedId: ULong,
         additionalType: AdditionTypeInterface?
     ): Result<List<AdditionalInfo>> = runBlocking {
-        httpClient.get {
-            additionApiEndPoint()
-            parameter("associatedType", associatedType.key)
-            parameter("associatedId", associatedId)
-            parameter("additionalType", additionalType?.key)
-        }.body()
+        httpClient.get(
+            CommonModuleResource.Addition(
+                associatedType = associatedType.key,
+                associatedId = associatedId,
+                additionalType = additionalType?.key
+            )
+        ).body()
     }
 
     fun saveAddition(addition: AdditionalInfo): Result<String> = runBlocking {
-        httpClient.post {
-            additionApiEndPoint()
+        httpClient.post(CommonModuleResource.Addition()) {
             setBody(addition)
         }.body()
     }
 
     fun deleteAddition(id: String): Result<Unit> = runBlocking {
-        httpClient.delete {
-            additionApiEndPoint()
-            parameter("id", id)
-        }.body()
-    }
-
-    private fun HttpRequestBuilder.configApiEndPoint(vararg paths: String) {
-        commonModuleApiEndPoint("config", *paths)
-    }
-
-    private fun HttpRequestBuilder.additionApiEndPoint(vararg paths: String) {
-        commonModuleApiEndPoint("addition", *paths)
+        httpClient.delete(CommonModuleResource.Addition(id = id)).body()
     }
 }

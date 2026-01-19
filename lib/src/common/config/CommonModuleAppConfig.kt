@@ -1,8 +1,8 @@
 package dev.sunriseydy.acgn.common.config
 
-import dev.sunriseydy.acgn.enums.Language
-import dev.sunriseydy.acgn.interfaces.AppConfigInterface
-import dev.sunriseydy.acgn.interfaces.CommonModule
+import dev.sunriseydy.acgn.base.enums.Language
+import dev.sunriseydy.acgn.base.interfaces.AppConfigInterface
+import dev.sunriseydy.acgn.base.interfaces.CommonModule
 import dev.sunriseydy.acgn.tools.LocalizationTool
 
 /**

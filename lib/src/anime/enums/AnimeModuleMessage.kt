@@ -1,7 +1,7 @@
 package dev.sunriseydy.acgn.anime.enums
 
-import dev.sunriseydy.acgn.interfaces.AnimeModule
-import dev.sunriseydy.acgn.interfaces.ErrorMessage
+import dev.sunriseydy.acgn.base.interfaces.AnimeModule
+import dev.sunriseydy.acgn.base.interfaces.ErrorMessage
 
 /**
  * @author SunriseYDY

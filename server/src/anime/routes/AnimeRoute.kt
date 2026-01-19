@@ -1,11 +1,14 @@
 package dev.sunriseydy.acgn.server.anime.routes
 
-import dev.sunriseydy.acgn.Result
-import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
+import dev.sunriseydy.acgn.anime.AnimeModuleResource
+import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.server.anime.service.AnimeService
 import dev.sunriseydy.acgn.server.anime.service.AnimeServiceImpl
 import dev.sunriseydy.acgn.server.anime.tools.TmdbTool
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.resources.post
+import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -14,111 +17,79 @@ import io.ktor.server.routing.*
  * @date 2024-07-15 14:45
  */
 fun Route.animeRoutes(animeService: AnimeService = AnimeServiceImpl()) {
-    route("/anime") {
-        get("/name") {
-            call.respond(Result(data = animeService.searchAnimeByName(call.parameters["name"])))
-        }
-        get("/cache") {
-            call.respond(Result(data = animeService.getAllAnimeWithAdditionFromCache()))
-        }
-        get {
-            call.respond(Result(data = animeService.getAllAnimeWithAdditionFromDB()))
-        }
-        get("/{animeId}") {
-            val animeId =
-                call.parameters["animeId"]!!.toULong()
-            call.respond(Result(data = animeService.getAnimeById(animeId)))
-        }
-        put("/refresh") {
-            call.respond(Result(data = animeService.refreshAnimeCache()))
-        }
-        delete("/{animeId}") {
-            val animeId =
-                call.parameters["animeId"]!!.toULong()
-            call.respond(Result(data = animeService.removeAnimeById(animeId)))
-        }
+    get<AnimeModuleResource.Anime.Name> { resource ->
+        call.respond(Result(data = animeService.searchAnimeByName(resource.name)))
+    }
+    get<AnimeModuleResource.Anime.Cache> {
+        call.respond(Result(data = animeService.getAllAnimeWithAdditionFromCache()))
+    }
+    get<AnimeModuleResource.Anime> {
+        call.respond(Result(data = animeService.getAllAnimeWithAdditionFromDB()))
+    }
+    get<AnimeModuleResource.Anime.Id> { resource ->
+        call.respond(Result(data = animeService.getAnimeById(resource.animeId)))
+    }
+    put<AnimeModuleResource.Anime.Refresh> {
+        call.respond(Result(data = animeService.refreshAnimeCache()))
+    }
+    delete<AnimeModuleResource.Anime.Id> { resource ->
+        call.respond(Result(data = animeService.removeAnimeById(resource.animeId)))
+    }
 
-        route("/season") {
-            get("{id}") {
-                val animeSeasonId =
-                    call.parameters["id"]!!.toULong()
-                call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonId)))
-            }
-            get("/years") {
-                call.respond(Result(data = animeService.getAnimeSeasonYears()))
-            }
-            get("/by-anime-id") {
-                val animeId =
-                    call.parameters["animeId"]!!.toULong()
-                call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionByAnimeId(animeId)))
-            }
-            get("/by-year-and-month-type") {
-                val year = call.parameters["year"]!!.toInt()
-                val monthType = call.parameters["monthType"]?.let {
-                    AnimeMonthType.valueOf(it)
-                }
-                call.respond(
-                    Result(
-                        data = animeService.getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(
-                            year,
-                            monthType
-                        )
-                    )
+    get<AnimeModuleResource.Anime.Season.Id> { resource ->
+        call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionAndAnimeById(resource.id)))
+    }
+    get<AnimeModuleResource.Anime.Season.Years> {
+        call.respond(Result(data = animeService.getAnimeSeasonYears()))
+    }
+    get<AnimeModuleResource.Anime.Season.ByAnimeId> { resource ->
+        call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionByAnimeId(resource.animeId)))
+    }
+    get<AnimeModuleResource.Anime.Season.ByYearAndMonth> { resource ->
+        call.respond(
+            Result(
+                data = animeService.getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(
+                    resource.year,
+                    resource.monthType
                 )
-            }
-            get("/section-map") {
-                call.respond(Result(data = animeService.getAnimeSeasonSectionMap()))
-            }
-            post {
-                call.respond(Result(data = animeService.saveAnimeSeason(call.receive())))
-            }
-            delete("/{seasonId}") {
-                val seasonId =
-                    call.parameters["seasonId"]!!.toULong()
-                call.respond(Result(data = animeService.removeAnimeSeasonById(seasonId)))
-            }
+            )
+        )
+    }
+    get<AnimeModuleResource.Anime.Season.SectionMap> {
+        call.respond(Result(data = animeService.getAnimeSeasonSectionMap()))
+    }
+    post<AnimeModuleResource.Anime.Season> {
+        call.respond(Result(data = animeService.saveAnimeSeason(call.receive())))
+    }
+    delete<AnimeModuleResource.Anime.Season.Id> { resource ->
+        call.respond(Result(data = animeService.removeAnimeSeasonById(resource.id)))
+    }
 
-            route("/episode") {
-                delete("/{episodeId}") {
-                    val episodeId =
-                        call.parameters["episodeId"]!!.toULong()
-                    call.respond(Result(data = animeService.removeAnimeEpisodeById(episodeId)))
-                }
-            }
-        }
+    delete<AnimeModuleResource.Anime.Season.Episode.Id> { resource ->
+        call.respond(Result(data = animeService.removeAnimeEpisodeById(resource.episodeId)))
+    }
 
-        route("/tmdb") {
-            get("/search-anime-tv") {
-                val query = call.parameters["query"]!!
-                call.respond(Result(data = TmdbTool().searchAnimeTVForAnime(query)))
-            }
-            get("/search-anime-movie") {
-                val query = call.parameters["query"]!!
-                call.respond(Result(data = TmdbTool().searchAnimeMovieForAnimeMovie(query)))
-            }
-            get("/tv-detail") {
-                val id = call.parameters["id"]!!.toInt()
-                call.respond(Result(data = TmdbTool().getTvDetailsForAnime(id)))
-            }
-            get("/season-detail") {
-                val showId = call.parameters["showId"]!!.toInt()
-                val season = call.parameters["season"]!!.toInt()
-                call.respond(Result(data = TmdbTool().getTvSeasonDetailsForAnimeSeason(showId, season)))
-            }
-            get("/movie-detail") {
-                val id = call.parameters["id"]!!.toInt()
-                call.respond(Result(data = TmdbTool().getMovieDetailsForAnimeMovie(id)))
-            }
-        }
+    get<AnimeModuleResource.Anime.Tmdb.SearchTv> { resource ->
+        call.respond(Result(data = TmdbTool().searchAnimeTVForAnime(resource.query)))
+    }
+    get<AnimeModuleResource.Anime.Tmdb.SearchMovie> { resource ->
+        call.respond(Result(data = TmdbTool().searchAnimeMovieForAnimeMovie(resource.query)))
+    }
+    get<AnimeModuleResource.Anime.Tmdb.TvDetail> { resource ->
+        call.respond(Result(data = TmdbTool().getTvDetailsForAnime(resource.id)))
+    }
+    get<AnimeModuleResource.Anime.Tmdb.SeasonDetail> { resource ->
+        call.respond(Result(data = TmdbTool().getTvSeasonDetailsForAnimeSeason(resource.showId, resource.season)))
+    }
+    get<AnimeModuleResource.Anime.Tmdb.MovieDetail> { resource ->
+        call.respond(Result(data = TmdbTool().getMovieDetailsForAnimeMovie(resource.id)))
+    }
 
-        route("/file") {
-            post("/season-file") {
-                call.respond(
-                    Result(
-                        data = animeService.handleAnimeSeasonFile(call.receive())
-                    )
-                )
-            }
-        }
+    post<AnimeModuleResource.Anime.File.SeasonFile> {
+        call.respond(
+            Result(
+                data = animeService.handleAnimeSeasonFile(call.receive())
+            )
+        )
     }
 }

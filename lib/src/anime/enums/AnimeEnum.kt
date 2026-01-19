@@ -1,7 +1,7 @@
 package dev.sunriseydy.acgn.anime.enums
 
+import dev.sunriseydy.acgn.base.interfaces.*
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
-import dev.sunriseydy.acgn.interfaces.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject

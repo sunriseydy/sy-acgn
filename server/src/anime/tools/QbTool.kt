@@ -1,10 +1,10 @@
 package dev.sunriseydy.acgn.server.anime.tools
 
 import anime.tools.torrent.TorrentParser
+import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.anime.dto.TorrentAdd
 import dev.sunriseydy.acgn.anime.enums.AnimeModuleError
-import dev.sunriseydy.acgn.common.config.AnimeModuleAppConfig
-import dev.sunriseydy.acgn.exception.MessageException
+import dev.sunriseydy.acgn.base.exception.MessageException
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.call.*
 import io.ktor.client.plugins.cookies.*

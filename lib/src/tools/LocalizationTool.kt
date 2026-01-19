@@ -1,6 +1,6 @@
 package dev.sunriseydy.acgn.tools
 
-import dev.sunriseydy.acgn.enums.Language
+import dev.sunriseydy.acgn.base.enums.Language
 
 
 /**

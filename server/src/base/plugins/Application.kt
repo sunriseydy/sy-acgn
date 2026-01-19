@@ -1,13 +1,15 @@
 package dev.sunriseydy.acgn.server.base.plugins
 
+import dev.sunriseydy.acgn.tools.AppConfigTool
 import io.ktor.server.application.*
 
-fun Application.module() {
+suspend fun Application.module() {
     configureSerialization()
     configureMonitoring()
     configureHTTP()
+    AppConfigTool.loadAppConfigFromFile(environment)
     configureDatabases()
-    loadAppConfig()
+    AppConfigTool.loadAppConfigFromDB()
     configureLocalization()
     configureRouting()
 }
