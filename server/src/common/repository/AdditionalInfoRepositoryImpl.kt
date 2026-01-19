@@ -61,6 +61,5 @@ class AdditionalInfoRepositoryImpl : AdditionalInfoRepository {
                         (AdditionalInfoTable.associatedId eq associatedId) and
                         (additionalType?.let { AdditionalInfoTable.additionalType eq additionalType } ?: Op.TRUE)
             }
-            Unit
         }
 }

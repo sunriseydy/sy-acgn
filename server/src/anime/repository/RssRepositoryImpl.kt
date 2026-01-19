@@ -89,7 +89,6 @@ class RssRepositoryImpl : RssRepository {
         }) {
             it[isRead] = true
         }
-        Unit
     }
 
     override suspend fun deleteRssItemByRssId(rssId: ULong): Unit = suspendTransaction {

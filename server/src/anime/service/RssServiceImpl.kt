@@ -1,7 +1,6 @@
 package dev.sunriseydy.acgn.server.anime.service
 
 import dev.sunriseydy.acgn.anime.dto.Rss
-import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.server.anime.repository.RssRepository
 import dev.sunriseydy.acgn.server.anime.repository.RssRepositoryImpl
 import dev.sunriseydy.acgn.server.anime.tools.RssTool
@@ -28,7 +27,7 @@ class RssServiceImpl(val rssRepository: RssRepository = RssRepositoryImpl()) : R
     override suspend fun createRss(link: String): Rss {
         // 1. 从 url 中获取 rss
         var rss = this.fetchRssFromLink(link)
-        var rssItems = rss.items
+        val rssItems = rss.items
         // 2. 插入 rss
         rss = rssRepository.insertRss(rss)
         // 3. 插入 rss item

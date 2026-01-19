@@ -160,7 +160,7 @@ class AnimeServiceImpl(
             animeId =
                 if (season.animeId == ULong.MIN_VALUE) {
                     // 新增动画系列
-                    var anime = season.anime
+                    val anime = season.anime
                     checkNotNull(anime) { "新增动画时的动画数据为空" }
                     this.createAnime(anime).id
                 } else {
