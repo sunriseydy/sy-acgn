@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.server.anime.routes
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.server.anime.service.AnimeService
+import dev.sunriseydy.acgn.server.anime.service.AnimeServiceImpl
 import dev.sunriseydy.acgn.server.anime.tools.TmdbTool
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -12,7 +13,7 @@ import io.ktor.server.routing.*
  * @author SunriseYDY
  * @date 2024-07-15 14:45
  */
-fun Route.animeRoutes(animeService: AnimeService = AnimeService()) {
+fun Route.animeRoutes(animeService: AnimeService = AnimeServiceImpl()) {
     route("/anime") {
         get("/name") {
             call.respond(Result(data = animeService.searchAnimeByName(call.parameters["name"])))

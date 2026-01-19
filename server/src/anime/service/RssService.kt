@@ -1,89 +1,24 @@
 package dev.sunriseydy.acgn.server.anime.service
 
 import dev.sunriseydy.acgn.anime.dto.Rss
-import dev.sunriseydy.acgn.server.anime.repository.RssRepository
-import dev.sunriseydy.acgn.server.anime.tools.RssTool
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import dev.sunriseydy.acgn.anime.dto.RssItem
 import java.util.*
 
 /**
  * @author SunriseYDY
  * @date 2024-06-29 00:50
  */
-class RssService(val rssRepository: RssRepository = RssRepository()) {
-
-    private val rssCache = mutableMapOf<ULong, Rss>()
-
-    suspend fun getAllRss() = rssRepository.selectAllRss().also {
-        it.forEach { rss ->
-            rss.unreadCount = getUnreadRssItemCount(rss.id)
-        }
-        rssCache.clear()
-        rssCache.putAll(it.associateBy { it.id })
-    }
-
-    suspend fun createRss(link: String): Rss {
-        // 1. 从 url 中获取 rss
-        var rss = this.fetchRssFromLink(link)
-        var rssItems = rss.items
-        // 2. 插入 rss
-        rss = rssRepository.insertRss(rss)
-        // 3. 插入 rss item
-        rssItems.forEach { rssItem ->
-            rssRepository.insertRssItem(rssItem.copy(rssId = rss.id))
-        }
-        return rss
-    }
-
-    suspend fun saveRss(rss: Rss) {
-        rssRepository.updateRss(rss)
-    }
-
-    suspend fun fetchRssFromLink(link: String) = RssTool().fetchRss(link)
-
-    suspend fun fetchRss(rssId: ULong?) = rssId?.let { this.fetchRssByRssId(rssId) } ?: this.fetchAllRss()
-
-    suspend fun fetchAllRss() {
-        rssRepository.selectAllRss().forEach {
-            this.fetchRssByRss(it)
-        }
-    }
-
-    suspend fun fetchRssByRssId(rssId: ULong) {
-        rssRepository.selectRssById(rssId).let {
-            this.fetchRssByRss(it)
-        }
-    }
-
-    suspend fun fetchRssByRss(rss: Rss) = this.fetchRssFromLink(rss.link).items.forEach {
-        // 先查询是否已存在，不存在则插入
-        rssRepository.selectRssItemByRssIdAndGuid(rss.id, it.guid) ?: rssRepository.insertRssItem(it)
-    }.also {
-        // 更新 rss 的 lastFetchAt
-        rssRepository.updateRss(rss.copy(lastFetchAt = OffsetDateTime.now(ZoneOffset.UTC)))
-    }
-
-    suspend fun removeRss(id: ULong) {
-        rssRepository.deleteRss(id)
-        rssRepository.deleteRssItemByRssId(id)
-    }
-
-    suspend fun getRssItemByRssIdOrIsRead(
-        rssId: ULong?,
-        isRead: Boolean?,
-        page: Long? = null,
-        size: Int? = null,
-    ) = rssRepository.selectRssItemByRssIdOrIsRead(rssId, isRead, page, size).also {
-        it.forEach { rssItem ->
-            rssItem.rss = rssCache[rssItem.rssId]
-        }
-    }
-
-    suspend fun markRssItemReadByIdOrRssId(
-        id: UUID?,
-        rssId: ULong?
-    ) = rssRepository.updateRssItemReadByIdOrRssId(id, rssId)
-
-    suspend fun getUnreadRssItemCount(rssId: ULong) = rssRepository.getUnreadRssItemCount(rssId)
+interface RssService {
+    suspend fun getAllRss(): List<Rss>
+    suspend fun createRss(link: String): Rss
+    suspend fun saveRss(rss: Rss)
+    suspend fun fetchRssFromLink(link: String): Rss
+    suspend fun fetchRss(rssId: ULong?): Any
+    suspend fun fetchAllRss()
+    suspend fun fetchRssByRssId(rssId: ULong)
+    suspend fun fetchRssByRss(rss: Rss)
+    suspend fun removeRss(id: ULong)
+    suspend fun getRssItemByRssIdOrIsRead(rssId: ULong?, isRead: Boolean?, page: Long? = null, size: Int? = null): List<RssItem>
+    suspend fun markRssItemReadByIdOrRssId(id: UUID?, rssId: ULong?)
+    suspend fun getUnreadRssItemCount(rssId: ULong): Long
 }

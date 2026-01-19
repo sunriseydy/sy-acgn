@@ -6,7 +6,9 @@ import dev.sunriseydy.acgn.common.dto.AppInfo
 import dev.sunriseydy.acgn.enums.Language
 import dev.sunriseydy.acgn.server.base.plugins.loadLocalizations
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
+import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepositoryImpl
 import dev.sunriseydy.acgn.server.common.service.AppConfigService
+import dev.sunriseydy.acgn.server.common.service.AppConfigServiceImpl
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.ktor.server.request.*
@@ -36,7 +38,7 @@ fun Route.configureCommonModuleRoutes() {
             call.respond(Result(data = LocalizationTool.getLocalizations()))
         }
         route("/config") {
-            val appConfigService = AppConfigService()
+            val appConfigService: AppConfigService = AppConfigServiceImpl()
             get {
                 call.respond(Result(data = appConfigService.getAllAppConfigFromDB()))
             }
@@ -49,7 +51,7 @@ fun Route.configureCommonModuleRoutes() {
             }
         }
         route("/addition") {
-            val additionalInfoRepository = AdditionalInfoRepository()
+            val additionalInfoRepository: AdditionalInfoRepository = AdditionalInfoRepositoryImpl()
             get {
                 val associatedType = call.parameters["associatedType"]!!
                 val associatedId = call.parameters["associatedId"]!!.toULong()

@@ -1,6 +1,7 @@
 package dev.sunriseydy.acgn.server.base.plugins
 
 import dev.sunriseydy.acgn.server.common.service.AppConfigService
+import dev.sunriseydy.acgn.server.common.service.AppConfigServiceImpl
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import io.ktor.server.application.*
 import io.ktor.server.config.yaml.*
@@ -16,7 +17,7 @@ fun Application.loadAppConfig() {
     }
 }
 
-suspend fun AppConfigTool.loadAppConfigFromDB() = fromAppConfigList(AppConfigService().getAllAppConfigFromDB())
+suspend fun AppConfigTool.loadAppConfigFromDB() = fromAppConfigList(AppConfigServiceImpl().getAllAppConfigFromDB())
 
 fun AppConfigTool.loadAppConfigFromFile() {
     val yamlConfig = YamlConfig("data/config/config.local.yaml") ?: YamlConfig("data/config/config.yaml") ?: return

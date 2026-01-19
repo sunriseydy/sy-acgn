@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.server.anime.routes
 import dev.sunriseydy.acgn.Result
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.server.anime.service.RssService
+import dev.sunriseydy.acgn.server.anime.service.RssServiceImpl
 import dev.sunriseydy.acgn.server.anime.tools.QbTool
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -11,7 +12,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.util.*
 
-fun Route.rssRoutes(rssService: RssService = RssService()) {
+fun Route.rssRoutes(rssService: RssService = RssServiceImpl()) {
     route("/rss") {
         get {
             call.respond(Result(data = rssService.getAllRss()))
