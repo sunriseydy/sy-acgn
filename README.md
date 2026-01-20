@@ -335,17 +335,14 @@ common-client  →  lib
         - 使用 `NavDisplay` 和 `entryProvider` 进行路由渲染
         - 包含 `AcgnBottomNavigationBar` 和 `PermanentNavigationDrawerContent` 组件
 
-## 配置
+## 后端服务配置 (`server/resources/application.yaml`)
 
-### 静态配置 (`server/resources/application.yaml`)
 - Ktor 服务器设置（端口 9390，主机 127.0.0.1）
 - PostgreSQL 连接详情
-- 配置解析：`$VAR:default` 语法用于环境变量
 
-### 本地化文件 (`server/resources/localization/`)
-- `zh-CN.yaml` - 简体中文
-- `en-US.yaml` - 英文
-- 根据 `AppLanguage` 配置加载
+配置解析：
+- `$VAR:default` 语法表示环境变量+默认值
+- `$?VAR` 语法表示可选的环境变量
 
 ## 关键模式
 
@@ -356,12 +353,12 @@ common-client  →  lib
 
 ### 配置优先级
 1. 数据库值（最高优先级）
-2. 文件值（`application.yaml`）
-3. `AppConfigInterface` 实现中定义的默认值
+2. 文件值（`server/resources/application.yaml`）
+3. `AppConfigInterface` 实现类中定义的默认值
 
 ### 本地化流程
-1. 服务器在启动时加载本地化文件
-2. 客户端调用 `/common/info` 获取当前本地化
+1. 服务器在启动时加载本地化文件 (`server/resources/localization/`)
+2. 客户端调用 `/common/info` 获取当前语言本地化
 3. `LocalizationTool.putAll()` 存储字符串
 4. `Key.meaning` 属性自动解析本地化文本
 
