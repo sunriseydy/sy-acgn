@@ -2,7 +2,6 @@ package dev.sunriseydy.acgn.server.anime.service
 
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.server.anime.repository.RssRepository
-import dev.sunriseydy.acgn.server.anime.repository.RssRepositoryImpl
 import dev.sunriseydy.acgn.server.anime.tools.RssTool
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -12,7 +11,7 @@ import java.util.*
  * @author SunriseYDY
  * @date 2024-06-29 00:50
  */
-class RssServiceImpl(val rssRepository: RssRepository = RssRepositoryImpl()) : RssService {
+class RssServiceImpl(val rssRepository: RssRepository) : RssService {
 
     private val rssCache = mutableMapOf<ULong, Rss>()
 

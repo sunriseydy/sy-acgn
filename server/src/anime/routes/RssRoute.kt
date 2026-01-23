@@ -4,8 +4,8 @@ import dev.sunriseydy.acgn.anime.AnimeModuleResource
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.server.anime.service.RssService
-import dev.sunriseydy.acgn.server.anime.service.RssServiceImpl
 import dev.sunriseydy.acgn.server.anime.tools.QbTool
+import io.ktor.server.plugins.di.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
@@ -16,7 +16,8 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.util.*
 
-fun Route.rssRoutes(rssService: RssService = RssServiceImpl()) {
+fun Route.rssRoutes() {
+    val rssService: RssService by application.dependencies
     get<AnimeModuleResource.Rss> {
         call.respond(Result(data = rssService.getAllRss()))
     }

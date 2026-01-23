@@ -4,13 +4,13 @@ import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.common.CommonModuleResource
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.common.dto.AppInfo
+import dev.sunriseydy.acgn.server.base.plugins.loadAppConfigFromDB
 import dev.sunriseydy.acgn.server.base.plugins.loadLocalizations
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
-import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepositoryImpl
 import dev.sunriseydy.acgn.server.common.service.AppConfigService
-import dev.sunriseydy.acgn.server.common.service.AppConfigServiceImpl
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
+import io.ktor.server.plugins.di.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
@@ -22,6 +22,8 @@ import io.ktor.server.routing.*
  * @date 2024-07-12 11:55
  */
 fun Route.configureCommonModuleRoutes() {
+    val appConfigService: AppConfigService by application.dependencies
+    val additionalInfoRepository: AdditionalInfoRepository by application.dependencies
     get<CommonModuleResource.Info> { resource ->
         resource.language?.let {
             LocalizationTool.loadLocalizations(it)
@@ -38,7 +40,6 @@ fun Route.configureCommonModuleRoutes() {
     get<CommonModuleResource.Localization> {
         call.respond(Result(data = LocalizationTool.getLocalizations()))
     }
-    val appConfigService: AppConfigService = AppConfigServiceImpl()
     get<CommonModuleResource.Config> {
         call.respond(Result(data = appConfigService.getAllAppConfigFromDB()))
     }
@@ -47,9 +48,8 @@ fun Route.configureCommonModuleRoutes() {
     }
     post<CommonModuleResource.Config> {
         val appConfigs = call.receive<List<AppConfig>>()
-        call.respond(Result(data = appConfigService.saveAppConfigs(appConfigs)))
+        call.respond(Result(data = appConfigService.saveAppConfigs(appConfigs).also { AppConfigTool.loadAppConfigFromDB(appConfigService) }))
     }
-    val additionalInfoRepository: AdditionalInfoRepository = AdditionalInfoRepositoryImpl()
     get<CommonModuleResource.Addition> { resource ->
         val associatedType = resource.associatedType!!
         val associatedId = resource.associatedId!!

@@ -1,16 +1,13 @@
 package dev.sunriseydy.acgn.server.common.service
 
 import dev.sunriseydy.acgn.common.dto.AppConfig
-import dev.sunriseydy.acgn.server.base.plugins.loadAppConfigFromDB
 import dev.sunriseydy.acgn.server.common.repository.AppConfigRepository
-import dev.sunriseydy.acgn.server.common.repository.AppConfigRepositoryImpl
-import dev.sunriseydy.acgn.tools.AppConfigTool
 
 /**
  * @author SunriseYDY
  * @date 2024-07-14 20:54
  */
-class AppConfigServiceImpl(val appConfigRepository: AppConfigRepository = AppConfigRepositoryImpl()) : AppConfigService {
+class AppConfigServiceImpl(val appConfigRepository: AppConfigRepository) : AppConfigService {
     override suspend fun getAllAppConfigFromDB(): List<AppConfig> =
         appConfigRepository.selectAllAppConfig()
 
@@ -24,8 +21,6 @@ class AppConfigServiceImpl(val appConfigRepository: AppConfigRepository = AppCon
     override suspend fun saveAppConfigs(appConfigs: List<AppConfig>): List<AppConfig> =
         appConfigs.map {
             saveAppConfig(it)
-        }.also {
-            AppConfigTool.loadAppConfigFromDB()
         }
 
     override suspend fun deleteAppConfig(appConfig: AppConfig) =

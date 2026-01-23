@@ -9,19 +9,17 @@ import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.base.enums.Status
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.server.anime.repository.AnimeRepository
-import dev.sunriseydy.acgn.server.anime.repository.AnimeRepositoryImpl
 import dev.sunriseydy.acgn.server.anime.tools.AnimeCacheTool
 import dev.sunriseydy.acgn.server.anime.tools.FileTool
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
-import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepositoryImpl
 
 /**
  * @author SunriseYDY
  * @date 2024-07-04 18:41
  */
 class AnimeServiceImpl(
-    val animeRepository: AnimeRepository = AnimeRepositoryImpl(),
-    val additionalInfoRepository: AdditionalInfoRepository = AdditionalInfoRepositoryImpl()
+    val animeRepository: AnimeRepository,
+    val additionalInfoRepository: AdditionalInfoRepository
 ) : AnimeService {
     override suspend fun getAllAnimeWithAdditionFromDB(): List<Anime> {
         return animeRepository.selectAllAnime().map {

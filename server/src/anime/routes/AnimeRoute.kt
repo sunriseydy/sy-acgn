@@ -3,8 +3,8 @@ package dev.sunriseydy.acgn.server.anime.routes
 import dev.sunriseydy.acgn.anime.AnimeModuleResource
 import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.server.anime.service.AnimeService
-import dev.sunriseydy.acgn.server.anime.service.AnimeServiceImpl
 import dev.sunriseydy.acgn.server.anime.tools.TmdbTool
+import io.ktor.server.plugins.di.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
@@ -16,7 +16,8 @@ import io.ktor.server.routing.*
  * @author SunriseYDY
  * @date 2024-07-15 14:45
  */
-fun Route.animeRoutes(animeService: AnimeService = AnimeServiceImpl()) {
+fun Route.animeRoutes() {
+    val animeService: AnimeService by application.dependencies
     get<AnimeModuleResource.Anime.Name> { resource ->
         call.respond(Result(data = animeService.searchAnimeByName(resource.name)))
     }
