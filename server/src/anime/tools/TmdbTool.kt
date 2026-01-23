@@ -10,6 +10,7 @@ import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.Tmdb3
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.model.*
 import dev.sunriseydy.acgn.tools.LocalizationTool
+import kotlinx.datetime.number
 import kotlinx.serialization.json.Json
 
 /**
@@ -140,7 +141,7 @@ class TmdbTool {
                     season = it.seasonNumber,
                     numberOfEpisodes = it.numberOfEpisodes,
                     year = it.airDate?.year ?: 0,
-                    month = it.airDate?.monthNumber ?: 0,
+                    month = it.airDate?.month?.number ?: 0,
                     airDate = it.airDate,
                     tmdbId = it.id.toULong(),
                     additions = listOf(
@@ -174,7 +175,7 @@ class TmdbTool {
             season = this.seasonNumber,
             numberOfEpisodes = this.numberOfEpisodes,
             year = this.airDate?.year ?: 0,
-            month = this.airDate?.monthNumber ?: 0,
+            month = this.airDate?.month?.number ?: 0,
             airDate = this.airDate,
             tmdbId = this.id.toULong(),
             additions = listOf(

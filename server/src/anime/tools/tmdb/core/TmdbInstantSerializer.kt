@@ -1,7 +1,6 @@
 package dev.sunriseydy.acgn.server.anime.tools.tmdb.core
 
-import kotlinx.datetime.Instant
-import kotlinx.datetime.toInstant
+import kotlin.time.Instant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -18,10 +17,13 @@ internal class TmdbInstantSerializer : KSerializer<Instant> {
         PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Instant {
-        val string = decoder.decodeString()
-        val splits = string.split(" ")
-        val isoString = "${splits[0]}T${splits[1]}Z"
-        return isoString.toInstant()
+        val raw = decoder.decodeString().trim()
+        val isoString = when {
+            raw.contains('T') -> raw
+            raw.endsWith(" UTC") -> raw.removeSuffix(" UTC").replace(' ', 'T') + "Z"
+            else -> raw.replace(' ', 'T')
+        }
+        return Instant.parse(isoString)
     }
 
     override fun serialize(encoder: Encoder, value: Instant) {

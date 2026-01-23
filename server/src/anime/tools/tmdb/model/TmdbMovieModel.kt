@@ -2,9 +2,10 @@
 
 package dev.sunriseydy.acgn.server.anime.tools.tmdb.model
 
-import dev.sunriseydy.acgn.server.anime.tools.tmdb.image.TmdbImage
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.LocalDateSerializer
-import kotlinx.datetime.Instant
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.TmdbInstantSerializer
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.image.TmdbImage
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -149,7 +150,9 @@ data class TmdbReleaseDates(
 @Serializable
 data class TmdbReleaseDate(
     @SerialName("iso_639_1") val iso639: String? = null,
-    @SerialName("release_date") val releaseDate: Instant?,
+    @SerialName("release_date")
+    @Serializable(TmdbInstantSerializer::class)
+    val releaseDate: Instant?,
     @SerialName("certification") val certification: String? = null,
     @SerialName("type") val type: TmdbReleaseType
 )

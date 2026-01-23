@@ -1,16 +1,13 @@
 package dev.sunriseydy.acgn.server.anime.tools.tmdb.core
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDate
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 internal fun currentLocalDate(timeZone: TimeZone = TimeZone.UTC): LocalDate = Clock.System.todayIn(timeZone)
 
@@ -19,14 +16,13 @@ internal fun LocalDate.plusWeeks(weeks: Int) = plus(weeks, DateTimeUnit.WEEK)
 internal fun LocalDate.minusWeeks(weeks: Int) = minus(weeks, DateTimeUnit.WEEK)
 
 internal fun String.tryLocalDate(): LocalDate? = try {
-    if (isBlank()) null else toLocalDate()
+    if (isBlank()) null else LocalDate.parse(this)
 } catch (t: Throwable) {
     null
 }
 
 internal fun String.tryLocalDateTime(): LocalDateTime? = try {
-    toInstant()
-    if (isBlank()) null else toLocalDateTime()
+    if (isBlank()) null else LocalDateTime.parse(this)
 } catch (t: Throwable) {
     null
 }

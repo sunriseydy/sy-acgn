@@ -1,7 +1,7 @@
 package dev.sunriseydy.acgn.server.anime.tools.tmdb.model
 
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.TmdbInstantSerializer
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
