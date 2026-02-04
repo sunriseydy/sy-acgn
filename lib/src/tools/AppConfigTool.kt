@@ -1,7 +1,9 @@
 package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.common.dto.AppConfig
-import kotlin.collections.mutableMapOf
+import io.github.oshai.kotlinlogging.KotlinLogging
+
+private val logger = KotlinLogging.logger { }
 
 /**
  * @author SunriseYDY
@@ -13,6 +15,7 @@ object AppConfigTool {
         mutableMapOf<String/* config key */, Pair<AppConfig?/* db value */, String?/* file value */>>()
 
     fun getAppConfigStringValue(key: String): String? {
+        logger.info { "Getting app config value for key: $key" }
         return appConfigs[key]?.first?.configValue ?: appConfigs[key]?.second
     }
 
