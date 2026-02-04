@@ -29,6 +29,8 @@ dependencies:
   - org.jetbrains.exposed:exposed-migration-jdbc:1.0.0-rc-4
   - org.postgresql:postgresql:42.7.8
   - commons-io:commons-io:2.16.1
+  # Caffeine cache
+  - com.github.ben-manes.caffeine:caffeine:3.1.8
 settings:
   ktor:
     enabled: true

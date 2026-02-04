@@ -58,7 +58,7 @@ fun Rss(appState: AppState) {
             appState.showError(e.message ?: CommonString.API_ERROR.meaning)
         },
     ) { pager ->
-        appState.api.rss.getRssItemByRssIdOrIsRead(
+        appState.api.rss.getQbRssArticles(
             rssId = if (currentRss.value.id == ULong.MIN_VALUE) null else currentRss.value.id,
             isRead = if (isOnlyUnread.value) false else null,
             page = pager.page.value,
@@ -123,7 +123,10 @@ fun RssList(
 
     Column(modifier = modifier) {
         PageTitle(RssString.RSS_TITLE.meaning) {
-            IconButton(onClick = { rssService.loadData() }) {
+            IconButton(onClick = {
+                // 刷新所有 RSS 订阅
+                rssService.refreshRss()
+            }) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
             }
             IconButton(onClick = { addRssDialogVisible.value = true }) {
