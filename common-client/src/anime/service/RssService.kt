@@ -65,9 +65,18 @@ class RssService(
         // 使用 qBittorrent 的 markAsRead API
         if (id != null) {
             // 标记特定文章为已读
-            // id 格式需要是 "itemPath/articleId"，这里需要从 id 解析出来
-            // 暂时使用原有实现，因为需要更复杂的映射逻辑
-            appState.api.rss.markRssItemReadByIdOrRssId(id, rssId).onSuccess(appState, onSuccess = { loadData() })
+            // 需要找到对应的 RSS 订阅源以获取路径
+            val rss = if (rssId != null) {
+                rssList.value.find { it.id == rssId }
+            } else {
+                // 如果没有提供 rssId，尝试从当前选择的 RSS 中查找
+                // 这里逻辑可能需要优化，但在 UI 中通常是选中了某个 RSS 后操作
+                null
+            }
+            
+            if (rss != null) {
+                appState.api.rss.markQbRssAsRead(rss.title, id).onSuccess(appState, onSuccess = { loadData() })
+            }
         } else if (rssId != null) {
             // 标记整个订阅源为已读
             val rss = rssList.value.find { it.id == rssId }

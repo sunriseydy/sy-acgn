@@ -9,32 +9,6 @@ import kotlinx.serialization.Serializable
 @Resource("anime")
 class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
     @Serializable
-    @Resource("rss")
-    class Rss(val parent: AnimeModuleResource = AnimeModuleResource()) {
-        @Serializable
-        @Resource("{id}")
-        class Id(val parent: Rss = Rss(), val id: ULong)
-
-        @Serializable
-        @Resource("fetch")
-        class Fetch(val parent: Rss = Rss(), val rssId: ULong? = null)
-
-        @Serializable
-        @Resource("item")
-        class Item(
-            val parent: Rss = Rss(),
-            val rssId: ULong? = null,
-            val isRead: Boolean? = null,
-            val page: Long? = null,
-            val size: Int? = null
-        ) {
-            @Serializable
-            @Resource("read")
-            class Read(val parent: Item = Item(), val id: String? = null, val rssId: ULong? = null)
-        }
-    }
-
-    @Serializable
     @Resource("qb")
     class Qb(val parent: AnimeModuleResource = AnimeModuleResource()) {
         @Serializable

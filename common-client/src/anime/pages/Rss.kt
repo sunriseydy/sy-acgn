@@ -306,7 +306,7 @@ fun RssItemList(
                             ) {
                                 Icon(Icons.Default.Download, contentDescription = null)
                             }
-                            IconButton(onClick = { rssService.markRssItemReadByIdOrRssId(rssItem.id, null) }) {
+                            IconButton(onClick = { rssService.markRssItemReadByIdOrRssId(rssItem.id, rssItem.rssId) }) {
                                 Icon(Icons.Default.Check, contentDescription = null)
                             }
                         }
@@ -347,7 +347,7 @@ fun RssItemList(
         onConfirmation = {
             downloadRssItem.value?.also {
                 rssService.download(it.link) {
-                    rssService.markRssItemReadByIdOrRssId(id = it.id)
+                    rssService.markRssItemReadByIdOrRssId(id = it.id, rssId = it.rssId)
                 }
                 downloadRssItem.value = null
                 downloadDialogVisible.value = false

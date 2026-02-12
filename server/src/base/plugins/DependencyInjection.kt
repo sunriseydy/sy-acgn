@@ -2,12 +2,8 @@ package dev.sunriseydy.acgn.server.base.plugins
 
 import dev.sunriseydy.acgn.server.anime.repository.AnimeRepository
 import dev.sunriseydy.acgn.server.anime.repository.AnimeRepositoryImpl
-import dev.sunriseydy.acgn.server.anime.repository.RssRepository
-import dev.sunriseydy.acgn.server.anime.repository.RssRepositoryImpl
 import dev.sunriseydy.acgn.server.anime.service.AnimeService
 import dev.sunriseydy.acgn.server.anime.service.AnimeServiceImpl
-import dev.sunriseydy.acgn.server.anime.service.RssService
-import dev.sunriseydy.acgn.server.anime.service.RssServiceImpl
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepositoryImpl
 import dev.sunriseydy.acgn.server.common.repository.AppConfigRepository
@@ -28,7 +24,6 @@ fun Application.configureDependencyInjection() {
         provide<AppConfigRepository> { AppConfigRepositoryImpl() }
         provide<AdditionalInfoRepository> { AdditionalInfoRepositoryImpl() }
         provide<AnimeRepository> { AnimeRepositoryImpl() }
-        provide<RssRepository> { RssRepositoryImpl() }
 
         // Register services
         provide<AppConfigService> {
@@ -39,9 +34,6 @@ fun Application.configureDependencyInjection() {
                 resolve<AnimeRepository>(),
                 resolve<AdditionalInfoRepository>()
             )
-        }
-        provide<RssService> {
-            RssServiceImpl(resolve<RssRepository>())
         }
     }
 }
