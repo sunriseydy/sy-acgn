@@ -1,7 +1,6 @@
 package dev.sunriseydy.acgn.server.base.plugins
 
 import dev.sunriseydy.acgn.server.anime.db.animeTables
-import dev.sunriseydy.acgn.server.anime.db.rssTables
 import dev.sunriseydy.acgn.server.base.config.PostgresqlConfig
 import dev.sunriseydy.acgn.server.common.db.commonModuleTables
 import io.ktor.server.application.*
@@ -43,7 +42,6 @@ fun Application.initializeDatabase(db: Database) {
         // migrate tables
         MigrationUtils.statementsRequiredForDatabaseMigration(
             *(listOf(
-                rssTables(),
                 animeTables(),
                 commonModuleTables()
             ).flatten().toTypedArray())
