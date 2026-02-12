@@ -12,11 +12,11 @@ import dev.sunriseydy.acgn.base.enums.Language
 import dev.sunriseydy.acgn.client.base.api.SyAcgnApi
 import dev.sunriseydy.acgn.client.base.components.ServerConfig
 import dev.sunriseydy.acgn.client.base.components.showError
-import dev.sunriseydy.acgn.client.base.utils.AcgnContentType
-import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
 import dev.sunriseydy.acgn.client.base.navigation.AcgnNavigationWrapper
 import dev.sunriseydy.acgn.client.base.navigation.NavigationAction
 import dev.sunriseydy.acgn.client.base.navigation.NavigationRoute
+import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.github.oshai.kotlinlogging.KotlinLogging

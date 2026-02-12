@@ -22,17 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import androidx.window.core.layout.WindowHeightSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.LayoutType
 import dev.sunriseydy.acgn.client.anime.pages.AnimeSeason
 import dev.sunriseydy.acgn.client.anime.pages.Rss
 import dev.sunriseydy.acgn.client.base.api.SyAcgnApi
-import dev.sunriseydy.acgn.client.base.utils.AcgnContentType
-import dev.sunriseydy.acgn.client.base.utils.AcgnNavigationContentPosition
-import dev.sunriseydy.acgn.client.base.utils.AcgnNavigationType
-import dev.sunriseydy.acgn.client.base.utils.isCompact
+import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
+import dev.sunriseydy.acgn.client.base.enums.AcgnNavigationContentPosition
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 
 /**
@@ -46,21 +42,22 @@ import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 fun AcgnNavigationWrapper() {
     val adaptiveInfo = currentWindowAdaptiveInfo()
 
-    val navigationType = when {
-        adaptiveInfo.windowSizeClass.isCompact() -> AcgnNavigationType.BOTTOM_NAVIGATION
-        else -> AcgnNavigationType.PERMANENT_NAVIGATION_DRAWER
+    val navigationSuiteType = if (adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(600)) {
+        NavigationSuiteType.NavigationDrawer
+    } else {
+        NavigationSuiteType.NavigationBar
     }
-    val navigationSuiteType = when {
-        adaptiveInfo.windowSizeClass.isCompact() -> NavigationSuiteType.NavigationBar
-        else -> NavigationSuiteType.NavigationDrawer
+
+    val navContentPosition = if (adaptiveInfo.windowSizeClass.isHeightAtLeastBreakpoint(480)) {
+        AcgnNavigationContentPosition.CENTER
+    } else {
+        AcgnNavigationContentPosition.TOP
     }
-    val navContentPosition = when (adaptiveInfo.windowSizeClass.windowHeightSizeClass) {
-        WindowHeightSizeClass.COMPACT -> AcgnNavigationContentPosition.TOP
-        else -> AcgnNavigationContentPosition.CENTER
-    }
-    val contentType: AcgnContentType = when (adaptiveInfo.windowSizeClass.windowWidthSizeClass) {
-        WindowWidthSizeClass.COMPACT, WindowWidthSizeClass.MEDIUM -> AcgnContentType.SINGLE_PANE
-        else -> AcgnContentType.DUAL_PANE
+
+    val contentType: AcgnContentType = if (adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(840)) {
+        AcgnContentType.DUAL_PANE
+    } else {
+        AcgnContentType.SINGLE_PANE
     }
 
     val navigationAction = remember {
@@ -187,7 +184,7 @@ fun NavigationDrawerItems(
         .verticalScroll(rememberScrollState()),
     horizontalAlignment = Alignment.CenterHorizontally,
 ) {
-    TopLevelRouteEnum.entries.forEach { it ->
+    TopLevelRouteEnum.entries.forEach {
         NavigationDrawerItem(
             modifier = Modifier.padding(bottom = 8.dp),
             selected = selectedDestination == it.route,

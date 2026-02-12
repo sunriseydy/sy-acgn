@@ -22,12 +22,12 @@ import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.enums.RssString
 import dev.sunriseydy.acgn.client.anime.service.RssService
 import dev.sunriseydy.acgn.client.base.components.*
-import dev.sunriseydy.acgn.client.base.utils.AcgnContentType
+import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
+import dev.sunriseydy.acgn.client.base.interfaces.Paging
+import dev.sunriseydy.acgn.client.base.interfaces.getPager
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.common.enums.CommonString
-import dev.sunriseydy.acgn.client.base.interfaces.Paging
-import dev.sunriseydy.acgn.client.base.interfaces.getPager
 
 /**
  * @author SunriseYDY
