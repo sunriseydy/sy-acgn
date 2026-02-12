@@ -162,6 +162,18 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
         }
 
         @Serializable
+        @Resource("bangumi")
+        class Bangumi(val parent: Anime = Anime()) {
+            @Serializable
+            @Resource("search-anime")
+            class SearchAnime(val parent: Bangumi = Bangumi(), val query: String)
+
+            @Serializable
+            @Resource("subject-detail")
+            class SubjectDetail(val parent: Bangumi = Bangumi(), val id: Int)
+        }
+
+        @Serializable
         @Resource("file")
         class File(val parent: Anime = Anime()) {
             @Serializable

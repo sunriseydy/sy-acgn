@@ -141,6 +141,14 @@ GET http://localhost:9390/api/anime/anime/tmdb/tv-detail?id=77698
 # @no-log
 GET http://localhost:9390/api/anime/anime/tmdb/season-detail?showId=77698&season=1
 
+### bangumi search anime
+# @no-log
+GET http://localhost:9390/api/anime/anime/bangumi/search-anime?query=久保同学不放过我
+
+### bangumi get subject detail
+# @no-log
+GET http://localhost:9390/api/anime/anime/bangumi/subject-detail?id=381793
+
 ### qb torrent properties
 # @no-log
 GET http://localhost:9390/api/anime/qb/torrent/e7b7655298462d527ac15b475c0e933b23654ed7

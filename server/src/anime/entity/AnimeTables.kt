@@ -19,7 +19,7 @@ object AnimeTable : ULongIdTable("anime") {
     val numberOfSeasons = integer("number_of_seasons").default(0)
     val numberOfEpisodes = integer("number_of_episodes").default(0)
     val tmdbId = ulong("tmdb_id").nullable().uniqueIndex()
-    val bgmId = ulong("bmg_id").nullable().uniqueIndex()
+    val bgmId = ulong("bgm_id").nullable().uniqueIndex()
     val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
     val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 }
@@ -63,7 +63,7 @@ object AnimeSeasonTable : ULongIdTable("anime_season") {
     val month = integer("month")
     val airDate = date("air_date").nullable()
     val tmdbId = ulong("tmdb_id").nullable().uniqueIndex()
-    val bgmId = ulong("bmg_id").nullable().uniqueIndex()
+    val bgmId = ulong("bgm_id").nullable().uniqueIndex()
     val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
     val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 
@@ -113,7 +113,7 @@ object AnimeEpisodeTable : ULongIdTable("anime_episode") {
     val episode = integer("episode")
     val airDate = date("air_date").nullable()
     val tmdbId = ulong("tmdb_id").nullable().uniqueIndex()
-    val bgmId = ulong("bmg_id").nullable().uniqueIndex()
+    val bgmId = ulong("bgm_id").nullable().uniqueIndex()
     val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
     val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
 

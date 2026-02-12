@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.server.anime.routes
 import dev.sunriseydy.acgn.anime.AnimeModuleResource
 import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.server.anime.service.AnimeService
+import dev.sunriseydy.acgn.server.anime.tools.BangumiTool
 import dev.sunriseydy.acgn.server.anime.tools.TmdbTool
 import io.ktor.server.plugins.di.*
 import io.ktor.server.request.*
@@ -84,6 +85,13 @@ fun Route.animeRoutes() {
     }
     get<AnimeModuleResource.Anime.Tmdb.MovieDetail> { resource ->
         call.respond(Result(data = TmdbTool().getMovieDetailsForAnimeMovie(resource.id)))
+    }
+
+    get<AnimeModuleResource.Anime.Bangumi.SearchAnime> { resource ->
+        call.respond(Result(data = application.dependencies.resolve<BangumiTool>().searchAnime(resource.query)))
+    }
+    get<AnimeModuleResource.Anime.Bangumi.SubjectDetail> { resource ->
+        call.respond(Result(data = application.dependencies.resolve<BangumiTool>().getSubject(resource.id)))
     }
 
     post<AnimeModuleResource.Anime.File.SeasonFile> {

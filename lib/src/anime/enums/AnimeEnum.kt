@@ -21,6 +21,10 @@ object AnimeAdditionType {
         override val valueOf: (List<AdditionalInfo>) -> JsonObject? =
             { this.stringValueOf(it)?.let { Json.parseToJsonElement(it).jsonObject } }
     }
+    object BgmJson : AnimeModule, AdditionTypeInterface {
+        override val valueOf: (List<AdditionalInfo>) -> JsonObject? =
+            { this.stringValueOf(it)?.let { Json.parseToJsonElement(it).jsonObject } }
+    }
 
     object DownloadStatus : AnimeModule, StatusAdditionType
     object FileStatus : AnimeModule, StatusAdditionType

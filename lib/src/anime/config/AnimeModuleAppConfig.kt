@@ -27,4 +27,8 @@ object AnimeModuleAppConfig {
     object MediaTargetDirectory : AppConfigInterface, AnimeModule {
         override val configValue: String? get() = this.stringValue
     }
+
+    object BgmUserAgent : AppConfigInterface, AnimeModule {
+        override val configValue: String? get() = this.stringValue
+    }
 }
