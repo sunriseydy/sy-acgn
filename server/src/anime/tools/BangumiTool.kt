@@ -32,7 +32,7 @@ class BangumiTool {
         }
     }
 
-    suspend fun searchAnime(keywords: String, limit: Int = 10, offset: Int = 0): List<Anime> {
+    suspend fun searchAnime(keywords: String, limit: Int = 10, offset: Int = 0): List<AnimeSeason> {
         val response: BangumiSearchResponse = client.post("v0/search/subjects") {
             parameter("limit", limit)
             parameter("offset", offset)
@@ -44,19 +44,19 @@ class BangumiTool {
             )
         }.body()
 
-        return response.data.map { it.toAnime() }
+        return response.data.map { it.toAnimeSeason() }
     }
 
-    suspend fun getSubject(id: Int): Anime {
+    suspend fun getSubject(id: Int): AnimeSeason {
         val subject: BangumiSubject = client.get("v0/subjects/$id").body()
-        return subject.toAnime()
+        return subject.toAnimeSeason()
     }
 
-    private fun BangumiSubject.toAnime(): Anime {
+    private fun BangumiSubject.toAnimeSeason(): AnimeSeason {
         val airDate = this.date?.let {
             try { LocalDate.parse(it) } catch (e: Exception) { null }
         }
-    
+
         val bgmIdULong = this.id.toULong()
         val additions = listOf(
             AdditionalInfo(
@@ -65,8 +65,7 @@ class BangumiTool {
                 Json.encodeToString(BangumiSubject.serializer(), this)
             )
         )
-
-        val season = AnimeSeason(
+        return AnimeSeason(
             id = ULong.MIN_VALUE,
             animeId = ULong.MIN_VALUE,
             name = this.nameCn.ifBlank { this.name },
@@ -79,15 +78,18 @@ class BangumiTool {
             bgmId = bgmIdULong,
             additions = additions
         )
+    }
+
+    private fun BangumiSubject.toAnime(): Anime {
+        val season = toAnimeSeason()
 
         return Anime(
             id = ULong.MIN_VALUE,
             name = this.nameCn.ifBlank { this.name },
             description = this.summary,
-            firstAirDate = airDate,
-            bgmId = bgmIdULong,
-            animeSeasons = listOf(season),
-            additions = additions
+            firstAirDate = season.airDate,
+            bgmId = season.bgmId,
+            animeSeasons = listOf(season)
         )
     }
 }
