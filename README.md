@@ -493,3 +493,4 @@ Component (可复用 UI 组件)
 - **双层配置系统**：文件 + 数据库，有明确的优先级
 - **共享代码** 在 `lib/` 和 `common-client/` 中，供服务器和客户端共用
 - **模块化架构** 每个功能模块独立管理，接口与实现分离
+- **日志** 使用 `private val logger = KotlinLogging.logger { }`
