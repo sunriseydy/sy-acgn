@@ -13,7 +13,7 @@ import kotlinx.io.files.SystemFileSystem
  * @author SunriseYDY
  * @date 2024-07-21 20:37
  */
-class FileTool {
+object FileTool {
 
     val SP_DIR_NAME = ".SPs"
 

@@ -4,7 +4,6 @@ import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
-import io.ktor.server.application.*
 
 /**
  * @author SunriseYDY
@@ -25,7 +24,7 @@ interface AnimeService {
     suspend fun updateAnime(anime: Anime): Anime
     suspend fun updateAnimeSeason(season: AnimeSeason): AnimeSeason
     suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason
-    suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile, application: Application)
+    suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile)
     suspend fun refreshAnimeCache()
     suspend fun removeAnimeById(id: ULong)
     suspend fun removeAnimeSeasonById(id: ULong)

@@ -97,7 +97,7 @@ fun Route.animeRoutes() {
     post<AnimeModuleResource.Anime.File.SeasonFile> {
         call.respond(
             Result(
-                data = animeService.handleAnimeSeasonFile(call.receive(), application)
+                data = animeService.handleAnimeSeasonFile(call.receive())
             )
         )
     }
