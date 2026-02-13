@@ -23,12 +23,12 @@ import androidx.compose.ui.unit.offset
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import dev.sunriseydy.acgn.client.AppState
-import dev.sunriseydy.acgn.client.LayoutType
 import dev.sunriseydy.acgn.client.anime.pages.AnimeSeason
 import dev.sunriseydy.acgn.client.anime.pages.Rss
 import dev.sunriseydy.acgn.client.base.api.SyAcgnApi
 import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
 import dev.sunriseydy.acgn.client.base.enums.AcgnNavigationContentPosition
+import dev.sunriseydy.acgn.client.base.enums.LayoutType
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 
 /**
@@ -210,6 +210,13 @@ fun NavigationDrawerItems(
     }
 }
 
+
+/**
+ * 定义导航测量策略，确定导航内容和头部的位置及布局规则。
+ *
+ * @param navigationContentPosition 定义导航内容在布局中的位置，可以为顶部或居中。
+ * @return 返回用于处理导航内容和头部布局的测量策略。
+ */
 fun navigationMeasurePolicy(
     navigationContentPosition: AcgnNavigationContentPosition,
 ): MeasurePolicy = MeasurePolicy { measurables, constraints ->

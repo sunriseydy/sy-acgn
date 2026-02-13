@@ -1,14 +1,17 @@
 package dev.sunriseydy.acgn.client.base.api
 
+import dev.sunriseydy.acgn.base.Result
+import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.api.AnimeApi
 import dev.sunriseydy.acgn.client.anime.api.RssApi
+import dev.sunriseydy.acgn.client.base.components.showError
 import dev.sunriseydy.acgn.client.base.utils.getLocalServerConfig
 import dev.sunriseydy.acgn.client.common.api.CommonApi
+import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.resources.*
-import io.ktor.client.request.*
 import io.ktor.http.*
 
 /**
@@ -37,16 +40,31 @@ class SyAcgnApi {
     }
 }
 
-internal fun HttpRequestBuilder.apiEndPoint(vararg paths: String) {
-    url {
-        appendPathSegments("api", *paths)
+fun <T> Result<T>.onSuccess(
+    appState: AppState? = null,
+    onSuccess: () -> Unit = { },
+    onError: (String) -> Unit = { }
+) {
+    try {
+        this.checkSuccess()
+        onSuccess()
+    } catch (e: Exception) {
+        val message = e.message ?: CommonString.API_ERROR.meaning
+        appState?.showError(message)
+        onError(message)
     }
 }
 
-internal fun HttpRequestBuilder.animeModuleApiEndPoint(vararg paths: String) {
-    apiEndPoint("anime", *paths)
-}
-
-internal fun HttpRequestBuilder.commonModuleApiEndPoint(vararg paths: String) {
-    apiEndPoint("common", *paths)
+fun <T> Result<T>.onSuccessData(
+    appState: AppState? = null,
+    onSuccess: (T) -> Unit = { },
+    onError: (String) -> Unit = { throw error(it) }
+) {
+    try {
+        onSuccess(this.checkSuccessAndNotNull())
+    } catch (e: Exception) {
+        val message = "${CommonString.API_ERROR.meaning}: ${e.message ?: ""}"
+        appState?.showError(message)
+        onError(message)
+    }
 }

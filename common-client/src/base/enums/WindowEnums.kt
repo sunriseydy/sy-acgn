@@ -13,3 +13,7 @@ enum class AcgnNavigationContentPosition {
 enum class AcgnContentType {
     SINGLE_PANE, DUAL_PANE
 }
+
+enum class LayoutType {
+    HEADER, CONTENT
+}

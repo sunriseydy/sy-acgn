@@ -7,16 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.base.enums.Language
 import dev.sunriseydy.acgn.client.base.api.SyAcgnApi
 import dev.sunriseydy.acgn.client.base.components.ServerConfig
-import dev.sunriseydy.acgn.client.base.components.showError
 import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
 import dev.sunriseydy.acgn.client.base.navigation.AcgnNavigationWrapper
 import dev.sunriseydy.acgn.client.base.navigation.NavigationAction
 import dev.sunriseydy.acgn.client.base.navigation.NavigationRoute
-import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -58,10 +55,10 @@ private fun checkServer(showServerConfig: MutableState<Boolean>, language: Langu
         Pair(false, "连接服务器失败：${e.message}")
     }
 
-enum class LayoutType {
-    HEADER, CONTENT
-}
-
+/**
+ * @author SunriseYDY
+ * @date 2026-02-13 16:05
+ */
 data class AppState(
     val navigationAction: NavigationAction<NavigationRoute>,
     val snackbarHostState: SnackbarHostState,
@@ -69,32 +66,3 @@ data class AppState(
     val contentType: AcgnContentType,
     val api: SyAcgnApi,
 )
-
-fun <T> Result<T>.onSuccess(
-    appState: AppState? = null,
-    onSuccess: () -> Unit = { },
-    onError: (String) -> Unit = { }
-) {
-    try {
-        this.checkSuccess()
-        onSuccess()
-    } catch (e: Exception) {
-        val message = e.message ?: CommonString.API_ERROR.meaning
-        appState?.showError(message)
-        onError(message)
-    }
-}
-
-fun <T> Result<T>.onSuccessData(
-    appState: AppState? = null,
-    onSuccess: (T) -> Unit = { },
-    onError: (String) -> Unit = { throw error(it) }
-) {
-    try {
-        onSuccess(this.checkSuccessAndNotNull())
-    } catch (e: Exception) {
-        val message = "${CommonString.API_ERROR.meaning}: ${e.message ?: ""}"
-        appState?.showError(message)
-        onError(message)
-    }
-}

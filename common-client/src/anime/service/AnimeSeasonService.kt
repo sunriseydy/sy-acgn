@@ -4,8 +4,8 @@ import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.client.AppState
-import dev.sunriseydy.acgn.client.onSuccess
-import dev.sunriseydy.acgn.client.onSuccessData
+import dev.sunriseydy.acgn.client.base.api.onSuccess
+import dev.sunriseydy.acgn.client.base.api.onSuccessData
 
 /**
  * @author SunriseYDY
