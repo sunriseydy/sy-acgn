@@ -12,6 +12,8 @@ import dev.sunriseydy.acgn.server.anime.repository.AnimeRepository
 import dev.sunriseydy.acgn.server.anime.tools.AnimeCacheTool
 import dev.sunriseydy.acgn.server.anime.tools.FileTool
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
+import io.ktor.server.application.*
+import io.ktor.server.plugins.di.*
 
 /**
  * @author SunriseYDY
@@ -176,10 +178,10 @@ class AnimeServiceImpl(
             }
         }
 
-    override suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile) {
+    override suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile, application: Application) {
         this.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonFile.id)
             .let {
-                FileTool().handleAnimeSeasonFile(it, animeSeasonFile)
+                application.dependencies.resolve<FileTool>().handleAnimeSeasonFile(it, animeSeasonFile)
                 // 更新文件状态
                 val addition = AnimeAdditionType.FileStatus.additionalInfo(it.additions)
                     ?.copy(additionalValue = Status.PROCESSED.key)

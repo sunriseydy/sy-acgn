@@ -72,19 +72,19 @@ fun Route.animeRoutes() {
     }
 
     get<AnimeModuleResource.Anime.Tmdb.SearchTv> { resource ->
-        call.respond(Result(data = TmdbTool().searchAnimeTVForAnime(resource.query)))
+        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().searchAnimeTVForAnime(resource.query)))
     }
     get<AnimeModuleResource.Anime.Tmdb.SearchMovie> { resource ->
-        call.respond(Result(data = TmdbTool().searchAnimeMovieForAnimeMovie(resource.query)))
+        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().searchAnimeMovieForAnimeMovie(resource.query)))
     }
     get<AnimeModuleResource.Anime.Tmdb.TvDetail> { resource ->
-        call.respond(Result(data = TmdbTool().getTvDetailsForAnime(resource.id)))
+        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().getTvDetailsForAnime(resource.id)))
     }
     get<AnimeModuleResource.Anime.Tmdb.SeasonDetail> { resource ->
-        call.respond(Result(data = TmdbTool().getTvSeasonDetailsForAnimeSeason(resource.showId, resource.season)))
+        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().getTvSeasonDetailsForAnimeSeason(resource.showId, resource.season)))
     }
     get<AnimeModuleResource.Anime.Tmdb.MovieDetail> { resource ->
-        call.respond(Result(data = TmdbTool().getMovieDetailsForAnimeMovie(resource.id)))
+        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().getMovieDetailsForAnimeMovie(resource.id)))
     }
 
     get<AnimeModuleResource.Anime.Bangumi.SearchAnime> { resource ->
@@ -97,7 +97,7 @@ fun Route.animeRoutes() {
     post<AnimeModuleResource.Anime.File.SeasonFile> {
         call.respond(
             Result(
-                data = animeService.handleAnimeSeasonFile(call.receive())
+                data = animeService.handleAnimeSeasonFile(call.receive(), application)
             )
         )
     }
