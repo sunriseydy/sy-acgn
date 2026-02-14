@@ -24,7 +24,7 @@
 
 ## 项目概述
 
-SY-ACGN 是一个基于 Kotlin 的动漫管理系统，包含 Ktor 后端服务器、Compose Multiplatform 桌面客户端和共享库模块。项目使用 **Amper** 作为构建工具。
+SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务器、Compose Multiplatform 桌面客户端和共享库模块。项目使用 **Amper** 作为构建工具。
 
 ### 快速开始
 
@@ -129,46 +129,35 @@ common-client  →  lib
 ### 后端（服务器）
 
 **技术栈：**
-- Ktor 3.3.3（CIO 引擎）作为 HTTP 服务器
+- Ktor（CIO 引擎）作为 HTTP 服务器
 - Ktor DI（`io.ktor:ktor-server-di`）用于依赖注入
-- Exposed（1.0.0-rc-4）用于 PostgreSQL 数据库访问
+- Exposed 用于 PostgreSQL 数据库访问
 - Kotlinx Serialization 用于 JSON 序列化
-- Caffeine 缓存（3.1.8）
-- dotenv-kotlin（6.4.1）加载 `.env` 环境变量
+- Caffeine 缓存
+- dotenv-kotlin 加载 `.env` 环境变量
 - Kotlin Logging + Logback
 
 **应用入口 (`server/src/Main.kt`)：**
 - 使用 `dotenv-kotlin` 加载 `.env` 文件中的环境变量到 System Properties
 - 通过 `EngineMain.main(args)` 启动 Ktor CIO 引擎
-- `.env` 文件缺失时自动忽略（生产环境兼容）
+- `.env` 文件缺失时自动忽略
 
-**核心插件 (`server/src/base/plugins/`)：**
+**核心 Ktor 插件 (`server/src/base/plugins/`)：**
 - `Application.kt` - 主入口点，注册所有插件
 - `DependencyInjection.kt` - 使用 Ktor DI 注入 Repository、Service 和工具类
-- `Databases.kt` - PostgreSQL 连接和模式迁移
+- `Databases.kt` - PostgreSQL 连接和表结构迁移
 - `AppConfig.kt` - 从文件和数据库加载配置
-- `Localization.kt` - 加载多语言字符串
+- `Localization.kt` - 加载后端多语言字符串
 - `Routing.kt` - API 路由配置和错误处理
 - `Serialization.kt` - JSON 序列化设置
 - `HTTP.kt` - HTTP 客户端配置
 - `Monitoring.kt` - 日志记录设置
 
-**插件加载顺序（`Application.module()`）：**
-1. `configureSerialization()` - JSON 序列化
-2. `configureMonitoring()` - 日志
-3. `configureHTTP()` - HTTP/CORS
-4. `configureDependencyInjection()` - 依赖注入
-5. `AppConfigTool.loadAppConfigFromFile()` - 文件配置
-6. `configureDatabases()` - 数据库连接和迁移
-7. `AppConfigTool.loadAppConfigFromDB()` - 数据库配置
-8. `configureLocalization()` - 多语言
-9. `configureRouting()` - 路由
-
 **依赖注入 (`DependencyInjection.kt`)：**
 使用 Ktor 内置的 DI 插件注册以下组件：
-- Repository：`AppConfigRepository`、`AdditionalInfoRepository`、`AnimeRepository`
-- Service：`AppConfigService`、`AnimeService`
-- 工具类：`BangumiTool`、`QbTool`、`TmdbTool`
+- Repository
+- Service
+- 工具类
 
 **模块化架构 (`server/src/`)：**
 
@@ -176,20 +165,12 @@ common-client  →  lib
    - `plugins/` - 核心插件（Application、DI、Databases、Routing 等）
    - `config/` - 配置类
      - `PostgresqlConfig.kt` - 数据库配置（使用 `AppConfigInterface` 模式）
-   - `constants/` - 常量
-     - `DatabaseKey.kt` - 数据库配置键常量
 
 2. **Anime 模块** (`server/src/anime/`)
-   - `entity/` - 数据表定义
-     - `AnimeTables.kt` - `AnimeTable`、`AnimeSeasonTable`、`AnimeEpisodeTable` 及对应 DAO
+   - `entity/` - 数据表定义及对应 DAO
    - `repository/` - 数据访问层
-     - `AnimeRepository.kt` + `AnimeRepositoryImpl.kt`
    - `service/` - 业务逻辑层
-     - `AnimeService.kt` + `AnimeServiceImpl.kt`
    - `routes/` - API 路由
-     - `AnimeModuleRoute.kt` - 模块路由入口（注册 `rssRoutes` + `animeRoutes`）
-     - `AnimeRoute.kt` - 动漫 CRUD 路由
-     - `RssRoute.kt` - RSS 订阅路由
    - `tools/` - 工具类
      - `AnimeCacheTool.kt` - 基于 Caffeine 的动漫数据缓存（24小时过期）
      - `BangumiTool.kt` - Bangumi API 客户端（搜索动漫、获取条目详情）
@@ -201,28 +182,10 @@ common-client  →  lib
      - `torrent/` - Torrent 解析工具
 
 3. **Common 模块** (`server/src/common/`)
-   - `entity/` - 通用数据表 (`CommonModuleTables.kt`)
-   - `repository/` - 配置和附加信息仓储
-     - `AppConfigRepository.kt` + `AppConfigRepositoryImpl.kt`
-     - `AdditionalInfoRepository.kt` + `AdditionalInfoRepositoryImpl.kt`
-   - `service/` - 应用配置服务
-     - `AppConfigService.kt` + `AppConfigServiceImpl.kt`
-   - `routes/` - 通用 API 路由 (`CommonModuleRoute.kt`)
-
-**API 路由结构：**
-- `/api` - 根端点
-- `/api/common/info` - 应用信息（配置 + 本地化）
-- `/api/common/localization` - 本地化字符串
-- `/api/common/config` - 应用配置 CRUD
-- `/api/common/config/map` - 配置映射
-- `/api/common/addition` - 附加信息 CRUD
-- `/api/anime/anime/*` - 动漫 CRUD（按 ID、名称、缓存、刷新）
-- `/api/anime/anime/season/*` - 动漫季度（按年月、分区映射）
-- `/api/anime/anime/season/episode/*` - 动漫剧集
-- `/api/anime/anime/tmdb/*` - TMDB 搜索和详情
-- `/api/anime/anime/bangumi/*` - Bangumi 搜索和详情
-- `/api/anime/anime/file/*` - 文件管理
-- `/api/anime/qb/*` - qBittorrent 管理（Torrent、RSS）
+   - `entity/` - 数据表定义及对应 DAO
+   - `repository/` - 数据访问层
+   - `service/` - 业务逻辑层
+   - `routes/` - API 路由
 
 **数据库模式迁移：**
 使用 Exposed 的 `MigrationUtils.statementsRequiredForDatabaseMigration()` 自动迁移表：
@@ -240,41 +203,22 @@ common-client  →  lib
 
 1. **Base 模块** (`lib/src/base/`)
    - `Result.kt` - 通用结果类型
-   - `ApiResources.kt` - API 资源定义（`/api` 根路由和 `/api/error` 测试路由）
+   - `ApiResources.kt` - API 资源定义
    - `enums/` - 基础枚举类型
-     - `Language.kt` - 语言枚举
-     - `MessageLevel.kt` - 消息级别
-     - `ModuleName.kt` - 模块名称
-     - `Status.kt` - 状态枚举
    - `exception/` - 异常类型
-     - `MessageException.kt` - 消息异常
    - `interfaces/` - 核心接口
-     - `KeyInterface.kt` - 多语言键接口
-     - `AppConfigInterface.kt` - 应用配置接口
-     - `AssociatedTypeInterface.kt` - 关联类型接口
-     - `AdditionTypeInterface.kt` - 附加类型接口
 
 2. **Anime 模块** (`lib/src/anime/`)
    - `dto/` - 数据传输对象
-     - `Anime.kt` - `Anime`、`AnimeSeason`、`AnimeEpisode`、`AnimeMovie`、`AnimeSeasonFile`
-     - `Rss.kt` - `Rss`、`RssItem`、`TorrentAdd`
    - `config/` - 模块配置
-     - `AnimeModuleAppConfig.kt` - 动漫模块应用配置
    - `enums/` - 模块枚举
-     - `AnimeEnum.kt` - 关联类型（`AnimeAssociatedType`）、附加类型（`AnimeAdditionType`）、月份类型（`AnimeMonthType`）
-     - `AnimeModuleMessage.kt` - 动漫模块消息
    - `AnimeModuleResources.kt` - 模块 API 资源定义
 
 3. **Common 模块** (`lib/src/common/`)
-   - `dto/` - 通用数据传输对象
-     - `AppInfo.kt` - 应用信息
-     - `AppConfig.kt` - 应用配置
-     - `AdditionalInfo.kt` - 附加信息
-   - `config/` - 通用配置
-     - `CommonModuleAppConfig.kt` - 通用模块应用配置
-   - `enums/` - 通用枚举
-     - `CommonModuleMessage.kt` - 通用模块消息
-   - `CommonModuleResources.kt` - 通用模块资源定义
+   - `dto/` - 数据传输对象
+   - `config/` - 模块配置
+   - `enums/` - 模块枚举
+   - `CommonModuleResources.kt` - 模块 API 资源定义
 
 4. **工具类** (`lib/src/tools/`)
    - `LocalizationTool.kt` - 本地化工具
@@ -290,7 +234,7 @@ common-client  →  lib
     - 通用 `Result<T>` 类，包含 `failed`、`message`、`data` 字段
     - `checkSuccess()` 和 `checkSuccessAndNotNull()` 辅助方法
 
-2. **多语言系统** (`lib/src/base/interfaces/KeyInterface.kt`)
+2. **后端多语言系统** (`lib/src/base/interfaces/KeyInterface.kt`)
     - `Key` 接口：`moduleName`、`key`、`meaning`（自动本地化）
     - `EnumKey`：枚举本地化（键格式：`enum.{MODULE}.{ClassName}.{NAME}`）
     - `Message`：消息本地化（键格式：`message.{LEVEL}.{MODULE}.{NAME}`）
@@ -320,13 +264,13 @@ common-client  →  lib
 
 **技术栈：**
 - Compose Multiplatform 用于 UI
-- Material 3 组件 (1.10.0-alpha05)
-- Navigation 3 组件 (1.0.0-alpha06)
-- Material 3 Adaptive (1.3.0-alpha02)
+- Material 3 组件
+- Navigation 3 组件
+- Material 3 Adaptive
 - Material 3 Adaptive Navigation Suite
-- Lifecycle ViewModel (2.10.0-alpha07)
+- Lifecycle ViewModel
 - Ktor Client 用于 API 调用
-- Multiplatform Settings (1.3.0) 用于本地存储
+- Multiplatform Settings 用于本地存储
 
 **模块化结构 (`common-client/src/`)：**
 
@@ -334,19 +278,11 @@ common-client  →  lib
    - **API** (`api/`)
      - `SyAcgnApi.kt` - 主 API 客户端，惰性初始化 HTTP 客户端
    - **Components** (`components/`)
-     - `AcgnLazyColumn.kt` - 带加载状态的懒加载列表
-     - `FormCard.kt`, `FormDialog.kt` - 表单组件
-     - `ServerConfig.kt` - 服务器连接配置
-     - `AcgnSnackbarHost.kt` - 错误/成功通知
-     - `AcgnAlertDialog.kt` - 确认对话框
-     - `EmptyComingSoon.kt` - 空状态占位符
-     - `PageTitle.kt` - 页面标题组件
    - **Navigation** (`navigation/`)
      - `NavigationRoute.kt` - 路由定义（密封接口）
      - `NavigationAction.kt` - 基于栈的导航动作处理器
      - `NavigationWrapper.kt` - 自适应导航包装器
    - **Enums** (`enums/`)
-     - `WindowEnums.kt` - 窗口相关枚举（`AcgnNavigationContentPosition`、`AcgnContentType`、`LayoutType`）
    - **Interfaces** (`interfaces/`)
      - `Paging.kt` - 分页接口
    - **Utils** (`utils/`)
@@ -358,23 +294,13 @@ common-client  →  lib
      - `AnimeApi.kt` - 动漫 API 客户端
      - `RssApi.kt` - RSS API 客户端
    - **Components** (`components/`)
-     - `CreateAnimeSeason.kt` - 创建动漫季度组件
-     - `CreateAnimeSeasonFromFile.kt` - 从文件创建动漫季度
    - **Pages** (`pages/`)
-     - `AnimeSeason.kt` - 动漫季度页面
-     - `Rss.kt` - RSS 订阅页面
    - **Service** (`service/`)
-     - `AnimeSeasonService.kt` - 动漫季度服务
-     - `RssService.kt` - RSS 服务
    - **Enums** (`enums/`)
-     - `AnimeString.kt` - 动漫模块字符串
-     - `RssString.kt` - RSS 字符串
 
 3. **Common 模块** (`common-client/src/common/`)
    - **API** (`api/`)
      - `CommonApi.kt` - 通用 API 客户端
-   - **Enums** (`enums/`)
-     - `CommonString.kt` - 通用字符串
 
 **核心组件详解：**
 
@@ -448,7 +374,7 @@ SY_BGM_USER_AGENT=        # Bangumi API User-Agent
 
 ## 关键模式
 
-### 错误处理
+### 响应处理
 - `MessageException` 包装 `ErrorMessage` 用于类型化错误
 - 服务器捕获所有异常并返回 `Result<T>(failed=true, message=...)`
 - 客户端使用 `onSuccess()` / `onSuccessData()` 扩展函数
@@ -490,14 +416,6 @@ SY_BGM_USER_AGENT=        # Bangumi API User-Agent
 2. 复制 `./amper package` 生成的可执行 JAR 包
 3. 暴露端口 9390
 4. 使用 `java -jar` 运行服务器
-
-```dockerfile
-FROM azul/zulu-openjdk:25-jre
-WORKDIR /opt/sy-acgn
-COPY ./build/tasks/_server_executableJarJvm/server-jvm-executable.jar ./server-jvm-executable.jar
-EXPOSE 9390
-ENTRYPOINT ["java", "-jar", "server-jvm-executable.jar"]
-```
 
 CI 脚本 (`ci.sh`) 会自动打包并构建 Docker 镜像，推送到阿里云容器镜像仓库。
 
