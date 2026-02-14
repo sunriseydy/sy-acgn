@@ -31,6 +31,8 @@ dependencies:
   - commons-io:commons-io:2.16.1
   # Caffeine cache
   - com.github.ben-manes.caffeine:caffeine:3.1.8
+  # dotenv
+  - io.github.cdimascio:dotenv-kotlin:6.4.1
 settings:
   ktor:
     enabled: true
