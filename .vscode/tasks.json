@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Server",
+            "type": "shell",
+            "command": "./run-server.sh",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "group": "server"
+            }
+        },
+        {
+            "label": "Run Desktop Client",
+            "type": "shell",
+            "command": "./run-desktop.sh",
+            "problemMatcher": [],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "group": "client"
+            }
+        },
+        {
+            "label": "Build Server",
+            "type": "shell",
+            "command": "./amper build -m server",
+            "problemMatcher": [],
+            "group": "build"
+        }
+    ]
+}

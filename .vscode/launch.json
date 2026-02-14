@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run Server (Shell)",
+            "runtimeExecutable": "${workspaceFolder}/run-server.sh",
+            "runtimeArgs": [],
+            "console": "integratedTerminal",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run Desktop (Shell)",
+            "runtimeExecutable": "${workspaceFolder}/run-desktop.sh",
+            "runtimeArgs": [],
+            "console": "integratedTerminal",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ]
+}
