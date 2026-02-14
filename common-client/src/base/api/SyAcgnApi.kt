@@ -14,10 +14,19 @@ import io.ktor.client.plugins.resources.*
 import io.ktor.http.*
 
 /**
+ * SY-ACGN 主 API 客户端
+ *
+ * 负责构建和管理 HTTP 客户端以及各个模块（Rss, Anime, Common）的 API 实例。
+ *
  * @author SunriseYDY
  * @date 2024-07-23 11:27
  */
 class SyAcgnApi {
+    /**
+     * 惰性初始化的 HTTP 客户端
+     *
+     * 配置了资源插件、默认请求 URL（从本地配置获取）和 JSON 内容类型。
+     */
     private val httpClient by lazy {
         HttpClientFactory.buildHttpClient {
             install(Resources)
@@ -30,15 +39,31 @@ class SyAcgnApi {
         }
     }
 
+    // 各个模块的 API 实例，惰性加载
     val rss by buildApi(::RssApi)
     val anime by buildApi(::AnimeApi)
     val common by buildApi(::CommonApi)
 
+    /**
+     * 构建 API 实例的辅助函数
+     *
+     * @param builder 接受 HttpClient 并返回 API 实例的函数
+     */
     private inline fun <T> buildApi(crossinline builder: (HttpClient) -> T) = lazy {
         builder(httpClient)
     }
 }
 
+/**
+ *Result<T> 的扩展函数，用于处理成功的响应（无返回值）。
+ *
+ * 检查 Result 是否成功，如果成功则执行 onSuccess 回调。
+ * 如果失败或发生异常，显示错误信息并执行 onError 回调。
+ *
+ * @param appState 应用状态，用于显示错误信息（可选）
+ * @param onSuccess 成功时的回调
+ * @param onError 失败时的回调
+ */
 fun <T> Result<T>.onSuccess(
     appState: AppState? = null,
     onSuccess: () -> Unit = { },
@@ -54,6 +79,16 @@ fun <T> Result<T>.onSuccess(
     }
 }
 
+/**
+ * Result<T> 的扩展函数，用于处理包含数据的成功响应。
+ *
+ * 检查 Result 是否成功且数据不为空，如果满足则执行 onSuccess 回调处理数据。
+ * 如果失败或发生异常，显示错误信息并执行 onError 回调。
+ *
+ * @param appState 应用状态，用于显示错误信息（可选）
+ * @param onSuccess 成功时的回调，接收数据 T
+ * @param onError 失败时的回调
+ */
 fun <T> Result<T>.onSuccessData(
     appState: AppState? = null,
     onSuccess: (T) -> Unit = { },

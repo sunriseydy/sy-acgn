@@ -9,6 +9,11 @@ import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 
 /**
+ * 动漫数据仓储实现类
+ *
+ * 使用 Exposed 框架进行数据库操作，所有操作均在协程事务 (suspendTransaction) 中执行。
+ * 负责 Anime、AnimeSeason 和 AnimeEpisode 的增删改查。
+ *
  * @author SunriseYDY
  * @date 2024-07-05 10:57
  */

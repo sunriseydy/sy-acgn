@@ -17,18 +17,22 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.di.*
 
 /**
- * Configure dependency injection for the application
+ * 配置应用程序的依赖注入 (DI)
+ *
+ * 使用 Ktor Server DI 插件注册 Repository、Service 和工具类。
+ * 通过 `dependencies { ... }` 块进行定义，实现接口与实现的解耦。
+ *
  * @author SunriseYDY
  * @date 2026-01-22
  */
 fun Application.configureDependencyInjection() {
     dependencies {
-        // Register repositories
+        // --- 注册 Repository (数据访问层) ---
         provide<AppConfigRepository> { AppConfigRepositoryImpl() }
         provide<AdditionalInfoRepository> { AdditionalInfoRepositoryImpl() }
         provide<AnimeRepository> { AnimeRepositoryImpl() }
 
-        // Register services
+        // --- 注册 Service (业务逻辑层) ---
         provide<AppConfigService> {
             AppConfigServiceImpl(resolve<AppConfigRepository>())
         }
@@ -38,6 +42,8 @@ fun Application.configureDependencyInjection() {
                 resolve<AdditionalInfoRepository>()
             )
         }
+
+        // --- 注册 Tools (工具类) ---
         provide<BangumiTool> { BangumiTool() }
         provide<QbTool> { QbTool() }
         provide<TmdbTool> { TmdbTool() }

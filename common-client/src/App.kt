@@ -21,6 +21,11 @@ import kotlinx.coroutines.CoroutineScope
 
 private val logger = KotlinLogging.logger { }
 
+/**
+ * 主应用组件
+ *
+ * 负责应用的主题设置、服务器连接检查以及根据状态显示服务器配置界面或主导航界面。
+ */
 @Composable
 fun App() {
     MaterialTheme {
@@ -40,6 +45,16 @@ fun App() {
     }
 }
 
+/**
+ * 检查服务器连接
+ *
+ * 尝试连接服务器获取应用信息。如果连接成功，加载应用配置和本地化信息。
+ * 如果连接失败或本地化信息为空，则返回错误信息。
+ *
+ * @param showServerConfig 控制是否显示服务器配置界面的状态
+ * @param language 可选的语言参数
+ * @return Pair(是否成功, 消息)
+ */
 private fun checkServer(showServerConfig: MutableState<Boolean>, language: Language? = null) =
     try {
         val (_, configs, localizations) = SyAcgnApi().common.getAppInfo(language).checkSuccessAndNotNull()
@@ -56,6 +71,10 @@ private fun checkServer(showServerConfig: MutableState<Boolean>, language: Langu
     }
 
 /**
+ * 应用全局状态
+ *
+ * 保存应用的全局状态，包括导航控制器、Snackbar 状态、协程作用域、内容类型（自适应布局用）和 API 客户端。
+ *
  * @author SunriseYDY
  * @date 2026-02-13 16:05
  */

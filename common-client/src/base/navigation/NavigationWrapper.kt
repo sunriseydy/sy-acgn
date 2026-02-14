@@ -37,6 +37,15 @@ import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
  */
 
 
+/**
+ * 主导航包装器
+ *
+ * 根据窗口大小自适应选择导航布局模式（底部导航栏或侧边导航栏）。
+ * 初始化应用状态、导航动作处理器，并定义导航结构。
+ *
+ * @author SunriseYDY
+ * @date 2024-07-28 01:00
+ */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AcgnNavigationWrapper() {
@@ -112,6 +121,12 @@ fun AcgnNavigationWrapper() {
     }
 }
 
+/**
+ * 底部导航栏组件
+ *
+ * @param selectedDestination 当前选中的路由
+ * @param navigateToTopLevelDestination 切换顶层路由的回调函数
+ */
 @Composable
 fun AcgnBottomNavigationBar(
     selectedDestination: NavigationRoute,
@@ -141,6 +156,14 @@ fun AcgnBottomNavigationBar(
     }
 }
 
+/**
+ * 永久侧边导航抽屉内容
+ *
+ * @param selectedDestination 当前选中的路由
+ * @param navigationContentPosition 导航内容的位置（顶部或居中）
+ * @param navigateToTopLevelDestination 切换顶层路由的回调函数
+ * @param modifier 修饰符
+ */
 @Composable
 fun PermanentNavigationDrawerContent(
     selectedDestination: NavigationRoute,

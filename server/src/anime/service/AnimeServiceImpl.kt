@@ -14,6 +14,12 @@ import dev.sunriseydy.acgn.server.anime.tools.FileTool
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 
 /**
+ * 动漫服务实现类
+ *
+ * 负责处理动漫相关的业务逻辑，包括数据的增删改查、缓存管理以及与附加信息的组合。
+ *
+ * @property animeRepository 动漫数据仓库
+ * @property additionalInfoRepository 附加信息仓库
  * @author SunriseYDY
  * @date 2024-07-04 18:41
  */
@@ -21,6 +27,9 @@ class AnimeServiceImpl(
     val animeRepository: AnimeRepository,
     val additionalInfoRepository: AdditionalInfoRepository
 ) : AnimeService {
+    /**
+     * 从数据库获取所有动漫，并附带附加信息
+     */
     override suspend fun getAllAnimeWithAdditionFromDB(): List<Anime> {
         return animeRepository.selectAllAnime().map {
             it.copy(
@@ -32,6 +41,12 @@ class AnimeServiceImpl(
         }
     }
 
+    /**
+     * 根据名称搜索动漫
+     *
+     * 优先使用缓存。如果缓存为空，则先刷新缓存。
+     * 如果名称为空，返回所有动漫列表。
+     */
     override suspend fun searchAnimeByName(name: String?): List<Anime> {
         if (AnimeCacheTool.isEmpty()) {
             this.refreshAnimeCache()
@@ -57,6 +72,9 @@ class AnimeServiceImpl(
         return AnimeCacheTool.getAnimeById(id)
     }
 
+    /**
+     * 根据 ID 获取动漫及其关联的附加信息和所属动漫信息
+     */
     override suspend fun getAnimeSeasonsWithAdditionAndAnimeById(id: ULong): AnimeSeason {
         return animeRepository.selectAnimeSeasonById(id).let {
             it.copy(
@@ -98,6 +116,11 @@ class AnimeServiceImpl(
             }
     }
 
+    /**
+     * 获取按年份和月份分组的动漫季度列表
+     *
+     * 返回一个 Map，键为 "年份 - 季节"，值为对应的动漫季度列表。
+     */
     override suspend fun getAnimeSeasonSectionMap(): MutableMap<String, List<AnimeSeason>> {
         val sectionMap: MutableMap<String, List<AnimeSeason>> = mutableMapOf()
         getAnimeSeasonYears().let { years ->
@@ -153,6 +176,13 @@ class AnimeServiceImpl(
                     }
             }
 
+    /**
+     * 保存动漫季度信息
+     *
+     * 如果关联的动漫不存在（ID 为 MIN_VALUE），则先创建动漫。
+     * 如果季度 ID 为 MIN_VALUE，则创建季度，否则更新季度。
+     * 最终返回包含完整信息的动漫季度对象。
+     */
     override suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason =
         season.copy(
             animeId =
@@ -176,6 +206,11 @@ class AnimeServiceImpl(
             }
         }
 
+    /**
+     * 处理动漫季度相关的本地文件
+     *
+     * 调用 FileTool 处理文件，并更新文件处理状态为 "已处理"。
+     */
     override suspend fun handleAnimeSeasonFile(animeSeasonFile: AnimeSeasonFile) {
         this.getAnimeSeasonsWithAdditionAndAnimeById(animeSeasonFile.id)
             .let {

@@ -2,8 +2,14 @@ package dev.sunriseydy.acgn.server
 
 import io.github.cdimascio.dotenv.dotenv
 
+/**
+ * 服务器入口点
+ *
+ * 负责加载环境变量并启动 Ktor CIO 引擎。
+ */
 fun main(args: Array<String>) {
     // 加载 .env 文件，如果文件不存在（例如在生产环境），则忽略错误
+    // 这允许在开发环境中使用 .env 文件配置，而在生产环境中使用系统环境变量
     val dotenv = dotenv {
          ignoreIfMissing = true
     }
@@ -13,5 +19,6 @@ fun main(args: Array<String>) {
         System.setProperty(entry.key, entry.value)
     }
 
+    // 启动 CIO 引擎
     io.ktor.server.cio.EngineMain.main(args)
 }
