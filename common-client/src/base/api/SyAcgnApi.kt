@@ -7,7 +7,6 @@ import dev.sunriseydy.acgn.client.anime.api.RssApi
 import dev.sunriseydy.acgn.client.base.components.showError
 import dev.sunriseydy.acgn.client.base.utils.getLocalServerConfig
 import dev.sunriseydy.acgn.client.common.api.CommonApi
-import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.*
 import io.ktor.client.plugins.*
@@ -49,7 +48,7 @@ fun <T> Result<T>.onSuccess(
         this.checkSuccess()
         onSuccess()
     } catch (e: Exception) {
-        val message = e.message ?: CommonString.API_ERROR.meaning
+        val message = e.message ?: "API Error"
         appState?.showError(message)
         onError(message)
     }
@@ -63,7 +62,7 @@ fun <T> Result<T>.onSuccessData(
     try {
         onSuccess(this.checkSuccessAndNotNull())
     } catch (e: Exception) {
-        val message = "${CommonString.API_ERROR.meaning}: ${e.message ?: ""}"
+        val message = "API Error: ${e.message ?: ""}"
         appState?.showError(message)
         onError(message)
     }

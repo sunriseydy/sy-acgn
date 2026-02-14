@@ -9,7 +9,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.res.Res
+import dev.sunriseydy.acgn.client.res.cancel
+import dev.sunriseydy.acgn.client.res.confirm
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * @author SunriseYDY
@@ -65,7 +68,7 @@ fun AcgnAlertDialog(
                         }
                     }
                 ) {
-                    Text(CommonString.CONFIRM.meaning)
+                    Text(stringResource(Res.string.confirm))
                 }
             },
             dismissButton = {
@@ -78,7 +81,7 @@ fun AcgnAlertDialog(
                         }
                     }
                 ) {
-                    Text(CommonString.CANCEL.meaning)
+                    Text(stringResource(Res.string.cancel))
                 }
             }
         )

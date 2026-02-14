@@ -9,7 +9,12 @@ import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.base.enums.Language
 import dev.sunriseydy.acgn.client.base.utils.getLocalServerConfigOrNull
 import dev.sunriseydy.acgn.client.base.utils.setLocalServerConfig
+import dev.sunriseydy.acgn.client.res.Res
+import dev.sunriseydy.acgn.client.res.choose_language
+import dev.sunriseydy.acgn.client.res.server_address
+import dev.sunriseydy.acgn.client.res.submit
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * @author SunriseYDY
@@ -33,14 +38,14 @@ fun ServerConfig(onClick: (Language) -> Pair<Boolean, String>, success: Boolean,
         Column(
             modifier = Modifier.width(300.dp)
         ) {
-            Text("选择语言：")
+            Text(stringResource(Res.string.choose_language))
             Spacer(modifier = Modifier.height(8.dp))
             LanguageRadioButtonGroup(selectedLanguage) { selectedLanguage = it }
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = serverAddress,
                 onValueChange = { serverAddress = it },
-                label = { Text("服务器地址") },
+                label = { stringResource(Res.string.server_address) },
             )
             Spacer(modifier = Modifier.height(16.dp))
             if (showError) {
@@ -58,7 +63,7 @@ fun ServerConfig(onClick: (Language) -> Pair<Boolean, String>, success: Boolean,
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("提交")
+                Text(stringResource(Res.string.submit))
             }
         }
     }

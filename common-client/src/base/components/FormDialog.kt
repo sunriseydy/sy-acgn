@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.window.Dialog
-import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.res.Res
+import dev.sunriseydy.acgn.client.res.submit
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * @author SunriseYDY
@@ -16,7 +18,7 @@ fun FormDialog(
     errorMessage: MutableState<String?> = mutableStateOf(null),
     onDismissRequest: () -> Unit = { formDialogVisible.value = false },
     onConfirmation: () -> Unit,
-    confirmationText: String = CommonString.SUBMIT.meaning,
+    confirmationText: String = stringResource(Res.string.submit),
     content: @Composable () -> Unit,
 ) {
     if (formDialogVisible.value) {

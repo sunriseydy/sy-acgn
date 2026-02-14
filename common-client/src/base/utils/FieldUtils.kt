@@ -5,7 +5,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.res.Res
+import dev.sunriseydy.acgn.client.res.is_blank
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * @author SunriseYDY
@@ -25,7 +27,7 @@ fun RequiredSupportingText(
     Column {
         supportingText()
         if (fieldValue.value.isBlank()) {
-            Text(fieldName + CommonString.IS_BLANK.meaning, color = MaterialTheme.colorScheme.error)
+            Text(fieldName + stringResource(Res.string.is_blank), color = MaterialTheme.colorScheme.error)
         }
     }
 }

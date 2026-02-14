@@ -11,7 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.res.cancel
+import dev.sunriseydy.acgn.client.res.submit
+import dev.sunriseydy.acgn.client.res.Res
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * @author SunriseYDY
@@ -22,7 +25,7 @@ fun FormCard(
     errorMessage: MutableState<String?> = mutableStateOf(null),
     onDismissRequest: (() -> Unit)?,
     onConfirmation: () -> Unit,
-    confirmationText: String = CommonString.SUBMIT.meaning,
+    confirmationText: String = stringResource(Res .string.submit),
     content: @Composable () -> Unit,
 ) {
     Card {
@@ -43,7 +46,7 @@ fun FormCard(
                                 errorMessage.value = e.message
                             }
                         },
-                    ) { Text(CommonString.CANCEL.meaning) }
+                    ) { Text(stringResource(Res.string.cancel)) }
                     Spacer(modifier = Modifier.width(4.dp))
                 }
                 TextButton(

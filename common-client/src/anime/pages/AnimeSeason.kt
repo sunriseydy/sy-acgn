@@ -24,8 +24,10 @@ import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.components.PageTitle
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
-import dev.sunriseydy.acgn.client.common.enums.CommonString
 import dev.sunriseydy.acgn.client.base.navigation.TopLevelRouteEnum
+import dev.sunriseydy.acgn.client.res.*
+import dev.sunriseydy.acgn.client.res.Res
+import org.jetbrains.compose.resources.stringResource
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
@@ -163,7 +165,7 @@ fun AnimeSeason(appState: AppState) {
                 loadData(true)
             }
         },
-        dialogTitle = CommonString.DELETE.meaning + currentSeason.value?.name,
+        dialogTitle = stringResource(Res.string.delete) + currentSeason.value?.name,
     )
     // 处理文件弹窗
     FormDialog(
@@ -185,12 +187,12 @@ fun AnimeSeason(appState: AppState) {
         OutlinedTextField(
             value = filePath.value,
             onValueChange = { filePath.value = it },
-            label = { RequiredFieldLabel(CommonString.FILE_PATH.meaning) },
-            supportingText = { RequiredSupportingText(filePath, CommonString.FILE_PATH.meaning) }
+            label = { RequiredFieldLabel(stringResource(Res.string.file_path)) },
+            supportingText = { RequiredSupportingText(filePath, stringResource(Res.string.file_path)) }
         )
         Row {
             Text(
-                CommonString.DELETE_SOURCE.meaning,
+                stringResource(Res.string.delete_source),
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Checkbox(
@@ -200,7 +202,7 @@ fun AnimeSeason(appState: AppState) {
         }
         Row {
             Text(
-                CommonString.DELETE_TARGET.meaning,
+                stringResource(Res.string.delete_target),
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Checkbox(

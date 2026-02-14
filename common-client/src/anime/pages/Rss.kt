@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.Rss
 import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.client.AppState
-import dev.sunriseydy.acgn.client.anime.enums.RssString
 import dev.sunriseydy.acgn.client.anime.service.RssService
 import dev.sunriseydy.acgn.client.base.components.*
 import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
@@ -27,7 +26,8 @@ import dev.sunriseydy.acgn.client.base.interfaces.Paging
 import dev.sunriseydy.acgn.client.base.interfaces.getPager
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
-import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.res.*
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * @author SunriseYDY
@@ -48,6 +48,7 @@ fun Rss(appState: AppState) {
     val isOnlyUnread: MutableState<Boolean> = remember { mutableStateOf(true) }
     val init: MutableState<Boolean> = remember { mutableStateOf(false) }
 
+    val apiError = stringResource(Res.string.api_error)
     val rssItemPager: Paging<RssItem> = getPager(
         page = remember { mutableStateOf(1L) },
         size = 50,
@@ -55,7 +56,7 @@ fun Rss(appState: AppState) {
         loading = remember { mutableStateOf(false) },
         finished = remember { mutableStateOf(false) },
         onError = { e ->
-            appState.showError(e.message ?: CommonString.API_ERROR.meaning)
+            appState.showError(e.message ?: apiError)
         },
     ) { pager ->
         appState.api.rss.getQbRssArticles(
@@ -122,7 +123,7 @@ fun RssList(
     }
 
     Column(modifier = modifier) {
-        PageTitle(RssString.RSS_TITLE.meaning) {
+        PageTitle(stringResource(Res.string.rss_title)) {
             IconButton(onClick = {
                 // 刷新所有 RSS 订阅
                 rssService.refreshRss()
@@ -164,17 +165,17 @@ fun RssList(
                                 deleteRss.value = rss
                                 deleteRssDialogVisible.value = true
                             }) {
-                                Icon(Icons.Default.Delete, CommonString.DELETE.meaning)
+                                Icon(Icons.Default.Delete, stringResource(Res.string.delete))
                             }
                             IconButton(onClick = {
                                 editRss.value = rss
                                 newTitle.value = rss.title
                                 editRssDialogVisible.value = true
                             }) {
-                                Icon(Icons.Default.Edit, CommonString.UPDATE.meaning)
+                                Icon(Icons.Default.Edit, stringResource(Res.string.update))
                             }
                             IconButton(onClick = { rssService.markRssItemReadByIdOrRssId(null, rss.id) }) {
-                                Icon(Icons.Default.Check, RssString.RSS_READ.meaning)
+                                Icon(Icons.Default.Check, stringResource(Res.string.rss_read))
                             }
                         }
                     }
@@ -184,10 +185,11 @@ fun RssList(
         }
     }
     // 创建 RSS 弹窗
+    val linkRequiredMsg = stringResource(Res.string.rss_field_link) + stringResource(Res.string.is_blank)
     FormDialog(
         formDialogVisible = addRssDialogVisible,
         onConfirmation = {
-            require(newLink.value.isNotBlank()) { RssString.RSS_FIELD_LINK.meaning + CommonString.IS_BLANK.meaning }
+            require(newLink.value.isNotBlank()) { linkRequiredMsg }
             rssService.createRss(
                 newLink.value,
                 onSuccess = {
@@ -203,8 +205,8 @@ fun RssList(
         OutlinedTextField(
             value = newLink.value,
             onValueChange = { newLink.value = it },
-            label = { RequiredFieldLabel(RssString.RSS_FIELD_LINK.meaning) },
-            supportingText = { RequiredSupportingText(newLink, RssString.RSS_FIELD_LINK.meaning) }
+            label = { RequiredFieldLabel(stringResource(Res.string.rss_field_link)) },
+            supportingText = { RequiredSupportingText(newLink, stringResource(Res.string.rss_field_link)) }
         )
     }
     // 删除 RSS 弹窗
@@ -218,13 +220,14 @@ fun RssList(
                 }
             }
         },
-        dialogTitle = CommonString.DELETE.meaning + deleteRss.value?.title,
+        dialogTitle = stringResource(Res.string.delete) + deleteRss.value?.title,
     )
     // 更新 RSS 弹窗
+    val titleRequiredMsg = stringResource(Res.string.rss_field_title) + stringResource(Res.string.is_blank)
     FormDialog(
         formDialogVisible = editRssDialogVisible,
         onConfirmation = {
-            require(newTitle.value.isNotBlank()) { RssString.RSS_FIELD_TITLE.meaning + CommonString.IS_BLANK.meaning }
+            require(newTitle.value.isNotBlank()) { titleRequiredMsg }
             editRss.value?.also {
                 rssService.updateRss(
                     it.copy(id = it.id, title = newTitle.value),
@@ -242,8 +245,8 @@ fun RssList(
         OutlinedTextField(
             value = newTitle.value,
             onValueChange = { newTitle.value = it },
-            label = { RequiredFieldLabel(RssString.RSS_FIELD_TITLE.meaning) },
-            supportingText = { RequiredSupportingText(newTitle, RssString.RSS_FIELD_TITLE.meaning) },
+            label = { RequiredFieldLabel(stringResource(Res.string.rss_field_title)) },
+            supportingText = { RequiredSupportingText(newTitle, stringResource(Res.string.rss_field_title)) },
         )
     }
 }
@@ -261,11 +264,11 @@ fun RssItemList(
     val downloadRssItem: MutableState<RssItem?> = remember { mutableStateOf(null) }
 
     Column(modifier = modifier) {
-        PageTitle(RssString.RSS_ITEM_TITLE.meaning) {
+        PageTitle(stringResource(Res.string.rss_item_title)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(RssString.IS_ONLY_UNREAD.meaning)
+                Text(stringResource(Res.string.is_only_unread))
                 Checkbox(
                     checked = isOnlyUnread.value,
                     onCheckedChange = {
@@ -353,6 +356,6 @@ fun RssItemList(
                 downloadDialogVisible.value = false
             }
         },
-        dialogTitle = CommonString.DOWNLOAD.meaning + downloadRssItem.value?.title,
+        dialogTitle = stringResource(Res.string.download) + downloadRssItem.value?.title,
     )
 }

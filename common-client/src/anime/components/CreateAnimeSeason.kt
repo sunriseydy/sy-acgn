@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
-import dev.sunriseydy.acgn.client.anime.enums.AnimeString
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
-import dev.sunriseydy.acgn.client.common.enums.CommonString
+import dev.sunriseydy.acgn.client.res.*
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * 创建动画季度弹窗
@@ -67,11 +67,16 @@ fun CreateAnimeSeason(
         resetField()
     }
 
+    val animeNameIsBlank =
+        stringResource(Res.string.season_field_anime_name) + stringResource(Res.string.is_blank)
+    val animeSeasonIsBlank =
+        stringResource(Res.string.season_field_season_name) + stringResource(Res.string.is_blank)
+
     fun handleSave() {
-        requireNotNull(anime.value) { AnimeString.SEASON_FIELD_ANIME_NAME.meaning + CommonString.IS_BLANK.meaning }
+        requireNotNull(anime.value) { animeNameIsBlank }
         requireNotNull(
             animeSeason.value,
-            lazyMessage = { AnimeString.SEASON_FIELD_SEASON_NAME.meaning + CommonString.IS_BLANK.meaning })
+            lazyMessage = { animeSeasonIsBlank })
             .let {
                 animeSeasonService.saveAnimeSeason(it, onSuccess)
                 closeCreateDialog()
@@ -122,7 +127,7 @@ fun CreateAnimeSeason(
             val fieldWidth = 300.dp
             Row {
                 Text(
-                    AnimeString.SEASON_FIELD_IS_CREATE_ANIME.meaning,
+                    stringResource(Res.string.season_field_is_create_anime),
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Checkbox(
@@ -141,14 +146,14 @@ fun CreateAnimeSeason(
                 modifier = Modifier.width(fieldWidth),
                 label = {
                     RequiredFieldLabel(
-                        AnimeString.SEASON_FIELD_ANIME_NAME_SEARCH.meaning +
-                                if (isCreateAnime.value) AnimeString.SEARCH_TMDB.meaning else AnimeString.SEARCH_LOCAL.meaning
+                        stringResource(Res.string.season_field_anime_name_search) +
+                                if (isCreateAnime.value) stringResource(Res.string.search_tmdb) else stringResource(Res.string.search_local)
                     )
                 },
                 supportingText = {
                     RequiredSupportingText(
                         animeNameSearch,
-                        AnimeString.SEASON_FIELD_ANIME_NAME_SEARCH.meaning
+                        stringResource(Res.string.season_field_anime_name_search)
                     )
                 },
                 leadingIcon = {
@@ -179,7 +184,7 @@ fun CreateAnimeSeason(
                         )
                     }
                     if (animeSearchResult.value.isEmpty()) {
-                        Text(CommonString.NO_DATA.meaning, modifier = Modifier.padding(8.dp))
+                        Text(stringResource(Res.string.no_data), modifier = Modifier.padding(8.dp))
                     }
                 }
             }
@@ -187,7 +192,7 @@ fun CreateAnimeSeason(
             OutlinedTextField(
                 value = if (animeSeason.value == null) "" else "${animeSeason.value!!.season} - ${animeSeason.value!!.name}",
                 onValueChange = { },
-                label = { RequiredFieldLabel(AnimeString.SEASON_FIELD_SEASON_NAME.meaning) },
+                label = { RequiredFieldLabel(stringResource(Res.string.season_field_season_name)) },
                 modifier = Modifier.width(fieldWidth),
                 readOnly = true,
                 leadingIcon = {
@@ -217,7 +222,7 @@ fun CreateAnimeSeason(
                         )
                     }
                     if (animeSeasonSearchResult.value.isEmpty()) {
-                        Text(CommonString.NO_DATA.meaning, modifier = Modifier.padding(8.dp))
+                        Text(stringResource(Res.string.no_data), modifier = Modifier.padding(8.dp))
                     }
                 }
             }

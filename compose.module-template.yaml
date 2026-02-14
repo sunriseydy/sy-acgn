@@ -3,3 +3,5 @@ settings:
     enabled: true
     # https://github.com/JetBrains/compose-multiplatform
     version: 1.10.0
+    resources:
+      packageName: dev.sunriseydy.acgn.client.res

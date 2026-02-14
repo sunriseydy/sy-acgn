@@ -5,22 +5,6 @@ enum:
     TopLevelRouteEnum:
       RSS: "订阅"
       ANIME_SEASON: "动画季度"
-    CommonString:
-      REFRESH: "刷新"
-      ADD: "添加"
-      DELETE: "删除"
-      UPDATE: "更新"
-      CANCEL: "取消"
-      SAVE: "保存"
-      SUBMIT: "提交"
-      CONFIRM: "确定"
-      IS_BLANK: "为空"
-      API_ERROR: "调用API异常"
-      DOWNLOAD: "下载"
-      NO_DATA: "无数据"
-      FILE_PATH: "文件路径"
-      DELETE_SOURCE: "删除源路径"
-      DELETE_TARGET: "删除目标路径"
   ANIME:
     AnimeAssociatedType:
       ANIME: "动画"
@@ -32,23 +16,6 @@ enum:
       SPRING: "春季动画"
       SUMMER: "夏季动画"
       FALL: "秋季动画"
-    RssString:
-      RSS_TITLE: "订阅"
-      RSS_READ: "已读"
-      RSS_ITEM_TITLE: "订阅条目"
-      RSS_FIELD_LINK: "订阅链接"
-      RSS_FIELD_TITLE: "订阅标题"
-      IS_ONLY_UNREAD: "仅显示未读"
-      RSS_ITEM_FIELD_PUBLISH_AT: "发布时间"
-    AnimeString:
-      SEASON_FIELD_IS_CREATE_ANIME: "是否创建动画系列"
-      SEASON_FIELD_ANIME_NAME: "动画名称"
-      SEASON_FIELD_ANIME_NAME_SEARCH: "动画名称，搜索"
-      SEASON_FIELD_SEASON_NUMBER: "季度"
-      SEASON_FIELD_SEASON_NAME: "季度名称"
-      SEARCH_TMDB: "TMDB"
-      SEARCH_LOCAL: "本地"
-      FIELD_SEASON_FILE_PATH: "文件路径"
 
 message:
   error:
