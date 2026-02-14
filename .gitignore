@@ -51,3 +51,6 @@ dist
 dist-ssr
 *.local
 *.local.*.env
+
+.env
+.claude/
