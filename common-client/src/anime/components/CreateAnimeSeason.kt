@@ -213,7 +213,7 @@ fun CreateAnimeSeason(
                 ) {
                     animeSeasonSearchResult.value.map {
                         DropdownMenuItem(
-                            text = { Text(it.season.toString() + it.name) },
+                            text = { Text("${it.season} - ${it.name}") },
                             onClick = {
                                 animeSeason.value = it.copy(animeId = anime.value!!.id, anime = anime.value)
                                 animeSeasonSearchVisible.value = false
