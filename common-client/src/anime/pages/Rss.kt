@@ -9,10 +9,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -46,7 +43,7 @@ fun Rss(appState: AppState) {
     }
     val rssList: MutableState<List<Rss>> = remember { mutableStateOf(listOf()) }
     val isOnlyUnread: MutableState<Boolean> = remember { mutableStateOf(true) }
-    val init: MutableState<Boolean> = remember { mutableStateOf(false) }
+
 
     val apiError = stringResource(Res.string.api_error)
     val rssItemPager: Paging<RssItem> = getPager(
@@ -67,11 +64,10 @@ fun Rss(appState: AppState) {
         ).checkSuccessAndNotNull()
     }
 
-    val rssService = RssService(appState, rssList, rssItemPager)
+    val rssService = remember { RssService(appState, rssList, rssItemPager) }
 
     // 加载数据
-    if (!init.value) {
-        init.value = true
+    LaunchedEffect(Unit) {
         rssService.loadData()
     }
 
@@ -80,7 +76,7 @@ fun Rss(appState: AppState) {
         Row {
             RssList(Modifier.fillMaxWidth(0.5f), rssList, currentRss, rssService)
             VerticalDivider(thickness = 2.dp)
-            RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, currentRss, rssService)
+            RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, currentRss, rssService, rssItemPager)
         }
     } else {
         if (currentRss.value.id == ULong.MIN_VALUE) {
@@ -88,7 +84,7 @@ fun Rss(appState: AppState) {
             RssList(Modifier.fillMaxWidth(), rssList, currentRss, rssService)
         } else {
             // 渲染订阅内容
-            RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, currentRss, rssService)
+            RssItemList(Modifier.fillMaxWidth(), isOnlyUnread, rssItemPager.data, currentRss, rssService, rssItemPager)
         }
     }
 
@@ -152,14 +148,18 @@ fun RssList(
                             MaterialTheme.colorScheme.surfaceVariant,
                     ),
                 ) {
-                    Row(modifier = Modifier.padding(8.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.CenterVertically)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                             Text(text = rss.title, style = MaterialTheme.typography.titleLarge)
-                            Text(text = "(${rss.unreadCount})")
+                            Text(text = "(${rss.unreadCount})", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 4.dp))
                         }
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton(onClick = {
                                 deleteRss.value = rss
@@ -258,6 +258,7 @@ fun RssItemList(
     rssItemList: MutableState<List<RssItem>>,
     currentRss: MutableState<Rss>,
     rssService: RssService,
+    rssItemPager: Paging<RssItem>
 ) {
     val rssItemListState: LazyListState = rememberLazyListState()
     val downloadDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -291,15 +292,19 @@ fun RssItemList(
         LazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssItemListState) {
             itemsIndexed(rssItemList.value, key = { _, rssItem -> rssItem.id }) { index, rssItem ->
                 Card(modifier = Modifier.fillMaxWidth()) {
-                    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(0.7f).align(Alignment.CenterVertically)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                             SelectionContainer {
                                 Text(text = rssItem.title, style = MaterialTheme.typography.titleLarge)
                             }
                         }
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton(
                                 onClick = {
@@ -317,30 +322,37 @@ fun RssItemList(
                     HorizontalDivider(thickness = 4.dp)
                     Column(modifier = Modifier.padding(8.dp)) {
                         Text(
-                            rssItem.publishedAt.toLocalDateTime().toString()
+                            text = rssItem.publishedAt.toLocalDateTime().toString(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                         if (currentRss.value.id == ULong.MIN_VALUE) {
-                            rssItem.rss?.let { Text(it.title) }
+                            rssItem.rss?.let {
+                                Text(
+                                    text = it.title,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.tertiary
+                                )
+                            }
                         }
                         rssItem.description?.let { Text(it) }
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    if (index == rssItemList.value.lastIndex) {
-                        IconButton(
-                            onClick = {
-                                rssService.loadMoreRssItem()
-                            }
-                        ) {
-                            Icon(Icons.Default.KeyboardArrowDown, null, modifier = Modifier.size(48.dp))
-                        }
+                
+                // Infinite Scroll Trigger
+                if (index >= rssItemList.value.lastIndex - 2 && !rssItemPager.finished.value && !rssItemPager.loading.value) {
+                    LaunchedEffect(Unit) {
+                        rssService.loadMoreRssItem()
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+
+                // Loading Indicator
+                if (index == rssItemList.value.lastIndex && rssItemPager.loading.value) {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+                    }
+                }
             }
         }
     }
