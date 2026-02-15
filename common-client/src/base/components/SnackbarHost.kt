@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
  * @date 2024-08-11 15:42
  */
 @Composable
-fun AcgnSnackbarHost(appState: AppState) {
+fun SnackbarHost(appState: AppState) {
     SnackbarHost(appState.snackbarHostState) { data ->
         // custom snackbar with the custom action button color and border
         val isError = data.visuals is SnackbarVisualsWithError

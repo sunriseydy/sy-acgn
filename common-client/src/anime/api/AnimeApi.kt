@@ -98,4 +98,8 @@ class AnimeApi internal constructor(private val httpClient: HttpClient) {
             setBody(animeSeasonFile)
         }.body()
     }
+
+    fun searchBgmAnime(query: String): Result<List<AnimeSeason>> = runBlocking {
+        httpClient.get(AnimeModuleResource.Anime.Bangumi.SearchAnime(query = query)).body()
+    }
 }

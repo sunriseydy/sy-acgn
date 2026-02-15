@@ -1,0 +1,147 @@
+package dev.sunriseydy.acgn.client.anime.components
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
+import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
+import dev.sunriseydy.acgn.client.base.components.FormDialog
+import dev.sunriseydy.acgn.client.res.Res
+import dev.sunriseydy.acgn.client.res.cancel
+import dev.sunriseydy.acgn.client.res.no_data
+import org.jetbrains.compose.resources.stringResource
+
+/**
+ * 搜索 Bangumi 动画季度弹窗
+ *
+ * @author SunriseYDY
+ * @date 2026-02-15
+ */
+@Composable
+fun SearchBgmAnimeSeason(
+    animeSeasonService: AnimeSeasonService,
+    visible: MutableState<Boolean>,
+    currentSeason: AnimeSeason?,
+    onSuccess: () -> Unit = { },
+) {
+    val searchQuery = remember { mutableStateOf("") }
+    val searchResults = remember { mutableStateOf(emptyList<AnimeSeason>()) }
+    val searchLoading = remember { mutableStateOf(false) }
+    val searchExpanded = remember { mutableStateOf(false) }
+
+    // 初始化搜索关键词
+    LaunchedEffect(visible.value) {
+        if (visible.value && currentSeason != null) {
+            searchQuery.value = currentSeason.name
+        }
+    }
+
+    fun closeDialog() {
+        visible.value = false
+        searchQuery.value = ""
+        searchResults.value = emptyList()
+        searchLoading.value = false
+        searchExpanded.value = false
+    }
+
+    fun handleSearch() {
+        if (searchQuery.value.isNotBlank()) {
+            searchLoading.value = true
+            animeSeasonService.searchBgmAnime(
+                query = searchQuery.value,
+                onSuccess = {
+                    searchResults.value = it
+                    searchLoading.value = false
+                    searchExpanded.value = true
+                },
+                onError = {
+                    searchLoading.value = false
+                }
+            )
+        }
+    }
+
+    fun handleSelect(result: AnimeSeason) {
+        if (currentSeason != null) {
+            val newAdditions = currentSeason.additions.filter {
+                it.additionalType != AnimeAdditionType.BgmJson.key
+            } + result.additions.map {
+                it.copy(associatedId = currentSeason.id)
+            }
+
+            val newSeason = currentSeason.copy(
+                bgmId = result.bgmId,
+                additions = newAdditions
+            )
+            animeSeasonService.saveAnimeSeason(newSeason, onSuccess = {
+                onSuccess()
+                closeDialog()
+            })
+        }
+    }
+
+    FormDialog(
+        formDialogVisible = visible,
+        onDismissRequest = { closeDialog() },
+        onConfirmation = { closeDialog() },
+        confirmationText = stringResource(Res.string.cancel),
+    ) {
+        val fieldWidth = 300.dp
+
+        Column {
+            // Search Input
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(
+                    value = searchQuery.value,
+                    onValueChange = { searchQuery.value = it },
+                    modifier = Modifier.width(fieldWidth),
+                    label = { Text("Search Bangumi") },
+                    trailingIcon = {
+                        IconButton(onClick = { handleSearch() }) {
+                            if (searchLoading.value) {
+                                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                            } else {
+                                Icon(Icons.Default.Search, null)
+                            }
+                        }
+                    },
+                    singleLine = true
+                )
+            }
+
+            // Dropdown Results
+            Box {
+                DropdownMenu(
+                    expanded = searchExpanded.value,
+                    onDismissRequest = { searchExpanded.value = false },
+                    scrollState = rememberScrollState(),
+                    modifier = Modifier.width(fieldWidth).heightIn(max = 300.dp)
+                ) {
+                    if (searchResults.value.isEmpty()) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(Res.string.no_data)) },
+                            onClick = { searchExpanded.value = false },
+                            enabled = false
+                        )
+                    } else {
+                        searchResults.value.forEach { result ->
+                            DropdownMenuItem(
+                                text = { Text("${result.name} (${result.year})") },
+                                onClick = {
+                                    handleSelect(result)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

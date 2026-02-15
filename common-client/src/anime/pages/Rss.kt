@@ -137,7 +137,7 @@ fun RssList(
                 Icon(Icons.Default.Check, null, modifier = Modifier.size(48.dp))
             }
         }
-        AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssListState) {
+        LazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssListState) {
             items(rssList.value, key = { it.id }) { rss ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -210,7 +210,7 @@ fun RssList(
         )
     }
     // 删除 RSS 弹窗
-    AcgnAlertDialog(
+    AlertDialog(
         alertDialogVisible = deleteRssDialogVisible,
         onConfirmation = {
             deleteRss.value?.also {
@@ -288,7 +288,7 @@ fun RssItemList(
                 }
             }
         }
-        AcgnLazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssItemListState) {
+        LazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssItemListState) {
             itemsIndexed(rssItemList.value, key = { _, rssItem -> rssItem.id }) { index, rssItem ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
@@ -345,7 +345,7 @@ fun RssItemList(
         }
     }
     // 下载弹窗
-    AcgnAlertDialog(
+    AlertDialog(
         alertDialogVisible = downloadDialogVisible,
         onConfirmation = {
             downloadRssItem.value?.also {

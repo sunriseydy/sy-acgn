@@ -20,7 +20,7 @@ import org.jetbrains.compose.resources.stringResource
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AcgnAlertDialog(
+fun AlertDialog(
     alertDialogVisible: MutableState<Boolean>,
     errorMessage: MutableState<String?> = mutableStateOf(null),
     onDismissRequest: () -> Unit = { alertDialogVisible.value = false },

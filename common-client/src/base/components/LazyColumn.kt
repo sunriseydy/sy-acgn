@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
  * @date 2024-08-15 16:42
  */
 @Composable
-fun AcgnLazyColumn(modifier: Modifier = Modifier, lazyListState: LazyListState, content: LazyListScope.() -> Unit) {
+fun LazyColumn(modifier: Modifier = Modifier, lazyListState: LazyListState, content: LazyListScope.() -> Unit) {
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

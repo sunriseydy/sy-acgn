@@ -50,4 +50,8 @@ class AnimeSeasonService(
         appState.api.anime.handleAnimeSeasonFile(seasonFile)
             .onSuccess(appState, onSuccess = onSuccess, onError = onError)
     }
+
+    fun searchBgmAnime(query: String, onSuccess: (List<AnimeSeason>) -> Unit, onError: (String) -> Unit = { }) {
+        appState.api.anime.searchBgmAnime(query).onSuccessData(appState, onSuccess, onError)
+    }
 }
