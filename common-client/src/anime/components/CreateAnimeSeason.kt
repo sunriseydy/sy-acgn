@@ -34,18 +34,156 @@ fun CreateAnimeSeason(
     onSuccess: (AnimeSeason) -> Unit = { },
     isDialog: Boolean = true,
 ) {
-    val isCreateAnime: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val state = rememberCreateAnimeSeasonState(animeSeasonService)
+    val animeNameIsBlank =
+        stringResource(Res.string.season_field_anime_name) + stringResource(Res.string.is_blank)
+    val animeSeasonIsBlank =
+        stringResource(Res.string.season_field_season_name) + stringResource(Res.string.is_blank)
 
-    val animeSearchVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val animeNameSearch: MutableState<String> = remember { mutableStateOf("") }
-    val animeSearchResult: MutableState<List<Anime>> = remember { mutableStateOf(emptyList()) }
+    FormDialog(
+        formDialogVisible = createDialogVisible,
+        onDismissRequest = {
+            createDialogVisible.value = false
+            state.reset()
+        },
+        onConfirmation = {
+            state.save(
+                onSuccess = {
+                    onSuccess(it)
+                    createDialogVisible.value = false
+                    state.reset()
+                },
+                animeNameIsBlankMsg = animeNameIsBlank,
+                animeSeasonIsBlankMsg = animeSeasonIsBlank
+            )
+        },
+    ) {
+        val fieldWidth = 500.dp
+        Row {
+            Text(
+                stringResource(Res.string.season_field_is_create_anime),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            Checkbox(
+                checked = state.isCreateAnime.value,
+                onCheckedChange = {
+                    state.isCreateAnime.value = it
+                    state.resetField()
+                }
+            )
+        }
 
-    val anime: MutableState<Anime?> = remember { mutableStateOf(null) }
+        // 动画名称搜索框
+        OutlinedTextField(
+            value = state.animeNameSearch.value,
+            onValueChange = { state.animeNameSearch.value = it },
+            modifier = Modifier.width(fieldWidth),
+            label = {
+                RequiredFieldLabel(
+                    stringResource(Res.string.season_field_anime_name_search) +
+                            if (state.isCreateAnime.value) stringResource(Res.string.search_tmdb) else stringResource(
+                                Res.string.search_local
+                            )
+                )
+            },
+            supportingText = {
+                RequiredSupportingText(
+                    state.animeNameSearch,
+                    stringResource(Res.string.season_field_anime_name_search)
+                )
+            },
+            leadingIcon = {
+                IconButton(onClick = {
+                    state.searchAnime()
+                }) {
+                    Icon(Icons.Default.Search, null)
+                }
+            },
+        )
+        // 动画搜索结果
+        Box {
+            DropdownMenu(
+                expanded = state.animeSearchVisible.value,
+                onDismissRequest = { state.animeSearchVisible.value = false },
+                scrollState = rememberScrollState(),
+                modifier = Modifier.width(fieldWidth).heightIn(max = fieldWidth)
+            ) {
+                state.animeSearchResult.value.map {
+                    DropdownMenuItem(
+                        text = { Text(it.name) },
+                        onClick = {
+                            state.selectAnime(it)
+                        },
+                    )
+                }
+                if (state.animeSearchResult.value.isEmpty()) {
+                    Text(stringResource(Res.string.no_data), modifier = Modifier.padding(8.dp))
+                }
+            }
+        }
+        // 动画季度搜索框
+        OutlinedTextField(
+            value = if (state.animeSeason.value == null) "" else "${state.animeSeason.value!!.season} - ${state.animeSeason.value!!.name}",
+            onValueChange = { },
+            label = { RequiredFieldLabel(stringResource(Res.string.season_field_season_name)) },
+            modifier = Modifier.width(fieldWidth),
+            readOnly = true,
+            leadingIcon = {
+                IconButton(onClick = {
+                    state.searchSeason()
+                }) {
+                    Icon(Icons.Default.Search, null)
+                }
+            },
+        )
+        // 动画季度搜索结果
+        Box {
+            DropdownMenu(
+                expanded = state.animeSeasonSearchVisible.value,
+                onDismissRequest = { state.animeSeasonSearchVisible.value = false },
+                scrollState = rememberScrollState(),
+                modifier = Modifier.width(fieldWidth).heightIn(max = fieldWidth)
+            ) {
+                state.animeSeasonSearchResult.value.map { season ->
+                    DropdownMenuItem(
+                        text = { Text("${season.season} - ${season.name}") },
+                        onClick = {
+                            state.selectSeason(season)
+                        },
+                    )
+                }
+                if (state.animeSeasonSearchResult.value.isEmpty()) {
+                    Text(stringResource(Res.string.no_data), modifier = Modifier.padding(8.dp))
+                }
+            }
+        }
+    }
+}
 
-    val animeSeason: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
+@Composable
+fun rememberCreateAnimeSeasonState(
+    service: AnimeSeasonService
+): CreateAnimeSeasonState {
+    return remember {
+        CreateAnimeSeasonState(service)
+    }
+}
 
-    val animeSeasonSearchVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val animeSeasonSearchResult: MutableState<List<AnimeSeason>> = remember { mutableStateOf(emptyList()) }
+class CreateAnimeSeasonState(
+    private val service: AnimeSeasonService
+) {
+    val isCreateAnime: MutableState<Boolean> = mutableStateOf(false)
+
+    val animeSearchVisible: MutableState<Boolean> = mutableStateOf(false)
+    val animeNameSearch: MutableState<String> = mutableStateOf("")
+    val animeSearchResult: MutableState<List<Anime>> = mutableStateOf(emptyList())
+
+    val anime: MutableState<Anime?> = mutableStateOf(null)
+
+    val animeSeason: MutableState<AnimeSeason?> = mutableStateOf(null)
+
+    val animeSeasonSearchVisible: MutableState<Boolean> = mutableStateOf(false)
+    val animeSeasonSearchResult: MutableState<List<AnimeSeason>> = mutableStateOf(emptyList())
 
     fun resetField() {
         animeSearchVisible.value = false
@@ -53,45 +191,26 @@ fun CreateAnimeSeason(
         animeSearchResult.value = emptyList()
 
         anime.value = null
-
         animeSeason.value = null
 
         animeSeasonSearchVisible.value = false
         animeSeasonSearchResult.value = emptyList()
     }
 
-    fun closeCreateDialog() {
-        createDialogVisible.value = false
+    fun reset() {
         isCreateAnime.value = false
-
         resetField()
     }
 
-    val animeNameIsBlank =
-        stringResource(Res.string.season_field_anime_name) + stringResource(Res.string.is_blank)
-    val animeSeasonIsBlank =
-        stringResource(Res.string.season_field_season_name) + stringResource(Res.string.is_blank)
-
-    fun handleSave() {
-        requireNotNull(anime.value) { animeNameIsBlank }
-        requireNotNull(
-            animeSeason.value,
-            lazyMessage = { animeSeasonIsBlank })
-            .let {
-                animeSeasonService.saveAnimeSeason(it, onSuccess)
-                closeCreateDialog()
-            }
-    }
-
-    fun handleAnimeNameSearch() {
+    fun searchAnime() {
         if (animeNameSearch.value.isNotBlank()) {
             if (isCreateAnime.value) {
-                animeSeasonService.searchAnimeFromTMDB(name = animeNameSearch.value, onSuccess = {
+                service.searchAnimeFromTMDB(name = animeNameSearch.value, onSuccess = {
                     animeSearchResult.value = it
                     animeSearchVisible.value = true
                 })
             } else {
-                animeSeasonService.searchAnime(name = animeNameSearch.value, onSuccess = {
+                service.searchAnime(name = animeNameSearch.value, onSuccess = {
                     animeSearchResult.value = it
                     animeSearchVisible.value = true
                 })
@@ -99,7 +218,14 @@ fun CreateAnimeSeason(
         }
     }
 
-    fun handleAnimeSeasonNameSearch() {
+    fun selectAnime(selected: Anime) {
+        anime.value = selected
+        animeNameSearch.value = selected.name
+        animeSearchVisible.value = false
+        animeSearchResult.value = emptyList()
+    }
+
+    fun searchSeason() {
         anime.value?.let { anime ->
             if (isCreateAnime.value && anime.animeSeasons.isNotEmpty()) {
                 // 如果创建动画，则直接取tmdb动画搜索结果的季度
@@ -108,7 +234,7 @@ fun CreateAnimeSeason(
             } else {
                 anime.tmdbId?.let { tmdbId ->
                     // 否则如果动画有tmdbId，则取tmdb动画季度
-                    animeSeasonService.getAnimeByTmdbId(tmdbId, onSuccess = { anime ->
+                    service.getAnimeByTmdbId(tmdbId, onSuccess = { anime ->
                         animeSeasonSearchResult.value = anime.animeSeasons
                         animeSeasonSearchVisible.value = true
                     })
@@ -117,117 +243,23 @@ fun CreateAnimeSeason(
         }
     }
 
-    @Composable
-    fun render() {
-        FormDialog(
-            formDialogVisible = createDialogVisible,
-            onDismissRequest = { closeCreateDialog() },
-            onConfirmation = { handleSave() },
-        ) {
-            val fieldWidth = 500.dp
-            Row {
-                Text(
-                    stringResource(Res.string.season_field_is_create_anime),
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Checkbox(
-                    checked = isCreateAnime.value,
-                    onCheckedChange = {
-                        isCreateAnime.value = it
-                        resetField()
-                    }
-                )
-            }
-
-            // 动画名称搜索框
-            OutlinedTextField(
-                value = animeNameSearch.value,
-                onValueChange = { animeNameSearch.value = it },
-                modifier = Modifier.width(fieldWidth),
-                label = {
-                    RequiredFieldLabel(
-                        stringResource(Res.string.season_field_anime_name_search) +
-                                if (isCreateAnime.value) stringResource(Res.string.search_tmdb) else stringResource(Res.string.search_local)
-                    )
-                },
-                supportingText = {
-                    RequiredSupportingText(
-                        animeNameSearch,
-                        stringResource(Res.string.season_field_anime_name_search)
-                    )
-                },
-                leadingIcon = {
-                    IconButton(onClick = {
-                        handleAnimeNameSearch()
-                    }) {
-                        Icon(Icons.Default.Search, null)
-                    }
-                },
-            )
-            // 动画搜索结果
-            Box {
-                DropdownMenu(
-                    expanded = animeSearchVisible.value,
-                    onDismissRequest = { animeSearchVisible.value = false },
-                    scrollState = rememberScrollState(),
-                    modifier = Modifier.width(fieldWidth).heightIn(max = fieldWidth)
-                ) {
-                    animeSearchResult.value.map {
-                        DropdownMenuItem(
-                            text = { Text(it.name) },
-                            onClick = {
-                                anime.value = it
-                                animeNameSearch.value = it.name
-                                animeSearchVisible.value = false
-                                animeSearchResult.value = emptyList()
-                            },
-                        )
-                    }
-                    if (animeSearchResult.value.isEmpty()) {
-                        Text(stringResource(Res.string.no_data), modifier = Modifier.padding(8.dp))
-                    }
-                }
-            }
-            // 动画季度搜索框
-            OutlinedTextField(
-                value = if (animeSeason.value == null) "" else "${animeSeason.value!!.season} - ${animeSeason.value!!.name}",
-                onValueChange = { },
-                label = { RequiredFieldLabel(stringResource(Res.string.season_field_season_name)) },
-                modifier = Modifier.width(fieldWidth),
-                readOnly = true,
-                leadingIcon = {
-                    IconButton(onClick = {
-                        handleAnimeSeasonNameSearch()
-                    }) {
-                        Icon(Icons.Default.Search, null)
-                    }
-                },
-            )
-            // 动画季度搜索结果
-            Box {
-                DropdownMenu(
-                    expanded = animeSeasonSearchVisible.value,
-                    onDismissRequest = { animeSeasonSearchVisible.value = false },
-                    scrollState = rememberScrollState(),
-                    modifier = Modifier.width(fieldWidth).heightIn(max = fieldWidth)
-                ) {
-                    animeSeasonSearchResult.value.map {
-                        DropdownMenuItem(
-                            text = { Text("${it.season} - ${it.name}") },
-                            onClick = {
-                                animeSeason.value = it.copy(animeId = anime.value!!.id, anime = anime.value)
-                                animeSeasonSearchVisible.value = false
-                                animeSeasonSearchResult.value = emptyList()
-                            },
-                        )
-                    }
-                    if (animeSeasonSearchResult.value.isEmpty()) {
-                        Text(stringResource(Res.string.no_data), modifier = Modifier.padding(8.dp))
-                    }
-                }
-            }
-        }
+    fun selectSeason(season: AnimeSeason) {
+        animeSeason.value = season.copy(animeId = anime.value!!.id, anime = anime.value)
+        animeSeasonSearchVisible.value = false
+        animeSeasonSearchResult.value = emptyList()
     }
 
-    render()
+    fun save(
+        onSuccess: (AnimeSeason) -> Unit,
+        animeNameIsBlankMsg: String,
+        animeSeasonIsBlankMsg: String
+    ) {
+        requireNotNull(anime.value) { animeNameIsBlankMsg }
+        requireNotNull(
+            animeSeason.value,
+            lazyMessage = { animeSeasonIsBlankMsg })
+            .let {
+                service.saveAnimeSeason(it, onSuccess)
+            }
+    }
 }
