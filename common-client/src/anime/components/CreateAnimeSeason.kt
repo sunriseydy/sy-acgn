@@ -124,7 +124,7 @@ fun CreateAnimeSeason(
             onDismissRequest = { closeCreateDialog() },
             onConfirmation = { handleSave() },
         ) {
-            val fieldWidth = 300.dp
+            val fieldWidth = 500.dp
             Row {
                 Text(
                     stringResource(Res.string.season_field_is_create_anime),

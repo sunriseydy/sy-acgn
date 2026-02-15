@@ -53,6 +53,7 @@ data class AnimeSeason(
     val additions: List<AdditionalInfo> = emptyList(),
 ) {
     var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
+    var bgmJson: JsonObject? = AnimeAdditionType.BgmJson.valueOf(additions)
     var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
     var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
     var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key

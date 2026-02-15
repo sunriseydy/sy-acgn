@@ -14,8 +14,12 @@ import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.res.Res
-import dev.sunriseydy.acgn.client.res.cancel
 import dev.sunriseydy.acgn.client.res.no_data
+import dev.sunriseydy.acgn.client.res.search
+import dev.sunriseydy.acgn.client.res.search_bangumi
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -35,11 +39,13 @@ fun SearchBgmAnimeSeason(
     val searchResults = remember { mutableStateOf(emptyList<AnimeSeason>()) }
     val searchLoading = remember { mutableStateOf(false) }
     val searchExpanded = remember { mutableStateOf(false) }
+    val selected: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
 
     // 初始化搜索关键词
     LaunchedEffect(visible.value) {
         if (visible.value && currentSeason != null) {
             searchQuery.value = currentSeason.name
+            selected.value = currentSeason
         }
     }
 
@@ -54,6 +60,7 @@ fun SearchBgmAnimeSeason(
     fun handleSearch() {
         if (searchQuery.value.isNotBlank()) {
             searchLoading.value = true
+            selected.value = null
             animeSeasonService.searchBgmAnime(
                 query = searchQuery.value,
                 onSuccess = {
@@ -68,16 +75,18 @@ fun SearchBgmAnimeSeason(
         }
     }
 
-    fun handleSelect(result: AnimeSeason) {
-        if (currentSeason != null) {
+    fun handleConfirm() {
+        if (currentSeason != null && selected.value != null && selected.value!!.additions.isNotEmpty()) {
+            val additionalInfo = selected.value!!.additions[0]
+            // 判断是否存在
+            val existingAddition = AnimeAdditionType.BgmJson.additionalInfo(currentSeason.additions)
             val newAdditions = currentSeason.additions.filter {
                 it.additionalType != AnimeAdditionType.BgmJson.key
-            } + result.additions.map {
-                it.copy(associatedId = currentSeason.id)
-            }
+            } + (existingAddition?.copy(additionalValue = additionalInfo.additionalValue)
+                ?: additionalInfo.copy(associatedId = currentSeason.id))
 
             val newSeason = currentSeason.copy(
-                bgmId = result.bgmId,
+                bgmId = selected.value!!.bgmId,
                 additions = newAdditions
             )
             animeSeasonService.saveAnimeSeason(newSeason, onSuccess = {
@@ -90,10 +99,9 @@ fun SearchBgmAnimeSeason(
     FormDialog(
         formDialogVisible = visible,
         onDismissRequest = { closeDialog() },
-        onConfirmation = { closeDialog() },
-        confirmationText = stringResource(Res.string.cancel),
+        onConfirmation = { handleConfirm() },
     ) {
-        val fieldWidth = 300.dp
+        val fieldWidth = 500.dp
 
         Column {
             // Search Input
@@ -102,7 +110,7 @@ fun SearchBgmAnimeSeason(
                     value = searchQuery.value,
                     onValueChange = { searchQuery.value = it },
                     modifier = Modifier.width(fieldWidth),
-                    label = { Text("Search Bangumi") },
+                    label = { Text("${stringResource(Res.string.search)} ${stringResource(Res.string.search_bangumi)}") },
                     trailingIcon = {
                         IconButton(onClick = { handleSearch() }) {
                             if (searchLoading.value) {
@@ -135,9 +143,27 @@ fun SearchBgmAnimeSeason(
                             DropdownMenuItem(
                                 text = { Text("${result.name} (${result.year})") },
                                 onClick = {
-                                    handleSelect(result)
+                                    searchExpanded.value = false
+                                    selected.value = result
                                 }
                             )
+                        }
+                    }
+                }
+            }
+
+            // 展示搜索结果的别名
+            if (selected.value != null && selected.value!!.bgmJson != null) {
+                val bgmJson = selected.value!!.bgmJson!!
+                bgmJson.get("infobox")?.jsonArray?.forEach { infobox ->
+                    if (infobox.jsonObject.get("key")?.jsonPrimitive?.content == "别名") {
+                        infobox.jsonObject.get("value")?.jsonArray?.forEach { alias ->
+                            alias.jsonObject.get("v")?.jsonPrimitive?.content?.let {
+                                Text(
+                                    text = it,
+                                    modifier = Modifier.width(fieldWidth)
+                                )
+                            }
                         }
                     }
                 }

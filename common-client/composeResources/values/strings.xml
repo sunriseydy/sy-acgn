@@ -18,6 +18,7 @@
     <string name="delete_source">删除源路径</string>
     <string name="delete_target">删除目标路径</string>
     <string name="delete">删除</string>
+    <string name="search">搜索</string>
 
     <!-- RssString -->
     <string name="rss_title">订阅</string>
@@ -36,4 +37,5 @@
     <string name="season_field_season_name">季度名称</string>
     <string name="search_tmdb">TMDB</string>
     <string name="search_local">本地</string>
+    <string name="search_bangumi">Bangumi</string>
 </resources>
