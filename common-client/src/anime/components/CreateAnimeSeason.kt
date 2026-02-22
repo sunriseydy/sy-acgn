@@ -1,7 +1,10 @@
 package dev.sunriseydy.acgn.client.anime.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -11,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
@@ -32,7 +36,6 @@ fun CreateAnimeSeason(
     animeSeasonService: AnimeSeasonService,
     createDialogVisible: MutableState<Boolean>,
     onSuccess: (AnimeSeason) -> Unit = { },
-    isDialog: Boolean = true,
 ) {
     val state = rememberCreateAnimeSeasonState(animeSeasonService)
     val animeNameIsBlank =
@@ -59,10 +62,17 @@ fun CreateAnimeSeason(
         },
     ) {
         val fieldWidth = 500.dp
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable {
+                    state.isCreateAnime.value = !state.isCreateAnime.value
+                    state.resetField()
+                }
+                .padding(end = 8.dp)
+        ) {
             Text(
                 stringResource(Res.string.season_field_is_create_anime),
-                modifier = Modifier.align(Alignment.CenterVertically)
             )
             Checkbox(
                 checked = state.isCreateAnime.value,
@@ -92,13 +102,15 @@ fun CreateAnimeSeason(
                     stringResource(Res.string.season_field_anime_name_search)
                 )
             },
-            leadingIcon = {
+            trailingIcon = {
                 IconButton(onClick = {
                     state.searchAnime()
                 }) {
                     Icon(Icons.Default.Search, null)
                 }
             },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { state.searchAnime() })
         )
         // 动画搜索结果
         Box {
@@ -128,7 +140,7 @@ fun CreateAnimeSeason(
             label = { RequiredFieldLabel(stringResource(Res.string.season_field_season_name)) },
             modifier = Modifier.width(fieldWidth),
             readOnly = true,
-            leadingIcon = {
+            trailingIcon = {
                 IconButton(onClick = {
                     state.searchSeason()
                 }) {

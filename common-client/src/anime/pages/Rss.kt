@@ -261,6 +261,26 @@ fun RssItemList(
     rssItemPager: Paging<RssItem>
 ) {
     val rssItemListState: LazyListState = rememberLazyListState()
+    
+    // 如果订阅源或未读状态改变，滚动回顶部
+    LaunchedEffect(currentRss.value.id, isOnlyUnread.value) {
+        rssItemListState.scrollToItem(0)
+    }
+
+    // 监听是否需要加载更多数据
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val lastVisibleItem = rssItemListState.layoutInfo.visibleItemsInfo.lastOrNull()
+            lastVisibleItem != null && lastVisibleItem.index >= rssItemList.value.lastIndex - 2
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value && !rssItemPager.finished.value && !rssItemPager.loading.value) {
+            rssService.loadMoreRssItem()
+        }
+    }
+
     val downloadDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val downloadRssItem: MutableState<RssItem?> = remember { mutableStateOf(null) }
 
@@ -290,7 +310,7 @@ fun RssItemList(
             }
         }
         LazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssItemListState) {
-            itemsIndexed(rssItemList.value, key = { _, rssItem -> rssItem.id }) { index, rssItem ->
+            items(rssItemList.value, key = { it.id }) { rssItem ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -339,16 +359,9 @@ fun RssItemList(
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                
-                // Infinite Scroll Trigger
-                if (index >= rssItemList.value.lastIndex - 2 && !rssItemPager.finished.value && !rssItemPager.loading.value) {
-                    LaunchedEffect(Unit) {
-                        rssService.loadMoreRssItem()
-                    }
-                }
-
-                // Loading Indicator
-                if (index == rssItemList.value.lastIndex && rssItemPager.loading.value) {
+            }
+            if (rssItemPager.loading.value && rssItemList.value.isNotEmpty()) {
+                item {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(modifier = Modifier.padding(8.dp))
                     }
