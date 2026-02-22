@@ -4,6 +4,7 @@ import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 
 /**
+ * 配置项 公共接口
  * @author SunriseYDY
  * @date 2024-07-12 15:07
  */
@@ -16,4 +17,13 @@ interface AppConfigInterface : Key {
     val stringValue: String? get() = AppConfigTool.getAppConfigStringValue(this.configKey)
 
     val configValue: Any?
+}
+
+/**
+ * 字符串类型配置项基类
+ *
+ * 所有值为 String? 的 配置项的公共父类，避免重复定义 [configValue]。
+ */
+interface StringAppConfig : AppConfigInterface {
+    override val configValue: String? get() = this.stringValue
 }

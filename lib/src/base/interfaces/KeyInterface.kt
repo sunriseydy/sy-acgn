@@ -63,3 +63,13 @@ fun Message.getMessageKey(enum: Message): String {
         throw IllegalArgumentException("$enum is not an enum")
     }
 }
+
+/**
+ * 关联类型接口
+ *
+ * 用于定义与其他实体关联的类型。
+ *
+ * @author SunriseYDY
+ * @date 2024-07-24 09:50
+ */
+interface AssociatedTypeInterface : EnumKey

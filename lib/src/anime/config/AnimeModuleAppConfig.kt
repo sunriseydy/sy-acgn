@@ -2,33 +2,34 @@ package dev.sunriseydy.acgn.anime.config
 
 import dev.sunriseydy.acgn.base.interfaces.AnimeModule
 import dev.sunriseydy.acgn.base.interfaces.AppConfigInterface
+import dev.sunriseydy.acgn.base.interfaces.StringAppConfig
 
 /**
+ * Anime 模块配置常量
+ *
+ * 定义了动画模块中需要的各项配置项。
+ * 所有配置均为字符串类型，通过 [AppConfigInterface] 统一管理。
+ *
  * @author SunriseYDY
  * @date 2024-07-16 20:03
  */
 object AnimeModuleAppConfig {
-    object TmdbApiKey : AppConfigInterface, AnimeModule {
-        override val configValue: String? get() = this.stringValue
-    }
 
-    object QbApiBaseUrl : AppConfigInterface, AnimeModule {
-        override val configValue: String? get() = this.stringValue
-    }
+    /** TMDB API 密钥 */
+    object TmdbApiKey : StringAppConfig, AnimeModule
 
-    object QbUserName : AppConfigInterface, AnimeModule {
-        override val configValue: String? get() = this.stringValue
-    }
+    /** qBittorrent API 基础 URL */
+    object QbApiBaseUrl : StringAppConfig, AnimeModule
 
-    object QbPassword : AppConfigInterface, AnimeModule {
-        override val configValue: String? get() = this.stringValue
-    }
+    /** qBittorrent 用户名 */
+    object QbUserName : StringAppConfig, AnimeModule
 
-    object MediaTargetDirectory : AppConfigInterface, AnimeModule {
-        override val configValue: String? get() = this.stringValue
-    }
+    /** qBittorrent 密码 */
+    object QbPassword : StringAppConfig, AnimeModule
 
-    object BgmUserAgent : AppConfigInterface, AnimeModule {
-        override val configValue: String? get() = this.stringValue
-    }
+    /** 媒体目标目录 */
+    object MediaTargetDirectory : StringAppConfig, AnimeModule
+
+    /** Bangumi User-Agent */
+    object BgmUserAgent : StringAppConfig, AnimeModule
 }

@@ -1,14 +1,19 @@
 @file:UseSerializers(OffsetDateTimeSerializer::class)
 package dev.sunriseydy.acgn.anime.dto
 
-import dev.sunriseydy.acgn.OffsetDateTimeSerializer
+import dev.sunriseydy.acgn.base.serializer.OffsetDateTimeSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 /**
- * 订阅 DTO
+ * RSS 订阅源 DTO
+ *
+ * @property id 订阅源 ID
+ * @property link 订阅源链接
+ * @property title 订阅源标题
+ * @property ttl 刷新间隔（秒）
  */
 @Serializable
 data class Rss(
@@ -21,12 +26,21 @@ data class Rss(
     val createdAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
     val updatedAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
 ) {
+    /** 订阅源下的内容列表 */
     var items: List<RssItem> = emptyList()
+
+    /** 未读条目数量 */
     var unreadCount: Long = 0
 }
 
 /**
- * 订阅内容 DTO
+ * RSS 订阅内容 DTO
+ *
+ * @property id 内容 ID
+ * @property rssId 所属订阅源 ID
+ * @property torrent Torrent 下载链接
+ * @property isRead 是否已读
+ * @property publishedAt 发布时间
  */
 @Serializable
 data class RssItem(
@@ -43,9 +57,17 @@ data class RssItem(
     val createdAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
     val updatedAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
 ) {
+    /** 所属的 RSS 订阅源（延迟关联） */
     var rss: Rss? = null
 }
 
+/**
+ * Torrent 添加请求 DTO
+ *
+ * @property url Torrent 下载链接或磁力链接
+ * @property category 分类（可选）
+ * @property autoTMM 是否启用自动 Torrent 管理
+ */
 @Serializable
 data class TorrentAdd(
     val url: String,

@@ -1,9 +1,10 @@
 @file:UseSerializers(OffsetDateTimeSerializer::class)
 package dev.sunriseydy.acgn.anime.dto
 
-import dev.sunriseydy.acgn.OffsetDateTimeSerializer
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.base.enums.Status
+import dev.sunriseydy.acgn.base.interfaces.AdditionInterface
+import dev.sunriseydy.acgn.base.serializer.OffsetDateTimeSerializer
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
@@ -11,6 +12,16 @@ import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.JsonObject
 import java.time.OffsetDateTime
 
+/**
+ * 动画实体 DTO
+ *
+ * @property id 动画 ID
+ * @property name 动画名称
+ * @property tmdbId TMDB 关联 ID
+ * @property bgmId Bangumi 关联 ID
+ * @property animeSeasons 关联的动画季度列表
+ * @property additions 附加信息列表
+ */
 @Serializable
 data class Anime(
     val id: ULong,
@@ -25,14 +36,23 @@ data class Anime(
     val createdAt: OffsetDateTime? = null,
     val updatedAt: OffsetDateTime? = null,
     val animeSeasons: List<AnimeSeason> = emptyList(),
-    val additions: List<AdditionalInfo> = emptyList(),
-) {
-    var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
-    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
-    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
-    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    override val additions: List<AdditionalInfo> = emptyList(),
+    ) : AdditionInterface {
+    val tmdbJson: JsonObject? get() = AnimeAdditionType.TmdbJson.valueOf(additions)
+    val downloadStatus: String get() = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val fileStatus: String get() = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val watchStatus: String get() = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
 }
 
+/**
+ * 动画季度 DTO
+ *
+ * @property id 季度 ID
+ * @property animeId 关联的动画 ID
+ * @property season 季度编号
+ * @property year 年份
+ * @property month 月份
+ */
 @Serializable
 data class AnimeSeason(
     val id: ULong,
@@ -50,15 +70,23 @@ data class AnimeSeason(
     val updatedAt: OffsetDateTime? = null,
     val anime: Anime? = null,
     val animeEpisodes: List<AnimeEpisode> = emptyList(),
-    val additions: List<AdditionalInfo> = emptyList(),
-) {
-    var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
-    var bgmJson: JsonObject? = AnimeAdditionType.BgmJson.valueOf(additions)
-    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
-    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
-    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    override val additions: List<AdditionalInfo> = emptyList(),
+) : AdditionInterface {
+    val tmdbJson: JsonObject? get() = AnimeAdditionType.TmdbJson.valueOf(additions)
+    val bgmJson: JsonObject? get() = AnimeAdditionType.BgmJson.valueOf(additions)
+    val downloadStatus: String get() = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val fileStatus: String get() = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val watchStatus: String get() = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
 }
 
+/**
+ * 动画剧集 DTO
+ *
+ * @property id 剧集 ID
+ * @property animeId 关联的动画 ID
+ * @property animeSeasonId 关联的季度 ID
+ * @property episode 集数
+ */
 @Serializable
 data class AnimeEpisode(
     val id: ULong,
@@ -72,14 +100,21 @@ data class AnimeEpisode(
     val bgmId: ULong? = null,
     val createdAt: OffsetDateTime? = null,
     val updatedAt: OffsetDateTime? = null,
-    val additions: List<AdditionalInfo> = emptyList(),
-) {
-    var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
-    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
-    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
-    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    override val additions: List<AdditionalInfo> = emptyList(),
+) : AdditionInterface {
+    val tmdbJson: JsonObject? get() = AnimeAdditionType.TmdbJson.valueOf(additions)
+    val downloadStatus: String get() = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val fileStatus: String get() = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val watchStatus: String get() = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
 }
 
+/**
+ * 动画电影 DTO
+ *
+ * @property id 电影 ID
+ * @property name 电影名称
+ * @property releaseDate 上映日期
+ */
 @Serializable
 data class AnimeMovie(
     val id: ULong,
@@ -90,14 +125,20 @@ data class AnimeMovie(
     val bgmId: ULong? = null,
     val createdAt: OffsetDateTime? = null,
     val updatedAt: OffsetDateTime? = null,
-    val additions: List<AdditionalInfo> = emptyList(),
-) {
-    var tmdbJson: JsonObject? = AnimeAdditionType.TmdbJson.valueOf(additions)
-    var downloadStatus: String = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
-    var fileStatus: String = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
-    var watchStatus: String = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    override val additions: List<AdditionalInfo> = emptyList(),
+) : AdditionInterface {
+    val tmdbJson: JsonObject? get() = AnimeAdditionType.TmdbJson.valueOf(additions)
+    val downloadStatus: String get() = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val fileStatus: String get() = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val watchStatus: String get() = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
 }
 
+/**
+ * 动画季度文件 DTO
+ *
+ * @property id 文件 ID
+ * @property path 文件路径
+ */
 @Serializable
 data class AnimeSeasonFile(
     val id: ULong,

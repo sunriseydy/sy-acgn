@@ -1,7 +1,7 @@
 @file:UseSerializers(OffsetDateTimeSerializer::class)
 package dev.sunriseydy.acgn.common.dto
 
-import dev.sunriseydy.acgn.OffsetDateTimeSerializer
+import dev.sunriseydy.acgn.base.serializer.OffsetDateTimeSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import java.time.OffsetDateTime

@@ -1,4 +1,4 @@
-package dev.sunriseydy.acgn
+package dev.sunriseydy.acgn.base.serializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -9,6 +9,14 @@ import kotlinx.serialization.encoding.Encoder
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * OffsetDateTime 序列化器
+ *
+ * 将 [OffsetDateTime] 序列化为 ISO 8601 格式的字符串，方便在 JSON 中传输。
+ *
+ * @author SunriseYDY
+ * @date 2024-07-11
+ */
 object OffsetDateTimeSerializer : KSerializer<OffsetDateTime> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("OffsetDateTime", PrimitiveKind.STRING)
 

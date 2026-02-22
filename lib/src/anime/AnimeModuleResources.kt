@@ -5,12 +5,29 @@ import dev.sunriseydy.acgn.base.ApiResource
 import io.ktor.resources.*
 import kotlinx.serialization.Serializable
 
+/**
+ * Anime 模块 API 路由资源定义
+ *
+ * 定义了动画模块下所有可用的 RESTful API 路由。
+ * 使用 Ktor Resources 插件实现类型安全路由。
+ *
+ * 路径结构:
+ * - `/api/anime/qb` - qBittorrent 相关 API
+ * - `/api/anime/anime` - 动画数据管理 API
+ *
+ * @author SunriseYDY
+ * @date 2024-07-16
+ */
 @Serializable
 @Resource("anime")
 class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
+
+    /** qBittorrent 相关 API: `/api/anime/qb` */
     @Serializable
     @Resource("qb")
     class Qb(val parent: AnimeModuleResource = AnimeModuleResource()) {
+
+        /** Torrent 管理: `/api/anime/qb/torrent` */
         @Serializable
         @Resource("torrent")
         class Torrent(val parent: Qb = Qb()) {
@@ -19,6 +36,7 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             class Hash(val parent: Torrent = Torrent(), val hash: String)
         }
 
+        /** RSS 订阅管理: `/api/anime/qb/rss` */
         @Serializable
         @Resource("rss")
         class Rss(val parent: Qb = Qb()) {
@@ -82,6 +100,7 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
         }
     }
 
+    /** 动画数据管理: `/api/anime/anime` */
     @Serializable
     @Resource("anime")
     class Anime(val parent: AnimeModuleResource = AnimeModuleResource()) {
@@ -101,6 +120,7 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
         @Resource("refresh")
         class Refresh(val parent: Anime = Anime())
 
+        /** 季度管理: `/api/anime/anime/season` */
         @Serializable
         @Resource("season")
         class Season(val parent: Anime = Anime()) {
@@ -128,6 +148,7 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             @Resource("section-map")
             class SectionMap(val parent: Season = Season())
 
+            /** 剧集管理: `/api/anime/anime/season/episode` */
             @Serializable
             @Resource("episode")
             class Episode(val parent: Season = Season()) {
@@ -137,6 +158,7 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             }
         }
 
+        /** TMDB 集成: `/api/anime/anime/tmdb` */
         @Serializable
         @Resource("tmdb")
         class Tmdb(val parent: Anime = Anime()) {
@@ -161,6 +183,7 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             class MovieDetail(val parent: Tmdb = Tmdb(), val id: Int)
         }
 
+        /** Bangumi 集成: `/api/anime/anime/bangumi` */
         @Serializable
         @Resource("bangumi")
         class Bangumi(val parent: Anime = Anime()) {
@@ -173,6 +196,7 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             class SubjectDetail(val parent: Bangumi = Bangumi(), val id: Int)
         }
 
+        /** 文件管理: `/api/anime/anime/file` */
         @Serializable
         @Resource("file")
         class File(val parent: Anime = Anime()) {
