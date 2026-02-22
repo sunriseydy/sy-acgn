@@ -14,11 +14,17 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 /**
+ * 动漫模块 API 路由
+ *
  * @author SunriseYDY
  * @date 2024-07-15 14:45
  */
 fun Route.animeRoutes() {
     val animeService: AnimeService by application.dependencies
+    val tmdbTool: TmdbTool by application.dependencies
+    val bangumiTool: BangumiTool by application.dependencies
+
+    // --- Anime CRUD ---
     get<AnimeModuleResource.Anime.Name> { resource ->
         call.respond(Result(data = animeService.searchAnimeByName(resource.name)))
     }
@@ -38,6 +44,7 @@ fun Route.animeRoutes() {
         call.respond(Result(data = animeService.removeAnimeById(resource.animeId)))
     }
 
+    // --- AnimeSeason ---
     get<AnimeModuleResource.Anime.Season.Id> { resource ->
         call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionAndAnimeById(resource.id)))
     }
@@ -67,33 +74,37 @@ fun Route.animeRoutes() {
         call.respond(Result(data = animeService.removeAnimeSeasonById(resource.id)))
     }
 
+    // --- AnimeEpisode ---
     delete<AnimeModuleResource.Anime.Season.Episode.Id> { resource ->
         call.respond(Result(data = animeService.removeAnimeEpisodeById(resource.episodeId)))
     }
 
+    // --- TMDB API ---
     get<AnimeModuleResource.Anime.Tmdb.SearchTv> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().searchAnimeTVForAnime(resource.query)))
+        call.respond(Result(data = tmdbTool.searchAnimeTVForAnime(resource.query)))
     }
     get<AnimeModuleResource.Anime.Tmdb.SearchMovie> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().searchAnimeMovieForAnimeMovie(resource.query)))
+        call.respond(Result(data = tmdbTool.searchAnimeMovieForAnimeMovie(resource.query)))
     }
     get<AnimeModuleResource.Anime.Tmdb.TvDetail> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().getTvDetailsForAnime(resource.id)))
+        call.respond(Result(data = tmdbTool.getTvDetailsForAnime(resource.id)))
     }
     get<AnimeModuleResource.Anime.Tmdb.SeasonDetail> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().getTvSeasonDetailsForAnimeSeason(resource.showId, resource.season)))
+        call.respond(Result(data = tmdbTool.getTvSeasonDetailsForAnimeSeason(resource.showId, resource.season)))
     }
     get<AnimeModuleResource.Anime.Tmdb.MovieDetail> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<TmdbTool>().getMovieDetailsForAnimeMovie(resource.id)))
+        call.respond(Result(data = tmdbTool.getMovieDetailsForAnimeMovie(resource.id)))
     }
 
+    // --- Bangumi API ---
     get<AnimeModuleResource.Anime.Bangumi.SearchAnime> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<BangumiTool>().searchAnime(resource.query)))
+        call.respond(Result(data = bangumiTool.searchAnime(resource.query)))
     }
     get<AnimeModuleResource.Anime.Bangumi.SubjectDetail> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<BangumiTool>().getSubject(resource.id)))
+        call.respond(Result(data = bangumiTool.getSubject(resource.id)))
     }
 
+    // --- File ---
     post<AnimeModuleResource.Anime.File.SeasonFile> {
         call.respond(
             Result(

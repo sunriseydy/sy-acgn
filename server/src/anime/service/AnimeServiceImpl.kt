@@ -120,17 +120,19 @@ class AnimeServiceImpl(
      * 获取按年份和月份分组的动漫季度列表
      *
      * 返回一个 Map，键为 "年份 - 季节"，值为对应的动漫季度列表。
+     * 优化：每个年份只查询一次数据库，按月份类型在内存中分组，避免 N+1 查询。
      */
     override suspend fun getAnimeSeasonSectionMap(): MutableMap<String, List<AnimeSeason>> {
         val sectionMap: MutableMap<String, List<AnimeSeason>> = mutableMapOf()
-        getAnimeSeasonYears().let { years ->
-            years.forEach { year ->
-                AnimeMonthType.entries.forEach { month ->
-                    getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, month).let { seasons ->
-                        if (seasons.isNotEmpty()) {
-                            sectionMap["$year - ${month.meaning}"] = seasons
-                        }
-                    }
+        val years = getAnimeSeasonYears()
+        for (year in years) {
+            // 一次查询获取该年份的所有季度和附加信息
+            val allSeasonsForYear = getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, null)
+            // 在内存中按月份类型分组
+            for (monthType in AnimeMonthType.entries) {
+                val filtered = allSeasonsForYear.filter { it.month in monthType.months }
+                if (filtered.isNotEmpty()) {
+                    sectionMap["$year - ${monthType.meaning}"] = filtered
                 }
             }
         }

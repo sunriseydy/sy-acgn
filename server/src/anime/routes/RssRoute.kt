@@ -3,33 +3,37 @@ package dev.sunriseydy.acgn.server.anime.routes
 import dev.sunriseydy.acgn.anime.AnimeModuleResource
 import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.server.anime.tools.QbTool
+import dev.sunriseydy.acgn.server.anime.tools.qbittorrent.model.QbRssAutoDownloadingRule
 import io.ktor.server.plugins.di.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 fun Route.rssRoutes() {
+    val qbTool: QbTool by application.dependencies
+
     get<AnimeModuleResource.Qb.Torrent.Hash> { resource ->
-        call.respond(Result(data = QbTool().getTorrentInfo(resource.hash)))
+        call.respond(Result(data = qbTool.getTorrentInfo(resource.hash)))
     }
     post<AnimeModuleResource.Qb.Torrent> {
-        call.respond(Result(data = QbTool().addTorrent(call.receive())))
+        call.respond(Result(data = qbTool.addTorrent(call.receive())))
     }
 
     // qBittorrent RSS API
 
     // 获取 RSS 列表（已转换为 Rss DTO）
     get<AnimeModuleResource.Qb.Rss.List> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<QbTool>().getRssList(resource.withData)))
+        call.respond(Result(data = qbTool.getRssList(resource.withData)))
     }
 
     // 获取 RSS 文章列表（已转换为 RssItem DTO，支持分页）
     get<AnimeModuleResource.Qb.Rss.Articles> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<QbTool>().getRssItemsByRssIdOrIsRead(
+        call.respond(Result(data = qbTool.getRssItemsByRssIdOrIsRead(
             rssId = resource.rssId,
             isRead = resource.isRead,
             page = resource.page,
@@ -40,7 +44,7 @@ fun Route.rssRoutes() {
     // RSS 文件夹管理
     post<AnimeModuleResource.Qb.Rss.Folder> {
         val path = call.receive<JsonObject>().getValue("path").jsonPrimitive.content
-        application.dependencies.resolve<QbTool>().addRssFolder(path)
+        qbTool.addRssFolder(path)
         call.respond(Result<Unit>())
     }
 
@@ -49,18 +53,18 @@ fun Route.rssRoutes() {
         val body = call.receive<JsonObject>()
         val url = body.getValue("url").jsonPrimitive.content
         val path = body["path"]?.jsonPrimitive?.content
-        application.dependencies.resolve<QbTool>().addRssFeed(url, path)
+        qbTool.addRssFeed(url, path)
         call.respond(Result<Unit>())
     }
 
     // RSS 项管理
     get<AnimeModuleResource.Qb.Rss.Item> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<QbTool>().getRssItems(resource.withData)))
+        call.respond(Result(data = qbTool.getRssItems(resource.withData)))
     }
 
     post<AnimeModuleResource.Qb.Rss.Item.Remove> {
         val path = call.receive<JsonObject>().getValue("path").jsonPrimitive.content
-        application.dependencies.resolve<QbTool>().removeRssItem(path)
+        qbTool.removeRssItem(path)
         call.respond(Result<Unit>())
     }
 
@@ -68,29 +72,29 @@ fun Route.rssRoutes() {
         val body = call.receive<JsonObject>()
         val itemPath = body.getValue("itemPath").jsonPrimitive.content
         val destPath = body.getValue("destPath").jsonPrimitive.content
-        application.dependencies.resolve<QbTool>().moveRssItem(itemPath, destPath)
+        qbTool.moveRssItem(itemPath, destPath)
         call.respond(Result<Unit>())
     }
 
     post<AnimeModuleResource.Qb.Rss.Item.Refresh> {
         val itemPath = call.receive<JsonObject>()["itemPath"]?.jsonPrimitive?.content
-        application.dependencies.resolve<QbTool>().refreshRssItem(itemPath)
+        qbTool.refreshRssItem(itemPath)
         call.respond(Result<Unit>())
     }
 
     // RSS 自动下载规则管理
     get<AnimeModuleResource.Qb.Rss.Rule> {
-        call.respond(Result(data = application.dependencies.resolve<QbTool>().getRssRules()))
+        call.respond(Result(data = qbTool.getRssRules()))
     }
 
     post<AnimeModuleResource.Qb.Rss.Rule> {
         val body = call.receive<JsonObject>()
         val ruleName = body.getValue("ruleName").jsonPrimitive.content
-        val ruleDef = kotlinx.serialization.json.Json.decodeFromJsonElement(
-            dev.sunriseydy.acgn.server.anime.tools.QbRssAutoDownloadingRule.serializer(),
+        val ruleDef = Json.decodeFromJsonElement(
+            QbRssAutoDownloadingRule.serializer(),
             body.getValue("ruleDef")
         )
-        application.dependencies.resolve<QbTool>().setRssRule(ruleName, ruleDef)
+        qbTool.setRssRule(ruleName, ruleDef)
         call.respond(Result<Unit>())
     }
 
@@ -98,18 +102,18 @@ fun Route.rssRoutes() {
         val body = call.receive<JsonObject>()
         val ruleName = body.getValue("ruleName").jsonPrimitive.content
         val newRuleName = body.getValue("newRuleName").jsonPrimitive.content
-        application.dependencies.resolve<QbTool>().renameRssRule(ruleName, newRuleName)
+        qbTool.renameRssRule(ruleName, newRuleName)
         call.respond(Result<Unit>())
     }
 
     post<AnimeModuleResource.Qb.Rss.Rule.Remove> {
         val ruleName = call.receive<JsonObject>().getValue("ruleName").jsonPrimitive.content
-        application.dependencies.resolve<QbTool>().removeRssRule(ruleName)
+        qbTool.removeRssRule(ruleName)
         call.respond(Result<Unit>())
     }
 
     get<AnimeModuleResource.Qb.Rss.Rule.MatchingArticles> { resource ->
-        call.respond(Result(data = application.dependencies.resolve<QbTool>().getMatchingArticles(resource.ruleName)))
+        call.respond(Result(data = qbTool.getMatchingArticles(resource.ruleName)))
     }
 
     // RSS 标记已读
@@ -117,7 +121,7 @@ fun Route.rssRoutes() {
         val body = call.receive<JsonObject>()
         val itemPath = body.getValue("itemPath").jsonPrimitive.content
         val articleId = body["articleId"]?.jsonPrimitive?.content
-        application.dependencies.resolve<QbTool>().markAsRead(itemPath, articleId)
+        qbTool.markAsRead(itemPath, articleId)
         call.respond(Result<Unit>())
     }
 }

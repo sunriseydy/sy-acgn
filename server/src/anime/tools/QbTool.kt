@@ -9,7 +9,13 @@ import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.anime.dto.TorrentAdd
 import dev.sunriseydy.acgn.anime.enums.AnimeModuleError
 import dev.sunriseydy.acgn.base.exception.MessageException
+import dev.sunriseydy.acgn.server.anime.tools.QbTool.Companion.MAX_RETRY_COUNT
+import dev.sunriseydy.acgn.server.anime.tools.qbittorrent.model.QbRssArticle
+import dev.sunriseydy.acgn.server.anime.tools.qbittorrent.model.QbRssAutoDownloadingRule
+import dev.sunriseydy.acgn.server.anime.tools.qbittorrent.model.QbRssItem
+import dev.sunriseydy.acgn.server.anime.tools.qbittorrent.model.TorrentInfo
 import dev.sunriseydy.acgn.tools.HttpClientFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.logging.*
@@ -18,8 +24,6 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.time.OffsetDateTime
@@ -29,17 +33,30 @@ import java.time.format.DateTimeParseException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+private val logger = KotlinLogging.logger { }
+
 /**
+ * qBittorrent API 客户端工具类
+ *
+ * 封装与 qBittorrent WebUI API 的交互，包括 Torrent 管理和 RSS 订阅管理。
+ * 自动处理登录认证和 Cookie 维护。
+ *
  * @author SunriseYDY
  * @date 2024-07-20 16:03
  */
 class QbTool {
 
-    val QB_COOKIE_NAME = "SID"
+    companion object {
+        /** qBittorrent Cookie 名称 */
+        private const val QB_COOKIE_NAME = "SID"
 
-    val userName = AnimeModuleAppConfig.QbUserName.configValue
-    val password = AnimeModuleAppConfig.QbPassword.configValue
-    val apiBaseUrl = AnimeModuleAppConfig.QbApiBaseUrl.configValue
+        /** 请求失败后最大重试次数，防止无限递归 */
+        private const val MAX_RETRY_COUNT = 3
+    }
+
+    private val userName = AnimeModuleAppConfig.QbUserName.configValue
+    private val password = AnimeModuleAppConfig.QbPassword.configValue
+    private val apiBaseUrl = AnimeModuleAppConfig.QbApiBaseUrl.configValue
 
     init {
         checkNotNull(apiBaseUrl) { "Qb api base url is null" }
@@ -78,11 +95,11 @@ class QbTool {
             }
         }
 
-    suspend fun checkCookie() =
+    private suspend fun checkCookie() =
         httpClient.cookies(apiBaseUrl!!)
             .any { it.name == QB_COOKIE_NAME }
 
-    suspend fun login() {
+    private suspend fun login() {
         httpClient.submitForm(
             url = apiBaseUrl + QbUrl.QB_LOGIN,
             formParameters = parameters {
@@ -93,21 +110,33 @@ class QbTool {
         if (!checkCookie()) {
             throw MessageException(AnimeModuleError.QB_LOGIN_FAILED)
         }
+        logger.info { "qBittorrent 登录成功" }
     }
 
-    suspend fun invoke(block: suspend () -> HttpResponse): HttpResponse {
+    /**
+     * 执行带自动认证的 HTTP 请求
+     *
+     * 自动检查 Cookie 有效性，失败时重试登录（最多 [MAX_RETRY_COUNT] 次）。
+     *
+     * @param retryCount 当前重试次数
+     * @param block 要执行的 HTTP 请求块
+     * @return HTTP 响应
+     */
+    suspend fun invoke(retryCount: Int = 0, block: suspend () -> HttpResponse): HttpResponse {
         if (!checkCookie()) {
             login()
         }
         val response = block()
         if (response.status.isSuccess()) {
-            println(response.bodyAsText())
+            logger.debug { "qBittorrent 请求成功: ${response.request.url}" }
             return response
         } else {
-            if (response.status == HttpStatusCode.Forbidden) {
+            if (response.status == HttpStatusCode.Forbidden && retryCount < MAX_RETRY_COUNT) {
+                logger.warn { "qBittorrent 请求被拒绝 (403)，尝试重新登录 (重试 ${retryCount + 1}/$MAX_RETRY_COUNT)" }
                 login()
-                return invoke(block)
+                return invoke(retryCount + 1, block)
             } else {
+                logger.error { "qBittorrent 请求失败: ${response.status} (重试次数: $retryCount)" }
                 throw MessageException(AnimeModuleError.QB_REQUEST_FAILED)
             }
         }
@@ -139,12 +168,12 @@ class QbTool {
                 url = apiBaseUrl + QbUrl.QB_TORRENT_ADD,
                 formData = formData {
                     bytes?.let { append("torrents", it) } ?: append("urls", torrentAdd.url)
-                    TODO("默认分类")
                     torrentAdd.category?.let { append("category", it) }
                     append("autoTMM", torrentAdd.autoTMM.toString())
                 }
             )
         }
+        logger.info { "Torrent 添加成功: hash=$hash" }
         return hash.lowercase()
     }
 
@@ -255,7 +284,7 @@ class QbTool {
      */
     fun invalidateRssCache() {
         rssItemsCache.invalidateAll()
-        println("RSS cache invalidated")
+        logger.debug { "RSS 缓存已清除" }
     }
 
     /**
@@ -263,7 +292,7 @@ class QbTool {
      */
     fun logCacheStats() {
         val stats = rssItemsCache.stats()
-        println("RSS Cache Stats - Hits: ${stats.hitCount()}, Misses: ${stats.missCount()}, Hit Rate: ${"%.2f".format(stats.hitRate() * 100)}%")
+        logger.info { "RSS Cache Stats - Hits: ${stats.hitCount()}, Misses: ${stats.missCount()}, Hit Rate: ${"%.2f".format(stats.hitRate() * 100)}%" }
     }
 
     /**
@@ -517,16 +546,18 @@ class QbTool {
         for (formatter in formatters) {
             try {
                 return OffsetDateTime.parse(dateStr, formatter)
-            } catch (e: DateTimeParseException) {
+            } catch (_: DateTimeParseException) {
                 // 继续尝试下一个格式
             }
         }
 
         // 所有格式都失败，返回当前时间
+        logger.warn { "无法解析日期: $dateStr, 使用当前时间" }
         return OffsetDateTime.now(ZoneOffset.UTC)
     }
 }
 
+/** qBittorrent API 路径常量 */
 object QbUrl {
     const val QB_LOGIN = "/api/v2/auth/login"
     const val QB_TORRENT_ADD = "/api/v2/torrents/add"
@@ -543,57 +574,4 @@ object QbUrl {
     const val QB_RSS_RULES = "/api/v2/rss/rules"
     const val QB_RSS_MATCHING_ARTICLES = "/api/v2/rss/matchingArticles"
     const val QB_RSS_MARK_AS_READ = "/api/v2/rss/markAsRead"
-}
-
-@Serializable
-data class TorrentInfo(
-    @SerialName("completion_date") val completionDate: Long,
-    @SerialName("download_path") val downloadPath: String,
-    @SerialName("eta") val eta: Long,
-    @SerialName("hash") val hash: String,
-    @SerialName("name") val name: String,
-    @SerialName("save_path") val savePath: String,
-)
-
-@Serializable
-data class QbRssItem(
-    @SerialName("uid") val uid: String? = null,
-    @SerialName("title") val title: String? = null,
-    @SerialName("lastBuildDate") val lastBuildDate: String? = null,
-    @SerialName("isLoading") val isLoading: Boolean? = null,
-    @SerialName("hasError") val hasError: Boolean? = null,
-    @SerialName("articles") val articles: List<QbRssArticle>? = null,
-)
-
-@Serializable
-data class QbRssArticle(
-    @SerialName("id") val id: String? = null,
-    @SerialName("date") val date: String? = null,
-    @SerialName("title") val title: String? = null,
-    @SerialName("author") val author: String? = null,
-    @SerialName("description") val description: String? = null,
-    @SerialName("torrentURL") val torrentURL: String? = null,
-    @SerialName("link") val link: String? = null,
-    @SerialName("isRead") val isRead: Boolean? = null,
-)
-
-@Serializable
-data class QbRssAutoDownloadingRule(
-    @SerialName("enabled") val enabled: Boolean? = null,
-    @SerialName("mustContain") val mustContain: String? = null,
-    @SerialName("mustNotContain") val mustNotContain: String? = null,
-    @SerialName("useRegex") val useRegex: Boolean? = null,
-    @SerialName("episodeFilter") val episodeFilter: String? = null,
-    @SerialName("smartFilter") val smartFilter: Boolean? = null,
-    @SerialName("previouslyMatchedEpisodes") val previouslyMatchedEpisodes: List<String>? = null,
-    @SerialName("affectedFeeds") val affectedFeeds: List<String>? = null,
-    @SerialName("ignoreDays") val ignoreDays: Int? = null,
-    @SerialName("lastMatch") val lastMatch: String? = null,
-    @SerialName("addPaused") val addPaused: Boolean? = null,
-    @SerialName("assignedCategory") val assignedCategory: String? = null,
-    @SerialName("savePath") val savePath: String? = null,
-) {
-    fun toJsonString(): String {
-        return kotlinx.serialization.json.Json.encodeToString(serializer(), this)
-    }
 }

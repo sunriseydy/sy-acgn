@@ -23,7 +23,38 @@ import io.ktor.server.routing.*
  */
 fun Application.configureRouting() {
     install(StatusPages) {
-        exception<Throwable> { call, cause -> handleError(call, cause) }
+        // 业务异常返回 200 + Result(failed=true)，方便客户端统一处理
+        exception<MessageException> { call, cause ->
+            call.application.log.warn("业务异常: ${cause.message}")
+            call.respond(
+                HttpStatusCode.OK,
+                Result<Unit>(failed = true, message = cause.message ?: cause.toString())
+            )
+        }
+        // 参数异常返回 400
+        exception<IllegalArgumentException> { call, cause ->
+            call.application.log.warn("参数异常: ${cause.message}")
+            call.respond(
+                HttpStatusCode.BadRequest,
+                Result<Unit>(failed = true, message = cause.message ?: "请求参数错误")
+            )
+        }
+        // 未找到资源返回 404
+        exception<NoSuchElementException> { call, cause ->
+            call.application.log.warn("资源未找到: ${cause.message}")
+            call.respond(
+                HttpStatusCode.NotFound,
+                Result<Unit>(failed = true, message = cause.message ?: "资源未找到")
+            )
+        }
+        // 其他未知异常返回 500
+        exception<Throwable> { call, cause ->
+            call.application.log.error("服务器内部错误", cause)
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                Result<Unit>(failed = true, message = cause.message ?: cause.toString())
+            )
+        }
     }
     install(Resources)
     routing {
@@ -37,18 +68,4 @@ fun Application.configureRouting() {
         configureCommonModuleRoutes()
         configureAnimeModuleRoutes()
     }
-}
-
-/**
- * 全局异常处理器
- *
- * 捕获所有未处理的异常，记录错误日志，并将其包装为 Result<Unit> 对象返回给客户端。
- * 确保客户端始终收到格式统一的 JSON 响应，即使在服务器出错时也是如此。
- */
-suspend fun handleError(call: ApplicationCall, cause: Throwable) {
-    call.application.log.error("exception", cause)
-    call.respond(
-        HttpStatusCode.OK,
-        Result<Unit>(failed = true, message = cause.message ?: cause.toString())
-    )
 }

@@ -8,6 +8,13 @@ import io.ktor.server.request.*
 import org.slf4j.event.Level
 import java.util.*
 
+/**
+ * 配置日志监控
+ *
+ * 安装 CallLogging 和 CallId 插件：
+ * - CallLogging：记录请求日志，MDC 中包含 call-id
+ * - CallId：从 X-Request-Id 获取或自动生成请求 ID，并回写到响应头
+ */
 fun Application.configureMonitoring() {
     install(CallLogging) {
         level = Level.INFO
