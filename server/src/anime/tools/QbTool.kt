@@ -484,7 +484,7 @@ class QbTool {
 
         // 5. 过滤：根据 isRead
         val filteredByRead = if (isRead != null) {
-            filteredByRssId.filter { it.second.isRead == isRead }
+            filteredByRssId.filter { (it.second.isRead ?: false) == isRead }
         } else {
             filteredByRssId
         }

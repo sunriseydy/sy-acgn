@@ -54,7 +54,7 @@ Accept: application/json
 
 ### get rss items
 # @no-log
-GET http://localhost:9390/api/anime/rss/item?rssId=5&page=2&size=2
+GET http://localhost:9390/api/anime/qb/rss/articles?page=1&size=5&isRead=false
 Accept: application/json
 
 ### mark rss item as read
