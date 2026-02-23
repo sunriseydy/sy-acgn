@@ -21,8 +21,9 @@ message:
   error:
     COMMON:
       TEST: "通用模块测试异常"
-
-config:
+  ERROR:
+    ANIME:
+      QB_REQUEST_FAILED: "qBitTorrent请求失败"
   COMMON:
     AppName:
       meaning: "应用名称"
