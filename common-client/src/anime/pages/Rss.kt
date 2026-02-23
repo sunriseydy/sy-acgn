@@ -311,7 +311,15 @@ fun RssItemList(
         }
         LazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssItemListState) {
             items(rssItemList.value, key = { it.id }) { rssItem ->
-                Card(modifier = Modifier.fillMaxWidth()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (rssItem.isRead)
+                            MaterialTheme.colorScheme.surfaceVariant
+                        else
+                            MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -334,8 +342,10 @@ fun RssItemList(
                             ) {
                                 Icon(Icons.Default.Download, contentDescription = null)
                             }
-                            IconButton(onClick = { rssService.markRssItemReadByIdOrRssId(rssItem.id, rssItem.rssId) }) {
-                                Icon(Icons.Default.Check, contentDescription = null)
+                            if (!rssItem.isRead) {
+                                IconButton(onClick = { rssService.markRssItemReadByIdOrRssId(rssItem.id, rssItem.rssId) }) {
+                                    Icon(Icons.Default.Check, contentDescription = null)
+                                }
                             }
                         }
                     }
