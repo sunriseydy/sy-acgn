@@ -7,4 +7,6 @@
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <logger name="dev.sunriseydy.acgn" level="DEBUG"/>
 </configuration>
