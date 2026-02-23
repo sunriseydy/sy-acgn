@@ -11,12 +11,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.sunriseydy.acgn.client.res.Res
 import dev.sunriseydy.acgn.client.res.cancel
 import dev.sunriseydy.acgn.client.res.submit
-import dev.sunriseydy.acgn.client.res.Res
 import org.jetbrains.compose.resources.stringResource
 
 /**
+ * 表单卡片组件
+ *
+ * 可复用的表单布局组件，包含内容区域、错误提示和操作按钮。
+ *
  * @author SunriseYDY
  * @date 2025-02-15 20:56
  */
@@ -25,7 +29,7 @@ fun FormCard(
     errorMessage: MutableState<String?> = mutableStateOf(null),
     onDismissRequest: (() -> Unit)?,
     onConfirmation: () -> Unit,
-    confirmationText: String = stringResource(Res .string.submit),
+    confirmationText: String = stringResource(Res.string.submit),
     content: @Composable () -> Unit,
 ) {
     Card {

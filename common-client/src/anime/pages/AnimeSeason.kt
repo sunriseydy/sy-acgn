@@ -119,11 +119,8 @@ fun AnimeSeason(appState: AppState) {
                                 )
                             }
                             Text(
-                                text = if (season.description.isNullOrBlank()) {
-                                    season.anime?.description ?: ""
-                                } else {
-                                    season.description!!
-                                },
+                                text = season.description?.takeUnless { it.isBlank() }
+                                    ?: season.anime?.description.orEmpty(),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             if (buttonGroupVisible.value) {

@@ -44,6 +44,18 @@ interface Paging<T> {
     }
 }
 
+/**
+ * 创建分页器实例
+ *
+ * @param page 当前页码状态
+ * @param size 每页大小
+ * @param data 数据列表状态
+ * @param loading 加载中状态
+ * @param finished 是否已加载完毕状态
+ * @param onError 加载出错时的回调
+ * @param getData 获取数据的函数
+ * @return Paging 实例
+ */
 fun <T> getPager(
     page: MutableState<Long>,
     size: Int,
@@ -53,18 +65,13 @@ fun <T> getPager(
     onError: (Exception) -> Unit,
     getData: (Paging<T>) -> List<T>,
 ): Paging<T> = object : Paging<T> {
-    override val page: MutableState<Long>
-        get() = page
-    override val size: Int
-        get() = size
-    override val data: MutableState<List<T>>
-        get() = data
-    override val loading: MutableState<Boolean>
-        get() = loading
-    override val finished: MutableState<Boolean>
-        get() = finished
+    override val page = page
+    override val size = size
+    override val data = data
+    override val loading = loading
+    override val finished = finished
 
     override fun onError(e: Exception) = onError(e)
 
-    override fun getData(paging: Paging<T>): List<T> = getData(this)
+    override fun getData(paging: Paging<T>): List<T> = getData(paging)
 }

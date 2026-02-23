@@ -45,7 +45,7 @@ fun ServerConfig(onClick: (Language) -> Pair<Boolean, String>, success: Boolean,
             OutlinedTextField(
                 value = serverAddress,
                 onValueChange = { serverAddress = it },
-                label = { stringResource(Res.string.server_address) },
+                label = { Text(stringResource(Res.string.server_address)) },
             )
             Spacer(modifier = Modifier.height(16.dp))
             if (showError) {

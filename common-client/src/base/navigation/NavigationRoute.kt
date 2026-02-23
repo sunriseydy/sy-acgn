@@ -8,7 +8,6 @@ import dev.sunriseydy.acgn.base.interfaces.EnumKey
  * 导航路由接口
  *
  * 定义所有导航路由必须实现的属性。目前主要包含可选的图标。
- * TODO: 考虑更好的模块化方案
  *
  * @author SunriseYDY
  * @date 2024-07-27 22:11

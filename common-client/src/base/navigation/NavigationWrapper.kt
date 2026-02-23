@@ -74,7 +74,6 @@ fun AcgnNavigationWrapper() {
     }
     val selectedDestination = navigationAction.topLevelKey
 
-    // ydy todo
     val snackbarHostState = remember { SnackbarHostState() }
 
     val appState = AppState(
@@ -138,9 +137,9 @@ fun AcgnBottomNavigationBar(
                 selected = selectedDestination == destination.route,
                 onClick = { navigateToTopLevelDestination(destination.route) },
                 icon = {
-                    destination.route.icon?.apply {
+                    destination.route.icon?.let {
                         Icon(
-                            imageVector = destination.route.icon!!,
+                            imageVector = it,
                             contentDescription = destination.meaning
                         )
                     }
@@ -218,9 +217,9 @@ fun NavigationDrawerItems(
                 )
             },
             icon = {
-                it.route.icon?.apply {
+                it.route.icon?.let { icon ->
                     Icon(
-                        imageVector = it.route.icon!!,
+                        imageVector = icon,
                         contentDescription = it.meaning
                     )
                 }

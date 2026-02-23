@@ -8,6 +8,13 @@ import dev.sunriseydy.acgn.client.base.api.onSuccess
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 
 /**
+ * 动漫季度服务层
+ *
+ * 封装动漫季度相关的业务逻辑，协调 API 调用和 UI 状态更新。
+ * 包括数据加载、TMDB/Bangumi 搜索、季度保存/删除和文件处理。
+ *
+ * @param appState 应用全局状态
+ *
  * @author SunriseYDY
  * @date 2025-02-15 11:39
  */

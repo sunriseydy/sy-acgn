@@ -18,6 +18,7 @@
     <string name="delete_source">Delete source</string>
     <string name="delete_target">Delete target</string>
     <string name="delete">Delete</string>
+    <string name="search">Search</string>
 
     <!-- RssString -->
     <string name="rss_title">RSS</string>
@@ -36,4 +37,5 @@
     <string name="season_field_season_name">Season name</string>
     <string name="search_tmdb">TMDB</string>
     <string name="search_local">Local</string>
+    <string name="search_bangumi">Bangumi</string>
 </resources>

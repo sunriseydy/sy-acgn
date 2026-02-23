@@ -6,10 +6,18 @@ import dev.sunriseydy.acgn.anime.dto.RssItem
 import dev.sunriseydy.acgn.anime.dto.TorrentAdd
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccess
-import dev.sunriseydy.acgn.client.base.interfaces.Paging
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
+import dev.sunriseydy.acgn.client.base.interfaces.Paging
 
 /**
+ * RSS 服务层
+ *
+ * 封装 RSS 相关的业务逻辑，协调 API 调用和 UI 状态更新。
+ *
+ * @param appState 应用全局状态
+ * @param rssList RSS 订阅列表状态
+ * @param rssItemPager RSS 条目分页器
+ *
  * @author SunriseYDY
  * @date 2025-02-15 11:36
  */

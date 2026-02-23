@@ -79,7 +79,7 @@ class NavigationAction<T : NavigationRoute>(startKey: T) {
      * 并切换回上一个顶层路由。
      */
     fun removeLast() {
-        val removedKey = topLevelStacks[topLevelKey]?.removeLastOrNull()
+        topLevelStacks[topLevelKey]?.removeLastOrNull()
         // 如果移除的 Key 是顶层 Stack 的最后一个元素（即顶层路由），则移除关联的顶层 Stack
         if (topLevelStacks[topLevelKey]?.isEmpty() == true) {
             topLevelStacks.remove(topLevelKey)

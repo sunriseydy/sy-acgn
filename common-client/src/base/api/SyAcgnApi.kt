@@ -55,7 +55,7 @@ class SyAcgnApi {
 }
 
 /**
- *Result<T> 的扩展函数，用于处理成功的响应（无返回值）。
+ * Result<T> 的扩展函数，用于处理成功的响应（无返回值）。
  *
  * 检查 Result 是否成功，如果成功则执行 onSuccess 回调。
  * 如果失败或发生异常，显示错误信息并执行 onError 回调。
@@ -73,7 +73,7 @@ fun <T> Result<T>.onSuccess(
         this.checkSuccess()
         onSuccess()
     } catch (e: Exception) {
-        val message = e.message ?: "API Error"
+        val message = "API Error: ${e.message ?: "Unknown error"}"
         appState?.showError(message)
         onError(message)
     }
@@ -92,12 +92,12 @@ fun <T> Result<T>.onSuccess(
 fun <T> Result<T>.onSuccessData(
     appState: AppState? = null,
     onSuccess: (T) -> Unit = { },
-    onError: (String) -> Unit = { throw error(it) }
+    onError: (String) -> Unit = { }
 ) {
     try {
         onSuccess(this.checkSuccessAndNotNull())
     } catch (e: Exception) {
-        val message = "API Error: ${e.message ?: ""}"
+        val message = "API Error: ${e.message ?: "Unknown error"}"
         appState?.showError(message)
         onError(message)
     }

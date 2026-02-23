@@ -120,7 +120,7 @@ fun CreateAnimeSeason(
                 scrollState = rememberScrollState(),
                 modifier = Modifier.width(fieldWidth).heightIn(max = fieldWidth)
             ) {
-                state.animeSearchResult.value.map {
+                state.animeSearchResult.value.forEach {
                     DropdownMenuItem(
                         text = { Text(it.name) },
                         onClick = {
@@ -156,7 +156,7 @@ fun CreateAnimeSeason(
                 scrollState = rememberScrollState(),
                 modifier = Modifier.width(fieldWidth).heightIn(max = fieldWidth)
             ) {
-                state.animeSeasonSearchResult.value.map { season ->
+                state.animeSeasonSearchResult.value.forEach { season ->
                     DropdownMenuItem(
                         text = { Text("${season.season} - ${season.name}") },
                         onClick = {

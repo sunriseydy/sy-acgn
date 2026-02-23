@@ -12,8 +12,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+/**
+ * 空页面占位组件
+ *
+ * 显示居中的标题和副标题，用于暂未实现的页面或无数据的场景。
+ *
+ * @param title 主标题
+ * @param subtitle 副标题
+ * @param modifier 修饰符
+ */
 @Composable
 fun EmptyComingSoon(
+    title: String = "Coming Soon",
+    subtitle: String = "",
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -23,17 +34,19 @@ fun EmptyComingSoon(
     ) {
         Text(
             modifier = Modifier.padding(8.dp),
-            text = "标题",
+            text = title,
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary
         )
-        Text(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            text = "副标题",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.outline
-        )
+        if (subtitle.isNotBlank()) {
+            Text(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.outline
+            )
+        }
     }
 }
