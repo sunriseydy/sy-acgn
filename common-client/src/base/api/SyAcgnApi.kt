@@ -10,6 +10,7 @@ import dev.sunriseydy.acgn.client.common.api.CommonApi
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.*
 import io.ktor.client.plugins.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.http.*
 
@@ -28,7 +29,7 @@ class SyAcgnApi {
      * 配置了资源插件、默认请求 URL（从本地配置获取）和 JSON 内容类型。
      */
     private val httpClient by lazy {
-        HttpClientFactory.buildHttpClient {
+        HttpClientFactory.buildHttpClient(logLevel = LogLevel.BODY) {
             install(Resources)
             defaultRequest {
                 url {

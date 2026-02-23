@@ -62,12 +62,9 @@ class QbTool {
         checkNotNull(apiBaseUrl) { "Qb api base url is null" }
     }
 
-    private val httpClient = HttpClientFactory.buildHttpClient {
+    private val httpClient = HttpClientFactory.buildHttpClient(logLevel = LogLevel.BODY) {
         install(HttpCookies)
         expectSuccess = false
-        Logging {
-            level = LogLevel.INFO
-        }
     }
 
     /**
