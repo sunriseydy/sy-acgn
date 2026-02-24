@@ -35,7 +35,7 @@ fun Application.configureRouting() {
         exception<IllegalArgumentException> { call, cause ->
             call.application.log.warn("参数异常: ${cause.message}")
             call.respond(
-                HttpStatusCode.BadRequest,
+                HttpStatusCode.OK,
                 Result<Unit>(failed = true, message = cause.message ?: "请求参数错误")
             )
         }
@@ -43,7 +43,7 @@ fun Application.configureRouting() {
         exception<NoSuchElementException> { call, cause ->
             call.application.log.warn("资源未找到: ${cause.message}")
             call.respond(
-                HttpStatusCode.NotFound,
+                HttpStatusCode.OK,
                 Result<Unit>(failed = true, message = cause.message ?: "资源未找到")
             )
         }
@@ -51,7 +51,7 @@ fun Application.configureRouting() {
         exception<Throwable> { call, cause ->
             call.application.log.error("服务器内部错误", cause)
             call.respond(
-                HttpStatusCode.InternalServerError,
+                HttpStatusCode.OK,
                 Result<Unit>(failed = true, message = cause.message ?: cause.toString())
             )
         }

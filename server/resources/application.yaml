@@ -4,7 +4,6 @@ ktor:
       - dev.sunriseydy.acgn.server.base.plugins.ApplicationKt.module
   deployment:
     port: 9390
-    host: 127.0.0.1
   development: true
 
 config:
