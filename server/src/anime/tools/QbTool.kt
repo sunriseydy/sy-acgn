@@ -395,6 +395,8 @@ class QbTool {
                 }
             )
         }
+        // 标记已读后清除缓存，确保下次查询返回最新的已读状态
+        invalidateRssCache()
     }
 
     /**
