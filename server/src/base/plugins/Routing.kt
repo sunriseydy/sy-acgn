@@ -10,6 +10,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -45,6 +46,13 @@ fun Application.configureRouting() {
             call.respond(
                 HttpStatusCode.OK,
                 Result<Unit>(failed = true, message = cause.message ?: "资源未找到")
+            )
+        }
+        status(HttpStatusCode.NotFound) { call, _ ->
+            call.application.log.warn("资源未找到: ${call.request.uri}")
+            call.respond(
+                HttpStatusCode.OK,
+                Result<Unit>(failed = true, message = "资源未找到: ${call.request.uri}")
             )
         }
         // 其他未知异常返回 500
