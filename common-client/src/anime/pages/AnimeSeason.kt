@@ -94,7 +94,7 @@ fun AnimeSeason(appState: AppState) {
             }
         }
         LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(4),
+            columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
             modifier = Modifier.fillMaxSize(),
             state = state,
             contentPadding = PaddingValues(8.dp),
