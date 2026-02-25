@@ -1,6 +1,8 @@
 package dev.sunriseydy.acgn.client.base.interfaces
 
 import androidx.compose.runtime.MutableState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * @author SunriseYDY
@@ -12,7 +14,8 @@ interface Paging<T> {
     val data: MutableState<List<T>>
     val loading: MutableState<Boolean>
     val finished: MutableState<Boolean>
-    fun getData(paging: Paging<T>): List<T>
+    val scope: CoroutineScope
+    suspend fun getData(paging: Paging<T>): List<T>
 
     fun onError(e: Exception)
 
@@ -21,15 +24,17 @@ interface Paging<T> {
         if (finished.value) return
         loading.value = true
         if (init) page.value = 1L
-        try {
-            getData(this).also {
-                if (it.isEmpty()) finished.value = true
-                if (init) data.value = it else data.value += it
+        scope.launch {
+            try {
+                getData(this@Paging).also {
+                    if (it.isEmpty()) finished.value = true
+                    if (init) data.value = it else data.value += it
+                }
+            } catch (e: Exception) {
+                onError(e)
+            } finally {
+                loading.value = false
             }
-        } catch (e: Exception) {
-            onError(e)
-        } finally {
-            loading.value = false
         }
     }
 
@@ -52,6 +57,7 @@ interface Paging<T> {
  * @param data 数据列表状态
  * @param loading 加载中状态
  * @param finished 是否已加载完毕状态
+ * @param scope 协程作用域
  * @param onError 加载出错时的回调
  * @param getData 获取数据的函数
  * @return Paging 实例
@@ -62,16 +68,18 @@ fun <T> getPager(
     data: MutableState<List<T>>,
     loading: MutableState<Boolean>,
     finished: MutableState<Boolean>,
+    scope: CoroutineScope,
     onError: (Exception) -> Unit,
-    getData: (Paging<T>) -> List<T>,
+    getData: suspend (Paging<T>) -> List<T>,
 ): Paging<T> = object : Paging<T> {
     override val page = page
     override val size = size
     override val data = data
     override val loading = loading
     override val finished = finished
+    override val scope = scope
 
     override fun onError(e: Exception) = onError(e)
 
-    override fun getData(paging: Paging<T>): List<T> = getData(paging)
+    override suspend fun getData(paging: Paging<T>): List<T> = getData(paging)
 }

@@ -52,6 +52,7 @@ fun Rss(appState: AppState) {
         data = remember { mutableStateOf(listOf()) },
         loading = remember { mutableStateOf(false) },
         finished = remember { mutableStateOf(false) },
+        scope = appState.scope,
         onError = { e ->
             appState.showError(e.message ?: apiError)
         },
@@ -352,7 +353,7 @@ fun RssItemList(
                     HorizontalDivider(thickness = 4.dp)
                     Column(modifier = Modifier.padding(8.dp)) {
                         Text(
-                            text = rssItem.publishedAt.toLocalDateTime().toString(),
+                            text = rssItem.publishedAt.toString(),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary
                         )

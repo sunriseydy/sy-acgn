@@ -8,6 +8,7 @@ import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccess
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.interfaces.Paging
+import kotlinx.coroutines.launch
 
 /**
  * RSS 服务层
@@ -27,10 +28,12 @@ class RssService(
     private val rssItemPager: Paging<RssItem>,
 ) {
     fun loadRss() {
-        // 从 qBittorrent 加载 RSS 订阅列表（后端已转换为 Rss DTO）
-        appState.api.rss.getQbRssList(withData = true).onSuccessData(appState, onSuccess = { data ->
-            rssList.value = data
-        })
+        appState.scope.launch {
+            // 从 qBittorrent 加载 RSS 订阅列表（后端已转换为 Rss DTO）
+            appState.api.rss.getQbRssList(withData = true).onSuccessData(appState, onSuccess = { data ->
+                rssList.value = data
+            })
+        }
     }
 
     fun createRss(
@@ -38,9 +41,11 @@ class RssService(
         onSuccess: () -> Unit = { },
         onError: (String) -> Unit = { },
     ) {
-        // 使用 qBittorrent API 添加 RSS 订阅
-        appState.api.rss.addQbRssFeed(link)
-            .onSuccess(null, onSuccess = onSuccess, onError = onError)
+        appState.scope.launch {
+            // 使用 qBittorrent API 添加 RSS 订阅
+            appState.api.rss.addQbRssFeed(link)
+                .onSuccess(null, onSuccess = onSuccess, onError = onError)
+        }
     }
 
     fun deleteRss(id: ULong, onSuccess: () -> Unit) {
@@ -48,7 +53,9 @@ class RssService(
         // id 在这里是 RSS 路径的哈希值，需要从 rssList 中找到对应的路径
         val rss = rssList.value.find { it.id == id }
         if (rss != null) {
-            appState.api.rss.removeQbRssItem(rss.title).onSuccess(appState, onSuccess)
+            appState.scope.launch {
+                appState.api.rss.removeQbRssItem(rss.title).onSuccess(appState, onSuccess)
+            }
         }
     }
 
@@ -61,8 +68,10 @@ class RssService(
         // 或者使用 moveRssItem 重命名
         val oldTitle = rssList.value.find { it.id == rss.id }?.title
         if (oldTitle != null && oldTitle != rss.title) {
-            appState.api.rss.moveQbRssItem(oldTitle, rss.title)
-                .onSuccess(appState, onSuccess, onError)
+            appState.scope.launch {
+                appState.api.rss.moveQbRssItem(oldTitle, rss.title)
+                    .onSuccess(appState, onSuccess, onError)
+            }
         }
     }
 
@@ -83,20 +92,26 @@ class RssService(
             }
             
             if (rss != null) {
-                appState.api.rss.markQbRssAsRead(rss.title, id).onSuccess(appState, onSuccess = { loadData() })
+                appState.scope.launch {
+                    appState.api.rss.markQbRssAsRead(rss.title, id).onSuccess(appState, onSuccess = { loadData() })
+                }
             }
         } else if (rssId != null) {
             // 标记整个订阅源为已读
             val rss = rssList.value.find { it.id == rssId }
             if (rss != null) {
-                appState.api.rss.markQbRssAsRead(rss.title).onSuccess(appState, onSuccess = { loadData() })
+                appState.scope.launch {
+                    appState.api.rss.markQbRssAsRead(rss.title).onSuccess(appState, onSuccess = { loadData() })
+                }
             }
         } else {
             // 标记所有为已读 - qBittorrent 需要逐个标记
-            rssList.value.forEach { rss ->
-                appState.api.rss.markQbRssAsRead(rss.title).onSuccess(appState)
+            appState.scope.launch {
+                rssList.value.forEach { rss ->
+                    appState.api.rss.markQbRssAsRead(rss.title).onSuccess(appState)
+                }
+                loadData()
             }
-            loadData()
         }
     }
 
@@ -114,12 +129,16 @@ class RssService(
     }
 
     fun download(link: String, onSuccess: () -> Unit) {
-        appState.api.rss.addQbTorrent(TorrentAdd(url = link)).onSuccess(appState, onSuccess)
+        appState.scope.launch {
+            appState.api.rss.addQbTorrent(TorrentAdd(url = link)).onSuccess(appState, onSuccess)
+        }
     }
 
     fun refreshRss(path: String? = null) {
-        appState.api.rss.refreshQbRssItem(path).onSuccess(appState) {
-            loadData()
+        appState.scope.launch {
+            appState.api.rss.refreshQbRssItem(path).onSuccess(appState) {
+                loadData()
+            }
         }
     }
 }

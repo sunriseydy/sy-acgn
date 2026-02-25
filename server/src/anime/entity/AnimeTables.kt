@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.server.anime.db
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import kotlin.time.Instant as KtInstant
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.ULongIdTable
 import org.jetbrains.exposed.v1.dao.ULongEntity
@@ -48,8 +49,8 @@ class AnimeDAO(id: EntityID<ULong>) : ULongEntity(id) {
         numberOfEpisodes = numberOfEpisodes,
         tmdbId = tmdbId,
         bgmId = bgmId,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        createdAt = createdAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
+        updatedAt = updatedAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
     )
 }
 
@@ -100,8 +101,8 @@ class AnimeSeasonDAO(id: EntityID<ULong>) : ULongEntity(id) {
         airDate = airDate,
         tmdbId = tmdbId,
         bgmId = bgmId,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        createdAt = createdAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
+        updatedAt = updatedAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
     )
 }
 
@@ -146,8 +147,8 @@ class AnimeEpisodeDAO(id: EntityID<ULong>) : ULongEntity(id) {
         airDate = airDate,
         tmdbId = tmdbId,
         bgmId = bgmId,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        createdAt = createdAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
+        updatedAt = updatedAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
     )
 }
 

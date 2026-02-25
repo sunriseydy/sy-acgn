@@ -15,10 +15,12 @@ fun Application.configureLocalization() {
 }
 
 fun LocalizationTool.loadLocalizations(language: Language = DEFAULT_LANGUAGE) {
-    currentLanguage = language
     val yamlConfig =
-        YamlConfig("localization/${currentLanguage.languageCode}-${currentLanguage.regionalCode}.yaml") ?: return
-    yamlConfig.keys().forEach {
-        putLocalization(it, yamlConfig.property(it).getString())
+        YamlConfig("localization/${language.languageCode}-${language.regionalCode}.yaml") ?: return
+    val loaded = buildMap {
+        yamlConfig.keys().forEach {
+            put(it, yamlConfig.property(it).getString())
+        }
     }
+    replaceAll(language, loaded)
 }

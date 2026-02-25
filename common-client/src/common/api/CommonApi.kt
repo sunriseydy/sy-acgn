@@ -12,7 +12,6 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.runBlocking
 
 /**
  * @author SunriseYDY
@@ -20,33 +19,33 @@ import kotlinx.coroutines.runBlocking
  */
 class CommonApi internal constructor(private val httpClient: HttpClient) {
 
-    fun getAppInfo(language: Language? = null): Result<AppInfo> = runBlocking {
+    suspend fun getAppInfo(language: Language? = null): Result<AppInfo> =
         httpClient.get(CommonModuleResource.Info(language = language)).body()
-    }
+    
 
-    fun getLocalizations(): Result<MutableMap<String, String>> = runBlocking {
+    suspend fun getLocalizations(): Result<MutableMap<String, String>> =
         httpClient.get(CommonModuleResource.Localization()).body()
-    }
+    
 
-    fun getAllAppConfigFromDB(): Result<List<AppConfig>> = runBlocking {
+    suspend fun getAllAppConfigFromDB(): Result<List<AppConfig>> =
         httpClient.get(CommonModuleResource.Config()).body()
-    }
+    
 
-    fun getAppConfigs(): Result<MutableMap<String, Pair<AppConfig?, String?>>> = runBlocking {
+    suspend fun getAppConfigs(): Result<MutableMap<String, Pair<AppConfig?, String?>>> =
         httpClient.get(CommonModuleResource.Config.Map()).body()
-    }
+    
 
-    fun saveAppConfigs(configs: List<AppConfig>): Result<List<AppConfig>> = runBlocking {
+    suspend fun saveAppConfigs(configs: List<AppConfig>): Result<List<AppConfig>> =
         httpClient.post(CommonModuleResource.Config()) {
             setBody(configs)
         }.body()
-    }
+    
 
-    fun getAdditions(
+    suspend fun getAdditions(
         associatedType: AssociatedTypeInterface,
         associatedId: ULong,
         additionalType: AdditionTypeInterface?
-    ): Result<List<AdditionalInfo>> = runBlocking {
+    ): Result<List<AdditionalInfo>> =
         httpClient.get(
             CommonModuleResource.Addition(
                 associatedType = associatedType.key,
@@ -54,15 +53,14 @@ class CommonApi internal constructor(private val httpClient: HttpClient) {
                 additionalType = additionalType?.key
             )
         ).body()
-    }
 
-    fun saveAddition(addition: AdditionalInfo): Result<String> = runBlocking {
+    suspend fun saveAddition(addition: AdditionalInfo): Result<String> =
         httpClient.post(CommonModuleResource.Addition()) {
             setBody(addition)
         }.body()
-    }
+    
 
-    fun deleteAddition(id: String): Result<Unit> = runBlocking {
+    suspend fun deleteAddition(id: String): Result<Unit> =
         httpClient.delete(CommonModuleResource.Addition(id = id)).body()
-    }
+    
 }

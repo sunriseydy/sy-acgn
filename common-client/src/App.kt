@@ -3,10 +3,7 @@ package dev.sunriseydy.acgn.client
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import dev.sunriseydy.acgn.base.enums.Language
 import dev.sunriseydy.acgn.client.base.api.SyAcgnApi
 import dev.sunriseydy.acgn.client.base.components.ServerConfig
@@ -31,13 +28,20 @@ fun App() {
     MaterialTheme {
         Surface {
             val showServerConfig = remember { mutableStateOf(true) }
+            val checkResult = remember { mutableStateOf(Pair(false, "")) }
+
+            LaunchedEffect(Unit) {
+                checkResult.value = checkServer(showServerConfig)
+            }
+
             if (showServerConfig.value) {
-                val (success, message) = checkServer(showServerConfig)
-                if (showServerConfig.value) {
-                    ServerConfig(onClick = { checkServer(showServerConfig, it) }, success, message)
-                } else {
-                    AcgnNavigationWrapper()
-                }
+                ServerConfig(
+                    onClick = { language ->
+                        checkServer(showServerConfig, language)
+                    },
+                    checkResult.value.first,
+                    checkResult.value.second
+                )
             } else {
                 AcgnNavigationWrapper()
             }
@@ -55,7 +59,7 @@ fun App() {
  * @param language 可选的语言参数
  * @return Pair(是否成功, 消息)
  */
-private fun checkServer(showServerConfig: MutableState<Boolean>, language: Language? = null) =
+private suspend fun checkServer(showServerConfig: MutableState<Boolean>, language: Language? = null) =
     try {
         val (_, configs, localizations) = SyAcgnApi().common.getAppInfo(language).checkSuccessAndNotNull()
         AppConfigTool.putAll(configs)

@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.server.common.db
 
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig
+import kotlin.time.Instant as KtInstant
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.ULongIdTable
 import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
@@ -46,8 +47,8 @@ class AdditionalInfoDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         associatedType = associatedType,
         additionalType = additionalType,
         additionalValue = additionalValue,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        createdAt = createdAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
+        updatedAt = updatedAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
     )
 }
 
@@ -70,8 +71,8 @@ class AppConfigDAO(id: EntityID<ULong>) : ULongEntity(id) {
         id = id.value,
         configKey = configKey,
         configValue = configValue,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        createdAt = createdAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
+        updatedAt = updatedAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
     )
 }
 

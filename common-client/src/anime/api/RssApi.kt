@@ -9,7 +9,6 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
@@ -18,24 +17,24 @@ import kotlinx.serialization.json.put
  * @date 2024-07-23 11:33
  */
 class RssApi internal constructor(private val httpClient: HttpClient) {
-    fun addQbTorrent(torrentAdd: TorrentAdd): Result<String> = runBlocking {
+    suspend fun addQbTorrent(torrentAdd: TorrentAdd): Result<String> =
         httpClient.post(AnimeModuleResource.Qb.Torrent()) {
             setBody(torrentAdd)
         }.body()
-    }
+    
 
     // qBittorrent RSS API
 
-    fun getQbRssList(withData: Boolean = false): Result<List<Rss>> = runBlocking {
+    suspend fun getQbRssList(withData: Boolean = false): Result<List<Rss>> =
         httpClient.get(AnimeModuleResource.Qb.Rss.List(withData = withData)).body()
-    }
+    
 
-    fun getQbRssArticles(
+    suspend fun getQbRssArticles(
         rssId: ULong?,
         isRead: Boolean?,
         page: Long,
         size: Int,
-    ): Result<List<RssItem>> = runBlocking {
+    ): Result<List<RssItem>> =
         httpClient.get(
             AnimeModuleResource.Qb.Rss.Articles(
                 rssId = rssId,
@@ -44,59 +43,58 @@ class RssApi internal constructor(private val httpClient: HttpClient) {
                 size = size
             )
         ).body()
-    }
 
-    fun addQbRssFolder(path: String): Result<Unit> = runBlocking {
+    suspend fun addQbRssFolder(path: String): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.Folder()) {
             setBody(buildJsonObject {
                 put("path", path)
             })
         }.body()
-    }
+    
 
-    fun addQbRssFeed(url: String, path: String? = null): Result<Unit> = runBlocking {
+    suspend fun addQbRssFeed(url: String, path: String? = null): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.Feed()) {
             setBody(buildJsonObject {
                 put("url", url)
                 path?.let { put("path", it) }
             })
         }.body()
-    }
+    
 
-    fun getQbRssItems(withData: Boolean = false): Result<Map<String, Any>> = runBlocking {
+    suspend fun getQbRssItems(withData: Boolean = false): Result<Map<String, Any>> =
         httpClient.get(AnimeModuleResource.Qb.Rss.Item(withData = withData)).body()
-    }
+    
 
-    fun removeQbRssItem(path: String): Result<Unit> = runBlocking {
+    suspend fun removeQbRssItem(path: String): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.Item.Remove()) {
             setBody(buildJsonObject {
                 put("path", path)
             })
         }.body()
-    }
+    
 
-    fun moveQbRssItem(itemPath: String, destPath: String): Result<Unit> = runBlocking {
+    suspend fun moveQbRssItem(itemPath: String, destPath: String): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.Item.Move()) {
             setBody(buildJsonObject {
                 put("itemPath", itemPath)
                 put("destPath", destPath)
             })
         }.body()
-    }
+    
 
-    fun refreshQbRssItem(itemPath: String? = null): Result<Unit> = runBlocking {
+    suspend fun refreshQbRssItem(itemPath: String? = null): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.Item.Refresh()) {
             setBody(buildJsonObject {
                 itemPath?.let { put("itemPath", it) }
             })
         }.body()
-    }
+    
 
-    fun getQbRssRules(): Result<Map<String, Any>> = runBlocking {
+    suspend fun getQbRssRules(): Result<Map<String, Any>> =
         httpClient.get(AnimeModuleResource.Qb.Rss.Rule()).body()
-    }
+    
 
-    fun setQbRssRule(ruleName: String, ruleDef: Map<String, Any>): Result<Unit> = runBlocking {
+    suspend fun setQbRssRule(ruleName: String, ruleDef: Map<String, Any>): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.Rule()) {
             setBody(buildJsonObject {
                 put("ruleName", ruleName)
@@ -108,35 +106,35 @@ class RssApi internal constructor(private val httpClient: HttpClient) {
                 ))
             })
         }.body()
-    }
+    
 
-    fun renameQbRssRule(ruleName: String, newRuleName: String): Result<Unit> = runBlocking {
+    suspend fun renameQbRssRule(ruleName: String, newRuleName: String): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.Rule.Rename()) {
             setBody(buildJsonObject {
                 put("ruleName", ruleName)
                 put("newRuleName", newRuleName)
             })
         }.body()
-    }
+    
 
-    fun removeQbRssRule(ruleName: String): Result<Unit> = runBlocking {
+    suspend fun removeQbRssRule(ruleName: String): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.Rule.Remove()) {
             setBody(buildJsonObject {
                 put("ruleName", ruleName)
             })
         }.body()
-    }
+    
 
-    fun getQbRssMatchingArticles(ruleName: String): Result<Map<String, List<String>>> = runBlocking {
+    suspend fun getQbRssMatchingArticles(ruleName: String): Result<Map<String, List<String>>> =
         httpClient.get(AnimeModuleResource.Qb.Rss.Rule.MatchingArticles(ruleName = ruleName)).body()
-    }
+    
 
-    fun markQbRssAsRead(itemPath: String, articleId: String? = null): Result<Unit> = runBlocking {
+    suspend fun markQbRssAsRead(itemPath: String, articleId: String? = null): Result<Unit> =
         httpClient.post(AnimeModuleResource.Qb.Rss.MarkAsRead()) {
             setBody(buildJsonObject {
                 put("itemPath", itemPath)
                 articleId?.let { put("articleId", it) }
             })
         }.body()
-    }
+    
 }

@@ -14,6 +14,7 @@ import dev.sunriseydy.acgn.client.res.choose_language
 import dev.sunriseydy.acgn.client.res.server_address
 import dev.sunriseydy.acgn.client.res.submit
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -24,11 +25,12 @@ import org.jetbrains.compose.resources.stringResource
 private val logger = KotlinLogging.logger { }
 
 @Composable
-fun ServerConfig(onClick: (Language) -> Pair<Boolean, String>, success: Boolean, errorMessage: String) {
+fun ServerConfig(onClick: suspend (Language) -> Pair<Boolean, String>, success: Boolean, errorMessage: String) {
     var selectedLanguage by remember { mutableStateOf(Language.SIMPLIFIED_CHINESE) }
     var serverAddress by remember { mutableStateOf(getLocalServerConfigOrNull() ?: "") }
     var showError by remember { mutableStateOf(!success) }
     var errorMessage by remember { mutableStateOf(errorMessage) }
+    val scope = rememberCoroutineScope()
 
     Row(
         modifier = Modifier.fillMaxSize(),
@@ -55,10 +57,12 @@ fun ServerConfig(onClick: (Language) -> Pair<Boolean, String>, success: Boolean,
             Button(
                 onClick = {
                     setLocalServerConfig(serverAddress)
-                    val (success, message) = onClick(selectedLanguage)
-                    if (!success) {
-                        showError = true
-                        errorMessage = message
+                    scope.launch {
+                        val (success, message) = onClick(selectedLanguage)
+                        if (!success) {
+                            showError = true
+                            errorMessage = message
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth()

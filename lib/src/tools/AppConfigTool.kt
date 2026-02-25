@@ -2,8 +2,6 @@ package dev.sunriseydy.acgn.tools
 
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.util.concurrent.ConcurrentHashMap
-
 private val logger = KotlinLogging.logger { }
 
 /**
@@ -14,15 +12,15 @@ private val logger = KotlinLogging.logger { }
  * 2. 文件配置 (File Config) - 优先级低
  *
  * 获取配置时，优先返回数据库中的值，如果为空，则返回文件配置中的值。
- * 使用 [ConcurrentHashMap] 保证线程安全。
  *
  * @author SunriseYDY
  * @date 2024-07-12 16:47
  */
 object AppConfigTool {
+    private val lock = PlatformLock()
 
-    /** 存储配置的线程安全 Map，Key 为配置键，Value 为 Pair(数据库值, 文件值) */
-    private val appConfigs = ConcurrentHashMap<String, Pair<AppConfig?, String?>>()
+    /** 存储配置快照，Key 为配置键，Value 为 Pair(数据库值, 文件值) */
+    private var appConfigs: Map<String, Pair<AppConfig?, String?>> = emptyMap()
 
     /**
      * 获取配置字符串值
@@ -33,16 +31,18 @@ object AppConfigTool {
      * @return 配置值字符串，如果不存在则返回 null
      */
     fun getAppConfigStringValue(key: String): String? {
-        logger.info { "获取配置值: key=$key" }
-        return appConfigs[key]?.let { (dbConfig, fileValue) ->
-            dbConfig?.configValue ?: fileValue
+        return lock.withLock {
+            logger.info { "获取配置值: key=$key" }
+            appConfigs[key]?.let { (dbConfig, fileValue) ->
+                dbConfig?.configValue ?: fileValue
+            }
         }
     }
 
     /**
      * 获取所有配置的只读视图
      */
-    fun getAppConfigs(): Map<String, Pair<AppConfig?, String?>> = appConfigs
+    fun getAppConfigs(): Map<String, Pair<AppConfig?, String?>> = lock.withLock { appConfigs.toMap() }
 
     /**
      * 存储来自文件的配置
@@ -53,8 +53,10 @@ object AppConfigTool {
      * @param value 文件配置值
      */
     fun putAppConfigFromFile(key: String, value: String) {
-        appConfigs.merge(key, Pair(null, value)) { existing, _ ->
-            Pair(existing.first, value)
+        lock.withLock {
+            val current = appConfigs[key]
+            val newPair = if (current != null) Pair(current.first, value) else Pair(null, value)
+            appConfigs = appConfigs + (key to newPair)
         }
     }
 
@@ -67,15 +69,21 @@ object AppConfigTool {
      * @param value 数据库配置对象
      */
     fun putAppConfigFromDB(key: String, value: AppConfig) {
-        appConfigs.merge(key, Pair(value, null)) { existing, _ ->
-            Pair(value, existing.second)
+        lock.withLock {
+            val current = appConfigs[key]
+            val newPair = if (current != null) Pair(value, current.second) else Pair(value, null)
+            appConfigs = appConfigs + (key to newPair)
         }
     }
 
     /**
      * 批量添加配置
      */
-    fun putAll(appConfigs: Map<String, Pair<AppConfig?, String?>>) = this.appConfigs.putAll(appConfigs)
+    fun putAll(configs: Map<String, Pair<AppConfig?, String?>>) {
+        lock.withLock {
+            appConfigs = appConfigs + configs
+        }
+    }
 
     /**
      * 从数据库配置列表批量加载配置
@@ -83,6 +91,13 @@ object AppConfigTool {
      * @param appConfigList 数据库配置列表
      */
     fun fromAppConfigList(appConfigList: List<AppConfig>) {
-        appConfigList.forEach { putAppConfigFromDB(it.configKey, it) }
+        lock.withLock {
+            var updated = appConfigs
+            appConfigList.forEach {
+                val current = updated[it.configKey]
+                updated = updated + (it.configKey to Pair(it, current?.second))
+            }
+            appConfigs = updated
+        }
     }
 }

@@ -1,11 +1,7 @@
-@file:UseSerializers(OffsetDateTimeSerializer::class)
 package dev.sunriseydy.acgn.common.dto
 
-import dev.sunriseydy.acgn.base.serializer.OffsetDateTimeSerializer
+import kotlin.time.Instant
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
-import java.time.OffsetDateTime
-
 /**
  * @author SunriseYDY
  * @date 2024-07-12 13:14
@@ -15,6 +11,6 @@ data class AppConfig(
     val id: ULong,
     val configKey: String,
     val configValue: String,
-    val createdAt: OffsetDateTime? = null,
-    val updatedAt: OffsetDateTime? = null,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 )

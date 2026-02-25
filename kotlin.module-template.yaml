@@ -1,3 +1,4 @@
 settings:
   kotlin:
     serialization: json
+    optIns: [ kotlin.time.ExperimentalTime ]

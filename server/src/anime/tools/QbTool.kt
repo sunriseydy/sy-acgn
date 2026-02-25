@@ -24,6 +24,8 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
+import kotlin.time.Clock
+import kotlin.time.Instant as KtInstant
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.time.OffsetDateTime
@@ -425,7 +427,7 @@ class QbTool {
                         link = value.uid ?: "",
                         title = value.title ?: key,
                         description = value.lastBuildDate,
-                        lastFetchAt = OffsetDateTime.now(ZoneOffset.UTC),
+                        lastFetchAt = Clock.System.now(),
                     ).apply {
                         this.unreadCount = unreadCount
                     }
@@ -522,17 +524,17 @@ class QbTool {
             torrent = article.torrentURL ?: article.link ?: "",
             isRead = article.isRead ?: false,
             publishedAt = publishedAt,
-            createdAt = OffsetDateTime.now(ZoneOffset.UTC),
-            updatedAt = OffsetDateTime.now(ZoneOffset.UTC),
+            createdAt = Clock.System.now(),
+            updatedAt = Clock.System.now(),
         )
     }
 
     /**
      * 解析文章日期，支持多种格式
      */
-    private fun parseArticleDate(dateStr: String?): OffsetDateTime {
+    private fun parseArticleDate(dateStr: String?): KtInstant {
         if (dateStr.isNullOrBlank()) {
-            return OffsetDateTime.now(ZoneOffset.UTC)
+            return Clock.System.now()
         }
 
         // 尝试多种日期格式
@@ -544,7 +546,7 @@ class QbTool {
 
         for (formatter in formatters) {
             try {
-                return OffsetDateTime.parse(dateStr, formatter)
+                return OffsetDateTime.parse(dateStr, formatter).toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) }
             } catch (_: DateTimeParseException) {
                 // 继续尝试下一个格式
             }
@@ -552,7 +554,7 @@ class QbTool {
 
         // 所有格式都失败，返回当前时间
         logger.warn { "无法解析日期: $dateStr, 使用当前时间" }
-        return OffsetDateTime.now(ZoneOffset.UTC)
+        return Clock.System.now()
     }
 }
 

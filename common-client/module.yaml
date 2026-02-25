@@ -1,6 +1,6 @@
 product:
   type: lib
-  platforms: [ jvm, android ]
+  platforms: [ jvm, android, wasmJs ]
 apply:
   - ../compose.module-template.yaml
   - ../lib.module-template.yaml
@@ -13,7 +13,6 @@ dependencies:
     org.jetbrains.compose.material3:material3:1.10.0-alpha05: exported
   - $compose.components.resources: exported
   - $compose.animation: exported
-  - $compose.uiTooling: exported
   - $compose.ui: exported
   - $compose.preview: exported
   - org.jetbrains.compose.material:material-icons-core:1.7.3: exported
