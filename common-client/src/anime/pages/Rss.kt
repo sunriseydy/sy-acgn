@@ -134,7 +134,7 @@ fun RssList(
             }
         }
         LazyColumn(modifier = Modifier.fillMaxSize(), lazyListState = rssListState) {
-            items(rssList.value, key = { it.id }) { rss ->
+            items(rssList.value, key = { it.id.toLong() }) { rss ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
