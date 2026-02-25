@@ -39,7 +39,7 @@ SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务�
 ./amper run -m android-client
 
 # 运行 Web 客户端 (WASM-JS)
-# ./amper run -m web-client
+./run-web.sh
 
 # 打包服务器
 ./amper package -m server
@@ -68,8 +68,8 @@ SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务�
 # 运行 Android 客户端
 ./amper run -m android-client
 
-# 运行 Web 客户端
-./amper run -m web-client
+# 运行 Web 客户端（会构建 wasm 并启动本地静态服务）
+./run-web.sh
 
 # 打包服务器（生成可执行 JAR）
 ./amper package -m server
@@ -80,6 +80,8 @@ SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务�
 # CI 构建（打包 + 构建 Docker 镜像）
 ./ci.sh
 ```
+
+`run-web.sh` 默认监听 `127.0.0.1:8080`，也可以指定端口：`./run-web.sh 5173`。
 
 ### 模块结构
 
