@@ -24,7 +24,7 @@
 
 ## 项目概述
 
-SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务器、Compose Multiplatform 客户端（桌面端/Android 端）和共享库模块。项目使用 **Amper** 作为构建工具。
+SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务器、Compose Multiplatform 客户端（桌面端/Android 端/Web 端）和共享库模块。项目使用 **Amper** 作为构建工具。
 
 ### 快速开始
 
@@ -37,6 +37,9 @@ SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务�
 
 # 运行 Android 客户端 (如果连接了设备或模拟器)
 ./amper run -m android-client
+
+# 运行 Web 客户端 (WASM-JS)
+# ./amper run -m web-client
 
 # 打包服务器
 ./amper package -m server
@@ -64,6 +67,9 @@ SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务�
 
 # 运行 Android 客户端
 ./amper run -m android-client
+
+# 运行 Web 客户端
+./amper run -m web-client
 
 # 打包服务器（生成可执行 JAR）
 ./amper package -m server
@@ -116,14 +122,18 @@ sy-acgn/
     │   └── AndroidManifest.xml
     └── module.yaml
 
+└── web-client/          # Web 应用 (WASM-JS) 入口点
+    ├── src/Main.kt
+    └── module.yaml
+
 **依赖关系：**
 
 ```
-desktop-client   android-client
-    ↘               ↙
-      common-client  →  lib
-            ↓            ↓
-          server    ←────┘
+desktop-client   android-client   web-client
+    ↘               ↓               ↙
+           common-client  →  lib
+                 ↓            ↓
+               server    ←────┘
 ```
 
 每个模块都有一个 `module.yaml` 文件定义其依赖关系。此外，项目根目录包含多个 `*.module-template.yaml` 模板文件用于统一配置：
@@ -274,7 +284,7 @@ desktop-client   android-client
 ### 前端（客户端）
 
 **技术栈：**
-- Compose Multiplatform 用于 UI
+- Compose Multiplatform 用于 UI (Desktop, Android, WASM-JS)
 - Material 3 组件
 - Navigation 3 组件
 - Material 3 Adaptive
@@ -321,17 +331,20 @@ desktop-client   android-client
 2. **Android 应用入口** (`android-client/src/MainActivity.kt`)
     - 集成 `App()` 到 `ComponentActivity`
 
-3. **主应用** (`common-client/src/App.kt`)
+3. **Web 应用入口** (`web-client/src/Main.kt`)
+    - 使用 `ComposeViewport` 进行渲染
+
+4. **主应用** (`common-client/src/App.kt`)
     - 首次启动时显示服务器配置界面
     - `SyAcgnApi` 初始化和验证
     - `AcgnNavigationWrapper` 用于路由
     - `AppState` 数据类保存导航状态
 
-3. **API 客户端** (`common-client/src/base/api/SyAcgnApi.kt`)
+5. **API 客户端** (`common-client/src/base/api/SyAcgnApi.kt`)
     - 惰性初始化的 Ktor HTTP 客户端
     - 模块化 API 访问：`rss`、`anime`、`common`
 
-4. **导航系统 (Navigation 3)** (`common-client/src/base/navigation/`)
+6. **导航系统 (Navigation 3)** (`common-client/src/base/navigation/`)
     - **NavigationRoute.kt** - 密封接口定义路由，包含：
         - `NavigationRoute` 密封接口（包含 `icon` 属性）
         - `RssRoute`、`AnimeSeasonRoute` 等数据对象实现
@@ -535,9 +548,9 @@ Component (可复用 UI 组件)
 
 ### 2026-02 新功能
 
-1. **Android 客户端支持**
-   - 增加 `android-client` 模块
-   - `common-client` 和 `lib` 模块提供 `android` 平台跨平台支持
+1. **Android & Web 客户端支持**
+   - 增加 `android-client` 和 `web-client` 模块
+   - `common-client` 和 `lib` 模块提供 `android` 和 `wasmJs` 平台跨平台支持
    - 实现平台专属的 API (如桌面 `VerticalScrollbar` 分离为 `expect/actual` 组件)
 
 2. **环境变量支持**
@@ -580,7 +593,7 @@ Component (可复用 UI 组件)
 - **多语言** 基于枚举，自动生成键
 - **数据库自动迁移** 在启动时使用 Exposed 迁移完成
 - **双层配置系统**：文件 + 数据库，有明确的优先级
-- **共享代码** 在 `lib/` 和 `common-client/` 中，供服务器和多平台客户端（Desktop/Android）共用
+- **共享代码** 在 `lib/` 和 `common-client/` 中，供服务器和多平台客户端（Desktop/Android/Web）共用
 - **跨平台适配** 使用 `expect/actual` 关键字进行平台特定 API 隔离（如 `CommonVerticalScrollbar`）
 - **模块化架构** 每个功能模块独立管理，接口与实现分离
 - **缓存** 使用 Caffeine 库实现服务端数据缓存
