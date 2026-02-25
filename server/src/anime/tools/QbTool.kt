@@ -417,7 +417,7 @@ class QbTool {
             // 只处理 RSS 订阅源（有 uid 字段的）
             if (value.uid != null) {
                 val id = key.hashCode().toULong()
-                val unreadCount = value.articles?.count { it.isRead == false }?.toLong() ?: 0L
+                val unreadCount = value.articles?.count { (it.isRead ?: false) == false }?.toLong() ?: 0L
 
                 result.add(
                     Rss(

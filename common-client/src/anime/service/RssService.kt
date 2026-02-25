@@ -28,7 +28,7 @@ class RssService(
 ) {
     fun loadRss() {
         // 从 qBittorrent 加载 RSS 订阅列表（后端已转换为 Rss DTO）
-        appState.api.rss.getQbRssList(withData = false).onSuccessData(appState, onSuccess = { data ->
+        appState.api.rss.getQbRssList(withData = true).onSuccessData(appState, onSuccess = { data ->
             rssList.value = data
         })
     }

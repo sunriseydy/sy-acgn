@@ -39,7 +39,7 @@ Content-Type: application/json
 
 ### get rss list
 # @no-log
-GET http://localhost:9390/api/anime/rss
+GET http://localhost:9390/api/anime/qb/rss/list?withData=true
 Accept: application/json
 
 ### delete rss
