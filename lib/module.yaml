@@ -24,6 +24,9 @@ dependencies:
 dependencies@jvm:
   # https:#github.com/qos-ch/logback/releases
   - ch.qos.logback:logback-classic:1.5.18
+dependencies@android:
+  # https://github.com/tony19/logback-android
+  - com.github.tony19:logback-android:3.0.0
 settings:
   ktor:
     enabled: true
