@@ -28,9 +28,15 @@ private val logger = KotlinLogging.logger { }
 fun ServerConfig(onClick: suspend (Language) -> Pair<Boolean, String>, success: Boolean, errorMessage: String) {
     var selectedLanguage by remember { mutableStateOf(Language.SIMPLIFIED_CHINESE) }
     var serverAddress by remember { mutableStateOf(getLocalServerConfigOrNull() ?: "") }
-    var showError by remember { mutableStateOf(!success) }
-    var errorMessage by remember { mutableStateOf(errorMessage) }
+    var showError by remember { mutableStateOf(!success && errorMessage.isNotBlank()) }
+    var errorMessageState by remember { mutableStateOf(errorMessage) }
     val scope = rememberCoroutineScope()
+
+    // Keep local UI state in sync with parent async check result.
+    LaunchedEffect(success, errorMessage) {
+        showError = !success && errorMessage.isNotBlank()
+        errorMessageState = errorMessage
+    }
 
     Row(
         modifier = Modifier.fillMaxSize(),
@@ -51,7 +57,7 @@ fun ServerConfig(onClick: suspend (Language) -> Pair<Boolean, String>, success: 
             )
             Spacer(modifier = Modifier.height(16.dp))
             if (showError) {
-                Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+                Text(text = errorMessageState, color = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.height(8.dp))
             }
             Button(
@@ -59,10 +65,8 @@ fun ServerConfig(onClick: suspend (Language) -> Pair<Boolean, String>, success: 
                     setLocalServerConfig(serverAddress)
                     scope.launch {
                         val (success, message) = onClick(selectedLanguage)
-                        if (!success) {
-                            showError = true
-                            errorMessage = message
-                        }
+                        showError = !success && message.isNotBlank()
+                        errorMessageState = message
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
