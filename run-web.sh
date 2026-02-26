@@ -22,6 +22,22 @@ echo "Preparing runtime assets in ${OUT_DIR}..."
 mkdir -p "${OUT_DIR}"
 unzip -jo "${SKIKO_JAR}" skiko.mjs skiko.wasm js-reexport-symbols.mjs -d "${OUT_DIR}" >/dev/null
 
+# Compose Web resources are fetched from /composeResources/<namespace>/...
+# Copy them next to web artifacts so runtime string lookups don't 404.
+COMPOSE_RES_DIR="${OUT_DIR}/composeResources"
+rm -rf "${COMPOSE_RES_DIR}"
+
+if [[ -d "${ROOT_DIR}/build/artifacts/JvmResourcesDirArtifact/common-clientcommon/composeResources" ]]; then
+  cp -R "${ROOT_DIR}/build/artifacts/JvmResourcesDirArtifact/common-clientcommon/composeResources" "${COMPOSE_RES_DIR}"
+elif [[ -d "${ROOT_DIR}/build/artifacts/PreparedComposeResourcesDirArtifact/common-clientcommon" ]]; then
+  RES_NS="$(grep -Rho "import [a-zA-Z0-9_.]*\\.res\\." "${ROOT_DIR}/common-client/src" 2>/dev/null | sed -E 's/^import ([a-zA-Z0-9_.]*\\.res)\\..*/\\1/' | sort -u | head -n 1)"
+  if [[ -z "${RES_NS}" ]]; then
+    RES_NS="dev.sunriseydy.acgn.client.res"
+  fi
+  mkdir -p "${COMPOSE_RES_DIR}/${RES_NS}"
+  cp -R "${ROOT_DIR}/build/artifacts/PreparedComposeResourcesDirArtifact/common-clientcommon/." "${COMPOSE_RES_DIR}/${RES_NS}/"
+fi
+
 cat > "${OUT_DIR}/index.html" <<'EOF'
 <!doctype html>
 <html lang="en">
@@ -29,9 +45,15 @@ cat > "${OUT_DIR}/index.html" <<'EOF'
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>web-client</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" />
   <style>
     html, body { margin: 0; width: 100%; height: 100%; }
     body { overflow: hidden; background: #0e1014; }
+    body, canvas {
+      font-family: "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Source Han Sans SC", sans-serif;
+    }
   </style>
   <script type="importmap">
     {
