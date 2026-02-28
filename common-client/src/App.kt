@@ -1,6 +1,5 @@
 package dev.sunriseydy.acgn.client
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
@@ -11,6 +10,7 @@ import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
 import dev.sunriseydy.acgn.client.base.navigation.AcgnNavigationWrapper
 import dev.sunriseydy.acgn.client.base.navigation.NavigationAction
 import dev.sunriseydy.acgn.client.base.navigation.NavigationRoute
+import dev.sunriseydy.acgn.client.base.theme.AppTheme
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -25,7 +25,7 @@ private val logger = KotlinLogging.logger { }
  */
 @Composable
 fun App() {
-    MaterialTheme {
+    AppTheme {
         Surface {
             val showServerConfig = remember { mutableStateOf(true) }
             val checkResult = remember { mutableStateOf(Pair(false, "")) }
