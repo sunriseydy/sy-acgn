@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- SY Logo - Stylized 'S' and 'Y' -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M34.5,45.5 C34.5,42.5 36.5,40.5 40,40.5 L50,40.5 C53.5,40.5 55.5,42.5 55.5,45.5 L55.5,48.5 C55.5,51.5 53.5,53.5 50,53.5 L40,53.5 C36.5,53.5 34.5,55.5 34.5,58.5 L34.5,61.5 C34.5,64.5 36.5,66.5 40,66.5 L50,66.5 C53.5,66.5 55.5,64.5 55.5,61.5"
+        android:strokeWidth="1.5" />
+    
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M60.5,40.5 L67.5,53.5 L74.5,40.5 M67.5,53.5 L67.5,66.5"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="4" />
+
+    <!-- ACGN Text - Simple Geometric -->
+    <path
+        android:fillColor="#CCFFFFFF"
+        android:pathData="M38,75 L42,85 L46,75 M40,82 L44,82 M50,75 L54,75 L54,85 L50,85 M50,80 L54,80 M58,75 L62,75 L62,85 L58,85 M58,80 L62,80 M66,75 L70,85 L74,75 M68,82 L72,82"
+        android:strokeColor="#CCFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.5" />
+
+    <!-- Subtle Glow / Flare -->
+    <path
+        android:fillColor="#33FFFFFF"
+        android:pathData="M54,54 m-25,0 a25,25 0 1,1 50,0 a25,25 0 1,1 -50,0" />
+</vector>
