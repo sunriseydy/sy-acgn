@@ -13,4 +13,4 @@ settings:
     compileSdk: 36
 
 dependencies:
-  - androidx.activity:activity-compose:1.12.0
+  - androidx.activity:activity-compose:1.13.0

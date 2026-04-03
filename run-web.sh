@@ -15,6 +15,8 @@ if [[ -z "${SKIKO_JAR}" ]]; then
   exit 1
 fi
 
+rm -rf "${OUT_DIR}"
+
 echo "Building web-client wasm artifacts..."
 "${ROOT_DIR}/amper" task :web-client:linkWasmJs
 

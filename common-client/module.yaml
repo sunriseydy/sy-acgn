@@ -18,8 +18,8 @@ dependencies:
   - org.jetbrains.compose.material:material-icons-core:1.7.3: exported
   - org.jetbrains.compose.material:material-icons-extended:1.7.3: exported
   # https://github.com/JetBrains/compose-multiplatform
-  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0-alpha07: exported
-  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3:2.10.0-alpha07: exported
+  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0: exported
+  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3:2.10.0: exported
   - org.jetbrains.androidx.navigation3:navigation3-ui:1.0.0-alpha06: exported
   - org.jetbrains.compose.material3.adaptive:adaptive:1.3.0-alpha02: exported
   - org.jetbrains.compose.material3.adaptive:adaptive-layout:1.3.0-alpha02: exported
