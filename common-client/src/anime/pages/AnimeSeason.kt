@@ -176,6 +176,7 @@ fun AnimeSeason(appState: AppState) {
         dialogTitle = stringResource(Res.string.delete) + (currentSeason.value?.name ?: ""),
     )
     // 处理文件弹窗
+    val errorMessage = mutableStateOf<String?>(null)
     FormDialog(
         formDialogVisible = handleFileDialogVisible,
         onConfirmation = {
@@ -188,9 +189,11 @@ fun AnimeSeason(appState: AppState) {
                         isDeleteTarget = isDeleteTarget.value,
                     ),
                     onSuccess = { handleFileDialogVisible.value = false },
+                    onError = { errorMessage.value = it },
                 )
             }
         },
+        errorMessage = errorMessage
     ) {
         OutlinedTextField(
             value = filePath.value,
