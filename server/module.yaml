@@ -17,7 +17,7 @@ dependencies:
   - $ktor.server.statusPages
   - $ktor.server.resources
   - $ktor.server.cio
-  - $ktor.server.config.yaml
+  - $ktor.server.configYaml
   - io.ktor:ktor-server-di
   # https://github.com/JetBrains/Exposed
   - org.jetbrains.exposed:exposed-core:1.2.0
