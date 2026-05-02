@@ -17,7 +17,7 @@ dependencies:
   - $ktor.server.statusPages
   - $ktor.server.resources
   - $ktor.server.cio
-  - $ktor.server.configYaml
+  - $ktor.server.config.yaml
   - io.ktor:ktor-server-di
   # https://github.com/JetBrains/Exposed
   - org.jetbrains.exposed:exposed-core:1.2.0
@@ -27,7 +27,7 @@ dependencies:
   - org.jetbrains.exposed:exposed-json:1.2.0
   - org.jetbrains.exposed:exposed-migration-core:1.2.0
   - org.jetbrains.exposed:exposed-migration-jdbc:1.2.0
-  - org.postgresql:postgresql:42.7.10
+  - org.postgresql:postgresql:42.7.11
   - commons-io:commons-io:2.16.1
   # Caffeine cache
   - com.github.ben-manes.caffeine:caffeine:3.1.8
