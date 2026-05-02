@@ -54,10 +54,10 @@ object FileTool {
             }
         }
         // 创建目录
+        createDirectories(animeSeasonDirectory)
         if (others.any { !isDirectory(it) }) {
+            // 创建 .SP 目录
             createDirectories(Path(animeSeasonDirectory, SP_DIR_NAME))
-        } else {
-            createDirectories(animeSeasonDirectory)
         }
         // 移动文件
         listOf(
