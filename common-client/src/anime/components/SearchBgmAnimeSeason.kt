@@ -44,7 +44,7 @@ fun SearchBgmAnimeSeason(
     // 初始化搜索关键词
     LaunchedEffect(visible.value) {
         if (visible.value && currentSeason != null) {
-            searchQuery.value = currentSeason.name
+            searchQuery.value = currentSeason.anime!!.name
             selected.value = currentSeason
         }
     }
