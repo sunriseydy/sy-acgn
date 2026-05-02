@@ -28,9 +28,13 @@ object FileTool {
         check(fileNames.isNotEmpty()) { "路径 $path 下没有文件" }
         val videos = listVideos(fileNames)
         check(videos.isNotEmpty()) { "路径 $path 下没有视频文件" }
-        val subtitles = listSubtitles(fileNames)
-        val others = fileNames - videos.toSet() - subtitles.toSet()
-        val mediaTargetDirectory = AnimeModuleAppConfig.MediaTargetDirectory.configValue
+        val allSubtitles = listSubtitles(fileNames)
+        // 忽略非简体中文字幕文件
+        val deleteSubtitles = listDeleteSubtitles(fileNames)
+        val subtitles = allSubtitles - deleteSubtitles.toSet()
+        val others = fileNames - videos.toSet() - allSubtitles.toSet()
+        // 获取媒体目录
+        val mediaTargetDirectory = AnimeModuleAppConfig.MediaTargetDirectory.configValue ?: path.parent.toString()
         requireNotNull(mediaTargetDirectory) { "${AnimeModuleAppConfig.MediaTargetDirectory.configKey}-媒体库目录不能为空" }
         // 生成目录名
         val animeDirectoryName = generateAnimeDirectoryName(animeSeason.anime!!)
@@ -75,6 +79,7 @@ object FileTool {
     fun listFiles(path: Path) = SystemFileSystem.list(path).sortedBy { it.name }
     fun listVideos(files: List<Path>) = files.filter { isVideo(it) }
     fun listSubtitles(files: List<Path>) = files.filter { isSubtitle(it) }
+    fun listDeleteSubtitles(files: List<Path>) = files.filter { isSubtitle(it) && it.name.contains(".tc.") }
     fun generateAnimeDirectoryName(anime: Anime) = buildString {
         append(anime.name)
         anime.firstAirDate?.let { append(" (${anime.firstAirDate!!.year})") }
