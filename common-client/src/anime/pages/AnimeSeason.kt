@@ -119,6 +119,10 @@ fun AnimeSeason(appState: AppState) {
                                 )
                             }
                             Text(
+                                text = "第 ${season.season} 季 共 ${season.numberOfEpisodes} 集",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Text(
                                 text = season.description?.takeUnless { it.isBlank() }
                                     ?: season.anime?.description.orEmpty(),
                                 style = MaterialTheme.typography.bodyLarge
