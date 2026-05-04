@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
+import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.components.CreateAnimeSeason
 import dev.sunriseydy.acgn.client.anime.components.SearchBgmAnimeSeason
@@ -24,6 +25,7 @@ import dev.sunriseydy.acgn.client.base.navigation.TopLevelRouteEnum
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.res.*
+import dev.sunriseydy.acgn.tools.i
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.launch
@@ -119,8 +121,15 @@ fun AnimeSeason(appState: AppState) {
                                     style = MaterialTheme.typography.titleLarge
                                 )
                             }
+                            val tag: String = buildString {
+                                append("第 ${season.season} 季 ")
+                                append("共 ${season.numberOfEpisodes} 集 ")
+                                AnimeAdditionType.FileStatus.additionalInfo(season.additions)?.also {
+                                    append(i(it.additionalType)).append(":").append(i(it.additionalValue)).append(" ")
+                                }
+                            }
                             Text(
-                                text = "第 ${season.season} 季 共 ${season.numberOfEpisodes} 集",
+                                text = tag,
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(

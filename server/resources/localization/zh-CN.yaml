@@ -5,6 +5,8 @@ enum:
     TopLevelRouteEnum:
       RSS: "订阅"
       ANIME_SEASON: "动画季度"
+    Status:
+      PROCESSED: "已处理"
   ANIME:
     AnimeAssociatedType:
       ANIME: "动画"
@@ -28,3 +30,6 @@ message:
     AppName:
       meaning: "应用名称"
       description: "应用的名称"
+addition:
+  ANIME:
+    FileStatus: "文件处理状态"
