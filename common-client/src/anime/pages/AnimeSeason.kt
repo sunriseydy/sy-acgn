@@ -26,6 +26,7 @@ import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.res.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.compose.resources.stringResource
+import kotlinx.coroutines.launch
 
 private val logger = KotlinLogging.logger { }
 
@@ -140,6 +141,22 @@ fun AnimeSeason(appState: AppState) {
                                         openHandleFileDialog()
                                     }) {
                                         Icon(Icons.Default.DriveFolderUpload, null)
+                                    }
+                                    // Refresh TMDB
+                                    if (season.anime?.tmdbId != null) {
+                                        IconButton(onClick = {
+                                            animeSeasonService.refreshTmdbData(
+                                                season = season,
+                                                onSuccess = { loadData() },
+                                                onError = { errorMsg ->
+                                                    appState.scope.launch {
+                                                        appState.snackbarHostState.showSnackbar(errorMsg)
+                                                    }
+                                                }
+                                            )
+                                        }) {
+                                            Icon(Icons.Default.Sync, null)
+                                        }
                                     }
                                     // Search BGM
                                     IconButton(onClick = {
