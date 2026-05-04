@@ -20,3 +20,4 @@ config:
     QbUserName: "$?SY_QB_USER_NAME"
     QbPassword: "$?SY_QB_PASSWORD"
     BgmUserAgent: "$?SY_BGM_USER_AGENT"
+    MediaTargetDirectory: "$?SY_MEDIA_TARGET_DIRECTORY"
