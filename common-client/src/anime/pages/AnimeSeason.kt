@@ -113,6 +113,7 @@ fun AnimeSeason(appState: AppState) {
                 Icon(Icons.Default.Search, null, modifier = Modifier.size(48.dp))
             }
             IconButton(onClick = {
+                searchName.value = ""
                 loadData()
             }) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
