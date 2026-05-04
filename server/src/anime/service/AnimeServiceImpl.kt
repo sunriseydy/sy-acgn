@@ -129,7 +129,7 @@ class AnimeServiceImpl(
             // 一次查询获取该年份的所有季度和附加信息
             val allSeasonsForYear = getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year, null)
             // 在内存中按月份类型分组
-            for (monthType in AnimeMonthType.entries) {
+            for (monthType in AnimeMonthType.entries.reversed()) {
                 val filtered = allSeasonsForYear.filter { it.month in monthType.months }
                 if (filtered.isNotEmpty()) {
                     sectionMap["$year - ${monthType.meaning}"] = filtered
@@ -162,7 +162,7 @@ class AnimeServiceImpl(
         val years = allSeasons.map { it.year }.distinct().sortedDescending()
         for (year in years) {
             val allSeasonsForYear = allSeasons.filter { it.year == year }
-            for (monthType in AnimeMonthType.entries) {
+            for (monthType in AnimeMonthType.entries.reversed()) {
                 val filtered = allSeasonsForYear.filter { it.month in monthType.months }
                 if (filtered.isNotEmpty()) {
                     sectionMap["$year - ${monthType.meaning}"] = filtered
