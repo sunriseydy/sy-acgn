@@ -19,6 +19,7 @@ interface AnimeService {
     suspend fun getAnimeSeasonYears(): List<Int>
     suspend fun getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(year: Int, monthType: AnimeMonthType? = null): List<AnimeSeason>
     suspend fun getAnimeSeasonSectionMap(): MutableMap<String, List<AnimeSeason>>
+    suspend fun searchAnimeSeasonSectionMapByName(name: String): MutableMap<String, List<AnimeSeason>>
     suspend fun createAnime(anime: Anime): Anime
     suspend fun createAnimeSeason(season: AnimeSeason): AnimeSeason
     suspend fun updateAnime(anime: Anime): Anime

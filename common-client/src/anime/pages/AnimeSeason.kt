@@ -53,21 +53,35 @@ fun AnimeSeason(appState: AppState) {
 
     val searchBgmDialogVisible = remember { mutableStateOf(false) }
     val currentSeason: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
+    val searchName = remember { mutableStateOf("") }
     // Initialize service
     val animeSeasonService = remember(appState) { AnimeSeasonService(appState) }
 
     fun loadData() {
         if (!loading.value) {
             loading.value = true
-            animeSeasonService.loadData(
-                onSuccess = {
-                    sectionMapState.value = it
-                    loading.value = false
-                },
-                onError = {
-                    loading.value = false
-                }
-            )
+            if (searchName.value.isNotBlank()) {
+                animeSeasonService.searchAnimeSeasonSectionMapByName(
+                    name = searchName.value,
+                    onSuccess = {
+                        sectionMapState.value = it
+                        loading.value = false
+                    },
+                    onError = {
+                        loading.value = false
+                    }
+                )
+            } else {
+                animeSeasonService.loadData(
+                    onSuccess = {
+                        sectionMapState.value = it
+                        loading.value = false
+                    },
+                    onError = {
+                        loading.value = false
+                    }
+                )
+            }
         }
     }
 
@@ -86,6 +100,18 @@ fun AnimeSeason(appState: AppState) {
     // UI Structure
     Column(modifier = Modifier.fillMaxSize()) {
         PageTitle(TopLevelRouteEnum.ANIME_SEASON.meaning) {
+            OutlinedTextField(
+                value = searchName.value,
+                onValueChange = { searchName.value = it },
+                label = { Text(stringResource(Res.string.search)) },
+                singleLine = true,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            IconButton(onClick = {
+                loadData()
+            }) {
+                Icon(Icons.Default.Search, null, modifier = Modifier.size(48.dp))
+            }
             IconButton(onClick = {
                 loadData()
             }) {

@@ -139,6 +139,39 @@ class AnimeServiceImpl(
         return sectionMap
     }
 
+    override suspend fun searchAnimeSeasonSectionMapByName(name: String): MutableMap<String, List<AnimeSeason>> {
+        val sectionMap: MutableMap<String, List<AnimeSeason>> = mutableMapOf()
+        if (name.isBlank()) {
+            return getAnimeSeasonSectionMap()
+        }
+        val animes = searchAnimeByName(name)
+        if (animes.isEmpty()) {
+            return sectionMap
+        }
+
+        val allSeasons = animes.flatMap { anime ->
+            getAnimeSeasonsWithAdditionByAnimeId(anime.id).map { season ->
+                season.copy(anime = anime)
+            }
+        }
+
+        if (allSeasons.isEmpty()) {
+            return sectionMap
+        }
+
+        val years = allSeasons.map { it.year }.distinct().sortedDescending()
+        for (year in years) {
+            val allSeasonsForYear = allSeasons.filter { it.year == year }
+            for (monthType in AnimeMonthType.entries) {
+                val filtered = allSeasonsForYear.filter { it.month in monthType.months }
+                if (filtered.isNotEmpty()) {
+                    sectionMap["$year - ${monthType.meaning}"] = filtered
+                }
+            }
+        }
+        return sectionMap
+    }
+
     override suspend fun createAnime(anime: Anime): Anime =
         check(anime.id == ULong.MIN_VALUE) { "只能新增数据" }
             .let {

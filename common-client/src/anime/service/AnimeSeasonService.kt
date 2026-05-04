@@ -30,6 +30,12 @@ class AnimeSeasonService(
         }
     }
 
+    fun searchAnimeSeasonSectionMapByName(name: String, onSuccess: (MutableMap<String, List<AnimeSeason>>) -> Unit, onError: (String) -> Unit = { }) {
+        appState.scope.launch {
+            appState.api.anime.searchAnimeSeasonSectionMapByName(name).onSuccessData(appState, onSuccess, onError)
+        }
+    }
+
     fun saveAnimeSeason(
         animeSeason: AnimeSeason,
         onSuccess: (AnimeSeason) -> Unit = { },

@@ -67,6 +67,9 @@ fun Route.animeRoutes() {
     get<AnimeModuleResource.Anime.Season.SectionMap> {
         call.respond(Result(data = animeService.getAnimeSeasonSectionMap()))
     }
+    get<AnimeModuleResource.Anime.Season.SearchByName> { resource ->
+        call.respond(Result(data = animeService.searchAnimeSeasonSectionMapByName(resource.name)))
+    }
     post<AnimeModuleResource.Anime.Season> {
         call.respond(Result(data = animeService.saveAnimeSeason(call.receive())))
     }

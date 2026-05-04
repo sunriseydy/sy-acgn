@@ -148,6 +148,10 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             @Resource("section-map")
             class SectionMap(val parent: Season = Season())
 
+            @Serializable
+            @Resource("search-by-name")
+            class SearchByName(val parent: Season = Season(), val name: String)
+
             /** 剧集管理: `/api/anime/anime/season/episode` */
             @Serializable
             @Resource("episode")
