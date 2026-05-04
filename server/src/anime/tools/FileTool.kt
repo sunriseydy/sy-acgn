@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.server.anime.tools
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
@@ -8,6 +9,8 @@ import dev.sunriseydy.acgn.anime.enums.AnimeModuleError
 import dev.sunriseydy.acgn.base.exception.MessageException
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
+
+private val logger = KotlinLogging.logger { }
 
 /**
  * @author SunriseYDY
@@ -73,9 +76,18 @@ object FileTool {
     fun isSubtitle(path: Path) = Extension.SUBTITLE.isPathMatch(path.name)
     fun isDirectory(path: Path) = SystemFileSystem.metadataOrNull(path)?.isDirectory == true
     fun exists(path: Path) = SystemFileSystem.exists(path)
-    fun moveFile(from: Path, to: Path) = SystemFileSystem.atomicMove(from, to)
-    fun createDirectories(path: Path) = SystemFileSystem.createDirectories(path)
-    fun deleteFile(path: Path) = SystemFileSystem.delete(path)
+    fun moveFile(from: Path, to: Path) {
+        logger.info { "Moving file from: $from to: $to" }
+        SystemFileSystem.atomicMove(from, to)
+    }
+    fun createDirectories(path: Path) {
+        logger.info { "Creating directories: $path" }
+        SystemFileSystem.createDirectories(path)
+    }
+    fun deleteFile(path: Path) {
+        logger.info { "Deleting file: $path" }
+        SystemFileSystem.delete(path)
+    }
     fun listFiles(path: Path) = SystemFileSystem.list(path).sortedBy { it.name }
     fun listVideos(files: List<Path>) = files.filter { isVideo(it) }
     fun listSubtitles(files: List<Path>) = files.filter { isSubtitle(it) }
