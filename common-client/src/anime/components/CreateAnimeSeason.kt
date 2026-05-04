@@ -122,7 +122,7 @@ fun CreateAnimeSeason(
             ) {
                 state.animeSearchResult.value.forEach {
                     DropdownMenuItem(
-                        text = { Text(it.name) },
+                        text = { Text("${it.name}  ${it.firstAirDate}") },
                         onClick = {
                             state.selectAnime(it)
                         },
