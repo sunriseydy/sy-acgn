@@ -48,6 +48,7 @@ object FileTool {
         val newSubtitlePairs = if (subtitles.isNotEmpty()) {
             generateEpisodeSubtitlesByVideos(newVideoPairs, subtitles, animeSeasonDirectory)
         } else emptyList()
+        // 处理其他文件
         val newOtherPairs = generateOthers(others, animeSeasonDirectory)
         if (exists(animeSeasonDirectory) && isDirectory(animeSeasonDirectory)) {
             if (animeSeasonFile.isDeleteTarget) {
@@ -91,7 +92,7 @@ object FileTool {
     fun listFiles(path: Path) = SystemFileSystem.list(path).sortedBy { it.name }
     fun listVideos(files: List<Path>) = files.filter { isVideo(it) }
     fun listSubtitles(files: List<Path>) = files.filter { isSubtitle(it) }
-    fun listDeleteSubtitles(files: List<Path>) = files.filter { isSubtitle(it) && it.name.contains(".tc.") }
+    fun listDeleteSubtitles(files: List<Path>) = files.filter { isSubtitle(it) && it.name.matches(Regex(".+\\.(tc|tcjp)\\..+")) }
     fun generateAnimeDirectoryName(anime: Anime) = buildString {
         append(anime.name)
         anime.firstAirDate?.let { append(" (${anime.firstAirDate!!.year})") }
@@ -123,6 +124,16 @@ object FileTool {
         }
     }
 
+    /**
+     * 根据输入目录和文件路径列表生成目标路径映射。
+     *
+     * 如果路径指向一个目录，将生成以目标目录为基础路径并在名称前面加上"."的新路径。
+     * 如果路径指向一个文件，将生成以目标目录为基础路径并在名称前加上预定义子目录的路径。
+     *
+     * @param others 一个包含路径对象的列表，用于生成目标路径。
+     * @param animeSeasonDirectory 目标基础目录，用于存放生成的路径。
+     * @return 返回生成的路径映射列表。
+     */
     fun generateOthers(others: List<Path>, animeSeasonDirectory: Path) = others.map {
         if (isDirectory(it)) {
             it to Path(animeSeasonDirectory, ".${it.name}")
