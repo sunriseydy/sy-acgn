@@ -134,6 +134,9 @@ data class AnimeMovie(
  *
  * @property id 文件 ID
  * @property path 文件路径
+ * @property isDeleteSource 是否删除源目录
+ * @property isDeleteTarget 是否删除目标目录（如果存在）
+ * @property episodeOffset 集数偏移量
  */
 @Serializable
 data class AnimeSeasonFile(
@@ -141,4 +144,5 @@ data class AnimeSeasonFile(
     val path: String,
     val isDeleteSource: Boolean = false,
     val isDeleteTarget: Boolean = false,
+    val episodeOffset: Int? = 0,
 )

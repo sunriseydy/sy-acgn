@@ -49,6 +49,7 @@ fun AnimeSeason(appState: AppState) {
     val filePath = remember { mutableStateOf("") }
     val isDeleteSource = remember { mutableStateOf(false) }
     val isDeleteTarget = remember { mutableStateOf(false) }
+    val episodeOffset = remember { mutableStateOf("") }
 
     val searchBgmDialogVisible = remember { mutableStateOf(false) }
     val currentSeason: MutableState<AnimeSeason?> = remember { mutableStateOf(null) }
@@ -69,7 +70,7 @@ fun AnimeSeason(appState: AppState) {
             )
         }
     }
-    
+
     // Initial load
     LaunchedEffect(Unit) {
         loadData()
@@ -80,8 +81,8 @@ fun AnimeSeason(appState: AppState) {
         filePath.value = ""
         isDeleteSource.value = false
         isDeleteTarget.value = false
+        episodeOffset.value = ""
     }
-
     // UI Structure
     Column(modifier = Modifier.fillMaxSize()) {
         PageTitle(TopLevelRouteEnum.ANIME_SEASON.meaning) {
@@ -211,6 +212,7 @@ fun AnimeSeason(appState: AppState) {
                         path = filePath.value,
                         isDeleteSource = isDeleteSource.value,
                         isDeleteTarget = isDeleteTarget.value,
+                        episodeOffset = episodeOffset.value.toIntOrNull() ?: 0,
                     ),
                     onSuccess = { handleFileDialogVisible.value = false },
                     onError = { errorMessage.value = it },
@@ -224,6 +226,12 @@ fun AnimeSeason(appState: AppState) {
             onValueChange = { filePath.value = it },
             label = { RequiredFieldLabel(stringResource(Res.string.file_path)) },
             supportingText = { RequiredSupportingText(filePath, stringResource(Res.string.file_path)) }
+        )
+        OutlinedTextField(
+            value = episodeOffset.value,
+            onValueChange = { episodeOffset.value = it },
+            label = { Text(stringResource(Res.string.episode_offset)) },
+            supportingText = { Text(stringResource(Res.string.episode_offset_supporting_text)) }
         )
         Row {
             Text(

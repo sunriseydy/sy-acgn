@@ -38,4 +38,6 @@
     <string name="search_tmdb">TMDB</string>
     <string name="search_local">本地</string>
     <string name="search_bangumi">Bangumi</string>
+    <string name="episode_offset">集数偏移</string>
+    <string name="episode_offset_supporting_text">默认为 0，如果在排序时需要修改集数则填写偏移量</string>
 </resources>

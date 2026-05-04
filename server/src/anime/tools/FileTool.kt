@@ -44,7 +44,7 @@ object FileTool {
         val seasonDirectoryName = generateSeasonDirectoryName(animeSeason)
         val animeSeasonDirectory = Path(mediaTargetDirectory, animeDirectoryName, seasonDirectoryName)
         // 生成文件名
-        val newVideoPairs = generateEpisodeVideosByNameSort(videos, animeSeason.season, animeSeasonDirectory)
+        val newVideoPairs = generateEpisodeVideosByNameSort(videos, animeSeason.season, animeSeasonDirectory, animeSeasonFile.episodeOffset ?: 0)
         val newSubtitlePairs = if (subtitles.isNotEmpty()) {
             generateEpisodeSubtitlesByVideos(newVideoPairs, subtitles, animeSeasonDirectory)
         } else emptyList()
@@ -69,6 +69,7 @@ object FileTool {
         ).forEach {
             moveFile(it.first, it.second)
         }
+        if (deleteSubtitles.isNotEmpty()) deleteSubtitles.forEach { deleteFile(it) }
         // 删除文件
         if (animeSeasonFile.isDeleteSource) deleteFile(path)
     }
@@ -92,7 +93,7 @@ object FileTool {
     fun listFiles(path: Path) = SystemFileSystem.list(path).sortedBy { it.name }
     fun listVideos(files: List<Path>) = files.filter { isVideo(it) }
     fun listSubtitles(files: List<Path>) = files.filter { isSubtitle(it) }
-    fun listDeleteSubtitles(files: List<Path>) = files.filter { isSubtitle(it) && it.name.matches(Regex(".+\\.(tc|tcjp)\\..+")) }
+    fun listDeleteSubtitles(files: List<Path>) = files.filter { isSubtitle(it) && it.name.matches(Regex(".+\\.(tc|tcjp|cht|CHT|JPTC)\\..+")) }
     fun generateAnimeDirectoryName(anime: Anime) = buildString {
         append(anime.name)
         anime.firstAirDate?.let { append(" (${anime.firstAirDate!!.year})") }
@@ -102,11 +103,11 @@ object FileTool {
     fun generateSeasonDirectoryName(animeSeason: AnimeSeason) =
         "Season ${animeSeason.season.toString().padStart(2, '0')}"
 
-    fun generateEpisodeVideosByNameSort(videos: List<Path>, season: Int, animeSeasonDirectory: Path) =
+    fun generateEpisodeVideosByNameSort(videos: List<Path>, season: Int, animeSeasonDirectory: Path, episodeOffset: Int = 0) =
         videos.mapIndexed { index, video ->
             val episodeFileName = buildString {
                 append("S${season.toString().padStart(2, '0')}")
-                append("E${(index + 1).toString().padStart(2, '0')}")
+                append("E${(index + 1 + episodeOffset).toString().padStart(2, '0')}")
                 append(" ")
                 append(video.name)
             }

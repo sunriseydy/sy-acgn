@@ -38,4 +38,6 @@
     <string name="search_tmdb">TMDB</string>
     <string name="search_local">Local</string>
     <string name="search_bangumi">Bangumi</string>
+    <string name="episode_offset">Episode Offset</string>
+    <string name="episode_offset_supporting_text">Default is 0, enter offset if you need to modify the episode number during sorting</string>
 </resources>
