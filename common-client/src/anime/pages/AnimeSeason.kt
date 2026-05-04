@@ -133,12 +133,6 @@ fun AnimeSeason(appState: AppState) {
                                     }
                                     IconButton(onClick = {
                                         currentSeason.value = season
-                                        createDialogVisible.value = true
-                                    }) {
-                                        Icon(Icons.Default.Edit, null)
-                                    }
-                                    IconButton(onClick = {
-                                        currentSeason.value = season
                                         openHandleFileDialog()
                                     }) {
                                         Icon(Icons.Default.DriveFolderUpload, null)
