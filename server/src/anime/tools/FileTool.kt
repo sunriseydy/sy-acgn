@@ -93,7 +93,7 @@ object FileTool {
     fun listFiles(path: Path) = SystemFileSystem.list(path).sortedBy { it.name }
     fun listVideos(files: List<Path>) = files.filter { isVideo(it) }
     fun listSubtitles(files: List<Path>) = files.filter { isSubtitle(it) }
-    fun listDeleteSubtitles(files: List<Path>) = files.filter { isSubtitle(it) && it.name.matches(Regex(".+\\.(tc|tcjp|cht|CHT|JPTC)\\..+")) }
+    fun listDeleteSubtitles(files: List<Path>) = files.filter { isSubtitle(it) && it.name.lowercase().matches(Regex(".+\\.(tc|tcjp|cht|jptc|jp&tc|tc&jp)\\..+")) }
     fun generateAnimeDirectoryName(anime: Anime) = buildString {
         append(anime.name)
         anime.firstAirDate?.let { append(" (${anime.firstAirDate!!.year})") }
