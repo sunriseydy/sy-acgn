@@ -15,11 +15,11 @@ import java.util.*
  * @date 2024-07-17 20:40
  */
 class AdditionalInfoRepositoryImpl : AdditionalInfoRepository {
-    override suspend fun selectAdditionalInfos(associatedType: String, associatedId: ULong, additionalType: String?) =
+    override suspend fun selectAdditionalInfos(associatedType: String, associatedId: ULong?, additionalType: String?) =
         suspendTransaction {
             AdditionalInfoDAO.find {
                 (AdditionalInfoTable.associatedType eq associatedType) and
-                        (AdditionalInfoTable.associatedId eq associatedId) and
+                        (associatedId?.let { AdditionalInfoTable.associatedId eq associatedId } ?: Op.TRUE) and
                         (additionalType?.let { AdditionalInfoTable.additionalType eq additionalType } ?: Op.TRUE)
             }.map(AdditionalInfoDAO::toDTO)
         }

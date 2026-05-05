@@ -29,7 +29,7 @@ fun Application.configureRouting() {
             call.application.log.warn("业务异常: ${cause.message}")
             call.respond(
                 HttpStatusCode.OK,
-                Result<Unit>(failed = true, message = cause.message ?: cause.toString())
+                Result<Unit>(failed = true, message = cause.message)
             )
         }
         // 参数异常返回 400

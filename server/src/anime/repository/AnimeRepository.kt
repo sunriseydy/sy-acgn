@@ -10,6 +10,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeSeason
  */
 interface AnimeRepository {
     suspend fun selectAllAnime(): List<Anime>
+    suspend fun selectAllAnimeSeasons(): List<AnimeSeason>
     suspend fun selectAnimeById(id: ULong): Anime
     suspend fun selectAnimeSeasonById(id: ULong): AnimeSeason
     suspend fun selectAnimeSeasonByAnimeId(animeId: ULong): List<AnimeSeason>

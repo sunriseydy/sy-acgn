@@ -9,7 +9,6 @@ import io.ktor.server.plugins.di.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
-import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -24,51 +23,14 @@ fun Route.animeRoutes() {
     val tmdbTool: TmdbTool by application.dependencies
     val bangumiTool: BangumiTool by application.dependencies
 
-    // --- Anime CRUD ---
+    // --- Anime ---
     get<AnimeModuleResource.Anime.Name> { resource ->
         call.respond(Result(data = animeService.searchAnimeByName(resource.name)))
     }
-    get<AnimeModuleResource.Anime.Cache> {
-        call.respond(Result(data = animeService.getAllAnimeWithAdditionFromCache()))
-    }
-    get<AnimeModuleResource.Anime> {
-        call.respond(Result(data = animeService.getAllAnimeWithAdditionFromDB()))
-    }
-    get<AnimeModuleResource.Anime.Id> { resource ->
-        call.respond(Result(data = animeService.getAnimeById(resource.animeId)))
-    }
-    put<AnimeModuleResource.Anime.Refresh> {
-        call.respond(Result(data = animeService.refreshAnimeCache()))
-    }
-    delete<AnimeModuleResource.Anime.Id> { resource ->
-        call.respond(Result(data = animeService.removeAnimeById(resource.animeId)))
-    }
 
     // --- AnimeSeason ---
-    get<AnimeModuleResource.Anime.Season.Id> { resource ->
-        call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionAndAnimeById(resource.id)))
-    }
-    get<AnimeModuleResource.Anime.Season.Years> {
-        call.respond(Result(data = animeService.getAnimeSeasonYears()))
-    }
-    get<AnimeModuleResource.Anime.Season.ByAnimeId> { resource ->
-        call.respond(Result(data = animeService.getAnimeSeasonsWithAdditionByAnimeId(resource.animeId)))
-    }
-    get<AnimeModuleResource.Anime.Season.ByYearAndMonth> { resource ->
-        call.respond(
-            Result(
-                data = animeService.getAnimeSeasonsWithAdditionAndAnimeByYearAndMonth(
-                    resource.year,
-                    resource.monthType
-                )
-            )
-        )
-    }
-    get<AnimeModuleResource.Anime.Season.SectionMap> {
-        call.respond(Result(data = animeService.getAnimeSeasonSectionMap()))
-    }
-    get<AnimeModuleResource.Anime.Season.SearchByName> { resource ->
-        call.respond(Result(data = animeService.searchAnimeSeasonSectionMapByName(resource.name)))
+    get<AnimeModuleResource.Anime.Season.SectionMap> { resource ->
+        call.respond(Result(data = animeService.getAnimeSeasonSectionMap(resource.name)))
     }
     post<AnimeModuleResource.Anime.Season> {
         call.respond(Result(data = animeService.saveAnimeSeason(call.receive())))

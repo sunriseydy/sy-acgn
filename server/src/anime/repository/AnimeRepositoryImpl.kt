@@ -22,6 +22,10 @@ class AnimeRepositoryImpl : AnimeRepository {
         AnimeDAO.all().map(AnimeDAO::toDTO)
     }
 
+    override suspend fun selectAllAnimeSeasons(): List<AnimeSeason> = suspendTransaction {
+        AnimeSeasonDAO.all().map(AnimeSeasonDAO::toDTO)
+    }
+
     override suspend fun selectAnimeById(id: ULong): Anime = suspendTransaction {
         AnimeDAO.findById(id)?.toDTO() ?: throw NoSuchElementException()
     }
