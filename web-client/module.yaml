@@ -1,7 +1,0 @@
-product: wasm-js/app
-
-apply:
-  - ../client.module-template.yaml
-  - ../compose.module-template.yaml
-  - ../kotlin.module-template.yaml
-  - ../maven.module-template.yaml

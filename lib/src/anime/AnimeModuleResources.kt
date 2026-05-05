@@ -105,20 +105,8 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
     @Resource("anime")
     class Anime(val parent: AnimeModuleResource = AnimeModuleResource()) {
         @Serializable
-        @Resource("{animeId}")
-        class Id(val parent: Anime = Anime(), val animeId: ULong)
-
-        @Serializable
         @Resource("name")
         class Name(val parent: Anime = Anime(), val name: String? = null)
-
-        @Serializable
-        @Resource("cache")
-        class Cache(val parent: Anime = Anime())
-
-        @Serializable
-        @Resource("refresh")
-        class Refresh(val parent: Anime = Anime())
 
         /** 季度管理: `/api/anime/anime/season` */
         @Serializable
@@ -129,28 +117,8 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             class Id(val parent: Season = Season(), val id: ULong)
 
             @Serializable
-            @Resource("years")
-            class Years(val parent: Season = Season())
-
-            @Serializable
-            @Resource("by-anime-id")
-            class ByAnimeId(val parent: Season = Season(), val animeId: ULong)
-
-            @Serializable
-            @Resource("by-year-and-month-type")
-            class ByYearAndMonth(
-                val parent: Season = Season(),
-                val year: Int,
-                val monthType: AnimeMonthType? = null
-            )
-
-            @Serializable
             @Resource("section-map")
-            class SectionMap(val parent: Season = Season())
-
-            @Serializable
-            @Resource("search-by-name")
-            class SearchByName(val parent: Season = Season(), val name: String)
+            class SectionMap(val parent: Season = Season(), val name: String? = null)
 
             /** 剧集管理: `/api/anime/anime/season/episode` */
             @Serializable

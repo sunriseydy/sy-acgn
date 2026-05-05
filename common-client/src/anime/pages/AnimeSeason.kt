@@ -60,28 +60,16 @@ fun AnimeSeason(appState: AppState) {
     fun loadData() {
         if (!loading.value) {
             loading.value = true
-            if (searchName.value.isNotBlank()) {
-                animeSeasonService.searchAnimeSeasonSectionMapByName(
-                    name = searchName.value,
-                    onSuccess = {
-                        sectionMapState.value = it
-                        loading.value = false
-                    },
-                    onError = {
-                        loading.value = false
-                    }
-                )
-            } else {
-                animeSeasonService.loadData(
-                    onSuccess = {
-                        sectionMapState.value = it
-                        loading.value = false
-                    },
-                    onError = {
-                        loading.value = false
-                    }
-                )
-            }
+            animeSeasonService.loadData(
+                name = searchName.value,
+                onSuccess = {
+                    sectionMapState.value = it
+                    loading.value = false
+                },
+                onError = {
+                    loading.value = false
+                }
+            )
         }
     }
 

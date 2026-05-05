@@ -1,6 +1,6 @@
 product:
   type: lib
-  platforms: [ jvm, android, wasmJs ]
+  platforms: [ jvm ]
 apply:
   - ../compose.module-template.yaml
   - ../lib.module-template.yaml
