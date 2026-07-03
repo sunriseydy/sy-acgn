@@ -17,17 +17,17 @@ dependencies:
   - $ktor.server.statusPages
   - $ktor.server.resources
   - $ktor.server.cio
-  - $ktor.server.configYaml
-  - io.ktor:ktor-server-di
+  - $ktor.server.config.yaml
+  - $libs.ktor.server.di
   # https://github.com/JetBrains/Exposed
-  - org.jetbrains.exposed:exposed-core:1.2.0
-  - org.jetbrains.exposed:exposed-jdbc:1.2.0
-  - org.jetbrains.exposed:exposed-dao:1.2.0
-  - org.jetbrains.exposed:exposed-kotlin-datetime:1.2.0
-  - org.jetbrains.exposed:exposed-json:1.2.0
-  - org.jetbrains.exposed:exposed-migration-core:1.2.0
-  - org.jetbrains.exposed:exposed-migration-jdbc:1.2.0
-  - org.postgresql:postgresql:42.7.11
+  - $libs.exposed.core
+  - $libs.exposed.jdbc
+  - $libs.exposed.dao
+  - $libs.exposed.kotlin.datetime
+  - $libs.exposed.json
+  - $libs.exposed.migration.core
+  - $libs.exposed.migration.jdbc
+  - org.postgresql:postgresql:42.7.12
   - commons-io:commons-io:2.16.1
   # Caffeine cache
   - com.github.ben-manes.caffeine:caffeine:3.1.8
@@ -36,5 +36,7 @@ dependencies:
 settings:
   ktor:
     enabled: true
+    applyBom: true
+    version: 3.5.1
   kotlin:
     optIns: [ kotlin.time.ExperimentalTime ]

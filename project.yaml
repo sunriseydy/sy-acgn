@@ -1,4 +1,4 @@
 modules:
-  - ./server
-  - ./lib
   - ./*-client
+  - ./lib
+  - ./server
