@@ -4,7 +4,7 @@
 
 - [项目概述](#项目概述)
   - [快速开始](#快速开始)
-- [构建系统：Amper](#构建系统amper)
+- [构建系统：Kotlin Toolchain](#构建系统 Kotlin Toolchain)
   - [常用命令](#常用命令)
   - [模块结构](#模块结构)
 - [架构](#架构)
@@ -24,49 +24,39 @@
 
 ## 项目概述
 
-SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务器、Compose Multiplatform 客户端（桌面端）和共享库模块。项目使用 **Amper** 作为构建工具。
+SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务器、Compose Multiplatform 客户端（桌面端）和共享库模块。项目使用 **Kotlin Toolchain** 作为构建工具。
 
 ### 快速开始
 
 ```bash
 # 运行服务器
-./run-server.sh
+./kotlin run -m server
 
 # 运行桌面客户端
-./run-desktop.sh
+./kotlin run -m desktop-client
 
 # 打包服务器
-./amper package -m server
-
-# CI 构建（打包 + Docker 镜像）
-./ci.sh
+./kotlin build -m server
 ```
 
-## 构建系统：Amper
+## 构建系统：Kotlin Toolchain
 
-本项目使用 JetBrains Amper（版本 0.9.2）而非 Gradle。所有构建操作都通过 `./amper` 脚本进行。
+本项目使用 JetBrains Kotlin Toolchain 而非 Gradle。所有构建操作都通过 `./kotlin` 脚本进行。
 
 ### 常用命令
 
 ```bash
 # 运行服务器
-./run-server.sh
-# 或直接：
-./amper run -m server
+./kotlin run -m server
 
 # 运行桌面客户端
-./run-desktop.sh
-# 或直接：
-./amper run -m desktop-client
+./kotlin run -m desktop-client
 
 # 打包服务器（生成可执行 JAR）
-./amper package -m server
+./kotlin package -m server
 
 # 编译服务器
-./amper build -m server
-
-# CI 构建（打包 + 构建 Docker 镜像）
-./ci.sh
+./kotlin build -m server
 ```
 
 ### 模块结构
@@ -411,7 +401,7 @@ SY_BGM_USER_AGENT=        # Bangumi API User-Agent
 
 `Dockerfile` 构建服务器：
 1. 基于 `azul/zulu-openjdk:25-jre` 镜像
-2. 复制 `./amper package` 生成的可执行 JAR 包
+2. 复制 `./kotlin package` 生成的可执行 JAR 包
 3. 暴露端口 9390
 4. 使用 `java -jar` 运行服务器
 
@@ -488,7 +478,7 @@ Component (可复用 UI 组件)
 
 ### 依赖管理
 
-- **Amper 版本管理**：使用模板文件统一依赖版本
+- **Kotlin Toolchain 模板管理**：使用模板文件统一依赖版本
 - **模块依赖**：
   - `server` → `lib`（服务器依赖共享库）
   - `common-client` → `lib`（客户端依赖共享库）
@@ -553,7 +543,7 @@ Component (可复用 UI 组件)
 
 ## 重要说明
 
-- **使用 Amper 而非 Gradle** - 所有命令通过 `./amper` 进行
+- **使用 Kotlin Toolchain 而非 Gradle** - 所有命令通过 `./kotlin` 进行
 - **环境变量** 通过 `.env` 文件配置，使用 `dotenv-kotlin` 加载
 - **依赖注入** 使用 Ktor 内置 DI 插件（`io.ktor:ktor-server-di`）
 - **配置解析** 在 `application.yaml` 中使用 `$VAR:default` 和 `$?VAR` 语法
