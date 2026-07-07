@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.server.common.db
 
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig
+import dev.sunriseydy.acgn.common.dto.AttachFileInfo
 import kotlin.time.Instant as KtInstant
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.ULongIdTable
@@ -76,4 +77,34 @@ class AppConfigDAO(id: EntityID<ULong>) : ULongEntity(id) {
     )
 }
 
-fun commonModuleTables() = listOf(AdditionalInfoTable, AppConfigTable)
+object AttachFileInfoTable : UUIDTable("common_attach_file") {
+    val fileName = varchar("file_name", 256)
+    val fileKey = varchar("file_key", 512)
+    val contentType = varchar("content_type", 128)
+    val fileSize = long("file_size")
+    val createdAt = timestampWithTimeZone("created_at").defaultExpression(CurrentTimestampWithTimeZone)
+    val updatedAt = timestampWithTimeZone("updated_at").defaultExpression(CurrentTimestampWithTimeZone)
+}
+
+class AttachFileInfoDAO(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<AttachFileInfoDAO>(AttachFileInfoTable)
+
+    var fileName by AttachFileInfoTable.fileName
+    var fileKey by AttachFileInfoTable.fileKey
+    var contentType by AttachFileInfoTable.contentType
+    var fileSize by AttachFileInfoTable.fileSize
+    var createdAt by AttachFileInfoTable.createdAt
+    var updatedAt by AttachFileInfoTable.updatedAt
+
+    fun toDTO() = AttachFileInfo(
+        id = id.toString(),
+        fileName = fileName,
+        fileKey = fileKey,
+        contentType = contentType,
+        fileSize = fileSize,
+        createdAt = createdAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
+        updatedAt = updatedAt.toInstant().let { KtInstant.fromEpochSeconds(it.epochSecond, it.nano) },
+    )
+}
+
+fun commonModuleTables() = listOf(AdditionalInfoTable, AppConfigTable, AttachFileInfoTable)

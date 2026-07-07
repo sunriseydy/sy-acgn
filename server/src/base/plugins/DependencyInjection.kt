@@ -7,12 +7,17 @@ import dev.sunriseydy.acgn.server.anime.service.AnimeServiceImpl
 import dev.sunriseydy.acgn.server.anime.tools.BangumiTool
 import dev.sunriseydy.acgn.server.anime.tools.QbTool
 import dev.sunriseydy.acgn.server.anime.tools.TmdbTool
+import dev.sunriseydy.acgn.server.base.tool.S3Tool
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepositoryImpl
 import dev.sunriseydy.acgn.server.common.repository.AppConfigRepository
 import dev.sunriseydy.acgn.server.common.repository.AppConfigRepositoryImpl
+import dev.sunriseydy.acgn.server.common.repository.AttachFileInfoRepository
+import dev.sunriseydy.acgn.server.common.repository.AttachFileInfoRepositoryImpl
 import dev.sunriseydy.acgn.server.common.service.AppConfigService
 import dev.sunriseydy.acgn.server.common.service.AppConfigServiceImpl
+import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
+import dev.sunriseydy.acgn.server.common.service.AttachFileInfoServiceImpl
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.*
 
@@ -31,15 +36,23 @@ fun Application.configureDependencyInjection() {
         provide<AppConfigRepository> { AppConfigRepositoryImpl() }
         provide<AdditionalInfoRepository> { AdditionalInfoRepositoryImpl() }
         provide<AnimeRepository> { AnimeRepositoryImpl() }
+        provide<AttachFileInfoRepository> { AttachFileInfoRepositoryImpl() }
 
         // --- 注册 Service (业务逻辑层) ---
         provide<AppConfigService> {
             AppConfigServiceImpl(resolve<AppConfigRepository>())
         }
+        provide<AttachFileInfoService> {
+            AttachFileInfoServiceImpl(
+                resolve<AttachFileInfoRepository>(),
+                resolve<S3Tool>()
+            )
+        }
         provide<AnimeService> {
             AnimeServiceImpl(
                 resolve<AnimeRepository>(),
-                resolve<AdditionalInfoRepository>()
+                resolve<AdditionalInfoRepository>(),
+                resolve<AttachFileInfoService>()
             )
         }
 
@@ -47,5 +60,6 @@ fun Application.configureDependencyInjection() {
         provide<BangumiTool> { BangumiTool() }
         provide<QbTool> { QbTool() }
         provide<TmdbTool> { TmdbTool() }
+        provide<S3Tool> { S3Tool() }
     }
 }

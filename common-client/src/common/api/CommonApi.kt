@@ -63,4 +63,6 @@ class CommonApi internal constructor(private val httpClient: HttpClient) {
     suspend fun deleteAddition(id: String): Result<Unit> =
         httpClient.delete(CommonModuleResource.Addition(id = id)).body()
     
+    suspend fun getAttachFileBytes(id: String): ByteArray =
+        httpClient.get(CommonModuleResource.AttachFile(id = id)).body()
 }

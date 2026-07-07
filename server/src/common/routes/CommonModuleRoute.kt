@@ -8,8 +8,10 @@ import dev.sunriseydy.acgn.server.base.plugins.loadAppConfigFromDB
 import dev.sunriseydy.acgn.server.base.plugins.loadLocalizations
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.common.service.AppConfigService
+import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.LocalizationTool
+import io.ktor.http.*
 import io.ktor.server.plugins.di.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
@@ -24,6 +26,7 @@ import io.ktor.server.routing.*
 fun Route.configureCommonModuleRoutes() {
     val appConfigService: AppConfigService by application.dependencies
     val additionalInfoRepository: AdditionalInfoRepository by application.dependencies
+    val attachFileInfoService: AttachFileInfoService by application.dependencies
     get<CommonModuleResource.Info> { resource ->
         resource.language?.let {
             LocalizationTool.loadLocalizations(it)
@@ -69,5 +72,22 @@ fun Route.configureCommonModuleRoutes() {
     }
     delete<CommonModuleResource.Addition> { resource ->
         call.respond(Result(data = additionalInfoRepository.deleteAdditionalInfo(resource.id!!)))
+    }
+    get<CommonModuleResource.AttachFile> { resource ->
+        val fileInfo = attachFileInfoService.getFileById(resource.id)
+        if (fileInfo == null) {
+            call.respond(HttpStatusCode.NotFound, "File not found: ${resource.id}")
+            return@get
+        }
+        val stream = attachFileInfoService.getFileStream(resource.id)
+        call.response.header(
+            HttpHeaders.ContentDisposition,
+            ContentDisposition.Inline
+                .withParameter(ContentDisposition.Parameters.FileName, fileInfo.fileName)
+                .toString()
+        )
+        call.respondOutputStream(ContentType.parse(fileInfo.contentType)) {
+            stream.copyTo(this)
+        }
     }
 }

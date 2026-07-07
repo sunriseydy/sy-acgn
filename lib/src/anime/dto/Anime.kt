@@ -4,10 +4,11 @@ import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.base.enums.Status
 import dev.sunriseydy.acgn.base.interfaces.AdditionInterface
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
-import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
+import kotlin.time.Instant
+
 /**
  * 动画实体 DTO
  *
@@ -73,6 +74,7 @@ data class AnimeSeason(
     val downloadStatus: String get() = AnimeAdditionType.DownloadStatus.valueOf(additions) ?: Status.UNPROCESS.key
     val fileStatus: String get() = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
     val watchStatus: String get() = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
+    val posterId: String? get() = AnimeAdditionType.PosterId.valueOf(additions)
 }
 
 /**

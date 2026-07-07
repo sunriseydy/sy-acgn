@@ -34,4 +34,8 @@ class CommonModuleResource(val parent: ApiResource = ApiResource()) {
         val additionalType: String? = null,
         val id: String? = null
     )
+
+    @Serializable
+    @Resource("attach/{id}")
+    class AttachFile(val parent: CommonModuleResource = CommonModuleResource(), val id: String)
 }

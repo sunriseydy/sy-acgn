@@ -32,6 +32,9 @@ object AnimeAdditionType {
 
     /** 观看状态 */
     object WatchStatus : AnimeModule, StringAdditionType
+
+    /** 封面图片id */
+    object PosterId : AnimeModule, StringAdditionType
 }
 
 /**

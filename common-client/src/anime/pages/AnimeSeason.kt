@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
@@ -19,6 +20,7 @@ import dev.sunriseydy.acgn.client.anime.components.CreateAnimeSeason
 import dev.sunriseydy.acgn.client.anime.components.SearchBgmAnimeSeason
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
+import dev.sunriseydy.acgn.client.base.components.AttachImage
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.components.PageTitle
 import dev.sunriseydy.acgn.client.base.navigation.TopLevelRouteEnum
@@ -27,8 +29,8 @@ import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.res.*
 import dev.sunriseydy.acgn.tools.i
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 private val logger = KotlinLogging.logger { }
 
@@ -130,65 +132,76 @@ fun AnimeSeason(appState: AppState) {
                         modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         onClick = { buttonGroupVisible.value = !buttonGroupVisible.value }
                     ) {
-                        Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
-                            SelectionContainer {
-                                Text(
-                                    text = "${season.anime?.name ?: ""} - ${season.name}",
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                            }
-                            val tag: String = buildString {
-                                append("第 ${season.season} 季 ")
-                                append("共 ${season.numberOfEpisodes} 集 ")
-                                AnimeAdditionType.FileStatus.additionalInfo(season.additions)?.also {
-                                    append(i(it.additionalType)).append(":").append(i(it.additionalValue)).append(" ")
+                        Row(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                val posterId = season.posterId
+                                if (!posterId.isNullOrBlank()) {
+                                    AttachImage(
+                                        appState = appState,
+                                        attachId = posterId,
+                                        modifier = Modifier.width(100.dp).height(150.dp).padding(end = 8.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
                                 }
-                            }
-                            Text(
-                                text = tag,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            Text(
-                                text = season.description?.takeUnless { it.isBlank() }
-                                    ?: season.anime?.description.orEmpty(),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            if (buttonGroupVisible.value) {
-                                Row {
-                                    IconButton(onClick = {
-                                        currentSeason.value = season
-                                        deleteDialogVisible.value = true
-                                    }) {
-                                        Icon(Icons.Default.Delete, null)
+                                SelectionContainer {
+                                    Text(
+                                        text = "${season.anime?.name ?: ""} - ${season.name}",
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+                                }
+                                val tag: String = buildString {
+                                    append("第 ${season.season} 季 ")
+                                    append("共 ${season.numberOfEpisodes} 集 ")
+                                    AnimeAdditionType.FileStatus.additionalInfo(season.additions)?.also {
+                                        append(i(it.additionalType)).append(":").append(i(it.additionalValue)).append(" ")
                                     }
-                                    IconButton(onClick = {
-                                        currentSeason.value = season
-                                        openHandleFileDialog()
-                                    }) {
-                                        Icon(Icons.Default.DriveFolderUpload, null)
-                                    }
-                                    // Refresh TMDB
-                                    if (season.anime?.tmdbId != null) {
+                                }
+                                Text(
+                                    text = tag,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                                Text(
+                                    text = season.description?.takeUnless { it.isBlank() }
+                                        ?: season.anime?.description.orEmpty(),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                if (buttonGroupVisible.value) {
+                                    Row {
                                         IconButton(onClick = {
-                                            animeSeasonService.refreshTmdbData(
-                                                season = season,
-                                                onSuccess = { loadData() },
-                                                onError = { errorMsg ->
-                                                    appState.scope.launch {
-                                                        appState.snackbarHostState.showSnackbar(errorMsg)
-                                                    }
-                                                }
-                                            )
+                                            currentSeason.value = season
+                                            deleteDialogVisible.value = true
                                         }) {
-                                            Icon(Icons.Default.Sync, null)
+                                            Icon(Icons.Default.Delete, null)
                                         }
-                                    }
-                                    // Search BGM
-                                    IconButton(onClick = {
-                                        currentSeason.value = season
-                                        searchBgmDialogVisible.value = true
-                                    }) {
-                                        Icon(Icons.Default.Search, null)
+                                        IconButton(onClick = {
+                                            currentSeason.value = season
+                                            openHandleFileDialog()
+                                        }) {
+                                            Icon(Icons.Default.DriveFolderUpload, null)
+                                        }
+                                        // Refresh TMDB
+                                        if (season.anime?.tmdbId != null) {
+                                            IconButton(onClick = {
+                                                animeSeasonService.refreshTmdbData(
+                                                    season = season,
+                                                    onSuccess = { loadData() },
+                                                    onError = { errorMsg ->
+                                                        appState.scope.launch {
+                                                            appState.snackbarHostState.showSnackbar(errorMsg)
+                                                        }
+                                                    }
+                                                )
+                                            }) {
+                                                Icon(Icons.Default.Sync, null)
+                                            }
+                                        }
+                                        // Search BGM
+                                        IconButton(onClick = {
+                                            currentSeason.value = season
+                                            searchBgmDialogVisible.value = true
+                                        }) {
+                                            Icon(Icons.Default.Search, null)
+                                        }
                                     }
                                 }
                             }

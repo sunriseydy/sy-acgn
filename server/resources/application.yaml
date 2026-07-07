@@ -21,3 +21,9 @@ config:
     QbPassword: "$?SY_QB_PASSWORD"
     BgmUserAgent: "$?SY_BGM_USER_AGENT"
     MediaTargetDirectory: "$?SY_MEDIA_TARGET_DIRECTORY"
+  COMMON:
+    S3Endpoint: "$?SY_S3_ENDPOINT"
+    S3AccessKey: "$?SY_S3_ACCESS_KEY"
+    S3SecretKey: "$?SY_S3_SECRET_KEY"
+    S3BucketName: "$?SY_S3_BUCKET_NAME"
+    S3Region: "$?SY_S3_REGION"

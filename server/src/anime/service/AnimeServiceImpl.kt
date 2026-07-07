@@ -8,11 +8,21 @@ import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.base.enums.Status
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
-import dev.sunriseydy.acgn.server.anime.db.AnimeSeasonTable.season
 import dev.sunriseydy.acgn.server.anime.repository.AnimeRepository
 import dev.sunriseydy.acgn.server.anime.tools.AnimeCacheTool
 import dev.sunriseydy.acgn.server.anime.tools.FileTool
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.image.TmdbImageSize
+import dev.sunriseydy.acgn.server.anime.tools.tmdb.image.TmdbImageUrlBuilder
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
+import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
+import dev.sunriseydy.acgn.tools.HttpClientFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonPrimitive
+import java.io.ByteArrayInputStream
 
 /**
  * 动漫服务实现类
@@ -26,8 +36,12 @@ import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
  */
 class AnimeServiceImpl(
     val animeRepository: AnimeRepository,
-    val additionalInfoRepository: AdditionalInfoRepository
+    val additionalInfoRepository: AdditionalInfoRepository,
+    val attachFileInfoService: AttachFileInfoService
 ) : AnimeService {
+    private val logger = KotlinLogging.logger { }
+    private val httpClient = HttpClientFactory.buildHttpClient()
+
     suspend fun getAllAnime(): List<Anime> {
         val additionalInfos = additionalInfoRepository.selectAdditionalInfos(AnimeAssociatedType.ANIME.key)
         return animeRepository.selectAllAnime().map {
@@ -127,13 +141,57 @@ class AnimeServiceImpl(
         }
     }
 
+    private suspend fun downloadAndSavePoster(seasonId: ULong, additions: List<AdditionalInfo>): AdditionalInfo? {
+        val tmdbJson = AnimeAdditionType.TmdbJson.valueOf(additions) ?: return null
+        val posterPath = tmdbJson["poster_path"]?.jsonPrimitive?.contentOrNull ?: return null
+        if (posterPath.isBlank()) return null
+
+        val existingPosterId = AnimeAdditionType.PosterId.valueOf(additions)
+        if (!existingPosterId.isNullOrBlank()) {
+            return null
+        }
+
+        try {
+            val imageUrl = TmdbImageUrlBuilder.build(posterPath, TmdbImageSize.ORIGINAL)
+            val response = httpClient.get(imageUrl)
+            if (response.status.isSuccess()) {
+                val bytes = response.bodyAsBytes()
+                val contentType = response.headers[HttpHeaders.ContentType] ?: "image/jpeg"
+                val fileName = posterPath.substringAfterLast("/")
+                val attachFileId = attachFileInfoService.saveFile(
+                    fileName = fileName,
+                    inputStream = ByteArrayInputStream(bytes),
+                    contentLength = bytes.size.toLong(),
+                    contentType = contentType
+                )
+                return AdditionalInfo(
+                    id = "",
+                    associatedId = seasonId,
+                    associatedType = AnimeAssociatedType.ANIME_SEASON.key,
+                    additionalType = AnimeAdditionType.PosterId.key,
+                    additionalValue = attachFileId
+                )
+            } else {
+                logger.warn { "Failed to download poster from $imageUrl: ${response.status}" }
+            }
+        } catch (e: Exception) {
+            logger.error(e) { "Error downloading poster for season $seasonId" }
+        }
+        return null
+    }
+
     override suspend fun createAnimeSeason(season: AnimeSeason): AnimeSeason {
         // 只能新增数据
         check(season.id == ULong.MIN_VALUE) { "只能新增数据" }
         return animeRepository.insertAnimeSeason(season)
-            .let {
-                additionalInfoRepository.saveAdditionalInfos(season.additions, it.id)
-                return@let this.addAnimeSeasonCache(it.id)
+            .let { insertedSeason ->
+                val additions = season.additions.toMutableList()
+                val posterAddition = downloadAndSavePoster(insertedSeason.id, additions)
+                if (posterAddition != null) {
+                    additions.add(posterAddition)
+                }
+                additionalInfoRepository.saveAdditionalInfos(additions, insertedSeason.id)
+                return@let this.addAnimeSeasonCache(insertedSeason.id)
             }
     }
 
@@ -148,9 +206,14 @@ class AnimeServiceImpl(
 
     suspend fun updateAnimeSeason(season: AnimeSeason): AnimeSeason {
         check(season.id != ULong.MIN_VALUE) { "只能更新数据" }
+        val additions = season.additions.toMutableList()
+        val posterAddition = downloadAndSavePoster(season.id, additions)
+        if (posterAddition != null) {
+            additions.add(posterAddition)
+        }
         return animeRepository.updateAnimeSeason(season)
             .let {
-                additionalInfoRepository.saveAdditionalInfos(season.additions, it.id)
+                additionalInfoRepository.saveAdditionalInfos(additions, it.id)
                 return@let this.addAnimeSeasonCache(it.id)
             }
     }
