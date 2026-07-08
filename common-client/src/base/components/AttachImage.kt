@@ -81,6 +81,7 @@ fun AttachImage(
                 error.value = true
             }
         } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
             error.value = true
         } finally {
             loading.value = false
