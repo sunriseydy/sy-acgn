@@ -105,7 +105,7 @@ fun AttachImage(
     }
 }
 
-private class ImageMemoryCache(private val maxSize: Int = 50) {
+private class ImageMemoryCache(private val maxSize: Int = 20) {
     private val cache = Collections.synchronizedMap(
         object : LinkedHashMap<String, ImageBitmap>(maxSize, 0.75f, true) {
             override fun removeEldestEntry(eldest: Map.Entry<String, ImageBitmap>?): Boolean {
@@ -122,12 +122,15 @@ private class ImageMemoryCache(private val maxSize: Int = 50) {
 
 private class ImageDiskCache(private val cacheDir: File) {
     private val lock = Any()
+    private var isDirCreated = false
+    private var putCount = 0
 
-    init {
-        synchronized(lock) {
+    private fun ensureDirCreated() {
+        if (!isDirCreated) {
             if (!cacheDir.exists()) {
                 cacheDir.mkdirs()
             }
+            isDirCreated = true
         }
     }
 
@@ -145,6 +148,7 @@ private class ImageDiskCache(private val cacheDir: File) {
     private fun getFile(key: String): File = File(cacheDir, getSafeFilename(key))
 
     fun get(key: String): ByteArray? = synchronized(lock) {
+        ensureDirCreated()
         val file = getFile(key)
         if (file.exists() && file.isFile) {
             try {
@@ -159,11 +163,28 @@ private class ImageDiskCache(private val cacheDir: File) {
 
     fun put(key: String, bytes: ByteArray) = synchronized(lock) {
         try {
+            ensureDirCreated()
             val file = getFile(key)
             file.writeBytes(bytes)
-            pruneCache()
+            putCount++
+            if (putCount >= 50) {
+                putCount = 0
+                pruneCache()
+            }
         } catch (e: Exception) {
             // Silently ignore disk write failures
+        }
+    }
+
+    fun delete(key: String) = synchronized(lock) {
+        try {
+            ensureDirCreated()
+            val file = getFile(key)
+            if (file.exists()) {
+                file.delete()
+            }
+        } catch (e: Exception) {
+            // Ignore deletion failures
         }
     }
 
@@ -184,7 +205,8 @@ private class ImageDiskCache(private val cacheDir: File) {
 }
 
 internal object ImageCacheManager {
-    private val cacheDir = File(System.getProperty("user.home") ?: ".", ".sy-acgn/cache/images")
+    private val homeDir = System.getProperty("user.home")?.takeIf { it.isNotBlank() } ?: "."
+    private val cacheDir = File(homeDir, ".sy-acgn/cache/images")
     private val memoryCache = ImageMemoryCache()
     private val diskCache = ImageDiskCache(cacheDir)
 
@@ -196,9 +218,12 @@ internal object ImageCacheManager {
             val bitmap = ImageIO.read(ByteArrayInputStream(bytes))?.toComposeImageBitmap()
             if (bitmap != null) {
                 memoryCache.put(key, bitmap)
+            } else {
+                diskCache.delete(key) // Delete corrupt file on disk
             }
             bitmap
         } catch (e: Exception) {
+            diskCache.delete(key) // Delete corrupt file on disk
             null
         }
     }
