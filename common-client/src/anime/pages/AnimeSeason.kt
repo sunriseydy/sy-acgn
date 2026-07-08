@@ -134,14 +134,19 @@ fun AnimeSeason(appState: AppState) {
                     ) {
                         Row(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
                             Column(modifier = Modifier.weight(1f)) {
-                                val posterId = season.posterId
-                                if (!posterId.isNullOrBlank()) {
-                                    AttachImage(
-                                        appState = appState,
-                                        attachId = posterId,
-                                        modifier = Modifier.width(100.dp).height(150.dp).padding(end = 8.dp),
-                                        contentScale = ContentScale.Crop
-                                    )
+                                Row(
+                                    modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    val posterId = season.posterId
+                                    if (!posterId.isNullOrBlank()) {
+                                        AttachImage(
+                                            appState = appState,
+                                            attachId = posterId,
+                                            modifier = Modifier.padding(end = 8.dp).width(300.dp).height(450.dp),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
                                 }
                                 SelectionContainer {
                                     Text(
