@@ -52,8 +52,29 @@ fun AttachImage(
         loading.value = true
         error.value = false
         try {
-            val bytes = appState.api.common.getAttachFileBytes(attachId)
-            val bitmap = ImageIO.read(ByteArrayInputStream(bytes))?.toComposeImageBitmap()
+            // 1. Check Memory Cache
+            val memoryBitmap = ImageCacheManager.getFromMemory(attachId)
+            if (memoryBitmap != null) {
+                imageBitmap.value = memoryBitmap
+                loading.value = false
+                return@LaunchedEffect
+            }
+
+            // 2. Load and decode asynchronously on background IO dispatcher
+            val bitmap = withContext(Dispatchers.IO) {
+                // Try from disk
+                var loaded = ImageCacheManager.getFromDiskAndCache(attachId)
+                if (loaded == null) {
+                    // Download from API
+                    val bytes = appState.api.common.getAttachFileBytes(attachId)
+                    loaded = ImageIO.read(ByteArrayInputStream(bytes))?.toComposeImageBitmap()
+                    if (loaded != null) {
+                        ImageCacheManager.put(attachId, bytes, loaded)
+                    }
+                }
+                loaded
+            }
+
             if (bitmap != null) {
                 imageBitmap.value = bitmap
             } else {
