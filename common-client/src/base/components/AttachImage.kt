@@ -98,17 +98,21 @@ private class ImageMemoryCache(private val maxSize: Int = 50) {
 }
 
 private class ImageDiskCache(private val cacheDir: File) {
+    private val lock = Any()
+
     init {
-        if (!cacheDir.exists()) {
-            cacheDir.mkdirs()
+        synchronized(lock) {
+            if (!cacheDir.exists()) {
+                cacheDir.mkdirs()
+            }
         }
     }
 
     private fun getFile(key: String): File = File(cacheDir, key)
 
-    fun get(key: String): ByteArray? {
+    fun get(key: String): ByteArray? = synchronized(lock) {
         val file = getFile(key)
-        return if (file.exists() && file.isFile) {
+        if (file.exists() && file.isFile) {
             try {
                 file.readBytes()
             } catch (e: Exception) {
@@ -119,7 +123,7 @@ private class ImageDiskCache(private val cacheDir: File) {
         }
     }
 
-    fun put(key: String, bytes: ByteArray) {
+    fun put(key: String, bytes: ByteArray) = synchronized(lock) {
         try {
             val file = getFile(key)
             file.writeBytes(bytes)
