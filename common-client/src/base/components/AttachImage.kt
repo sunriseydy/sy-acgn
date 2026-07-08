@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import dev.sunriseydy.acgn.client.AppState
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.security.MessageDigest
 import java.util.Collections
 import java.util.LinkedHashMap
 import javax.imageio.ImageIO
@@ -130,7 +131,18 @@ private class ImageDiskCache(private val cacheDir: File) {
         }
     }
 
-    private fun getFile(key: String): File = File(cacheDir, key)
+    private fun getSafeFilename(key: String): String {
+        return try {
+            val digest = MessageDigest.getInstance("MD5")
+            val hashBytes = digest.digest(key.toByteArray(Charsets.UTF_8))
+            hashBytes.joinToString("") { "%02x".format(it) }
+        } catch (e: Exception) {
+            // Fallback: replace any non-alphanumeric chars
+            key.replace(Regex("[^a-zA-Z0-9_-]"), "_")
+        }
+    }
+
+    private fun getFile(key: String): File = File(cacheDir, getSafeFilename(key))
 
     fun get(key: String): ByteArray? = synchronized(lock) {
         val file = getFile(key)
@@ -149,14 +161,30 @@ private class ImageDiskCache(private val cacheDir: File) {
         try {
             val file = getFile(key)
             file.writeBytes(bytes)
+            pruneCache()
         } catch (e: Exception) {
             // Silently ignore disk write failures
+        }
+    }
+
+    private fun pruneCache() {
+        try {
+            val files = cacheDir.listFiles() ?: return
+            if (files.size > 1000) {
+                val sortedFiles = files.sortedBy { it.lastModified() }
+                val toDeleteCount = files.size - 800
+                for (i in 0 until toDeleteCount) {
+                    sortedFiles[i].delete()
+                }
+            }
+        } catch (e: Exception) {
+            // Ignore pruning exceptions
         }
     }
 }
 
 internal object ImageCacheManager {
-    private val cacheDir = File(System.getProperty("user.home"), ".sy-acgn/cache/images")
+    private val cacheDir = File(System.getProperty("user.home") ?: ".", ".sy-acgn/cache/images")
     private val memoryCache = ImageMemoryCache()
     private val diskCache = ImageDiskCache(cacheDir)
 
