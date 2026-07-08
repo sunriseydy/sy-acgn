@@ -16,7 +16,12 @@ import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import dev.sunriseydy.acgn.client.AppState
 import java.io.ByteArrayInputStream
+import java.io.File
+import java.util.Collections
+import java.util.LinkedHashMap
 import javax.imageio.ImageIO
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * 附件图片展示组件
@@ -74,5 +79,78 @@ fun AttachImage(
                 contentScale = contentScale
             )
         }
+    }
+}
+
+private class ImageMemoryCache(private val maxSize: Int = 50) {
+    private val cache = Collections.synchronizedMap(
+        object : LinkedHashMap<String, ImageBitmap>(maxSize, 0.75f, true) {
+            override fun removeEldestEntry(eldest: Map.Entry<String, ImageBitmap>?): Boolean {
+                return size > maxSize
+            }
+        }
+    )
+
+    fun get(key: String): ImageBitmap? = cache[key]
+    fun put(key: String, bitmap: ImageBitmap) {
+        cache[key] = bitmap
+    }
+}
+
+private class ImageDiskCache(private val cacheDir: File) {
+    init {
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs()
+        }
+    }
+
+    private fun getFile(key: String): File = File(cacheDir, key)
+
+    fun get(key: String): ByteArray? {
+        val file = getFile(key)
+        return if (file.exists() && file.isFile) {
+            try {
+                file.readBytes()
+            } catch (e: Exception) {
+                null
+            }
+        } else {
+            null
+        }
+    }
+
+    fun put(key: String, bytes: ByteArray) {
+        try {
+            val file = getFile(key)
+            file.writeBytes(bytes)
+        } catch (e: Exception) {
+            // Silently ignore disk write failures
+        }
+    }
+}
+
+internal object ImageCacheManager {
+    private val cacheDir = File(System.getProperty("user.home"), ".sy-acgn/cache/images")
+    private val memoryCache = ImageMemoryCache()
+    private val diskCache = ImageDiskCache(cacheDir)
+
+    fun getFromMemory(key: String): ImageBitmap? = memoryCache.get(key)
+
+    fun getFromDiskAndCache(key: String): ImageBitmap? {
+        val bytes = diskCache.get(key) ?: return null
+        return try {
+            val bitmap = ImageIO.read(ByteArrayInputStream(bytes))?.toComposeImageBitmap()
+            if (bitmap != null) {
+                memoryCache.put(key, bitmap)
+            }
+            bitmap
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun put(key: String, bytes: ByteArray, bitmap: ImageBitmap) {
+        memoryCache.put(key, bitmap)
+        diskCache.put(key, bytes)
     }
 }
