@@ -1,11 +1,11 @@
 package dev.sunriseydy.acgn.tools
 
 import io.ktor.client.*
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
-import io.ktor.http.HttpHeaders
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.serialization.kotlinx.xml.xml
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.xml.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
@@ -57,7 +57,8 @@ object HttpClientFactory {
         }
         install(Logging) {
             logger = Logger.DEFAULT
-            level = logLevel
+            level = LogLevel.BODY
+            format = LoggingFormat.OkHttp
             sanitizeHeader { header -> header == HttpHeaders.Authorization }
         }
     }
