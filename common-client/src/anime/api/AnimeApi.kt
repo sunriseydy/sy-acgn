@@ -21,7 +21,7 @@ class AnimeApi internal constructor(private val httpClient: HttpClient) {
         httpClient.get(AnimeModuleResource.Anime.Name(name = name)).body()
 
     suspend fun getAnimeSeasonSectionMap(name: String?): Result<MutableMap<String, List<AnimeSeason>>> =
-        httpClient.get(AnimeModuleResource.Anime.Season.SectionMap()).body()
+        httpClient.get(AnimeModuleResource.Anime.Season.SectionMap(name = name)).body()
 
     suspend fun saveAnimeSeason(animeSeason: AnimeSeason): Result<AnimeSeason> =
         httpClient.post(AnimeModuleResource.Anime.Season()) {
