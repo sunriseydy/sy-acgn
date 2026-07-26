@@ -89,3 +89,14 @@ data class BangumiSearchResponse(
     val offset: Int,
     val data: List<BangumiSubject>
 )
+
+@Serializable
+data class BangumiRelatedSubject(
+    val id: Int,
+    val type: Int,
+    val name: String,
+    @SerialName("name_cn") val nameCn: String = "",
+    val relation: String = "",
+    val images: BangumiImages? = null
+)
+

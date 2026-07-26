@@ -3,12 +3,13 @@ package dev.sunriseydy.acgn.server.base.plugins
 import dev.sunriseydy.acgn.server.anime.db.animeTables
 import dev.sunriseydy.acgn.server.base.config.PostgresqlConfig
 import dev.sunriseydy.acgn.server.common.db.commonModuleTables
+import dev.sunriseydy.acgn.server.novel.db.novelTables
 import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.SizedIterable
-import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 
 /**
@@ -61,7 +62,8 @@ fun Application.initializeDatabase(db: Database) {
         MigrationUtils.statementsRequiredForDatabaseMigration(
             *(listOf(
                 animeTables(),
-                commonModuleTables()
+                commonModuleTables(),
+                novelTables()
             ).flatten().toTypedArray())
         ).also {
             environment.log.info("database migration: $it")

@@ -26,9 +26,12 @@ import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.pages.AnimeSeason
 import dev.sunriseydy.acgn.client.anime.pages.Rss
 import dev.sunriseydy.acgn.client.base.api.SyAcgnApi
+import dev.sunriseydy.acgn.client.base.components.SnackbarHost
 import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
 import dev.sunriseydy.acgn.client.base.enums.AcgnNavigationContentPosition
 import dev.sunriseydy.acgn.client.base.enums.LayoutType
+import dev.sunriseydy.acgn.client.novel.pages.NovelDetailPage
+import dev.sunriseydy.acgn.client.novel.pages.NovelListPage
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 
 /**
@@ -102,21 +105,33 @@ fun AcgnNavigationWrapper() {
             }
         }
     ) {
-        NavDisplay(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surface),
-            backStack = navigationAction.backStack,
-            onBack = { navigationAction.removeLast() },
-            entryProvider = entryProvider {
-                entry<RssRoute> {
-                    Rss(appState)
-                }
-                entry<AnimeSeasonRoute> {
-                    AnimeSeason(appState)
-                }
-            },
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            NavDisplay(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.surface),
+                backStack = navigationAction.backStack,
+                onBack = { navigationAction.removeLast() },
+                entryProvider = entryProvider {
+                    entry<RssRoute> {
+                        Rss(appState)
+                    }
+                    entry<AnimeSeasonRoute> {
+                        AnimeSeason(appState)
+                    }
+                    entry<NovelRoute> {
+                        NovelListPage(appState)
+                    }
+                    entry<NovelDetailRoute> { route ->
+                        NovelDetailPage(appState, route.novelId)
+                    }
+                },
+            )
+            SnackbarHost(
+                appState = appState,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
     }
 }
 

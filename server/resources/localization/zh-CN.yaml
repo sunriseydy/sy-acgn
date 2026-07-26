@@ -5,6 +5,7 @@ enum:
     TopLevelRouteEnum:
       RSS: "订阅"
       ANIME_SEASON: "动画季度"
+      NOVEL: "轻小说"
     Status:
       PROCESSED: "已处理"
   ANIME:
@@ -18,18 +19,48 @@ enum:
       SPRING: "春季动画"
       SUMMER: "夏季动画"
       FALL: "秋季动画"
+  NOVEL:
+    NovelAssociatedType:
+      NOVEL: "轻小说"
+      NOVEL_VOLUME: "轻小说卷"
+    NovelStatusEnum:
+      SERIALIZING: "连载中"
+      ENDED: "已完结"
+      PAUSED: "暂停"
+    ReadingStatusEnum:
+      UNREAD: "未读"
+      READING: "阅读中"
+      READ: "已读"
+      DROPPED: "弃书"
 
 message:
   error:
     COMMON:
       TEST: "通用模块测试异常"
+    NOVEL:
+      NOVEL_NOT_FOUND: "未找到轻小说"
+      NOVEL_VOLUME_NOT_FOUND: "未找到轻小说卷"
+      BANGUMI_IMPORT_FAILED: "Bangumi导入失败"
+      INVALID_VOLUME_NUMBER: "无效的卷号"
   ERROR:
     ANIME:
       QB_REQUEST_FAILED: "qBitTorrent请求失败"
+    NOVEL:
+      NOVEL_NOT_FOUND: "未找到轻小说"
+      NOVEL_VOLUME_NOT_FOUND: "未找到轻小说卷"
+      BANGUMI_IMPORT_FAILED: "Bangumi导入失败"
+      INVALID_VOLUME_NUMBER: "无效的卷号"
   COMMON:
     AppName:
       meaning: "应用名称"
       description: "应用的名称"
+
 addition:
   ANIME:
     FileStatus: "文件处理状态"
+  NOVEL:
+    BgmJson: "Bangumi元数据"
+    ReadingStatus: "阅读状态"
+    FileStatus: "文件状态"
+    PosterId: "封面"
+    EpubFilePath: "电子书文件路径"

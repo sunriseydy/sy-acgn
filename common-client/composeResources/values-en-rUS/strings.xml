@@ -40,4 +40,33 @@
     <string name="search_bangumi">Bangumi</string>
     <string name="episode_offset">Episode Offset</string>
     <string name="episode_offset_supporting_text">Default is 0, enter offset if you need to modify the episode number during sorting</string>
+
+    <!-- NovelString -->
+    <string name="novel_title">Light Novels</string>
+    <string name="novel_detail_title">Light Novel Detail</string>
+    <string name="novel_volume_list">Volumes</string>
+    <string name="novel_search_placeholder">Search Light Novels</string>
+    <string name="novel_create">Create Novel</string>
+    <string name="novel_edit">Edit Novel</string>
+    <string name="novel_name">Title</string>
+    <string name="novel_original_name">Original Title</string>
+    <string name="novel_author">Author</string>
+    <string name="novel_illustrator">Illustrator</string>
+    <string name="novel_publisher">Publisher</string>
+    <string name="novel_description">Description</string>
+    <string name="novel_status">Status</string>
+    <string name="novel_total_volumes">Total Volumes</string>
+    <string name="novel_volume_number">Volume Number (e.g. 1, 1.5)</string>
+    <string name="novel_volume_name">Volume Title</string>
+    <string name="novel_volume_isbn">ISBN</string>
+    <string name="novel_volume_description">Volume Description</string>
+    <string name="novel_add_volume">Add Volume</string>
+    <string name="novel_edit_volume">Edit Volume</string>
+    <string name="novel_delete">Delete Light Novel</string>
+    <string name="novel_delete_volume">Delete Volume</string>
+    <string name="novel_bangumi_import">Bangumi Import</string>
+    <string name="novel_bangumi_import_tip">Import metadata by Bangumi Subject ID:</string>
+    <string name="novel_bangumi_search_label">Search Bangumi Light Novels</string>
+    <string name="novel_no_data">No light novel data. Try importing from Bangumi or creating a new novel.</string>
+    <string name="novel_no_volume_data">No volume data. Click the top button to add a volume.</string>
 </resources>

@@ -7,6 +7,7 @@ import dev.sunriseydy.acgn.client.anime.api.RssApi
 import dev.sunriseydy.acgn.client.base.components.showError
 import dev.sunriseydy.acgn.client.base.utils.getLocalServerConfig
 import dev.sunriseydy.acgn.client.common.api.CommonApi
+import dev.sunriseydy.acgn.client.novel.api.NovelApi
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.*
 import io.ktor.client.plugins.*
@@ -31,6 +32,10 @@ class SyAcgnApi {
     private val httpClient by lazy {
         HttpClientFactory.buildHttpClient(logLevel = LogLevel.BODY) {
             install(Resources)
+            install(HttpTimeout) {
+                requestTimeoutMillis = 30_000
+                socketTimeoutMillis = 30_000
+            }
             defaultRequest {
                 url {
                     takeFrom(getLocalServerConfig())
@@ -44,6 +49,7 @@ class SyAcgnApi {
     val rss by buildApi(::RssApi)
     val anime by buildApi(::AnimeApi)
     val common by buildApi(::CommonApi)
+    val novel by buildApi(::NovelApi)
 
     /**
      * 构建 API 实例的辅助函数

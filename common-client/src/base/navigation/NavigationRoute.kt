@@ -31,6 +31,20 @@ data object AnimeSeasonRoute : NavigationRoute {
 }
 
 /**
+ * 轻小说页面路由
+ */
+data object NovelRoute : NavigationRoute {
+    override val icon: ImageVector? = null
+}
+
+/**
+ * 轻小说详情页面路由
+ */
+data class NovelDetailRoute(val novelId: ULong) : NavigationRoute {
+    override val icon: ImageVector? = null
+}
+
+/**
  * 顶层路由枚举
  *
  * 定义应用的顶层导航项，同时实现了 CommonModule 和 EnumKey 接口以支持本地化。
@@ -38,4 +52,5 @@ data object AnimeSeasonRoute : NavigationRoute {
 enum class TopLevelRouteEnum(val route: NavigationRoute) : CommonModule, EnumKey {
     RSS(route = RssRoute),
     ANIME_SEASON(route = AnimeSeasonRoute),
+    NOVEL(route = NovelRoute),
 }

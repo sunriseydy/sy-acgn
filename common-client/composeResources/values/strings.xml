@@ -40,4 +40,33 @@
     <string name="search_bangumi">Bangumi</string>
     <string name="episode_offset">集数偏移</string>
     <string name="episode_offset_supporting_text">默认为 0，如果在排序时需要修改集数则填写偏移量</string>
+
+    <!-- NovelString -->
+    <string name="novel_title">轻小说</string>
+    <string name="novel_detail_title">轻小说详情</string>
+    <string name="novel_volume_list">单卷列表</string>
+    <string name="novel_search_placeholder">搜索轻小说</string>
+    <string name="novel_create">新建小说</string>
+    <string name="novel_edit">编辑小说</string>
+    <string name="novel_name">小说名称</string>
+    <string name="novel_original_name">日文原名</string>
+    <string name="novel_author">作者</string>
+    <string name="novel_illustrator">插画家/绘师</string>
+    <string name="novel_publisher">文库/出版社</string>
+    <string name="novel_description">简介</string>
+    <string name="novel_status">连载状态</string>
+    <string name="novel_total_volumes">总卷数</string>
+    <string name="novel_volume_number">卷号 (例: 1, 1.5)</string>
+    <string name="novel_volume_name">卷名称</string>
+    <string name="novel_volume_isbn">ISBN 编号</string>
+    <string name="novel_volume_description">卷简介</string>
+    <string name="novel_add_volume">添加卷</string>
+    <string name="novel_edit_volume">编辑卷</string>
+    <string name="novel_delete">删除轻小说</string>
+    <string name="novel_delete_volume">删除卷</string>
+    <string name="novel_bangumi_import">Bangumi 导入</string>
+    <string name="novel_bangumi_import_tip">按 Bangumi 条目 ID 导入轻小说元数据：</string>
+    <string name="novel_bangumi_search_label">搜索 Bangumi 轻小说</string>
+    <string name="novel_no_data">暂无轻小说数据，尝试从 Bangumi 导入或新建小说。</string>
+    <string name="novel_no_volume_data">暂无单卷数据，点击顶部按钮添加卷。</string>
 </resources>

@@ -8,16 +8,13 @@ import dev.sunriseydy.acgn.server.anime.tools.BangumiTool
 import dev.sunriseydy.acgn.server.anime.tools.QbTool
 import dev.sunriseydy.acgn.server.anime.tools.TmdbTool
 import dev.sunriseydy.acgn.server.base.tool.S3Tool
-import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
-import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepositoryImpl
-import dev.sunriseydy.acgn.server.common.repository.AppConfigRepository
-import dev.sunriseydy.acgn.server.common.repository.AppConfigRepositoryImpl
-import dev.sunriseydy.acgn.server.common.repository.AttachFileInfoRepository
-import dev.sunriseydy.acgn.server.common.repository.AttachFileInfoRepositoryImpl
+import dev.sunriseydy.acgn.server.common.repository.*
 import dev.sunriseydy.acgn.server.common.service.AppConfigService
 import dev.sunriseydy.acgn.server.common.service.AppConfigServiceImpl
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoServiceImpl
+import dev.sunriseydy.acgn.server.novel.repository.NovelRepository
+import dev.sunriseydy.acgn.server.novel.repository.NovelRepositoryImpl
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.*
 
@@ -37,6 +34,9 @@ fun Application.configureDependencyInjection() {
         provide<AdditionalInfoRepository> { AdditionalInfoRepositoryImpl() }
         provide<AnimeRepository> { AnimeRepositoryImpl() }
         provide<AttachFileInfoRepository> { AttachFileInfoRepositoryImpl() }
+        provide<NovelRepository> {
+            NovelRepositoryImpl()
+        }
 
         // --- 注册 Service (业务逻辑层) ---
         provide<AppConfigService> {
@@ -53,6 +53,13 @@ fun Application.configureDependencyInjection() {
                 resolve<AnimeRepository>(),
                 resolve<AdditionalInfoRepository>(),
                 resolve<AttachFileInfoService>()
+            )
+        }
+        provide<dev.sunriseydy.acgn.server.novel.service.NovelService> {
+            dev.sunriseydy.acgn.server.novel.service.NovelServiceImpl(
+                resolve<NovelRepository>(),
+                resolve<AdditionalInfoRepository>(),
+                resolve<BangumiTool>()
             )
         }
 

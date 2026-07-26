@@ -7,4 +7,5 @@ package dev.sunriseydy.acgn.base.enums
 enum class ModuleName {
     COMMON,
     ANIME,
+    NOVEL,
 }

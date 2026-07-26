@@ -3,20 +3,60 @@ enum:
     Language:
       SIMPLIFIED_CHINESE: "Chinese"
       ENGLISH: "English"
+    TopLevelRouteEnum:
+      RSS: "RSS"
+      ANIME_SEASON: "Anime Season"
+      NOVEL: "Light Novels"
   ANIME:
     AnimeAssociatedType:
-      ANIME: "动画"
-      ANIME_SEASON: "动画季度"
-      ANIME_EPISODE: "动画集"
-      ANIME_MOVIE: "动画电影"
+      ANIME: "Anime"
+      ANIME_SEASON: "Anime Season"
+      ANIME_EPISODE: "Anime Episode"
+      ANIME_MOVIE: "Anime Movie"
+  NOVEL:
+    NovelAssociatedType:
+      NOVEL: "Light Novel"
+      NOVEL_VOLUME: "Light Novel Volume"
+    NovelStatusEnum:
+      SERIALIZING: "Serializing"
+      ENDED: "Ended"
+      PAUSED: "Paused"
+    ReadingStatusEnum:
+      UNREAD: "Unread"
+      READING: "Reading"
+      READ: "Read"
+      DROPPED: "Dropped"
 
 message:
   error:
     COMMON:
-      test: "通用模块测试异常"
+      test: "Common module test error"
+    NOVEL:
+      NOVEL_NOT_FOUND: "Light novel not found"
+      NOVEL_VOLUME_NOT_FOUND: "Light novel volume not found"
+      BANGUMI_IMPORT_FAILED: "Bangumi import failed"
+      INVALID_VOLUME_NUMBER: "Invalid volume number"
+  ERROR:
+    ANIME:
+      QB_REQUEST_FAILED: "qBitTorrent request failed"
+    NOVEL:
+      NOVEL_NOT_FOUND: "Light novel not found"
+      NOVEL_VOLUME_NOT_FOUND: "Light novel volume not found"
+      BANGUMI_IMPORT_FAILED: "Bangumi import failed"
+      INVALID_VOLUME_NUMBER: "Invalid volume number"
 
 config:
   COMMON:
     AppName:
-      meaning: "应用名称"
-      description: "应用的名称"
+      meaning: "App Name"
+      description: "Name of application"
+
+addition:
+  ANIME:
+    FileStatus: "File Status"
+  NOVEL:
+    BgmJson: "Bangumi Metadata"
+    ReadingStatus: "Reading Status"
+    FileStatus: "File Status"
+    PosterId: "Poster"
+    EpubFilePath: "Epub File Path"

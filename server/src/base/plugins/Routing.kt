@@ -6,6 +6,7 @@ import dev.sunriseydy.acgn.base.exception.MessageException
 import dev.sunriseydy.acgn.common.enums.CommonModuleError
 import dev.sunriseydy.acgn.server.anime.routes.configureAnimeModuleRoutes
 import dev.sunriseydy.acgn.server.common.routes.configureCommonModuleRoutes
+import dev.sunriseydy.acgn.server.novel.routes.configureNovelModuleRoutes
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -75,5 +76,6 @@ fun Application.configureRouting() {
         }
         configureCommonModuleRoutes()
         configureAnimeModuleRoutes()
+        configureNovelModuleRoutes()
     }
 }
