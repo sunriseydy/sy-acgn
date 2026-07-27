@@ -62,7 +62,7 @@ class NovelModuleResource(val parent: ApiResource = ApiResource()) {
 
             @Serializable
             @Resource("import/{bgmId}")
-            class Import(val parent: Bangumi = Bangumi(), val bgmId: ULong)
+            class Import(val parent: Bangumi = Bangumi(), val bgmId: ULong, val isUpdate: Boolean = false)
         }
     }
 }

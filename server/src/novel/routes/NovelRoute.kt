@@ -77,6 +77,6 @@ fun Route.configureNovelModuleRoutes() {
     }
 
     post<NovelModuleResource.Novel.Bangumi.Import> { resource ->
-        call.respond(Result(data = novelService.importNovelFromBangumi(resource.bgmId)))
+        call.respond(Result(data = novelService.importNovelFromBangumi(resource.bgmId, resource.isUpdate)))
     }
 }

@@ -13,5 +13,6 @@ interface AttachFileInfoService {
     suspend fun getFileById(id: String): AttachFileInfo?
     suspend fun getFileStream(id: String): InputStream
     suspend fun saveFile(fileName: String, inputStream: InputStream, contentLength: Long, contentType: String): String
+    suspend fun saveFile(downloadUrl: String, defaultContentType: String, defaultFileName: String): String
     suspend fun deleteFile(id: String)
 }

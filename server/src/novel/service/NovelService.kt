@@ -23,5 +23,5 @@ interface NovelService {
     suspend fun deleteVolume(volumeId: ULong)
 
     suspend fun searchBangumiNovel(query: String): List<Novel>
-    suspend fun importNovelFromBangumi(bgmId: ULong): Novel
+    suspend fun importNovelFromBangumi(bgmId: ULong, isUpdate: Boolean = false): Novel
 }

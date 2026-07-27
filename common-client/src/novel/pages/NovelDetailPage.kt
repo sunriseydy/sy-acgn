@@ -11,9 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
+import dev.sunriseydy.acgn.client.base.components.AttachImage
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.components.PageTitle
 import dev.sunriseydy.acgn.client.res.*
@@ -93,6 +95,20 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
                 item {
                     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                         Column(modifier = Modifier.padding(16.dp)) {
+                            val posterId = novel.posterId
+                            if (!posterId.isNullOrBlank()) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    AttachImage(
+                                        appState = appState,
+                                        attachId = posterId,
+                                        modifier = Modifier.width(180.dp).height(240.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
                             SelectionContainer {
                                 Text(novel.name, style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
                             }
@@ -144,6 +160,15 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
                                 modifier = Modifier.padding(16.dp).fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                val volPosterId = volume.posterId
+                                if (!volPosterId.isNullOrBlank()) {
+                                    AttachImage(
+                                        appState = appState,
+                                        attachId = volPosterId,
+                                        modifier = Modifier.padding(end = 12.dp).width(60.dp).height(80.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = "V${volume.volumeNumber} - ${volume.name}",

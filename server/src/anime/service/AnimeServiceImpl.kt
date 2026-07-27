@@ -15,14 +15,9 @@ import dev.sunriseydy.acgn.server.anime.tools.tmdb.image.TmdbImageSize
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.image.TmdbImageUrlBuilder
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
-import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
-import java.io.ByteArrayInputStream
 
 /**
  * 动漫服务实现类
@@ -40,7 +35,6 @@ class AnimeServiceImpl(
     val attachFileInfoService: AttachFileInfoService
 ) : AnimeService {
     private val logger = KotlinLogging.logger { }
-    private val httpClient = HttpClientFactory.buildHttpClient()
 
     suspend fun getAllAnime(): List<Anime> {
         val additionalInfos = additionalInfoRepository.selectAdditionalInfos(AnimeAssociatedType.ANIME.key)
@@ -153,27 +147,18 @@ class AnimeServiceImpl(
 
         try {
             val imageUrl = TmdbImageUrlBuilder.build(posterPath, TmdbImageSize.ORIGINAL)
-            val response = httpClient.get(imageUrl)
-            if (response.status.isSuccess()) {
-                val bytes = response.bodyAsBytes()
-                val contentType = response.headers[HttpHeaders.ContentType] ?: "image/jpeg"
-                val fileName = posterPath.substringAfterLast("/")
-                val attachFileId = attachFileInfoService.saveFile(
-                    fileName = fileName,
-                    inputStream = ByteArrayInputStream(bytes),
-                    contentLength = bytes.size.toLong(),
-                    contentType = contentType
-                )
-                return AdditionalInfo(
-                    id = "",
-                    associatedId = seasonId,
-                    associatedType = AnimeAssociatedType.ANIME_SEASON.key,
-                    additionalType = AnimeAdditionType.PosterId.key,
-                    additionalValue = attachFileId
-                )
-            } else {
-                logger.warn { "Failed to download poster from $imageUrl: ${response.status}" }
-            }
+            val attachFileId = attachFileInfoService.saveFile(
+                downloadUrl = imageUrl,
+                defaultContentType = "image/jpeg",
+                defaultFileName = posterPath.substringAfterLast("/").ifBlank { "poster.jpg" }
+            )
+            return AdditionalInfo(
+                id = "",
+                associatedId = seasonId,
+                associatedType = AnimeAssociatedType.ANIME_SEASON.key,
+                additionalType = AnimeAdditionType.PosterId.key,
+                additionalValue = attachFileId
+            )
         } catch (e: Exception) {
             logger.error(e) { "Error downloading poster for season $seasonId" }
         }

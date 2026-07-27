@@ -59,7 +59,8 @@ fun Application.configureDependencyInjection() {
             dev.sunriseydy.acgn.server.novel.service.NovelServiceImpl(
                 resolve<NovelRepository>(),
                 resolve<AdditionalInfoRepository>(),
-                resolve<BangumiTool>()
+                resolve<BangumiTool>(),
+                resolve<AttachFileInfoService>()
             )
         }
 

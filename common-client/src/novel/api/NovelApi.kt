@@ -47,6 +47,6 @@ class NovelApi internal constructor(private val httpClient: HttpClient) {
     suspend fun searchBangumiNovel(query: String): Result<List<Novel>> =
         httpClient.get(NovelModuleResource.Novel.Bangumi.Search(query = query)).body()
 
-    suspend fun importNovelFromBangumi(bgmId: ULong): Result<Novel> =
-        httpClient.post(NovelModuleResource.Novel.Bangumi.Import(bgmId = bgmId)).body()
+    suspend fun importNovelFromBangumi(bgmId: ULong, isUpdate: Boolean = false): Result<Novel> =
+        httpClient.post(NovelModuleResource.Novel.Bangumi.Import(bgmId = bgmId, isUpdate = isUpdate)).body()
 }

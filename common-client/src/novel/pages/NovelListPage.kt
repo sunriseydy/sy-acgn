@@ -16,9 +16,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
+import dev.sunriseydy.acgn.client.base.components.AttachImage
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.components.PageTitle
 import dev.sunriseydy.acgn.client.base.navigation.NovelDetailRoute
@@ -138,6 +140,20 @@ fun NovelListPage(appState: AppState) {
                         }
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
+                            val posterId = novel.posterId
+                            if (!posterId.isNullOrBlank()) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    AttachImage(
+                                        appState = appState,
+                                        attachId = posterId,
+                                        modifier = Modifier.width(140.dp).height(190.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
                             SelectionContainer {
                                 Text(
                                     text = novel.name,
@@ -199,6 +215,18 @@ fun NovelListPage(appState: AppState) {
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End
                             ) {
+                                val bId = novel.bgmId
+                                if (bId != null) {
+                                    IconButton(onClick = {
+                                        appState.scope.launch {
+                                            appState.api.novel.importNovelFromBangumi(bId, isUpdate = true).onSuccessData(appState, onSuccess = {
+                                                loadNovels()
+                                            })
+                                        }
+                                    }) {
+                                        Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
+                                    }
+                                }
                                 IconButton(onClick = { openCreateDialog(novel) }) {
                                     Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.update))
                                 }
