@@ -90,6 +90,14 @@ fun NovelListPage(appState: AppState) {
         createDialogVisible.value = true
     }
 
+    fun openBgmImportDialog() {
+        bgmIdInput.value = ""
+        bgmSearchQuery.value = ""
+        bgmSearchResults.value = emptyList()
+        bgmSearching.value = false
+        bgmImportDialogVisible.value = true
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         PageTitle(TopLevelRouteEnum.NOVEL.meaning) {
             OutlinedTextField(
@@ -112,7 +120,7 @@ fun NovelListPage(appState: AppState) {
             IconButton(onClick = { openCreateDialog() }) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.novel_create))
             }
-            IconButton(onClick = { bgmImportDialogVisible.value = true }) {
+            IconButton(onClick = { openBgmImportDialog() }) {
                 Icon(Icons.Default.CloudDownload, contentDescription = stringResource(Res.string.novel_bangumi_import))
             }
         }
@@ -337,12 +345,22 @@ fun NovelListPage(appState: AppState) {
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
                 value = bgmSearchQuery.value,
                 onValueChange = { bgmSearchQuery.value = it },
                 label = { Text(stringResource(Res.string.novel_bangumi_search_label)) },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                trailingIcon = if (bgmSearchQuery.value.isNotEmpty()) {
+                    {
+                        IconButton(onClick = {
+                            bgmSearchQuery.value = ""
+                            bgmSearchResults.value = emptyList()
+                        }) {
+                            Icon(Icons.Default.Clear, contentDescription = null)
+                        }
+                    }
+                } else null
             )
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = {
