@@ -10,8 +10,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
@@ -104,7 +104,7 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
                                     AttachImage(
                                         appState = appState,
                                         attachId = posterId,
-                                        modifier = Modifier.width(180.dp).height(240.dp),
+                                        modifier = Modifier.width(400.dp).height(564.dp),
                                         contentScale = ContentScale.Crop
                                     )
                                 }

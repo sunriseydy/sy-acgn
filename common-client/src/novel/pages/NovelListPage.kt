@@ -15,8 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
@@ -149,7 +149,7 @@ fun NovelListPage(appState: AppState) {
                                     AttachImage(
                                         appState = appState,
                                         attachId = posterId,
-                                        modifier = Modifier.width(140.dp).height(190.dp),
+                                        modifier = Modifier.width(400.dp).height(564.dp),
                                         contentScale = ContentScale.Crop
                                     )
                                 }
