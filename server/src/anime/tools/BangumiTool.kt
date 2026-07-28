@@ -221,5 +221,62 @@ class BangumiTool {
         }
         return null
     }
+
+    suspend fun searchGame(keywords: String, limit: Int = 10, offset: Int = 0): List<dev.sunriseydy.acgn.game.dto.Game> {
+        val response: BangumiSearchResponse = client.post("v0/search/subjects") {
+            parameter("limit", limit)
+            parameter("offset", offset)
+            setBody(
+                BangumiSearchRequest(
+                    keyword = keywords,
+                    filter = BangumiSearchFilter(type = listOf(4)) // 4 for Game
+                )
+            )
+        }.body()
+
+        return response.data.map { it.toGame() }
+    }
+
+    suspend fun getGameSubject(id: Int): dev.sunriseydy.acgn.game.dto.Game {
+        val subject: BangumiSubject = client.get("v0/subjects/$id").body()
+        return subject.toGame()
+    }
+
+    private fun BangumiSubject.toGame(): dev.sunriseydy.acgn.game.dto.Game {
+        val bgmIdULong = this.id.toULong()
+        var devStr: String? = null
+        var pubStr: String? = null
+
+        infobox?.forEach { wiki ->
+            when (wiki.key) {
+                "开发", "制作" -> devStr = wiki.value.toString().removeSurrounding("\"")
+                "发行" -> pubStr = wiki.value.toString().removeSurrounding("\"")
+            }
+        }
+
+        val releaseDate = this.date?.let {
+            try { LocalDate.parse(it) } catch (e: Exception) { null }
+        }
+
+        val additions = listOf(
+            AdditionalInfo(
+                "", ULong.MIN_VALUE, dev.sunriseydy.acgn.game.enums.GameAssociatedType.GAME.key,
+                dev.sunriseydy.acgn.game.enums.GameAdditionType.BgmJson.key,
+                Json.encodeToString(BangumiSubject.serializer(), this)
+            )
+        )
+        return dev.sunriseydy.acgn.game.dto.Game(
+            id = ULong.MIN_VALUE,
+            name = this.nameCn.ifBlank { this.name },
+            originalName = this.name,
+            developer = devStr,
+            publisher = pubStr,
+            description = this.summary.replace(Regex("(\\r?\\n){3,}"), "\n\n").trim(),
+            releaseDate = releaseDate,
+            bgmId = bgmIdULong,
+            rating = this.rating?.score?.takeIf { it > 0.0 },
+            additions = additions
+        )
+    }
 }
 

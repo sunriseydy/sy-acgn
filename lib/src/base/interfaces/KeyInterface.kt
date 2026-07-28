@@ -52,6 +52,10 @@ interface NovelModule : Key {
     override val moduleName get() = ModuleName.NOVEL
 }
 
+interface GameModule : Key {
+    override val moduleName get() = ModuleName.GAME
+}
+
 fun EnumKey.getEnumKey(enum: EnumKey): String {
     if (enum is Enum<*>) {
         return "enum.${enum.moduleName.name}.${enum::class.simpleName}.${enum.name}"

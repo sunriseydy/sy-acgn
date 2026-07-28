@@ -1,0 +1,233 @@
+package dev.sunriseydy.acgn.server.game.service
+
+import dev.sunriseydy.acgn.game.dto.*
+import dev.sunriseydy.acgn.game.enums.GameAssociatedType
+import dev.sunriseydy.acgn.server.anime.tools.BangumiTool
+import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
+import dev.sunriseydy.acgn.server.game.repository.GameRepository
+import dev.sunriseydy.acgn.server.game.tools.GameCacheTool
+import dev.sunriseydy.acgn.server.game.tools.SteamTool
+
+class GameServiceImpl(
+    private val gameRepository: GameRepository,
+    private val additionalInfoRepository: AdditionalInfoRepository,
+    private val bangumiTool: BangumiTool,
+    private val steamTool: SteamTool
+) : GameService {
+
+    override suspend fun getGameList(
+        name: String?,
+        platform: String?,
+        playStatus: String?,
+        page: Long,
+        size: Int
+    ): List<Game> {
+        val games = gameRepository.selectAllGame(name, platform, playStatus, page, size)
+        return games.map { attachFullGameDetails(it) }
+    }
+
+    override suspend fun getGameById(id: ULong): Game {
+        val cached = GameCacheTool.getGameById(id)
+        if (cached != null) return cached
+
+        val game = gameRepository.selectGameById(id)
+        val fullGame = attachFullGameDetails(game)
+        GameCacheTool.setGame(fullGame)
+        return fullGame
+    }
+
+    private suspend fun attachFullGameDetails(game: Game): Game {
+        val releases = gameRepository.selectGameReleasesByGameId(game.id)
+        val playRecord = gameRepository.selectGamePlayRecordByGameId(game.id)
+        val additions = additionalInfoRepository.selectAdditionalInfos(
+            associatedType = GameAssociatedType.GAME.key,
+            associatedId = game.id
+        )
+        return game.copy(
+            releases = releases,
+            playRecord = playRecord,
+            additions = additions
+        )
+    }
+
+    override suspend fun createGame(dto: GameCreateOrUpdateDto): Game {
+        val newGame = Game(
+            id = ULong.MIN_VALUE,
+            name = dto.name,
+            originalName = dto.originalName,
+            developer = dto.developer,
+            publisher = dto.publisher,
+            description = dto.description,
+            releaseDate = dto.releaseDate,
+            bgmId = dto.bgmId,
+            steamId = dto.steamId,
+            rating = dto.rating
+        )
+        val created = gameRepository.insertGame(newGame)
+        val full = attachFullGameDetails(created)
+        GameCacheTool.setGame(full)
+        return full
+    }
+
+    override suspend fun updateGame(dto: GameCreateOrUpdateDto): Game {
+        val dtoId = requireNotNull(dto.id) { "Game ID must not be null for update" }
+        val existing = gameRepository.selectGameById(dtoId)
+        val toUpdate = existing.copy(
+            name = dto.name,
+            originalName = dto.originalName,
+            developer = dto.developer,
+            publisher = dto.publisher,
+            description = dto.description,
+            releaseDate = dto.releaseDate,
+            bgmId = dto.bgmId,
+            steamId = dto.steamId,
+            rating = dto.rating
+        )
+        val updated = gameRepository.updateGame(toUpdate)
+        val full = attachFullGameDetails(updated)
+        GameCacheTool.setGame(full)
+        return full
+    }
+
+    override suspend fun deleteGame(id: ULong) {
+        gameRepository.deleteGameById(id)
+        additionalInfoRepository.deleteAdditionalInfos(
+            associatedType = GameAssociatedType.GAME.key,
+            associatedId = id
+        )
+        GameCacheTool.removeGame(id)
+    }
+
+    override suspend fun getReleasesByGameId(gameId: ULong): List<GameRelease> {
+        return gameRepository.selectGameReleasesByGameId(gameId)
+    }
+
+    override suspend fun createRelease(dto: GameReleaseCreateOrUpdateDto): GameRelease {
+        val release = GameRelease(
+            id = ULong.MIN_VALUE,
+            gameId = dto.gameId,
+            platform = dto.platform,
+            releaseDate = dto.releaseDate,
+            version = dto.version,
+            language = dto.language
+        )
+        val created = gameRepository.insertGameRelease(release)
+        GameCacheTool.removeGame(dto.gameId)
+        return created
+    }
+
+    override suspend fun updateRelease(dto: GameReleaseCreateOrUpdateDto): GameRelease {
+        val releaseId = requireNotNull(dto.id) { "Release ID must not be null for update" }
+        val release = GameRelease(
+            id = releaseId,
+            gameId = dto.gameId,
+            platform = dto.platform,
+            releaseDate = dto.releaseDate,
+            version = dto.version,
+            language = dto.language
+        )
+        val updated = gameRepository.updateGameRelease(release)
+        GameCacheTool.removeGame(dto.gameId)
+        return updated
+    }
+
+    override suspend fun deleteRelease(releaseId: ULong) {
+        gameRepository.deleteGameReleaseById(releaseId)
+    }
+
+    override suspend fun getPlayRecord(gameId: ULong): GamePlayRecord? {
+        return gameRepository.selectGamePlayRecordByGameId(gameId)
+    }
+
+    override suspend fun updatePlayRecord(dto: GamePlayRecordCreateOrUpdateDto): GamePlayRecord {
+        val record = GamePlayRecord(
+            id = dto.id ?: ULong.MIN_VALUE,
+            gameId = dto.gameId,
+            playStatus = dto.playStatus,
+            playTimeMinutes = dto.playTimeMinutes,
+            clearCount = dto.clearCount,
+            score = dto.score,
+            comment = dto.comment,
+            lastPlayedAt = dto.lastPlayedAt
+        )
+        val updated = gameRepository.upsertGamePlayRecord(record)
+        GameCacheTool.removeGame(dto.gameId)
+        return updated
+    }
+
+    override suspend fun searchBangumiGame(query: String): List<Game> {
+        return bangumiTool.searchGame(query)
+    }
+
+    override suspend fun importFromBangumi(bgmId: ULong, isUpdate: Boolean): Game {
+        val bgmGame = bangumiTool.getGameSubject(bgmId.toInt())
+        val existing = gameRepository.selectGameByBgmId(bgmId)
+
+        return if (existing != null) {
+            if (isUpdate) {
+                val toUpdate = existing.copy(
+                    name = bgmGame.name,
+                    originalName = bgmGame.originalName,
+                    developer = bgmGame.developer ?: existing.developer,
+                    publisher = bgmGame.publisher ?: existing.publisher,
+                    description = bgmGame.description ?: existing.description,
+                    releaseDate = bgmGame.releaseDate ?: existing.releaseDate,
+                    rating = bgmGame.rating ?: existing.rating
+                )
+                val updated = gameRepository.updateGame(toUpdate)
+                val full = attachFullGameDetails(updated)
+                GameCacheTool.setGame(full)
+                full
+            } else {
+                attachFullGameDetails(existing)
+            }
+        } else {
+            val created = gameRepository.insertGame(bgmGame)
+            if (bgmGame.additions.isNotEmpty()) {
+                additionalInfoRepository.saveAdditionalInfos(bgmGame.additions, associatedId = created.id)
+            }
+            val full = attachFullGameDetails(created)
+            GameCacheTool.setGame(full)
+            full
+        }
+    }
+
+    override suspend fun searchSteamGame(query: String): List<Game> {
+        return steamTool.searchGame(query)
+    }
+
+    override suspend fun importFromSteam(appId: ULong, isUpdate: Boolean): Game {
+        val steamGame = steamTool.getAppDetail(appId)
+        val existing = gameRepository.selectGameBySteamId(appId)
+
+        return if (existing != null) {
+            if (isUpdate) {
+                val toUpdate = existing.copy(
+                    name = steamGame.name,
+                    developer = steamGame.developer ?: existing.developer,
+                    publisher = steamGame.publisher ?: existing.publisher,
+                    description = steamGame.description ?: existing.description
+                )
+                val updated = gameRepository.updateGame(toUpdate)
+                val full = attachFullGameDetails(updated)
+                GameCacheTool.setGame(full)
+                full
+            } else {
+                attachFullGameDetails(existing)
+            }
+        } else {
+            val created = gameRepository.insertGame(steamGame)
+            if (steamGame.releases.isNotEmpty()) {
+                steamGame.releases.forEach { rel ->
+                    gameRepository.insertGameRelease(rel.copy(gameId = created.id))
+                }
+            }
+            if (steamGame.additions.isNotEmpty()) {
+                additionalInfoRepository.saveAdditionalInfos(steamGame.additions, associatedId = created.id)
+            }
+            val full = attachFullGameDetails(created)
+            GameCacheTool.setGame(full)
+            full
+        }
+    }
+}

@@ -7,6 +7,7 @@ import dev.sunriseydy.acgn.client.anime.api.RssApi
 import dev.sunriseydy.acgn.client.base.components.showError
 import dev.sunriseydy.acgn.client.base.utils.getLocalServerConfig
 import dev.sunriseydy.acgn.client.common.api.CommonApi
+import dev.sunriseydy.acgn.client.game.api.GameApi
 import dev.sunriseydy.acgn.client.novel.api.NovelApi
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.*
@@ -50,6 +51,7 @@ class SyAcgnApi {
     val anime by buildApi(::AnimeApi)
     val common by buildApi(::CommonApi)
     val novel by buildApi(::NovelApi)
+    val game by buildApi(::GameApi)
 
     /**
      * 构建 API 实例的辅助函数

@@ -45,6 +45,20 @@ data class NovelDetailRoute(val novelId: ULong) : NavigationRoute {
 }
 
 /**
+ * 游戏页面路由
+ */
+data object GameRoute : NavigationRoute {
+    override val icon: ImageVector? = null
+}
+
+/**
+ * 游戏详情页面路由
+ */
+data class GameDetailRoute(val gameId: ULong) : NavigationRoute {
+    override val icon: ImageVector? = null
+}
+
+/**
  * 顶层路由枚举
  *
  * 定义应用的顶层导航项，同时实现了 CommonModule 和 EnumKey 接口以支持本地化。
@@ -53,4 +67,5 @@ enum class TopLevelRouteEnum(val route: NavigationRoute) : CommonModule, EnumKey
     RSS(route = RssRoute),
     ANIME_SEASON(route = AnimeSeasonRoute),
     NOVEL(route = NovelRoute),
+    GAME(route = GameRoute),
 }

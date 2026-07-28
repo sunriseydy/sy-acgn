@@ -37,6 +37,9 @@ fun Application.configureDependencyInjection() {
         provide<NovelRepository> {
             NovelRepositoryImpl()
         }
+        provide<dev.sunriseydy.acgn.server.game.repository.GameRepository> {
+            dev.sunriseydy.acgn.server.game.repository.GameRepositoryImpl()
+        }
 
         // --- 注册 Service (业务逻辑层) ---
         provide<AppConfigService> {
@@ -63,9 +66,18 @@ fun Application.configureDependencyInjection() {
                 resolve<AttachFileInfoService>()
             )
         }
+        provide<dev.sunriseydy.acgn.server.game.service.GameService> {
+            dev.sunriseydy.acgn.server.game.service.GameServiceImpl(
+                resolve<dev.sunriseydy.acgn.server.game.repository.GameRepository>(),
+                resolve<AdditionalInfoRepository>(),
+                resolve<BangumiTool>(),
+                resolve<dev.sunriseydy.acgn.server.game.tools.SteamTool>()
+            )
+        }
 
         // --- 注册 Tools (工具类) ---
         provide<BangumiTool> { BangumiTool() }
+        provide<dev.sunriseydy.acgn.server.game.tools.SteamTool> { dev.sunriseydy.acgn.server.game.tools.SteamTool() }
         provide<QbTool> { QbTool() }
         provide<TmdbTool> { TmdbTool() }
         provide<S3Tool> { S3Tool() }

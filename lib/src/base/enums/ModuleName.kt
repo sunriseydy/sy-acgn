@@ -8,4 +8,5 @@ enum class ModuleName {
     COMMON,
     ANIME,
     NOVEL,
+    GAME,
 }

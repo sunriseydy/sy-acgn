@@ -3,6 +3,7 @@ package dev.sunriseydy.acgn.server.base.plugins
 import dev.sunriseydy.acgn.server.anime.db.animeTables
 import dev.sunriseydy.acgn.server.base.config.PostgresqlConfig
 import dev.sunriseydy.acgn.server.common.db.commonModuleTables
+import dev.sunriseydy.acgn.server.game.db.gameTables
 import dev.sunriseydy.acgn.server.novel.db.novelTables
 import io.ktor.server.application.*
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -63,7 +64,8 @@ fun Application.initializeDatabase(db: Database) {
             *(listOf(
                 animeTables(),
                 commonModuleTables(),
-                novelTables()
+                novelTables(),
+                gameTables()
             ).flatten().toTypedArray())
         ).also {
             environment.log.info("database migration: $it")

@@ -30,6 +30,8 @@ import dev.sunriseydy.acgn.client.base.components.SnackbarHost
 import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
 import dev.sunriseydy.acgn.client.base.enums.AcgnNavigationContentPosition
 import dev.sunriseydy.acgn.client.base.enums.LayoutType
+import dev.sunriseydy.acgn.client.game.pages.GameDetailPage
+import dev.sunriseydy.acgn.client.game.pages.GameListPage
 import dev.sunriseydy.acgn.client.novel.pages.NovelDetailPage
 import dev.sunriseydy.acgn.client.novel.pages.NovelListPage
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
@@ -124,6 +126,12 @@ fun AcgnNavigationWrapper() {
                     }
                     entry<NovelDetailRoute> { route ->
                         NovelDetailPage(appState, route.novelId)
+                    }
+                    entry<GameRoute> {
+                        GameListPage(appState)
+                    }
+                    entry<GameDetailRoute> { route ->
+                        GameDetailPage(appState, route.gameId)
                     }
                 },
             )
