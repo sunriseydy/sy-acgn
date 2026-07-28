@@ -104,8 +104,8 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
                                     AttachImage(
                                         appState = appState,
                                         attachId = posterId,
-                                        modifier = Modifier.width(400.dp).height(564.dp),
-                                        contentScale = ContentScale.Crop
+                                        modifier = Modifier.width(300.dp).height(400.dp),
+                                        contentScale = ContentScale.FillWidth
                                     )
                                 }
                             }
@@ -165,8 +165,8 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
                                     AttachImage(
                                         appState = appState,
                                         attachId = volPosterId,
-                                        modifier = Modifier.padding(end = 12.dp).width(60.dp).height(80.dp),
-                                        contentScale = ContentScale.Crop
+                                        modifier = Modifier.padding(end = 12.dp).width(90.dp).height(120.dp),
+                                        contentScale = ContentScale.FillWidth
                                     )
                                 }
                                 Column(modifier = Modifier.weight(1f)) {

@@ -149,8 +149,8 @@ fun NovelListPage(appState: AppState) {
                                     AttachImage(
                                         appState = appState,
                                         attachId = posterId,
-                                        modifier = Modifier.width(400.dp).height(564.dp),
-                                        contentScale = ContentScale.Crop
+                                        modifier = Modifier.width(300.dp).height(400.dp),
+                                        contentScale = ContentScale.FillWidth
                                     )
                                 }
                             }

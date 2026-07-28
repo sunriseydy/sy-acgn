@@ -143,8 +143,8 @@ fun AnimeSeason(appState: AppState) {
                                         AttachImage(
                                             appState = appState,
                                             attachId = posterId,
-                                            modifier = Modifier.padding(end = 8.dp).width(300.dp).height(450.dp),
-                                            contentScale = ContentScale.Crop
+                                            modifier = Modifier.padding(end = 8.dp).width(300.dp).height(400.dp),
+                                            contentScale = ContentScale.FillWidth
                                         )
                                     }
                                 }
