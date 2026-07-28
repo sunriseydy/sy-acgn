@@ -12,6 +12,9 @@ import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
 import dev.sunriseydy.acgn.server.novel.repository.NovelRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -158,10 +161,10 @@ class NovelServiceImpl(
         return bangumiTool.searchNovel(query)
     }
 
-    override suspend fun importNovelFromBangumi(bgmId: ULong, isUpdate: Boolean): Novel {
+    override suspend fun importNovelFromBangumi(bgmId: ULong, isUpdate: Boolean): Novel = coroutineScope {
         val existing = novelRepository.selectNovelByBgmId(bgmId)
         if (existing != null && !isUpdate) {
-            return getNovelById(existing.id)
+            return@coroutineScope getNovelById(existing.id)
         }
 
         val bgmNovel = bangumiTool.getNovelSubject(bgmId.toInt())
@@ -194,67 +197,78 @@ class NovelServiceImpl(
             associatedType = NovelAssociatedType.NOVEL.key,
             associatedId = novelId
         )
-        val novelPosterAddition = downloadAndSavePoster(
-            associatedId = novelId,
-            associatedType = NovelAssociatedType.NOVEL.key,
-            additions = currentNovelAdditions,
-            forceUpdate = isUpdate
-        )
-        if (novelPosterAddition != null) {
-            additionalInfoRepository.deleteAdditionalInfos(NovelAssociatedType.NOVEL.key, novelId, NovelAdditionType.PosterId.key)
-            additionalInfoRepository.saveAdditionalInfo(novelPosterAddition, novelId)
+
+        val novelPosterDeferred = async {
+            val novelPosterAddition = downloadAndSavePoster(
+                associatedId = novelId,
+                associatedType = NovelAssociatedType.NOVEL.key,
+                additions = currentNovelAdditions,
+                forceUpdate = isUpdate
+            )
+            if (novelPosterAddition != null) {
+                additionalInfoRepository.deleteAdditionalInfos(NovelAssociatedType.NOVEL.key, novelId, NovelAdditionType.PosterId.key)
+                additionalInfoRepository.saveAdditionalInfo(novelPosterAddition, novelId)
+            }
         }
 
-        val bgmVolumes = bangumiTool.getNovelVolumes(bgmId.toInt(), novelId)
+        val bgmVolumesDeferred = async {
+            bangumiTool.getNovelVolumes(bgmId.toInt(), novelId)
+        }
+
+        novelPosterDeferred.await()
+        val bgmVolumes = bgmVolumesDeferred.await()
+
         val existingVolumes = novelRepository.selectNovelVolumeByNovelId(novelId)
         val existingVolumeMapByBgmId = existingVolumes.mapNotNull { vol -> vol.bgmId?.let { it to vol } }.toMap()
         val existingVolumeMapByNumber = existingVolumes.associateBy { it.volumeNumber }
 
-        bgmVolumes.forEach { volume ->
-            val existingVolume = (volume.bgmId?.let { existingVolumeMapByBgmId[it] })
-                ?: existingVolumeMapByNumber[volume.volumeNumber]
+        bgmVolumes.map { volume ->
+            async {
+                val existingVolume = (volume.bgmId?.let { existingVolumeMapByBgmId[it] })
+                    ?: existingVolumeMapByNumber[volume.volumeNumber]
 
-            val volumeId = if (existingVolume != null) {
-                val updatedVol = existingVolume.copy(
-                    novelId = novelId,
-                    volumeNumber = volume.volumeNumber,
-                    name = volume.name,
-                    description = volume.description ?: existingVolume.description,
-                    releaseDate = volume.releaseDate ?: existingVolume.releaseDate,
-                    isbn = volume.isbn ?: existingVolume.isbn,
-                    bgmId = volume.bgmId ?: existingVolume.bgmId
+                val volumeId = if (existingVolume != null) {
+                    val updatedVol = existingVolume.copy(
+                        novelId = novelId,
+                        volumeNumber = volume.volumeNumber,
+                        name = volume.name,
+                        description = volume.description ?: existingVolume.description,
+                        releaseDate = volume.releaseDate ?: existingVolume.releaseDate,
+                        isbn = volume.isbn ?: existingVolume.isbn,
+                        bgmId = volume.bgmId ?: existingVolume.bgmId
+                    )
+                    val updatedResult = novelRepository.updateNovelVolume(updatedVol)
+                    if (volume.additions.isNotEmpty()) {
+                        additionalInfoRepository.deleteAdditionalInfos(NovelAssociatedType.NOVEL_VOLUME.key, updatedResult.id, NovelAdditionType.BgmJson.key)
+                        additionalInfoRepository.saveAdditionalInfos(volume.additions, updatedResult.id)
+                    }
+                    updatedResult.id
+                } else {
+                    val insertedVolume = novelRepository.insertNovelVolume(volume.copy(novelId = novelId))
+                    if (volume.additions.isNotEmpty()) {
+                        additionalInfoRepository.saveAdditionalInfos(volume.additions, insertedVolume.id)
+                    }
+                    insertedVolume.id
+                }
+
+                val currentVolAdditions = additionalInfoRepository.selectAdditionalInfos(
+                    associatedType = NovelAssociatedType.NOVEL_VOLUME.key,
+                    associatedId = volumeId
                 )
-                val updatedResult = novelRepository.updateNovelVolume(updatedVol)
-                if (volume.additions.isNotEmpty()) {
-                    additionalInfoRepository.deleteAdditionalInfos(NovelAssociatedType.NOVEL_VOLUME.key, updatedResult.id, NovelAdditionType.BgmJson.key)
-                    additionalInfoRepository.saveAdditionalInfos(volume.additions, updatedResult.id)
+                val volPosterAddition = downloadAndSavePoster(
+                    associatedId = volumeId,
+                    associatedType = NovelAssociatedType.NOVEL_VOLUME.key,
+                    additions = currentVolAdditions,
+                    forceUpdate = isUpdate
+                )
+                if (volPosterAddition != null) {
+                    additionalInfoRepository.deleteAdditionalInfos(NovelAssociatedType.NOVEL_VOLUME.key, volumeId, NovelAdditionType.PosterId.key)
+                    additionalInfoRepository.saveAdditionalInfo(volPosterAddition, volumeId)
                 }
-                updatedResult.id
-            } else {
-                val insertedVolume = novelRepository.insertNovelVolume(volume.copy(novelId = novelId))
-                if (volume.additions.isNotEmpty()) {
-                    additionalInfoRepository.saveAdditionalInfos(volume.additions, insertedVolume.id)
-                }
-                insertedVolume.id
             }
+        }.awaitAll()
 
-            val currentVolAdditions = additionalInfoRepository.selectAdditionalInfos(
-                associatedType = NovelAssociatedType.NOVEL_VOLUME.key,
-                associatedId = volumeId
-            )
-            val volPosterAddition = downloadAndSavePoster(
-                associatedId = volumeId,
-                associatedType = NovelAssociatedType.NOVEL_VOLUME.key,
-                additions = currentVolAdditions,
-                forceUpdate = isUpdate
-            )
-            if (volPosterAddition != null) {
-                additionalInfoRepository.deleteAdditionalInfos(NovelAssociatedType.NOVEL_VOLUME.key, volumeId, NovelAdditionType.PosterId.key)
-                additionalInfoRepository.saveAdditionalInfo(volPosterAddition, volumeId)
-            }
-        }
-
-        return getNovelById(novelId)
+        getNovelById(novelId)
     }
 
     private suspend fun downloadAndSavePoster(
