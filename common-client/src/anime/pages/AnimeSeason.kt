@@ -154,17 +154,23 @@ fun AnimeSeason(appState: AppState) {
                                         style = MaterialTheme.typography.titleLarge
                                     )
                                 }
-                                val tag: String = buildString {
-                                    append("第 ${season.season} 季 ")
-                                    append("共 ${season.numberOfEpisodes} 集 ")
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    AssistChip(
+                                        onClick = {},
+                                        label = { Text("第 ${season.season} 季") }
+                                    )
+                                    AssistChip(
+                                        onClick = {},
+                                        label = { Text("共 ${season.numberOfEpisodes} 集") }
+                                    )
                                     AnimeAdditionType.FileStatus.additionalInfo(season.additions)?.also {
-                                        append(i(it.additionalType)).append(":").append(i(it.additionalValue)).append(" ")
+                                        AssistChip(
+                                            onClick = {},
+                                            label = { Text(i(it.additionalValue)) }
+                                        )
                                     }
                                 }
-                                Text(
-                                    text = tag,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
                                 Text(
                                     text = season.description?.takeUnless { it.isBlank() }
                                         ?: season.anime?.description.orEmpty(),
