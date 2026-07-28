@@ -31,9 +31,13 @@ class NovelServiceImpl(
 
     private val logger = KotlinLogging.logger { }
 
-    override suspend fun getNovelList(name: String?, status: String?, page: Long, size: Int): List<Novel> {
+    override suspend fun getNovelList(name: String?, status: String?, page: Long, size: Int): List<Novel> = coroutineScope {
         val novels = novelRepository.selectAllNovel(name, status, page, size)
-        return novels.map { attachNovelAdditions(it) }
+        novels.map {
+            async {
+                attachNovelAdditions(it)
+            }
+        }.awaitAll()
     }
 
     override suspend fun getNovelById(id: ULong): Novel {
