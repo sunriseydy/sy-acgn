@@ -13,6 +13,7 @@ import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
 import dev.sunriseydy.acgn.server.novel.repository.NovelRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
@@ -84,9 +85,13 @@ class NovelServiceImpl(
         novelRepository.deleteNovelById(id)
     }
 
-    override suspend fun getVolumeListByNovelId(novelId: ULong): List<NovelVolume> {
+    override suspend fun getVolumeListByNovelId(novelId: ULong): List<NovelVolume> = coroutineScope {
         val volumes = novelRepository.selectNovelVolumeByNovelId(novelId)
-        return volumes.map { attachVolumeAdditions(it) }
+        volumes.map {
+            async {
+                attachVolumeAdditions(it)
+            }
+        }.awaitAll()
     }
 
     override suspend fun getVolumeById(volumeId: ULong): NovelVolume {
