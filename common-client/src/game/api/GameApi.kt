@@ -13,13 +13,12 @@ import io.ktor.client.request.*
  */
 class GameApi internal constructor(private val httpClient: HttpClient) {
     suspend fun getGameList(
+        fromDb: Boolean = true,
         name: String? = null,
         platform: String? = null,
-        playStatus: String? = null,
-        page: Long = 1,
-        size: Int = 50
+        playStatus: String? = null
     ): Result<List<Game>> =
-        httpClient.get(GameModuleResource.Game.List(name = name, platform = platform, playStatus = playStatus, page = page, size = size)).body()
+        httpClient.get(GameModuleResource.Game.List(fromDb = fromDb, name = name, platform = platform, playStatus = playStatus)).body()
 
     suspend fun getGameById(id: ULong): Result<Game> =
         httpClient.get(GameModuleResource.Game.Id(id = id)).body()

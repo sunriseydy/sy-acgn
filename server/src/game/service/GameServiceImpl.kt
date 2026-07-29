@@ -7,6 +7,7 @@ import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.game.repository.GameRepository
 import dev.sunriseydy.acgn.server.game.tools.GameCacheTool
 import dev.sunriseydy.acgn.server.game.tools.SteamTool
+import kotlinx.coroutines.coroutineScope
 
 class GameServiceImpl(
     private val gameRepository: GameRepository,
@@ -16,14 +17,37 @@ class GameServiceImpl(
 ) : GameService {
 
     override suspend fun getGameList(
+        fromDb: Boolean,
         name: String?,
         platform: String?,
-        playStatus: String?,
-        page: Long,
-        size: Int
-    ): List<Game> {
-        val games = gameRepository.selectAllGame(name, platform, playStatus, page, size)
-        return games.map { attachFullGameDetails(it) }
+        playStatus: String?
+    ): List<Game> = coroutineScope {
+        if (fromDb || GameCacheTool.isGameEmpty()) {
+            val games = gameRepository.selectAllGame(name, platform, playStatus)
+            games.map {
+                val fullGame = attachFullGameDetails(it)
+                GameCacheTool.setGame(fullGame)
+            }
+        } else {
+            var cached = GameCacheTool.getGameList()
+            if (!name.isNullOrBlank()) {
+                cached = cached.filter {
+                    it.name.contains(name, ignoreCase = true) ||
+                            (it.originalName?.contains(name, ignoreCase = true) == true)
+                }
+            }
+            if (!platform.isNullOrBlank()) {
+                cached = cached.filter { game ->
+                    game.releases.any { it.platform.equals(platform, ignoreCase = true) }
+                }
+            }
+            if (!playStatus.isNullOrBlank()) {
+                cached = cached.filter { game ->
+                    game.playRecord?.playStatus.equals(playStatus, ignoreCase = true)
+                }
+            }
+            return@coroutineScope cached
+        }
     }
 
     override suspend fun getGameById(id: ULong): Game {

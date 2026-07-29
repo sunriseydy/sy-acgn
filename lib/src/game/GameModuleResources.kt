@@ -23,11 +23,10 @@ class GameModuleResource(val parent: ApiResource = ApiResource()) {
         @Resource("list")
         class List(
             val parent: Game = Game(),
+            val fromDb: Boolean = true,
             val name: String? = null,
             val platform: String? = null,
-            val playStatus: String? = null,
-            val page: Long = 1,
-            val size: Int = 50
+            val playStatus: String? = null
         )
 
         @Serializable

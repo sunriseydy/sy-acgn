@@ -11,9 +11,7 @@ interface GameRepository {
     suspend fun selectAllGame(
         name: String? = null,
         platform: String? = null,
-        playStatus: String? = null,
-        page: Long = 1,
-        size: Int = 50
+        playStatus: String? = null
     ): List<Game>
 
     suspend fun selectGameById(id: ULong): Game

@@ -22,11 +22,10 @@ fun Route.configureGameModuleRoutes() {
         call.respond(
             Result(
                 data = gameService.getGameList(
+                    fromDb = resource.fromDb,
                     name = resource.name,
                     platform = resource.platform,
-                    playStatus = resource.playStatus,
-                    page = resource.page,
-                    size = resource.size
+                    playStatus = resource.playStatus
                 )
             )
         )

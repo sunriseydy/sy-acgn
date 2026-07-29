@@ -20,9 +20,7 @@ class GameRepositoryImpl : GameRepository {
     override suspend fun selectAllGame(
         name: String?,
         platform: String?,
-        playStatus: String?,
-        page: Long,
-        size: Int
+        playStatus: String?
     ): List<Game> = suspendTransaction {
         var query: Op<Boolean> = Op.TRUE
 
@@ -44,7 +42,6 @@ class GameRepositoryImpl : GameRepository {
 
         GameDAO.find { query }
             .orderBy(GameTable.createdAt to SortOrder.DESC)
-            .paging(page, size)
             .map { it.toDTO() }
     }
 

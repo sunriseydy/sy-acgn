@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -32,10 +33,11 @@ fun GameListPage(appState: AppState) {
     var selectedPlayStatus by remember { mutableStateOf<String?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
 
-    val loadGames: () -> Unit = {
+    val loadGames: (fromDb: Boolean) -> Unit = { fromDb ->
         appState.scope.launch {
             isLoading = true
             appState.api.game.getGameList(
+                fromDb = fromDb,
                 name = searchKeyword.ifBlank { null },
                 platform = selectedPlatform,
                 playStatus = selectedPlayStatus
@@ -48,7 +50,7 @@ fun GameListPage(appState: AppState) {
     }
 
     LaunchedEffect(searchKeyword, selectedPlatform, selectedPlayStatus) {
-        loadGames()
+        loadGames(false)
     }
 
     Scaffold(
@@ -56,6 +58,9 @@ fun GameListPage(appState: AppState) {
             TopAppBar(
                 title = { Text("游戏库", fontWeight = FontWeight.Bold) },
                 actions = {
+                    IconButton(onClick = { loadGames(true) }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "刷新（从数据库查询）")
+                    }
                     IconButton(onClick = { showImportDialog = true }) {
                         Icon(Icons.Default.Add, contentDescription = "导入/新建游戏")
                     }
@@ -144,7 +149,7 @@ fun GameListPage(appState: AppState) {
             onDismiss = { showImportDialog = false },
             onImportSuccess = {
                 showImportDialog = false
-                loadGames()
+                loadGames(false)
             }
         )
     }
