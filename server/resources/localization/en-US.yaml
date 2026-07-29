@@ -7,6 +7,7 @@ enum:
       RSS: "RSS"
       ANIME_SEASON: "Anime Season"
       NOVEL: "Light Novels"
+      GAME: "Games"
   ANIME:
     AnimeAssociatedType:
       ANIME: "Anime"
@@ -26,6 +27,32 @@ enum:
       READING: "Reading"
       READ: "Read"
       DROPPED: "Dropped"
+  GAME:
+    GameAssociatedType:
+      GAME: "Game"
+      GAME_RELEASE: "Game Release"
+      GAME_PLAY_RECORD: "Play Record"
+    GamePlayStatusEnum:
+      UNPLAYED: "Unplayed"
+      PLAYING: "Playing"
+      COMPLETED: "Completed"
+      MASTERED: "Mastered"
+      DROPPED: "Dropped"
+    GamePlatformEnum:
+      STEAM: "Steam"
+      EPIC: "Epic Games"
+      GOG: "GOG"
+      MICROSOFT_STORE: "Microsoft Store"
+      DLSITE: "DLsite"
+      OTHER_PC: "Other PC Platforms"
+      SWITCH: "Nintendo Switch"
+      PS5: "PlayStation 5"
+      PS4: "PlayStation 4"
+      PS3: "PlayStation 3"
+      XBOX: "Xbox"
+      ANDROID: "Android"
+      IOS: "iOS"
+      OTHERS: "Others"
 
 message:
   error:
@@ -36,6 +63,11 @@ message:
       NOVEL_VOLUME_NOT_FOUND: "Light novel volume not found"
       BANGUMI_IMPORT_FAILED: "Bangumi import failed"
       INVALID_VOLUME_NUMBER: "Invalid volume number"
+    GAME:
+      GAME_NOT_FOUND: "Game not found"
+      GAME_RELEASE_NOT_FOUND: "Game release not found"
+      BANGUMI_IMPORT_FAILED: "Bangumi game import failed"
+      STEAM_IMPORT_FAILED: "Steam game import failed"
   ERROR:
     ANIME:
       QB_REQUEST_FAILED: "qBitTorrent request failed"
@@ -44,6 +76,11 @@ message:
       NOVEL_VOLUME_NOT_FOUND: "Light novel volume not found"
       BANGUMI_IMPORT_FAILED: "Bangumi import failed"
       INVALID_VOLUME_NUMBER: "Invalid volume number"
+    GAME:
+      GAME_NOT_FOUND: "Game not found"
+      GAME_RELEASE_NOT_FOUND: "Game release not found"
+      BANGUMI_IMPORT_FAILED: "Bangumi game import failed"
+      STEAM_IMPORT_FAILED: "Steam game import failed"
 
 config:
   COMMON:
@@ -60,3 +97,8 @@ addition:
     FileStatus: "File Status"
     PosterId: "Poster"
     EpubFilePath: "Epub File Path"
+  GAME:
+    BgmJson: "Bangumi Metadata"
+    SteamJson: "Steam Metadata"
+    PlayStatus: "Play Status"
+    PosterId: "Poster"

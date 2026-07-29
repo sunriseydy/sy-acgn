@@ -6,6 +6,7 @@ enum:
       RSS: "订阅"
       ANIME_SEASON: "动画"
       NOVEL: "轻小说"
+      GAME: "游戏"
     Status:
       PROCESSED: "已处理"
   ANIME:
@@ -32,6 +33,32 @@ enum:
       READING: "阅读中"
       READ: "已读"
       DROPPED: "弃书"
+  GAME:
+    GameAssociatedType:
+      GAME: "游戏"
+      GAME_RELEASE: "游戏发行版本"
+      GAME_PLAY_RECORD: "游玩记录"
+    GamePlayStatusEnum:
+      UNPLAYED: "未开始"
+      PLAYING: "游玩中"
+      COMPLETED: "已通关"
+      MASTERED: "完美/全成就"
+      DROPPED: "搁置/弃坑"
+    GamePlatformEnum:
+      STEAM: "Steam"
+      EPIC: "Epic Games"
+      GOG: "GOG"
+      MICROSOFT_STORE: "Microsoft Store"
+      DLSITE: "DLsite"
+      OTHER_PC: "其他 PC 平台"
+      SWITCH: "Nintendo Switch"
+      PS5: "PlayStation 5"
+      PS4: "PlayStation 4"
+      PS3: "PlayStation 3"
+      XBOX: "Xbox"
+      ANDROID: "Android"
+      IOS: "iOS"
+      OTHERS: "其他平台"
 
 message:
   error:
@@ -42,6 +69,11 @@ message:
       NOVEL_VOLUME_NOT_FOUND: "未找到轻小说卷"
       BANGUMI_IMPORT_FAILED: "Bangumi导入失败"
       INVALID_VOLUME_NUMBER: "无效的卷号"
+    GAME:
+      GAME_NOT_FOUND: "未找到游戏"
+      GAME_RELEASE_NOT_FOUND: "未找到游戏发行版本"
+      BANGUMI_IMPORT_FAILED: "Bangumi 游戏导入失败"
+      STEAM_IMPORT_FAILED: "Steam 游戏导入失败"
   ERROR:
     ANIME:
       QB_REQUEST_FAILED: "qBitTorrent请求失败"
@@ -50,6 +82,11 @@ message:
       NOVEL_VOLUME_NOT_FOUND: "未找到轻小说卷"
       BANGUMI_IMPORT_FAILED: "Bangumi导入失败"
       INVALID_VOLUME_NUMBER: "无效的卷号"
+    GAME:
+      GAME_NOT_FOUND: "未找到游戏"
+      GAME_RELEASE_NOT_FOUND: "未找到游戏发行版本"
+      BANGUMI_IMPORT_FAILED: "Bangumi 游戏导入失败"
+      STEAM_IMPORT_FAILED: "Steam 游戏导入失败"
   COMMON:
     AppName:
       meaning: "应用名称"
@@ -64,3 +101,8 @@ addition:
     FileStatus: "文件状态"
     PosterId: "封面"
     EpubFilePath: "电子书文件路径"
+  GAME:
+    BgmJson: "Bangumi 元数据"
+    SteamJson: "Steam 元数据"
+    PlayStatus: "游玩状态"
+    PosterId: "封面"
