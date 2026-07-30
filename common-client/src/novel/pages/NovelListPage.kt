@@ -60,11 +60,12 @@ fun NovelListPage(appState: AppState) {
     val bgmSearchResults = remember { mutableStateOf<List<Novel>>(emptyList()) }
     val bgmSearching = remember { mutableStateOf(false) }
 
-    fun loadNovels() {
+    fun loadNovels(fromDb: Boolean = false) {
         if (loading.value) return
         loading.value = true
         appState.scope.launch {
             appState.api.novel.getNovelList(
+                fromDb = fromDb,
                 name = searchName.value.ifBlank { null },
                 status = selectedStatus.value,
             ).onSuccessData(appState, onSuccess = { list ->
@@ -75,7 +76,7 @@ fun NovelListPage(appState: AppState) {
     }
 
     LaunchedEffect(Unit) {
-        loadNovels()
+        loadNovels(fromDb = false)
     }
 
     fun openCreateDialog(novel: Novel? = null) {
@@ -107,13 +108,13 @@ fun NovelListPage(appState: AppState) {
                 singleLine = true,
                 modifier = Modifier.padding(end = 8.dp).width(200.dp)
             )
-            IconButton(onClick = { loadNovels() }) {
+            IconButton(onClick = { loadNovels(fromDb = false) }) {
                 Icon(Icons.Default.Search, contentDescription = stringResource(Res.string.search))
             }
             IconButton(onClick = {
                 searchName.value = ""
                 selectedStatus.value = null
-                loadNovels()
+                loadNovels(fromDb = true)
             }) {
                 Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
             }
@@ -228,7 +229,7 @@ fun NovelListPage(appState: AppState) {
                                     IconButton(onClick = {
                                         appState.scope.launch {
                                             appState.api.novel.importNovelFromBangumi(bId, isUpdate = true).onSuccessData(appState, onSuccess = {
-                                                loadNovels()
+                                                loadNovels(fromDb = true)
                                             })
                                         }
                                     }) {
@@ -270,12 +271,12 @@ fun NovelListPage(appState: AppState) {
                 if (selectedNovel.value == null) {
                     appState.api.novel.createNovel(dto).onSuccessData(appState, onSuccess = {
                         createDialogVisible.value = false
-                        loadNovels()
+                        loadNovels(fromDb = true)
                     })
                 } else {
                     appState.api.novel.updateNovel(dto).onSuccessData(appState, onSuccess = {
                         createDialogVisible.value = false
-                        loadNovels()
+                        loadNovels(fromDb = true)
                     })
                 }
             }
@@ -331,7 +332,7 @@ fun NovelListPage(appState: AppState) {
                     appState.api.novel.importNovelFromBangumi(bgmId).onSuccessData(appState, onSuccess = {
                         bgmImportDialogVisible.value = false
                         bgmIdInput.value = ""
-                        loadNovels()
+                        loadNovels(fromDb = true)
                     })
                 }
             }
@@ -390,7 +391,7 @@ fun NovelListPage(appState: AppState) {
                             appState.api.novel.importNovelFromBangumi(bId).onSuccessData(appState, onSuccess = {
                                 bgmImportDialogVisible.value = false
                                 bgmIdInput.value = ""
-                                loadNovels()
+                                loadNovels(fromDb = true)
                             })
                         }
                     }
@@ -414,7 +415,7 @@ fun NovelListPage(appState: AppState) {
                     appState.api.novel.deleteNovel(novel.id).onSuccessData(appState, onSuccess = {
                         deleteDialogVisible.value = false
                         selectedNovel.value = null
-                        loadNovels()
+                        loadNovels(fromDb = true)
                     })
                 }
             }

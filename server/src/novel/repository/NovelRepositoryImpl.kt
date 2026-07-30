@@ -9,6 +9,7 @@ import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.like
+import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 
 /**
@@ -17,16 +18,21 @@ import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 class NovelRepositoryImpl : NovelRepository {
     override suspend fun selectAllNovel(
         name: String?,
-        status: String?,
-        page: Long,
-        size: Int
+        status: String?
     ): List<Novel> = suspendTransaction {
-        NovelDAO.find {
-            (name?.let { NovelTable.name like "%$it%" } ?: Op.TRUE) and
-                    (status?.let { NovelTable.status eq it } ?: Op.TRUE)
-        }.orderBy(NovelTable.createdAt to SortOrder.DESC)
-            .paging(page, size)
-            .map(NovelDAO::toDTO)
+        var query: Op<Boolean> = Op.TRUE
+
+        if (!name.isNullOrBlank()) {
+            query = query and ((NovelTable.name like "%$name%") or (NovelTable.originalName like "%$name%"))
+        }
+
+        if (!status.isNullOrBlank()) {
+            query = query and (NovelTable.status eq status)
+        }
+
+        NovelDAO.find { query }
+            .orderBy(NovelTable.createdAt to SortOrder.DESC)
+            .map { it.toDTO() }
     }
 
     override suspend fun selectNovelById(id: ULong): Novel = suspendTransaction {

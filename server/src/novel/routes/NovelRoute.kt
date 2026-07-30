@@ -21,10 +21,9 @@ fun Route.configureNovelModuleRoutes() {
         call.respond(
             Result(
                 data = novelService.getNovelList(
+                    fromDb = resource.fromDb,
                     name = resource.name,
-                    status = resource.status,
-                    page = resource.page,
-                    size = resource.size
+                    status = resource.status
                 )
             )
         )

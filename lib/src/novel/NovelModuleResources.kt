@@ -23,10 +23,9 @@ class NovelModuleResource(val parent: ApiResource = ApiResource()) {
         @Resource("list")
         class List(
             val parent: Novel = Novel(),
+            val fromDb: Boolean = true,
             val name: String? = null,
-            val status: String? = null,
-            val page: Long = 1,
-            val size: Int = 50
+            val status: String? = null
         )
 
         @Serializable

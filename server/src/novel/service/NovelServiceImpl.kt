@@ -11,6 +11,7 @@ import dev.sunriseydy.acgn.server.anime.tools.BangumiTool
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
 import dev.sunriseydy.acgn.server.novel.repository.NovelRepository
+import dev.sunriseydy.acgn.server.novel.tools.NovelCacheTool
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -31,19 +32,58 @@ class NovelServiceImpl(
 
     private val logger = KotlinLogging.logger { }
 
-    override suspend fun getNovelList(name: String?, status: String?, page: Long, size: Int): List<Novel> = coroutineScope {
-        val novels = novelRepository.selectAllNovel(name, status, page, size)
-        novels.map {
-            async {
-                attachNovelAdditions(it)
+    override suspend fun getNovelList(
+        fromDb: Boolean,
+        name: String?,
+        status: String?
+    ): List<Novel> = coroutineScope {
+        if (fromDb || NovelCacheTool.isNovelEmpty()) {
+            val novels = novelRepository.selectAllNovel(name, status)
+            novels.map { novel ->
+                async {
+                    val fullNovel = attachFullNovelDetails(novel)
+                    NovelCacheTool.setNovel(fullNovel)
+                }
+            }.awaitAll()
+        } else {
+            var cached = NovelCacheTool.getNovelList()
+            if (!name.isNullOrBlank()) {
+                cached = cached.filter {
+                    it.name.contains(name, ignoreCase = true) ||
+                            (it.originalName?.contains(name, ignoreCase = true) == true)
+                }
             }
-        }.awaitAll()
+            if (!status.isNullOrBlank()) {
+                cached = cached.filter { novel ->
+                    novel.status.equals(status, ignoreCase = true)
+                }
+            }
+            return@coroutineScope cached
+        }
     }
 
     override suspend fun getNovelById(id: ULong): Novel {
+        val cached = NovelCacheTool.getNovelById(id)
+        if (cached != null) return cached
+
         val novel = novelRepository.selectNovelById(id)
-        val volumes = getVolumeListByNovelId(id)
-        return attachNovelAdditions(novel).copy(volumes = volumes)
+        val fullNovel = attachFullNovelDetails(novel)
+        NovelCacheTool.setNovel(fullNovel)
+        return fullNovel
+    }
+
+    private suspend fun attachFullNovelDetails(novel: Novel): Novel = coroutineScope {
+        val volumesDeferred = async { getVolumeListByNovelId(novel.id) }
+        val additionsDeferred = async {
+            additionalInfoRepository.selectAdditionalInfos(
+                associatedType = NovelAssociatedType.NOVEL.key,
+                associatedId = novel.id
+            )
+        }
+        novel.copy(
+            volumes = volumesDeferred.await(),
+            additions = additionsDeferred.await()
+        )
     }
 
     override suspend fun createNovel(dto: NovelCreateOrUpdateDto): Novel {
@@ -59,7 +99,10 @@ class NovelServiceImpl(
             totalVolumes = dto.totalVolumes,
             bgmId = dto.bgmId
         )
-        return novelRepository.insertNovel(novel)
+        val created = novelRepository.insertNovel(novel)
+        val full = attachFullNovelDetails(created)
+        NovelCacheTool.setNovel(full)
+        return full
     }
 
     override suspend fun updateNovel(dto: NovelCreateOrUpdateDto): Novel {
@@ -77,7 +120,9 @@ class NovelServiceImpl(
             bgmId = dto.bgmId ?: existing.bgmId
         )
         val result = novelRepository.updateNovel(updated)
-        return attachNovelAdditions(result)
+        val full = attachFullNovelDetails(result)
+        NovelCacheTool.setNovel(full)
+        return full
     }
 
     override suspend fun deleteNovel(id: ULong) {
@@ -87,6 +132,7 @@ class NovelServiceImpl(
             deleteVolume(volume.id)
         }
         novelRepository.deleteNovelById(id)
+        NovelCacheTool.removeNovel(id)
     }
 
     override suspend fun getVolumeListByNovelId(novelId: ULong): List<NovelVolume> = coroutineScope {
@@ -118,6 +164,7 @@ class NovelServiceImpl(
         dto.readingStatus?.let { status ->
             updateVolumeReadingStatus(inserted.id, status)
         }
+        NovelCacheTool.removeNovel(dto.novelId)
         return getVolumeById(inserted.id)
     }
 
@@ -137,10 +184,12 @@ class NovelServiceImpl(
         dto.readingStatus?.let { status ->
             updateVolumeReadingStatus(result.id, status)
         }
+        NovelCacheTool.removeNovel(dto.novelId)
         return getVolumeById(result.id)
     }
 
     override suspend fun updateVolumeReadingStatus(volumeId: ULong, readingStatus: String): NovelVolume {
+        val volume = novelRepository.selectNovelVolumeById(volumeId)
         val oldReadingStatus = additionalInfoRepository.selectAdditionalInfos(
             NovelAssociatedType.NOVEL_VOLUME.key,
             volumeId, NovelAdditionType.ReadingStatus.key
@@ -157,12 +206,15 @@ class NovelServiceImpl(
             )
             additionalInfoRepository.saveAdditionalInfo(info, volumeId)
         }
+        NovelCacheTool.removeNovel(volume.novelId)
         return getVolumeById(volumeId)
     }
 
     override suspend fun deleteVolume(volumeId: ULong) {
+        val volume = novelRepository.selectNovelVolumeById(volumeId)
         additionalInfoRepository.deleteAdditionalInfos(NovelAssociatedType.NOVEL_VOLUME.key, volumeId)
         novelRepository.deleteNovelVolumeById(volumeId)
+        NovelCacheTool.removeNovel(volume.novelId)
     }
 
     override suspend fun searchBangumiNovel(query: String): List<Novel> {

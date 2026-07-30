@@ -15,8 +15,8 @@ import io.ktor.client.request.*
  * 轻小说 API 客户端
  */
 class NovelApi internal constructor(private val httpClient: HttpClient) {
-    suspend fun getNovelList(name: String? = null, status: String? = null, page: Long = 1, size: Int = 50): Result<List<Novel>> =
-        httpClient.get(NovelModuleResource.Novel.List(name = name, status = status, page = page, size = size)).body()
+    suspend fun getNovelList(fromDb: Boolean = true, name: String? = null, status: String? = null): Result<List<Novel>> =
+        httpClient.get(NovelModuleResource.Novel.List(fromDb = fromDb, name = name, status = status)).body()
 
     suspend fun getNovelById(id: ULong): Result<Novel> =
         httpClient.get(NovelModuleResource.Novel.Id(id = id)).body()

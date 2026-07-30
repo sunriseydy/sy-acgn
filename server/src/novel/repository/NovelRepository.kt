@@ -7,7 +7,7 @@ import dev.sunriseydy.acgn.novel.dto.NovelVolume
  * 轻小说 Repository 接口
  */
 interface NovelRepository {
-    suspend fun selectAllNovel(name: String? = null, status: String? = null, page: Long = 1, size: Int = 50): List<Novel>
+    suspend fun selectAllNovel(name: String? = null, status: String? = null): List<Novel>
     suspend fun selectNovelById(id: ULong): Novel
     suspend fun selectNovelByBgmId(bgmId: ULong): Novel?
     suspend fun insertNovel(novel: Novel): Novel

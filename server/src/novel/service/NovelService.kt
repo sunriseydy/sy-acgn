@@ -9,7 +9,7 @@ import dev.sunriseydy.acgn.novel.dto.NovelVolumeCreateOrUpdateDto
  * 轻小说 Service 接口
  */
 interface NovelService {
-    suspend fun getNovelList(name: String? = null, status: String? = null, page: Long = 1, size: Int = 50): List<Novel>
+    suspend fun getNovelList(fromDb: Boolean = true, name: String? = null, status: String? = null): List<Novel>
     suspend fun getNovelById(id: ULong): Novel
     suspend fun createNovel(dto: NovelCreateOrUpdateDto): Novel
     suspend fun updateNovel(dto: NovelCreateOrUpdateDto): Novel
