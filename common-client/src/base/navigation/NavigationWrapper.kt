@@ -1,8 +1,11 @@
 package dev.sunriseydy.acgn.client.base.navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -135,6 +138,33 @@ fun AcgnNavigationWrapper() {
                     }
                 },
             )
+            if (appState.api.isLoading.value) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.32f))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = {}
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        tonalElevation = 6.dp,
+                        shadowElevation = 6.dp
+                    ) {
+                        Box(
+                            modifier = Modifier.padding(24.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+            }
             SnackbarHost(
                 appState = appState,
                 modifier = Modifier.align(Alignment.BottomCenter),

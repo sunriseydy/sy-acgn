@@ -1,5 +1,7 @@
 package dev.sunriseydy.acgn.client.base.api
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.api.AnimeApi
@@ -15,6 +17,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.http.*
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * SY-ACGN 主 API 客户端
@@ -25,6 +28,27 @@ import io.ktor.http.*
  * @date 2024-07-23 11:27
  */
 class SyAcgnApi {
+    private val activeRequestCount = AtomicInteger(0)
+    private val _isLoading = mutableStateOf(false)
+
+    /**
+     * 页面全局 Loading 状态
+     */
+    val isLoading: State<Boolean> get() = _isLoading
+
+    private fun onRequestStart() {
+        if (activeRequestCount.getAndIncrement() == 0) {
+            _isLoading.value = true
+        }
+    }
+
+    private fun onRequestEnd() {
+        if (activeRequestCount.decrementAndGet() <= 0) {
+            activeRequestCount.set(0)
+            _isLoading.value = false
+        }
+    }
+
     /**
      * 惰性初始化的 HTTP 客户端
      *
@@ -42,6 +66,20 @@ class SyAcgnApi {
                     takeFrom(getLocalServerConfig())
                 }
                 contentType(ContentType.Application.Json)
+            }
+        }.apply {
+            plugin(HttpSend).intercept { request ->
+                val isSilent = request.headers["X-Silent-Request"]?.toBoolean() ?: false
+                if (!isSilent) {
+                    onRequestStart()
+                }
+                try {
+                    execute(request)
+                } finally {
+                    if (!isSilent) {
+                        onRequestEnd()
+                    }
+                }
             }
         }
     }
