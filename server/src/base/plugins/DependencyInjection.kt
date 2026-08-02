@@ -71,7 +71,8 @@ fun Application.configureDependencyInjection() {
                 resolve<dev.sunriseydy.acgn.server.game.repository.GameRepository>(),
                 resolve<AdditionalInfoRepository>(),
                 resolve<BangumiTool>(),
-                resolve<dev.sunriseydy.acgn.server.game.tools.SteamTool>()
+                resolve<dev.sunriseydy.acgn.server.game.tools.SteamTool>(),
+                resolve<AttachFileInfoService>()
             )
         }
 

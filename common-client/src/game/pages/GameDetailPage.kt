@@ -11,11 +11,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccess
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
+import dev.sunriseydy.acgn.client.base.components.AttachImage
 import dev.sunriseydy.acgn.game.dto.*
 import dev.sunriseydy.acgn.game.enums.GamePlatformEnum
 import dev.sunriseydy.acgn.game.enums.GamePlayStatusEnum
@@ -135,6 +137,18 @@ fun GameDetailPage(appState: AppState, gameId: ULong) {
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        val posterId = current.posterId
+                        if (!posterId.isNullOrBlank()) {
+                            AttachImage(
+                                appState = appState,
+                                attachId = posterId,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(240.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+
                         Text(current.name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
 
                         val origName = current.originalName

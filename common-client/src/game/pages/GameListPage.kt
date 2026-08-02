@@ -13,11 +13,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
+import dev.sunriseydy.acgn.client.base.components.AttachImage
 import dev.sunriseydy.acgn.client.base.components.showMessage
 import dev.sunriseydy.acgn.client.base.navigation.GameDetailRoute
 import dev.sunriseydy.acgn.game.dto.Game
@@ -51,31 +53,37 @@ fun GameListPage(appState: AppState) {
         }
     }
 
-    fun updateFromBangumi(game: Game) {
-        val bgmId = game.bgmId ?: return
-        appState.scope.launch {
-            appState.showMessage("正在从 Bangumi 更新游戏数据...")
-            appState.api.game.importFromBangumi(bgmId, isUpdate = true).onSuccessData(
-                appState = appState,
-                onSuccess = {
-                    appState.showMessage("从 Bangumi 更新成功")
-                    loadGames(false)
-                }
-            )
+    val updateFromBangumi: (Game) -> Unit = { game ->
+        val bgmId = game.bgmId
+        if (bgmId != null) {
+            appState.scope.launch {
+                isLoading = true
+                appState.api.game.importFromBangumi(bgmId, isUpdate = true).onSuccessData(
+                    appState = appState,
+                    onSuccess = {
+                        appState.showMessage("与 Bangumi 同步成功")
+                        loadGames(true)
+                    }
+                )
+                isLoading = false
+            }
         }
     }
 
-    fun updateFromSteam(game: Game) {
-        val steamId = game.steamId ?: return
-        appState.scope.launch {
-            appState.showMessage("正在从 Steam 更新游戏数据...")
-            appState.api.game.importFromSteam(steamId, isUpdate = true).onSuccessData(
-                appState = appState,
-                onSuccess = {
-                    appState.showMessage("从 Steam 更新成功")
-                    loadGames(false)
-                }
-            )
+    val updateFromSteam: (Game) -> Unit = { game ->
+        val steamId = game.steamId
+        if (steamId != null) {
+            appState.scope.launch {
+                isLoading = true
+                appState.api.game.importFromSteam(steamId, isUpdate = true).onSuccessData(
+                    appState = appState,
+                    onSuccess = {
+                        appState.showMessage("与 Steam 同步成功")
+                        loadGames(true)
+                    }
+                )
+                isLoading = false
+            }
         }
     }
 
@@ -84,14 +92,10 @@ fun GameListPage(appState: AppState) {
             game.bgmId != null && game.steamId != null -> {
                 refreshTargetGame = game
             }
-            game.bgmId != null -> {
-                updateFromBangumi(game)
-            }
-            game.steamId != null -> {
-                updateFromSteam(game)
-            }
+            game.bgmId != null -> updateFromBangumi(game)
+            game.steamId != null -> updateFromSteam(game)
             else -> {
-                appState.showMessage("该游戏未关联 Bangumi 或 Steam ID，无法更新")
+                appState.showMessage("该游戏未关联 Bangumi 或 Steam，无法从在线数据源刷新")
             }
         }
     }
@@ -179,6 +183,7 @@ fun GameListPage(appState: AppState) {
                 ) {
                     items(games, key = { it.id }) { game ->
                         GameCard(
+                            appState = appState,
                             game = game,
                             onClick = {
                                 appState.navigationAction.add(GameDetailRoute(game.id))
@@ -250,6 +255,7 @@ fun GameListPage(appState: AppState) {
 
 @Composable
 fun GameCard(
+    appState: AppState,
     game: Game,
     onClick: () -> Unit,
     onRefresh: () -> Unit
@@ -260,32 +266,44 @@ fun GameCard(
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = game.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
+        Column {
+            val posterId = game.posterId
+            if (!posterId.isNullOrBlank()) {
+                AttachImage(
+                    appState = appState,
+                    attachId = posterId,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp),
+                    contentScale = ContentScale.Crop
                 )
-                IconButton(
-                    onClick = onRefresh
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "刷新游戏数据"
-                    )
-                }
             }
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = game.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(
+                        onClick = onRefresh
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "刷新游戏数据"
+                        )
+                    }
+                }
 
             val origName = game.originalName
             if (!origName.isNullOrBlank()) {
@@ -346,4 +364,5 @@ fun GameCard(
             }
         }
     }
+}
 }
