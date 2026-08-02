@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
+import dev.sunriseydy.acgn.client.base.components.showMessage
 import dev.sunriseydy.acgn.client.base.navigation.GameDetailRoute
 import dev.sunriseydy.acgn.game.dto.Game
 import dev.sunriseydy.acgn.game.enums.GamePlayStatusEnum
@@ -32,6 +33,7 @@ fun GameListPage(appState: AppState) {
     var selectedPlatform by remember { mutableStateOf<String?>(null) }
     var selectedPlayStatus by remember { mutableStateOf<String?>(null) }
     var showImportDialog by remember { mutableStateOf(false) }
+    var refreshTargetGame by remember { mutableStateOf<Game?>(null) }
 
     val loadGames: (fromDb: Boolean) -> Unit = { fromDb ->
         appState.scope.launch {
@@ -46,6 +48,51 @@ fun GameListPage(appState: AppState) {
                 onSuccess = { data -> games = data }
             )
             isLoading = false
+        }
+    }
+
+    fun updateFromBangumi(game: Game) {
+        val bgmId = game.bgmId ?: return
+        appState.scope.launch {
+            appState.showMessage("正在从 Bangumi 更新游戏数据...")
+            appState.api.game.importFromBangumi(bgmId, isUpdate = true).onSuccessData(
+                appState = appState,
+                onSuccess = {
+                    appState.showMessage("从 Bangumi 更新成功")
+                    loadGames(false)
+                }
+            )
+        }
+    }
+
+    fun updateFromSteam(game: Game) {
+        val steamId = game.steamId ?: return
+        appState.scope.launch {
+            appState.showMessage("正在从 Steam 更新游戏数据...")
+            appState.api.game.importFromSteam(steamId, isUpdate = true).onSuccessData(
+                appState = appState,
+                onSuccess = {
+                    appState.showMessage("从 Steam 更新成功")
+                    loadGames(false)
+                }
+            )
+        }
+    }
+
+    val onRefreshGame: (Game) -> Unit = { game ->
+        when {
+            game.bgmId != null && game.steamId != null -> {
+                refreshTargetGame = game
+            }
+            game.bgmId != null -> {
+                updateFromBangumi(game)
+            }
+            game.steamId != null -> {
+                updateFromSteam(game)
+            }
+            else -> {
+                appState.showMessage("该游戏未关联 Bangumi 或 Steam ID，无法更新")
+            }
         }
     }
 
@@ -135,6 +182,9 @@ fun GameListPage(appState: AppState) {
                             game = game,
                             onClick = {
                                 appState.navigationAction.add(GameDetailRoute(game.id))
+                            },
+                            onRefresh = {
+                                onRefreshGame(game)
                             }
                         )
                     }
@@ -153,10 +203,57 @@ fun GameListPage(appState: AppState) {
             }
         )
     }
+
+    if (refreshTargetGame != null) {
+        val game = refreshTargetGame!!
+        AlertDialog(
+            onDismissRequest = { refreshTargetGame = null },
+            icon = { Icon(Icons.Default.Refresh, contentDescription = null) },
+            title = { Text("选择更新来源") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("游戏《${game.name}》同时关联了 Bangumi 与 Steam，请选择数据更新来源：")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        ElevatedButton(
+                            onClick = {
+                                val target = refreshTargetGame
+                                refreshTargetGame = null
+                                target?.let { updateFromBangumi(it) }
+                            }
+                        ) {
+                            Text("Bangumi")
+                        }
+                        ElevatedButton(
+                            onClick = {
+                                val target = refreshTargetGame
+                                refreshTargetGame = null
+                                target?.let { updateFromSteam(it) }
+                            }
+                        ) {
+                            Text("Steam")
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { refreshTargetGame = null }) {
+                    Text("取消")
+                }
+            }
+        )
+    }
 }
 
 @Composable
-fun GameCard(game: Game, onClick: () -> Unit) {
+fun GameCard(
+    game: Game,
+    onClick: () -> Unit,
+    onRefresh: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -167,13 +264,28 @@ fun GameCard(game: Game, onClick: () -> Unit) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = game.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = game.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(
+                    onClick = onRefresh
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "刷新游戏数据"
+                    )
+                }
+            }
 
             val origName = game.originalName
             if (!origName.isNullOrBlank()) {
