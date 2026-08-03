@@ -155,10 +155,10 @@ fun SearchBgmAnimeSeason(
             // 展示搜索结果的别名
             if (selected.value != null && selected.value!!.bgmJson != null) {
                 val bgmJson = selected.value!!.bgmJson!!
-                bgmJson.get("infobox")?.jsonArray?.forEach { infobox ->
-                    if (infobox.jsonObject.get("key")?.jsonPrimitive?.content == "别名") {
-                        infobox.jsonObject.get("value")?.jsonArray?.forEach { alias ->
-                            alias.jsonObject.get("v")?.jsonPrimitive?.content?.let {
+                bgmJson["infobox"]?.jsonArray?.forEach { infobox ->
+                    if (infobox.jsonObject["key"]?.jsonPrimitive?.content == "别名") {
+                        infobox.jsonObject["value"]?.jsonArray?.forEach { alias ->
+                            alias.jsonObject["v"]?.jsonPrimitive?.content?.let {
                                 Text(
                                     text = it,
                                     modifier = Modifier.width(fieldWidth)

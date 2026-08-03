@@ -8,7 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
@@ -58,7 +58,7 @@ import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AcgnNavigationWrapper() {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val adaptiveInfo = currentWindowAdaptiveInfoV2()
 
     val navigationSuiteType = if (adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(600)) {
         NavigationSuiteType.NavigationDrawer

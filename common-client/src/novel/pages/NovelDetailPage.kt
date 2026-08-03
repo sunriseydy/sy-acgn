@@ -5,7 +5,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -70,7 +74,7 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
     Column(modifier = Modifier.fillMaxSize()) {
         PageTitle(novelState.value?.name ?: stringResource(Res.string.novel_detail_title)) {
             IconButton(onClick = { appState.navigationAction.removeLast() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             IconButton(onClick = { loadNovelDetail() }) {
                 Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))

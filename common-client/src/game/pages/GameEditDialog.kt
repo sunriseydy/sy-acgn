@@ -98,7 +98,7 @@ fun GameImportDialog(
                     .height(400.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                TabRow(selectedTabIndex = selectedTab) {
+                PrimaryTabRow(selectedTabIndex = selectedTab) {
                     Tab(selected = selectedTab == 0, onClick = { selectedTab = 0; searchResults = emptyList() }) {
                         Text("Bangumi 导入", modifier = Modifier.padding(12.dp))
                     }

@@ -24,16 +24,15 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import kotlin.time.Clock
-import kotlin.time.Instant as KtInstant
 import java.io.ByteArrayInputStream
 import java.net.URLDecoder
 import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.time.Clock
+import kotlin.time.Instant as KtInstant
 
 private val logger = KotlinLogging.logger { }
 
@@ -419,12 +418,12 @@ class QbTool {
             // 只处理 RSS 订阅源（有 uid 字段的）
             if (value.uid != null) {
                 val id = key.hashCode().toULong()
-                val unreadCount = value.articles?.count { (it.isRead ?: false) == false }?.toLong() ?: 0L
+                val unreadCount = value.articles?.count { !(it.isRead ?: false) }?.toLong() ?: 0L
 
                 result.add(
                     Rss(
                         id = id,
-                        link = value.uid ?: "",
+                        link = value.uid,
                         title = value.title ?: key,
                         description = value.lastBuildDate,
                         lastFetchAt = Clock.System.now(),

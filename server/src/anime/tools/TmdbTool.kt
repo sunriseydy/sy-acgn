@@ -75,7 +75,7 @@ class TmdbTool {
         tmdbClient.showSeasons.getDetails(showId, seasonNumber, language)
             .let {
                 var episodes = it.episodes
-                episodes = episodes?.map {
+                episodes = episodes?.map { it ->
                     it.copy(
                         crew = null,
                         guestStars = null

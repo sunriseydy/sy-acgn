@@ -33,7 +33,7 @@ object LocalizationTool {
      */
     fun putAll(localizations: Map<String, String>) {
         lock.withLock {
-            this.localizations = this.localizations + localizations
+            this.localizations += localizations
         }
     }
 

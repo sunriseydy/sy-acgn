@@ -48,7 +48,7 @@ class NavigationAction<T : NavigationRoute>(startKey: T) {
 
         // 如果顶层栈不存在，则添加
         if (topLevelStacks[key] == null) {
-            topLevelStacks.put(key, mutableStateListOf(key))
+            topLevelStacks[key] = mutableStateListOf(key)
         } else {
             // 否则将其移到栈的末尾（为了保持正确的层级顺序）
             topLevelStacks.apply {

@@ -1,12 +1,12 @@
 package dev.sunriseydy.acgn.server.anime.tools
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeModuleError
 import dev.sunriseydy.acgn.base.exception.MessageException
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 
@@ -18,7 +18,7 @@ private val logger = KotlinLogging.logger { }
  */
 object FileTool {
 
-    val SP_DIR_NAME = ".SPs"
+    const val SP_DIR_NAME = ".SPs"
 
     fun handleAnimeSeasonFile(
         animeSeason: AnimeSeason,

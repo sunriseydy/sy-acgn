@@ -5,9 +5,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -113,7 +117,7 @@ fun AnimeSeasonDetailPage(appState: AppState, seasonId: ULong) {
                 ?: "动画季度详情"
         ) {
             IconButton(onClick = { appState.navigationAction.removeLast() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "返回")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
             }
             IconButton(onClick = { loadDetail() }) {
                 Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
