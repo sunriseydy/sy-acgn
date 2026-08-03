@@ -54,3 +54,4 @@ dist-ssr
 
 .env
 .claude/
+.alma-snapshots

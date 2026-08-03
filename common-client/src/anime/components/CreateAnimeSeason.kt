@@ -19,10 +19,12 @@ import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
+import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.res.*
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -256,7 +258,29 @@ class CreateAnimeSeasonState(
     }
 
     fun selectSeason(season: AnimeSeason) {
-        animeSeason.value = season.copy(animeId = anime.value!!.id, anime = anime.value)
+        val selectedAnime = anime.value!!
+        val showId = selectedAnime.tmdbId?.toInt()
+        // 选中季度后，尽量拉取 TMDB 季度详情（含集数）
+        if (showId != null) {
+            service.appState.scope.launch {
+                service.appState.api.anime.getTmdbAnimeSeasonDetail(showId, season.season.toString())
+                    .onSuccessData(
+                        service.appState,
+                        onSuccess = { detail ->
+                            animeSeason.value = detail.copy(
+                                animeId = selectedAnime.id,
+                                anime = selectedAnime,
+                                bgmId = season.bgmId,
+                            )
+                        },
+                        onError = {
+                            animeSeason.value = season.copy(animeId = selectedAnime.id, anime = selectedAnime)
+                        }
+                    )
+            }
+        } else {
+            animeSeason.value = season.copy(animeId = selectedAnime.id, anime = selectedAnime)
+        }
         animeSeasonSearchVisible.value = false
         animeSeasonSearchResult.value = emptyList()
     }
@@ -271,7 +295,18 @@ class CreateAnimeSeasonState(
             animeSeason.value,
             lazyMessage = { animeSeasonIsBlankMsg })
             .let {
-                service.saveAnimeSeason(it, onSuccess)
+                service.saveAnimeSeason(it, onSuccess = { saved ->
+                    // 若创建时未带全集数，且存在 TMDB，则补同步
+                    if (saved.anime?.tmdbId != null || anime.value?.tmdbId != null) {
+                        service.syncEpisodes(
+                            seasonId = saved.id,
+                            onSuccess = { onSuccess(saved) },
+                            onError = { onSuccess(saved) }
+                        )
+                    } else {
+                        onSuccess(saved)
+                    }
+                })
             }
     }
 }

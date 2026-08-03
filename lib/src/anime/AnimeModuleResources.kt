@@ -114,7 +114,17 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
         class Season(val parent: Anime = Anime()) {
             @Serializable
             @Resource("{id}")
-            class Id(val parent: Season = Season(), val id: ULong)
+            class Id(val parent: Season = Season(), val id: ULong) {
+                /** 同步集数: `/api/anime/anime/season/{id}/sync-episodes` */
+                @Serializable
+                @Resource("sync-episodes")
+                class SyncEpisodes(val parent: Id)
+
+                /** 季度下集数列表: `/api/anime/anime/season/{id}/episodes` */
+                @Serializable
+                @Resource("episodes")
+                class Episodes(val parent: Id)
+            }
 
             @Serializable
             @Resource("section-map")

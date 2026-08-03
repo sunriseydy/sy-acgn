@@ -31,6 +31,13 @@ data object AnimeSeasonRoute : NavigationRoute {
 }
 
 /**
+ * 动漫季度详情页面路由
+ */
+data class AnimeSeasonDetailRoute(val seasonId: ULong) : NavigationRoute {
+    override val icon: ImageVector? = null
+}
+
+/**
  * 轻小说页面路由
  */
 data object NovelRoute : NavigationRoute {

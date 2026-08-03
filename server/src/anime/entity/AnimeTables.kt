@@ -109,7 +109,8 @@ class AnimeSeasonDAO(id: EntityID<ULong>) : ULongEntity(id) {
 object AnimeEpisodeTable : ULongIdTable("anime_episode") {
     val animeId = ulong("anime_id")
     val animeSeasonId = ulong("anime_season_id")
-    val name = varchar("name", 1024).uniqueIndex()
+    // 集数名常重复（如“第1集”），唯一性由 (animeId, animeSeasonId, episode) 保证
+    val name = varchar("name", 1024)
     val description = text("description", eagerLoading = true).nullable()
     val episode = integer("episode")
     val airDate = date("air_date").nullable()

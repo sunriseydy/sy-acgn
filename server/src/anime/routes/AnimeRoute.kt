@@ -32,11 +32,20 @@ fun Route.animeRoutes() {
     get<AnimeModuleResource.Anime.Season.SectionMap> { resource ->
         call.respond(Result(data = animeService.getAnimeSeasonSectionMap(resource.name)))
     }
+    get<AnimeModuleResource.Anime.Season.Id> { resource ->
+        call.respond(Result(data = animeService.getAnimeSeasonById(resource.id)))
+    }
     post<AnimeModuleResource.Anime.Season> {
         call.respond(Result(data = animeService.saveAnimeSeason(call.receive())))
     }
     delete<AnimeModuleResource.Anime.Season.Id> { resource ->
         call.respond(Result(data = animeService.removeAnimeSeasonById(resource.id)))
+    }
+    post<AnimeModuleResource.Anime.Season.Id.SyncEpisodes> { resource ->
+        call.respond(Result(data = animeService.syncAnimeSeasonEpisodes(resource.parent.id)))
+    }
+    get<AnimeModuleResource.Anime.Season.Id.Episodes> { resource ->
+        call.respond(Result(data = animeService.getAnimeEpisodesBySeasonId(resource.parent.id)))
     }
 
     // --- AnimeEpisode ---

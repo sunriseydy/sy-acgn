@@ -2,6 +2,7 @@ package dev.sunriseydy.acgn.server.anime.tools
 
 import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.anime.dto.Anime
+import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
@@ -178,11 +179,33 @@ class TmdbTool {
             month = this.airDate?.month?.number ?: 0,
             airDate = this.airDate,
             tmdbId = this.id.toULong(),
+            animeEpisodes = this.episodes.orEmpty().map { it.toAnimeEpisode() },
             additions = listOf(
                 AdditionalInfo(
                     "",
                     ULong.MIN_VALUE,
                     AnimeAssociatedType.ANIME_SEASON.key,
+                    AnimeAdditionType.TmdbJson.key,
+                    Json.encodeToString(this),
+                )
+            ),
+        )
+
+    private fun TmdbEpisode.toAnimeEpisode() =
+        AnimeEpisode(
+            id = ULong.MIN_VALUE,
+            animeId = ULong.MIN_VALUE,
+            animeSeasonId = ULong.MIN_VALUE,
+            name = this.name?.takeIf { it.isNotBlank() } ?: "第${this.episodeNumber}集",
+            description = this.overview,
+            episode = this.episodeNumber,
+            airDate = this.airDate,
+            tmdbId = this.id.toULong(),
+            additions = listOf(
+                AdditionalInfo(
+                    "",
+                    ULong.MIN_VALUE,
+                    AnimeAssociatedType.ANIME_EPISODE.key,
                     AnimeAdditionType.TmdbJson.key,
                     Json.encodeToString(this),
                 )

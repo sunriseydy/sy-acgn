@@ -133,6 +133,19 @@ class AnimeRepositoryImpl : AnimeRepository {
         }?.toDTO() ?: throw NoSuchElementException()
     }
 
+    override suspend fun updateAnimeEpisode(animeEpisode: AnimeEpisode): AnimeEpisode = suspendTransaction {
+        AnimeEpisodeDAO.findByIdAndUpdate(animeEpisode.id) {
+            it.animeId = animeEpisode.animeId
+            it.animeSeasonId = animeEpisode.animeSeasonId
+            it.name = animeEpisode.name
+            it.description = animeEpisode.description
+            it.episode = animeEpisode.episode
+            it.airDate = animeEpisode.airDate
+            animeEpisode.tmdbId?.apply { it.tmdbId = animeEpisode.tmdbId }
+            animeEpisode.bgmId?.apply { it.bgmId = animeEpisode.bgmId }
+        }?.toDTO() ?: throw NoSuchElementException()
+    }
+
     override suspend fun deleteAnimeById(id: ULong): Unit = suspendTransaction {
         AnimeDAO.findById(id)?.delete() ?: throw NoSuchElementException()
     }

@@ -23,6 +23,7 @@ interface AnimeRepository {
     suspend fun insertAnimeEpisode(animeEpisode: AnimeEpisode): AnimeEpisode
     suspend fun updateAnime(anime: Anime): Anime
     suspend fun updateAnimeSeason(animeSeason: AnimeSeason): AnimeSeason
+    suspend fun updateAnimeEpisode(animeEpisode: AnimeEpisode): AnimeEpisode
     suspend fun deleteAnimeById(id: ULong)
     suspend fun deleteAnimeSeasonById(id: ULong)
     suspend fun deleteAnimeSeasonByAnimeId(animeId: ULong)

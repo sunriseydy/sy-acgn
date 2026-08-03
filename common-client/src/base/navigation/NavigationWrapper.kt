@@ -27,6 +27,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.pages.AnimeSeason
+import dev.sunriseydy.acgn.client.anime.pages.AnimeSeasonDetailPage
 import dev.sunriseydy.acgn.client.anime.pages.Rss
 import dev.sunriseydy.acgn.client.base.api.SyAcgnApi
 import dev.sunriseydy.acgn.client.base.components.SnackbarHost
@@ -123,6 +124,9 @@ fun AcgnNavigationWrapper() {
                     }
                     entry<AnimeSeasonRoute> {
                         AnimeSeason(appState)
+                    }
+                    entry<AnimeSeasonDetailRoute> { route ->
+                        AnimeSeasonDetailPage(appState, route.seasonId)
                     }
                     entry<NovelRoute> {
                         NovelListPage(appState)

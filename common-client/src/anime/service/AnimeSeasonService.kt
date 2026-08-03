@@ -1,13 +1,12 @@
 package dev.sunriseydy.acgn.client.anime.service
 
 import dev.sunriseydy.acgn.anime.dto.Anime
+import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
-import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccess
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
-import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import kotlinx.coroutines.launch
 
 /**
@@ -58,28 +57,42 @@ class AnimeSeasonService(
         }
     }
 
-    fun refreshTmdbData(season: AnimeSeason, onSuccess: () -> Unit = { }, onError: (String) -> Unit = { }) {
-        val showId = season.anime?.tmdbId?.toInt()
-        if (showId == null) {
-            onError("该动漫季度关联的动画没有 TMDB ID")
-            return
-        }
+    fun loadSeasonById(
+        seasonId: ULong,
+        onSuccess: (AnimeSeason) -> Unit = { },
+        onError: (String) -> Unit = { },
+    ) {
         appState.scope.launch {
-            appState.api.anime.getTmdbAnimeSeasonDetail(showId, season.season.toString()).onSuccessData(
+            appState.api.anime.getAnimeSeasonById(seasonId).onSuccessData(appState, onSuccess, onError)
+        }
+    }
+
+    fun loadEpisodes(
+        seasonId: ULong,
+        onSuccess: (List<AnimeEpisode>) -> Unit = { },
+        onError: (String) -> Unit = { },
+    ) {
+        appState.scope.launch {
+            appState.api.anime.getAnimeEpisodesBySeasonId(seasonId).onSuccessData(appState, onSuccess, onError)
+        }
+    }
+
+    fun syncEpisodes(
+        seasonId: ULong,
+        onSuccess: (List<AnimeEpisode>) -> Unit = { },
+        onError: (String) -> Unit = { },
+    ) {
+        appState.scope.launch {
+            appState.api.anime.syncAnimeSeasonEpisodes(seasonId).onSuccessData(appState, onSuccess, onError)
+        }
+    }
+
+    fun refreshTmdbData(season: AnimeSeason, onSuccess: () -> Unit = { }, onError: (String) -> Unit = { }) {
+        appState.scope.launch {
+            // 同步元数据与集数
+            appState.api.anime.syncAnimeSeasonEpisodes(season.id).onSuccessData(
                 appState,
-                onSuccess = { tmdbSeason ->
-                    val tmdbAddition = AnimeAdditionType.TmdbJson.additionalInfo(tmdbSeason.additions)!!
-                    val updatedSeason = tmdbSeason.copy(
-                        id = season.id,
-                        animeId = season.animeId,
-                        bgmId = season.bgmId,
-                        // 附加信息，如果存在 tmdb 的，则更新值，否则取接口返回的
-                        additions = listOf(AnimeAdditionType.TmdbJson.additionalInfo(season.additions)?.copy(additionalValue = tmdbAddition.additionalValue)
-                            ?: tmdbAddition
-                        )
-                    )
-                    saveAnimeSeason(updatedSeason, onSuccess = { onSuccess() }, onError = onError)
-                },
+                onSuccess = { onSuccess() },
                 onError = onError
             )
         }
