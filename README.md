@@ -69,6 +69,8 @@ sy-acgn/
 │   ├── src/
 │   │   ├── base/       # 核心插件和配置
 │   │   ├── anime/      # 动漫功能模块
+│   │   ├── game/       # 游戏功能模块
+│   │   ├── novel/      # 小说功能模块
 │   │   ├── common/     # 通用功能模块
 │   │   └── Main.kt
 │   ├── resources/      # 配置和静态资源
@@ -78,6 +80,8 @@ sy-acgn/
 │   ├── src/
 │   │   ├── base/       # 核心接口、Result、枚举
 │   │   ├── anime/      # 动漫模块 DTO/枚举/资源
+│   │   ├── game/       # 游戏模块 DTO/枚举/资源
+│   │   ├── novel/      # 小说模块 DTO/枚举/资源
 │   │   ├── common/     # 通用模块 DTO/枚举/资源
 │   │   └── tools/      # 跨模块工具类
 │   └── module.yaml
@@ -86,6 +90,8 @@ sy-acgn/
 │   ├── src/
 │   │   ├── base/       # 导航、API、通用组件
 │   │   ├── anime/      # 动漫页面和组件
+│   │   ├── game/       # 游戏页面和 API
+│   │   ├── novel/      # 小说页面和 API
 │   │   └── common/     # 通用 API 客户端
 │   ├── composeResources/ # Compose 多平台资源
 │   └── module.yaml
@@ -170,7 +176,26 @@ common-client  →  lib
      - `tmdb/` - TMDB API 完整客户端实现（API、模型、序列化等）
      - `torrent/` - Torrent 解析工具
 
-3. **Common 模块** (`server/src/common/`)
+3. **Game 模块** (`server/src/game/`)
+   - `entity/` - 游戏数据表及对应 DAO
+   - `repository/` - 数据访问层
+   - `service/` - 业务逻辑层
+   - `routes/` - API 路由
+   - `tools/` - 工具类
+     - `GameCacheTool.kt` - 基于 Caffeine 的游戏数据缓存
+     - `SteamTool.kt` - Steam API 客户端（获取游戏详情与数据同步）
+     - `BangumiGameTool.kt` - Bangumi 游戏数据同步
+
+4. **Novel 模块** (`server/src/novel/`)
+   - `entity/` - 小说数据表及对应 DAO
+   - `repository/` - 数据访问层
+   - `service/` - 业务逻辑层
+   - `routes/` - API 路由
+   - `tools/` - 工具类
+     - `NovelCacheTool.kt` - 基于 Caffeine 的小说数据缓存
+     - `BangumiNovelTool.kt` - Bangumi 小说数据搜索与导入工具
+
+5. **Common 模块** (`server/src/common/`)
    - `entity/` - 数据表定义及对应 DAO
    - `repository/` - 数据访问层
    - `service/` - 业务逻辑层
@@ -179,6 +204,8 @@ common-client  →  lib
 **数据库模式迁移：**
 使用 Exposed 的 `MigrationUtils.statementsRequiredForDatabaseMigration()` 自动迁移表：
 - `animeTables()` - 动漫相关表（`AnimeTable`、`AnimeSeasonTable`、`AnimeEpisodeTable`）
+- `gameTables()` - 游戏相关表（`GameTable` 等）
+- `novelTables()` - 小说相关表（`NovelTable` 等）
 - `commonModuleTables()` - 通用模块表（`app_config`、`additional_info`）
 
 **分层架构模式：**
@@ -203,7 +230,17 @@ common-client  →  lib
    - `enums/` - 模块枚举
    - `AnimeModuleResources.kt` - 模块 API 资源定义
 
-3. **Common 模块** (`lib/src/common/`)
+3. **Game 模块** (`lib/src/game/`)
+   - `dto/` - 游戏相关数据传输对象
+   - `enums/` - 游戏相关枚举与错误码定义
+   - `GameModuleResources.kt` - 游戏模块 API 资源定义
+
+4. **Novel 模块** (`lib/src/novel/`)
+   - `dto/` - 小说相关数据传输对象
+   - `enums/` - 小说相关枚举定义
+   - `NovelModuleResources.kt` - 小说模块 API 资源定义
+
+5. **Common 模块** (`lib/src/common/`)
    - `dto/` - 数据传输对象
    - `config/` - 模块配置
    - `enums/` - 模块枚举
@@ -267,6 +304,7 @@ common-client  →  lib
    - **API** (`api/`)
      - `SyAcgnApi.kt` - 主 API 客户端，惰性初始化 HTTP 客户端
    - **Components** (`components/`)
+     - 全局 Loading 状态、遮罩层与图片组件 (`AttachImage.kt` 等)
    - **Navigation** (`navigation/`)
      - `NavigationRoute.kt` - 路由定义（密封接口）
      - `NavigationAction.kt` - 基于栈的导航动作处理器
@@ -276,6 +314,7 @@ common-client  →  lib
      - `Paging.kt` - 分页接口
    - **Utils** (`utils/`)
      - `LocalSettings.kt` - 本地设置管理
+     - `AppDirectories.kt` - 应用程序目录与存储管理
      - `FieldUtils.kt` - 字段工具
 
 2. **Anime 模块** (`common-client/src/anime/`)
@@ -283,11 +322,21 @@ common-client  →  lib
      - `AnimeApi.kt` - 动漫 API 客户端
      - `RssApi.kt` - RSS API 客户端
    - **Components** (`components/`)
-   - **Pages** (`pages/`)
+   - **Pages** (`pages/`) - 动漫列表、季度详情页（含集数列表）
    - **Service** (`service/`)
    - **Enums** (`enums/`)
 
-3. **Common 模块** (`common-client/src/common/`)
+3. **Game 模块** (`common-client/src/game/`)
+   - **API** (`api/`)
+     - `GameApi.kt` - 游戏 API 客户端
+   - **Pages** (`pages/`) - 游戏列表、数据同步与封面图片上传管理页面
+
+4. **Novel 模块** (`common-client/src/novel/`)
+   - **API** (`api/`)
+     - `NovelApi.kt` - 小说 API 客户端
+   - **Pages** (`pages/`) - 小说列表、Bangumi 导入对话框
+
+5. **Common 模块** (`common-client/src/common/`)
    - **API** (`api/`)
      - `CommonApi.kt` - 通用 API 客户端
 
@@ -304,7 +353,7 @@ common-client  →  lib
 
 5. **API 客户端** (`common-client/src/base/api/SyAcgnApi.kt`)
     - 惰性初始化的 Ktor HTTP 客户端
-    - 模块化 API 访问：`rss`、`anime`、`common`
+    - 模块化 API 访问：`rss`、`anime`、`game`、`novel`、`common`
 
 6. **导航系统 (Navigation 3)** (`common-client/src/base/navigation/`)
     - **NavigationRoute.kt** - 密封接口定义路由，包含：
@@ -373,9 +422,9 @@ SY_BGM_USER_AGENT=        # Bangumi API User-Agent
 - 路由中通过 `by application.dependencies` 委托获取依赖
 
 ### 缓存策略
-- `AnimeCacheTool` 使用 Caffeine 缓存库
+- `AnimeCacheTool` / `GameCacheTool` / `NovelCacheTool` 使用 Caffeine 缓存库
 - 双缓存：列表缓存 + ID 查询缓存
-- 24 小时自动过期，最大 10000 条目
+- 24 小时自动过期，最大 10000 条目，提高检索吞吐量并减轻数据库压力
 
 ### 本地化流程
 1. 服务器在启动时加载本地化文件 (`server/resources/localization/`)
@@ -385,7 +434,8 @@ SY_BGM_USER_AGENT=        # Bangumi API User-Agent
 
 ### 外部服务集成
 - **TMDB** - 搜索电视剧/电影，获取详情和季度信息
-- **Bangumi** - 搜索动漫、获取条目详情，转换为 `AnimeSeason`
+- **Bangumi** - 搜索动漫/游戏/小说条目，获取详情并支持批量导入与数据同步
+- **Steam** - 获取游戏基本信息及图片数据并进行同步
 - **qBittorrent** - Torrent 下载管理和 RSS 订阅
 - **文件管理** - 媒体库目录结构生成、视频/字幕文件排序和重命名
 
@@ -507,6 +557,25 @@ Component (可复用 UI 组件)
    - 编译时 URL 参数类型检查
 
 ## 最近重大改进
+
+### 2026-08 功能更新与重构
+
+1. **Game（游戏）功能模块全栈支持**
+   - 新增 Game 模块 API、数据库表定义、服务层及前端 UI 界面
+   - 支持新增与更新游戏，可选择从 Bangumi 或 Steam 来源同步游戏元数据
+   - 支持游戏封面图的上传、预览与本地存储管理
+   - 引入基于 Caffeine 的 `GameCacheTool` 优化列表查询性能
+
+2. **Novel（小说）功能模块与性能优化**
+   - 新增 Bangumi 导入对话框及小说搜索功能
+   - 使用 Kotlin 协程并行化优化小说列表及卷列表加载逻辑，提升并发吞吐
+   - 引入基于 Caffeine 的 `NovelCacheTool` 缓存机制，移除硬编码的分页限制
+
+3. **前端 Compose 体验与界面增强**
+   - 新增动画季度详情页，支持展示季度元数据与集数列表，优化季度导航逻辑
+   - 添加全局 Loading 状态和遮罩层，提升界面数据请求过程中的交互反馈
+   - 优化动画季度页面标签显示（使用 Compose `AssistChip` 规范化呈现）
+   - 统一整理客户端应用目录存储工具 `AppDirectories.kt`
 
 ### 2026-02 新功能
 
