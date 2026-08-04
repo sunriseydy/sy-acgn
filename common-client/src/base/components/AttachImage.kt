@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import dev.sunriseydy.acgn.client.AppState
+import dev.sunriseydy.acgn.client.base.utils.AppDirectories
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.security.MessageDigest
@@ -205,8 +206,7 @@ private class ImageDiskCache(private val cacheDir: File) {
 }
 
 internal object ImageCacheManager {
-    private val homeDir = System.getProperty("user.home")?.takeIf { it.isNotBlank() } ?: "."
-    private val cacheDir = File(homeDir, ".sy-acgn/cache/images")
+    private val cacheDir = File(AppDirectories.appCacheDir, "images")
     private val memoryCache = ImageMemoryCache()
     private val diskCache = ImageDiskCache(cacheDir)
 
