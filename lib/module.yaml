@@ -27,4 +27,4 @@ dependencies:
 settings:
   ktor:
     enabled: true
-    version: 3.5.1
+    version: 3.5.2

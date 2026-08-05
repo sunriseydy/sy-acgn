@@ -39,6 +39,6 @@ settings:
   ktor:
     enabled: true
     applyBom: true
-    version: 3.5.1
+    version: 3.5.2
   kotlin:
     optIns: [ kotlin.time.ExperimentalTime ]
