@@ -27,7 +27,7 @@ dependencies:
   - $libs.exposed.json
   - $libs.exposed.migration.core
   - $libs.exposed.migration.jdbc
-  - org.postgresql:postgresql:42.7.12
+  - $libs.postgresql
   - commons-io:commons-io:2.16.1
   # Caffeine cache
   - com.github.ben-manes.caffeine:caffeine:3.1.8
