@@ -112,11 +112,13 @@ class AnimeServiceImpl(
      * 获取按年份和月份分组的动漫季度列表
      *
      * 返回一个 Map，键为 "年份 - 季节"，值为对应的动漫季度列表。
+     *
+     * @param fromDb 为 true 时先清除缓存并从数据库重建，用于刷新场景
      */
-    override suspend fun getAnimeSeasonSectionMap(name: String?): MutableMap<String, List<AnimeSeason>> {
+    override suspend fun getAnimeSeasonSectionMap(name: String?, fromDb: Boolean): MutableMap<String, List<AnimeSeason>> {
         val sectionMap: MutableMap<String, List<AnimeSeason>> = mutableMapOf()
         var seasons: List<AnimeSeason>
-        if (AnimeCacheTool.isSeasonEmpty()) {
+        if (fromDb || AnimeCacheTool.isSeasonEmpty()) {
             this.refreshCache()
         }
         if (name.isNullOrBlank()) {

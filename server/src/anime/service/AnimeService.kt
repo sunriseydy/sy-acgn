@@ -12,7 +12,7 @@ import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
  */
 interface AnimeService {
     suspend fun searchAnimeByName(name: String?): List<Anime>
-    suspend fun getAnimeSeasonSectionMap(name: String? = null): MutableMap<String, List<AnimeSeason>>
+    suspend fun getAnimeSeasonSectionMap(name: String? = null, fromDb: Boolean = false): MutableMap<String, List<AnimeSeason>>
     suspend fun getAnimeSeasonById(id: ULong): AnimeSeason
     suspend fun getAnimeEpisodesBySeasonId(seasonId: ULong): List<AnimeEpisode>
     suspend fun createAnimeSeason(season: AnimeSeason): AnimeSeason

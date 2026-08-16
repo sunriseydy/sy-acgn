@@ -45,11 +45,12 @@ fun AnimeSeason(appState: AppState) {
     val searchName = remember { mutableStateOf("") }
     val animeSeasonService = remember(appState) { AnimeSeasonService(appState) }
 
-    fun loadData() {
+    fun loadData(fromDb: Boolean = false) {
         if (!loading.value) {
             loading.value = true
             animeSeasonService.loadData(
                 name = searchName.value,
+                fromDb = fromDb,
                 onSuccess = {
                     sectionMapState.value = it
                     loading.value = false
@@ -81,7 +82,7 @@ fun AnimeSeason(appState: AppState) {
             }
             IconButton(onClick = {
                 searchName.value = ""
-                loadData()
+                loadData(fromDb = true)
             }) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
             }

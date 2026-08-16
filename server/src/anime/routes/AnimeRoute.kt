@@ -30,7 +30,7 @@ fun Route.animeRoutes() {
 
     // --- AnimeSeason ---
     get<AnimeModuleResource.Anime.Season.SectionMap> { resource ->
-        call.respond(Result(data = animeService.getAnimeSeasonSectionMap(resource.name)))
+        call.respond(Result(data = animeService.getAnimeSeasonSectionMap(resource.name, resource.fromDb)))
     }
     get<AnimeModuleResource.Anime.Season.Id> { resource ->
         call.respond(Result(data = animeService.getAnimeSeasonById(resource.id)))

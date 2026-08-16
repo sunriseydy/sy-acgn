@@ -128,7 +128,12 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
 
             @Serializable
             @Resource("section-map")
-            class SectionMap(val parent: Season = Season(), val name: String? = null)
+            class SectionMap(
+                val parent: Season = Season(),
+                val name: String? = null,
+                /** 是否强制从数据库查询（跳过缓存，先清除缓存），用于刷新场景 */
+                val fromDb: Boolean = false
+            )
 
             /** 剧集管理: `/api/anime/anime/season/episode` */
             @Serializable

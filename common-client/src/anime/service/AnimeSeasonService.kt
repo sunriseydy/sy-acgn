@@ -23,9 +23,14 @@ import kotlinx.coroutines.launch
 class AnimeSeasonService(
     val appState: AppState,
 ) {
-    fun loadData(name: String? = null, onSuccess: (MutableMap<String, List<AnimeSeason>>) -> Unit, onError: (String) -> Unit = { }) {
+    fun loadData(
+        name: String? = null,
+        fromDb: Boolean = false,
+        onSuccess: (MutableMap<String, List<AnimeSeason>>) -> Unit,
+        onError: (String) -> Unit = { }
+    ) {
         appState.scope.launch {
-            appState.api.anime.getAnimeSeasonSectionMap(name).onSuccessData(appState, onSuccess, onError)
+            appState.api.anime.getAnimeSeasonSectionMap(name, fromDb).onSuccessData(appState, onSuccess, onError)
         }
     }
 
