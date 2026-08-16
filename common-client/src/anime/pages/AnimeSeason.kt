@@ -8,22 +8,30 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.components.CreateAnimeSeason
+import dev.sunriseydy.acgn.client.anime.components.SearchBgmAnimeSeason
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
+import dev.sunriseydy.acgn.client.base.components.AlertDialog
 import dev.sunriseydy.acgn.client.base.components.AttachImage
+import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.components.PageTitle
 import dev.sunriseydy.acgn.client.base.navigation.AnimeSeasonDetailRoute
 import dev.sunriseydy.acgn.client.base.navigation.TopLevelRouteEnum
+import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
+import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.res.*
 import dev.sunriseydy.acgn.tools.i
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 private val logger = KotlinLogging.logger { }
@@ -45,6 +53,17 @@ fun AnimeSeason(appState: AppState) {
     val searchName = remember { mutableStateOf("") }
     val animeSeasonService = remember(appState) { AnimeSeasonService(appState) }
 
+    // 卡片操作（同步 TMDB / 关联 Bangumi / 处理文件 / 删除）对应的目标季度与弹窗状态
+    val actionSeason = remember { mutableStateOf<AnimeSeason?>(null) }
+    val deleteDialogVisible = remember { mutableStateOf(false) }
+    val handleFileDialogVisible = remember { mutableStateOf(false) }
+    val searchBgmDialogVisible = remember { mutableStateOf(false) }
+    val filePath = remember { mutableStateOf("") }
+    val isDeleteSource = remember { mutableStateOf(false) }
+    val isDeleteTarget = remember { mutableStateOf(false) }
+    val episodeOffset = remember { mutableStateOf("") }
+    val fileErrorMessage = remember { mutableStateOf<String?>(null) }
+
     fun loadData(fromDb: Boolean = false) {
         if (!loading.value) {
             loading.value = true
@@ -64,6 +83,16 @@ fun AnimeSeason(appState: AppState) {
 
     LaunchedEffect(Unit) {
         loadData()
+    }
+
+    fun openHandleFileDialog(season: AnimeSeason) {
+        actionSeason.value = season
+        handleFileDialogVisible.value = true
+        filePath.value = ""
+        isDeleteSource.value = false
+        isDeleteTarget.value = false
+        episodeOffset.value = ""
+        fileErrorMessage.value = null
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -155,6 +184,46 @@ fun AnimeSeason(appState: AppState) {
                                 maxLines = 4,
                                 overflow = TextOverflow.Ellipsis
                             )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                if (season.anime?.tmdbId != null) {
+                                    IconButton(onClick = {
+                                        animeSeasonService.refreshTmdbData(
+                                            season = season,
+                                            onSuccess = {
+                                                loadData()
+                                                appState.scope.launch {
+                                                    appState.snackbarHostState.showSnackbar("已从 TMDB 同步季度与集数")
+                                                }
+                                            },
+                                            onError = { errorMsg ->
+                                                appState.scope.launch {
+                                                    appState.snackbarHostState.showSnackbar(errorMsg)
+                                                }
+                                            }
+                                        )
+                                    }) {
+                                        Icon(Icons.Default.Sync, contentDescription = "同步 TMDB")
+                                    }
+                                }
+                                IconButton(onClick = {
+                                    actionSeason.value = season
+                                    searchBgmDialogVisible.value = true
+                                }) {
+                                    Icon(Icons.Default.Search, contentDescription = "关联 Bangumi")
+                                }
+                                IconButton(onClick = { openHandleFileDialog(season) }) {
+                                    Icon(Icons.Default.DriveFolderUpload, contentDescription = "处理文件")
+                                }
+                                IconButton(onClick = {
+                                    actionSeason.value = season
+                                    deleteDialogVisible.value = true
+                                }) {
+                                    Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.delete))
+                                }
+                            }
                         }
                     }
                 }
@@ -163,4 +232,80 @@ fun AnimeSeason(appState: AppState) {
     }
 
     CreateAnimeSeason(animeSeasonService, createDialogVisible, onSuccess = { loadData() })
+
+    AlertDialog(
+        alertDialogVisible = deleteDialogVisible,
+        onConfirmation = {
+            actionSeason.value?.let { season ->
+                animeSeasonService.deleteSeason(season.id) {
+                    deleteDialogVisible.value = false
+                    loadData()
+                }
+            }
+        },
+        dialogTitle = stringResource(Res.string.delete) + (actionSeason.value?.name ?: ""),
+    )
+
+    FormDialog(
+        formDialogVisible = handleFileDialogVisible,
+        onConfirmation = {
+            actionSeason.value?.let { season ->
+                animeSeasonService.handleAnimeSeasonFile(
+                    AnimeSeasonFile(
+                        id = season.id,
+                        path = filePath.value,
+                        isDeleteSource = isDeleteSource.value,
+                        isDeleteTarget = isDeleteTarget.value,
+                        episodeOffset = episodeOffset.value.toIntOrNull() ?: 0,
+                    ),
+                    onSuccess = {
+                        handleFileDialogVisible.value = false
+                        loadData()
+                    },
+                    onError = { fileErrorMessage.value = it },
+                )
+            }
+        },
+        errorMessage = fileErrorMessage
+    ) {
+        OutlinedTextField(
+            value = filePath.value,
+            onValueChange = { filePath.value = it },
+            label = { RequiredFieldLabel(stringResource(Res.string.file_path)) },
+            supportingText = { RequiredSupportingText(filePath, stringResource(Res.string.file_path)) }
+        )
+        OutlinedTextField(
+            value = episodeOffset.value,
+            onValueChange = { episodeOffset.value = it },
+            label = { Text(stringResource(Res.string.episode_offset)) },
+            supportingText = { Text(stringResource(Res.string.episode_offset_supporting_text)) }
+        )
+        Row {
+            Text(
+                stringResource(Res.string.delete_source),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            Checkbox(
+                checked = isDeleteSource.value,
+                onCheckedChange = { isDeleteSource.value = it },
+            )
+        }
+        Row {
+            Text(
+                stringResource(Res.string.delete_target),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            Checkbox(
+                checked = isDeleteTarget.value,
+                onCheckedChange = { isDeleteTarget.value = it },
+            )
+        }
+    }
+
+    SearchBgmAnimeSeason(
+        animeSeasonService = animeSeasonService,
+        visible = searchBgmDialogVisible,
+        currentSeason = actionSeason.value,
+        onSuccess = { loadData() }
+    )
 }
