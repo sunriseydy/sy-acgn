@@ -26,7 +26,15 @@ class AdditionalInfoRepositoryImpl : AdditionalInfoRepository {
 
     override suspend fun saveAdditionalInfo(additionalInfo: AdditionalInfo, associatedId: ULong?) =
         if (additionalInfo.id.isEmpty()) {
-            this.insertAdditionalInfo(associatedId?.let { additionalInfo.copy(associatedId = it) } ?: additionalInfo)
+            val info = associatedId?.let { additionalInfo.copy(associatedId = it) } ?: additionalInfo
+            // (关联类型, 关联 id, 附加类型) 存在唯一索引，同键记录已存在时更新附加值而非重复插入
+            val existing = this.selectAdditionalInfos(info.associatedType, info.associatedId, info.additionalType)
+                .firstOrNull()
+            if (existing == null) {
+                this.insertAdditionalInfo(info)
+            } else {
+                this.updateAdditionalValue(existing.id, info.additionalValue)
+            }
         } else {
             this.updateAdditionalValue(additionalInfo.id, additionalInfo.additionalValue)
         }
