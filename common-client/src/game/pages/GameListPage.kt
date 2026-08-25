@@ -345,7 +345,7 @@ fun GameCard(
 
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            text = "时长: %.1fh".format(hours),
+                            text = "时长: ${((hours * 10).toLong() / 10.0)}h",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold
                         )

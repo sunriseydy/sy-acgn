@@ -24,7 +24,7 @@
 
 ## 项目概述
 
-SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务器、Compose Multiplatform 客户端（桌面端）和共享库模块。项目使用 **Kotlin Toolchain** 作为构建工具。
+SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务器、Compose Multiplatform 客户端（桌面端与 WebAssembly Web 端）和共享库模块。项目使用 **Kotlin Toolchain** 作为构建工具。
 
 ### 快速开始
 
@@ -34,6 +34,9 @@ SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务�
 
 # 运行桌面客户端
 ./kotlin run -m desktop-client
+
+# 运行 WebAssembly 网页端客户端
+./kotlin run -m wasm-client
 
 # 打包服务器
 ./kotlin build -m server
@@ -51,6 +54,12 @@ SY-ACGN 是一个基于 Kotlin 的 ACGN 管理系统，包含 Ktor 后端服务�
 
 # 运行桌面客户端
 ./kotlin run -m desktop-client
+
+# 运行 WebAssembly (Wasm) 网页客户端
+./kotlin run -m wasm-client
+
+# 编译 WebAssembly (Wasm) 网页客户端
+./kotlin build -m wasm-client
 
 # 打包服务器（生成可执行 JAR）
 ./kotlin package -m server
@@ -76,7 +85,7 @@ sy-acgn/
 │   ├── resources/      # 配置和静态资源
 │   └── module.yaml
 │
-├── lib/                 # 共享 Kotlin 库
+├── lib/                 # 共享 Kotlin 库（多平台：JVM / Wasm-JS）
 │   ├── src/
 │   │   ├── base/       # 核心接口、Result、枚举
 │   │   ├── anime/      # 动漫模块 DTO/枚举/资源
@@ -84,30 +93,41 @@ sy-acgn/
 │   │   ├── novel/      # 小说模块 DTO/枚举/资源
 │   │   ├── common/     # 通用模块 DTO/枚举/资源
 │   │   └── tools/      # 跨模块工具类
+│   ├── src@jvm/        # JVM 专属实现（如 ReentrantLock）
+│   ├── src@wasmJs/     # Wasm-JS 专属实现
 │   └── module.yaml
 │
-├── common-client/       # 共享 Compose UI 组件
+├── common-client/       # 共享 Compose UI 组件（多平台：JVM / Wasm-JS）
 │   ├── src/
 │   │   ├── base/       # 导航、API、通用组件
 │   │   ├── anime/      # 动漫页面和组件
 │   │   ├── game/       # 游戏页面和 API
 │   │   ├── novel/      # 小说页面和 API
 │   │   └── common/     # 通用 API 客户端
+│   ├── src@jvm/        # JVM 专属存储与缓存实现
+│   ├── src@wasmJs/     # Wasm-JS 专属存储与缓存实现
 │   ├── composeResources/ # Compose 多平台资源
 │   └── module.yaml
 │
-└── desktop-client/      # 桌面应用入口点
+├── desktop-client/      # 桌面应用入口点（JVM）
+│   ├── src/Main.kt
+│   └── module.yaml
+│
+└── wasm-client/         # WebAssembly 网页端入口点（Wasm-JS）
     ├── src/Main.kt
+    ├── resources/index.html
     └── module.yaml
+```
 
 **依赖关系：**
 
 ```
-desktop-client
-    ↓
-common-client  →  lib
-      ↓            ↓
-    server    ←────┘
+desktop-client    wasm-client
+     \                /
+      ↓              ↓
+       common-client  →  lib
+             ↓            ↓
+           server    ←────┘
 ```
 
 每个模块都有一个 `module.yaml` 文件定义其依赖关系。此外，项目根目录包含多个 `*.module-template.yaml` 模板文件用于统一配置：
@@ -289,14 +309,14 @@ common-client  →  lib
 ### 前端（客户端）
 
 **技术栈：**
-- Compose Multiplatform 用于 UI (Desktop)
+- Compose Multiplatform 用于 UI（支持 Desktop JVM 与 WebAssembly Wasm-JS 网页端）
 - Material 3 组件
 - Navigation 3 组件
 - Material 3 Adaptive
 - Material 3 Adaptive Navigation Suite
 - Lifecycle ViewModel
 - Ktor Client 用于 API 调用
-- Multiplatform Settings 用于本地存储
+- Multiplatform Settings 用于跨平台本地存储（桌面端使用 Properties 文件，Web 端使用 LocalStorage）
 
 **模块化结构 (`common-client/src/`)：**
 
@@ -313,8 +333,8 @@ common-client  →  lib
    - **Interfaces** (`interfaces/`)
      - `Paging.kt` - 分页接口
    - **Utils** (`utils/`)
-     - `LocalSettings.kt` - 本地设置管理
-     - `AppDirectories.kt` - 应用程序目录与存储管理
+     - `LocalSettings.kt` - 本地设置管理（多平台 expect/actual）
+     - `AppDirectories.kt` - 桌面端应用程序目录与存储管理
      - `FieldUtils.kt` - 字段工具
 
 2. **Anime 模块** (`common-client/src/anime/`)
@@ -344,8 +364,14 @@ common-client  →  lib
 
 1. **桌面应用入口** (`desktop-client/src/Main.kt`)
     - 单窗口应用程序，最大化状态
+    - 运行命令：`./kotlin run -m desktop-client`
 
-2. **主应用** (`common-client/src/App.kt`)
+2. **WebAssembly 网页应用入口** (`wasm-client/src/Main.kt`)
+    - 基于 `wasm-js/app` 产品类型，挂载 Compose UI 到浏览器
+    - 运行命令：`./kotlin run -m wasm-client`
+    - 构建命令：`./kotlin build -m wasm-client`
+
+3. **主应用** (`common-client/src/App.kt`)
     - 首次启动时显示服务器配置界面
     - `SyAcgnApi` 初始化和验证
     - `AcgnNavigationWrapper` 用于路由
@@ -560,7 +586,14 @@ Component (可复用 UI 组件)
 
 ### 2026-08 功能更新与重构
 
-1. **Game（游戏）功能模块全栈支持**
+1. **WebAssembly (Wasm-JS) 客户端支持与多平台改造**
+   - 依据 Kotlin Toolchain 官方规范，添加 `wasm-client` 模块（产品类型 `wasm-js/app`），支持直接编译为 WebAssembly 并在现代浏览器中运行
+   - 升级共享库 `lib` 与 UI 组件 `common-client` 为多平台库（同时支持 `jvm` 与 `wasmJs`）
+   - 重构跨平台存储（`LocalSettings` 使用 `expect/actual` 分别对接桌面 Properties 与浏览器 LocalStorage）
+   - 适配跨平台图片解码（采用 Compose Resources `decodeToImageBitmap` 代替 ImageIO）与纯 Kotlin 缓存机制
+   - 采用多平台 `AtomicInt` 与 `PlatformLock` 抽象，确保线程与并发安全
+
+2. **Game（游戏）功能模块全栈支持**
    - 新增 Game 模块 API、数据库表定义、服务层及前端 UI 界面
    - 支持新增与更新游戏，可选择从 Bangumi 或 Steam 来源同步游戏元数据
    - 支持游戏封面图的上传、预览与本地存储管理

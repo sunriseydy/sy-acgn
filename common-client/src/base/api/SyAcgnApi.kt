@@ -17,7 +17,8 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.http.*
-import java.util.concurrent.atomic.AtomicInteger
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 /**
  * SY-ACGN 主 API 客户端
@@ -27,8 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger
  * @author SunriseYDY
  * @date 2024-07-23 11:27
  */
+@OptIn(ExperimentalAtomicApi::class)
 class SyAcgnApi {
-    private val activeRequestCount = AtomicInteger(0)
+    private val activeRequestCount = AtomicInt(0)
     private val _isLoading = mutableStateOf(false)
 
     /**
@@ -37,14 +39,14 @@ class SyAcgnApi {
     val isLoading: State<Boolean> get() = _isLoading
 
     private fun onRequestStart() {
-        if (activeRequestCount.getAndIncrement() == 0) {
+        if (activeRequestCount.fetchAndAdd(1) == 0) {
             _isLoading.value = true
         }
     }
 
     private fun onRequestEnd() {
-        if (activeRequestCount.decrementAndGet() <= 0) {
-            activeRequestCount.set(0)
+        if (activeRequestCount.addAndFetch(-1) <= 0) {
+            activeRequestCount.store(0)
             _isLoading.value = false
         }
     }
