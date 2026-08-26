@@ -64,5 +64,7 @@ class CommonApi internal constructor(private val httpClient: HttpClient) {
         httpClient.delete(CommonModuleResource.Addition(id = id)).body()
     
     suspend fun getAttachFileBytes(id: String): ByteArray =
-        httpClient.get(CommonModuleResource.AttachFile(id = id)).body()
+        httpClient.get(CommonModuleResource.AttachFile(id = id)) {
+            header("X-Silent-Request", "true")
+        }.body()
 }

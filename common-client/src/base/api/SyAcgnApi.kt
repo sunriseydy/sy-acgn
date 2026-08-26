@@ -72,6 +72,7 @@ class SyAcgnApi {
         }.apply {
             plugin(HttpSend).intercept { request ->
                 val isSilent = request.headers["X-Silent-Request"]?.toBoolean() ?: false
+                request.headers.remove("X-Silent-Request")
                 if (!isSilent) {
                     onRequestStart()
                 }

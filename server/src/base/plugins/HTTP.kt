@@ -21,6 +21,7 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Delete)
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
+        allowHeadersPrefixed("X-")
         anyHost()
         allowCredentials = true
     }
