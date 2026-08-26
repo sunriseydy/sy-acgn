@@ -13,6 +13,7 @@ dependencies:
   # https://github.com/ktorio/ktor
   - bom: $ktor.bom
   - $ktor.client.core: exported
+  - $ktor.client.cio: exported
   - $ktor.client.logging: exported
   - $ktor.client.auth: exported
   - $ktor.client.contentNegotiation: exported
