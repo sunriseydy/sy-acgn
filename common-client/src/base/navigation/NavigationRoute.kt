@@ -1,7 +1,5 @@
 package dev.sunriseydy.acgn.client.base.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import dev.sunriseydy.acgn.base.interfaces.CommonModule
 import dev.sunriseydy.acgn.base.interfaces.EnumKey
@@ -71,7 +69,7 @@ data class GameDetailRoute(val gameId: ULong) : NavigationRoute {
  * 设置页面路由
  */
 data object SettingsRoute : NavigationRoute {
-    override val icon: ImageVector = Icons.Default.Settings
+    override val icon: ImageVector? = null
 }
 
 /**

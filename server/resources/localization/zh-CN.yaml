@@ -153,7 +153,7 @@ config:
   group:
     COMMON: "通用设置"
     COMMON_S3: "S3 存储设置"
-    ANIME: "动漫设置"
+    ANIME: "动画设置"
     db_postgresql: "数据库配置"
     client_server: "服务器设置"
 
