@@ -7,6 +7,7 @@ enum:
       ANIME_SEASON: "动画"
       NOVEL: "轻小说"
       GAME: "游戏"
+      SETTINGS: "设置"
     Status:
       PROCESSED: "已处理"
   ANIME:
@@ -91,6 +92,78 @@ message:
     AppName:
       meaning: "应用名称"
       description: "应用的名称"
+
+config:
+  COMMON:
+    AppName:
+      meaning: "应用名称"
+      description: "应用的名称"
+    AppLanguage:
+      meaning: "语言"
+      description: "应用显示语言"
+    AppServer:
+      meaning: "应用服务器地址"
+      description: "服务器地址"
+    S3Endpoint:
+      meaning: "Endpoint"
+      description: "S3 端点 URL"
+    S3AccessKey:
+      meaning: "Access Key"
+      description: "S3 访问密钥"
+    S3SecretKey:
+      meaning: "Secret Key"
+      description: "S3 私有密钥"
+    S3BucketName:
+      meaning: "Bucket Name"
+      description: "S3 存储桶名称"
+    S3Region:
+      meaning: "Region"
+      description: "S3 区域"
+  ANIME:
+    TmdbApiKey:
+      meaning: "TMDB API 密钥"
+      description: "TMDB API 密钥"
+    QbApiBaseUrl:
+      meaning: "qBittorrent URL"
+      description: "qBittorrent API 基础 URL"
+    QbUserName:
+      meaning: "qBittorrent 用户名"
+      description: "qBittorrent 用户名"
+    QbPassword:
+      meaning: "qBittorrent 密码"
+      description: "qBittorrent 密码"
+    MediaTargetDirectory:
+      meaning: "媒体目标目录"
+      description: "媒体文件目标目录"
+    BgmUserAgent:
+      meaning: "Bangumi User-Agent"
+      description: "Bangumi API User-Agent"
+  db:
+    postgresql:
+      host:
+        meaning: "Host"
+      port:
+        meaning: "Port"
+      database:
+        meaning: "Database"
+      user:
+        meaning: "User"
+      password:
+        meaning: "Password"
+  group:
+    COMMON: "通用设置"
+    COMMON.S3: "S3 存储设置"
+    ANIME: "动漫设置"
+    db.postgresql: "数据库配置"
+    client.server: "服务器设置"
+
+settings:
+  title: "设置"
+  save: "保存"
+  save_success: "设置已保存"
+  server_address: "服务器地址"
+  show_password: "显示"
+  hide_password: "隐藏"
 
 addition:
   ANIME:
