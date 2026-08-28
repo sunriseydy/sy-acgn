@@ -142,10 +142,10 @@ config:
         meaning: "Password"
   group:
     COMMON: "General"
-    COMMON.S3: "S3 Storage"
+    COMMON_S3: "S3 Storage"
     ANIME: "Anime"
-    db.postgresql: "Database"
-    client.server: "Server"
+    db_postgresql: "Database"
+    client_server: "Server"
 
 settings:
   title: "Settings"

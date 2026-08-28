@@ -237,7 +237,7 @@ private fun buildConfigGroups(
     }
 
     val serverAddress = dev.sunriseydy.acgn.client.base.utils.getLocalServerConfigOrNull() ?: ""
-    groups["client.server"] = mutableListOf(
+    groups["client_server"] = mutableListOf(
         ConfigItem(
             key = "__client_server_address__",
             displayName = i("settings.server_address", "服务器地址"),
@@ -250,7 +250,7 @@ private fun buildConfigGroups(
         )
     )
 
-    val groupOrder = listOf("COMMON", "client.server", "ANIME", "COMMON.S3", "db.postgresql")
+    val groupOrder = listOf("COMMON", "client_server", "ANIME", "COMMON_S3", "db_postgresql")
     return groups.entries.sortedBy { (key, _) ->
         val idx = groupOrder.indexOf(key)
         if (idx >= 0) idx else groupOrder.size
@@ -267,7 +267,7 @@ private fun extractGroupKey(configKey: String): String? {
         configKey.startsWith(DB_CONFIG_PREFIX) -> {
             val rest = configKey.removePrefix(DB_CONFIG_PREFIX)
             val subsystem = rest.substringBefore(".", "")
-            if (subsystem.isNotEmpty()) "db.$subsystem" else null
+            if (subsystem.isNotEmpty()) "db_$subsystem" else null
         }
         configKey.startsWith(STANDARD_CONFIG_PREFIX) -> {
             val rest = configKey.removePrefix(STANDARD_CONFIG_PREFIX)
@@ -275,7 +275,7 @@ private fun extractGroupKey(configKey: String): String? {
             val name = rest.substringAfter(".", "")
             when {
                 module.isEmpty() || name.isEmpty() -> null
-                module == "COMMON" && name.startsWith("S3") -> "COMMON.S3"
+                module == "COMMON" && name.startsWith("S3") -> "COMMON_S3"
                 else -> module
             }
         }
