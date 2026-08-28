@@ -38,6 +38,7 @@ import dev.sunriseydy.acgn.client.game.pages.GameDetailPage
 import dev.sunriseydy.acgn.client.game.pages.GameListPage
 import dev.sunriseydy.acgn.client.novel.pages.NovelDetailPage
 import dev.sunriseydy.acgn.client.novel.pages.NovelListPage
+import dev.sunriseydy.acgn.client.common.pages.SettingsPage
 import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
 
 /**
@@ -139,6 +140,9 @@ fun AcgnNavigationWrapper() {
                     }
                     entry<GameDetailRoute> { route ->
                         GameDetailPage(appState, route.gameId)
+                    }
+                    entry<SettingsRoute> {
+                        SettingsPage(appState)
                     }
                 },
             )

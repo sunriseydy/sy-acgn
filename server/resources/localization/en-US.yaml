@@ -8,6 +8,7 @@ enum:
       ANIME_SEASON: "Anime Season"
       NOVEL: "Light Novels"
       GAME: "Games"
+      SETTINGS: "Settings"
   ANIME:
     AnimeAssociatedType:
       ANIME: "Anime"
@@ -87,6 +88,72 @@ config:
     AppName:
       meaning: "App Name"
       description: "Name of application"
+    AppLanguage:
+      meaning: "Language"
+      description: "Application display language"
+    AppServer:
+      meaning: "App Server"
+      description: "Server address"
+    S3Endpoint:
+      meaning: "Endpoint"
+      description: "S3 endpoint URL"
+    S3AccessKey:
+      meaning: "Access Key"
+      description: "S3 access key"
+    S3SecretKey:
+      meaning: "Secret Key"
+      description: "S3 secret key"
+    S3BucketName:
+      meaning: "Bucket Name"
+      description: "S3 bucket name"
+    S3Region:
+      meaning: "Region"
+      description: "S3 region"
+  ANIME:
+    TmdbApiKey:
+      meaning: "TMDB API Key"
+      description: "TMDB API key"
+    QbApiBaseUrl:
+      meaning: "qBittorrent URL"
+      description: "qBittorrent API base URL"
+    QbUserName:
+      meaning: "qBittorrent Username"
+      description: "qBittorrent username"
+    QbPassword:
+      meaning: "qBittorrent Password"
+      description: "qBittorrent password"
+    MediaTargetDirectory:
+      meaning: "Media Target Directory"
+      description: "Media file target directory"
+    BgmUserAgent:
+      meaning: "Bangumi User-Agent"
+      description: "Bangumi API User-Agent"
+  db:
+    postgresql:
+      host:
+        meaning: "Host"
+      port:
+        meaning: "Port"
+      database:
+        meaning: "Database"
+      user:
+        meaning: "User"
+      password:
+        meaning: "Password"
+  group:
+    COMMON: "General"
+    COMMON.S3: "S3 Storage"
+    ANIME: "Anime"
+    db.postgresql: "Database"
+    client.server: "Server"
+
+settings:
+  title: "Settings"
+  save: "Save"
+  save_success: "Settings saved"
+  server_address: "Server Address"
+  show_password: "Show"
+  hide_password: "Hide"
 
 addition:
   ANIME:
