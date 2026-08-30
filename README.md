@@ -92,9 +92,9 @@ sy-acgn/
 │   │   ├── game/       # 游戏模块 DTO/枚举/资源
 │   │   ├── novel/      # 小说模块 DTO/枚举/资源
 │   │   ├── common/     # 通用模块 DTO/枚举/资源
-│   │   └── tools/      # 跨模块工具类
-│   ├── src@jvm/        # JVM 专属实现（如 ReentrantLock）
-│   ├── src@wasmJs/     # Wasm-JS 专属实现
+│   │   └── tools/      # 跨平台并发锁、配置与网络工具类
+│   ├── src@jvm/        # JVM 专属实现（如 ReentrantLock 并发锁）
+│   ├── src@wasmJs/     # Wasm-JS 专属实现（单线程无操作锁）
 │   └── module.yaml
 │
 ├── common-client/       # 共享 Compose UI 组件（多平台：JVM / Wasm-JS）
@@ -103,7 +103,7 @@ sy-acgn/
 │   │   ├── anime/      # 动漫页面和组件
 │   │   ├── game/       # 游戏页面和 API
 │   │   ├── novel/      # 小说页面和 API
-│   │   └── common/     # 通用 API 客户端
+│   │   └── common/     # 通用 API 客户端与设置页面
 │   ├── src@jvm/        # JVM 专属存储与缓存实现
 │   ├── src@wasmJs/     # Wasm-JS 专属存储与缓存实现
 │   ├── composeResources/ # Compose 多平台资源
@@ -165,7 +165,7 @@ desktop-client    wasm-client
 - `Localization.kt` - 加载后端多语言字符串
 - `Routing.kt` - API 路由配置和错误处理
 - `Serialization.kt` - JSON 序列化设置
-- `HTTP.kt` - HTTP 客户端配置
+- `HTTP.kt` - HTTP 服务器特性配置（反向代理头及支持 `X-` 前缀标头的 CORS 跨域设置）
 - `Monitoring.kt` - 日志记录设置
 
 **依赖注入 (`DependencyInjection.kt`)：**
@@ -264,12 +264,13 @@ desktop-client    wasm-client
    - `enums/` - 模块枚举
    - `CommonModuleResources.kt` - 模块 API 资源定义
 
-4. **工具类** (`lib/src/tools/`)
+6. **工具类** (`lib/src/tools/`)
+   - `PlatformLock.kt` - 跨平台互斥锁抽象（统一提供 `withLock` 接口）
    - `LocalizationTool.kt` - 本地化工具
    - `AppConfigTool.kt` - 应用配置工具
-   - `HttpClientFactory.kt` - HTTP 客户端工厂
+   - `HttpClientFactory.kt` - HTTP 客户端工厂，导出并配置 Ktor CIO 客户端
 
-5. **序列化工具** (`lib/src/`)
+7. **序列化工具** (`lib/src/`)
    - `OffsetDateTimeSerializer.kt` - `OffsetDateTime` 序列化器
 
 **核心设计模式：**
@@ -320,11 +321,12 @@ desktop-client    wasm-client
 
 1. **Base 模块** (`common-client/src/base/`)
    - **API** (`api/`)
-     - `SyAcgnApi.kt` - 主 API 客户端，惰性初始化 HTTP 客户端
+     - `SyAcgnApi.kt` - 主 API 客户端，管理请求生命周期与全局 Loading 状态，支持 `X-Silent-Request` 静默请求
    - **Components** (`components/`)
-     - 全局 Loading 状态、遮罩层与图片组件 (`AttachImage.kt` 等)
+     - `PageTitle.kt` - 统一页面顶部栏组件（支持导航返回按钮、标题跑马灯滚动与右侧操作按钮布局）
+     - 全局 Loading 状态、遮罩层与图片组件 (`AttachImage.kt`、`ImageCacheManager.kt` 等)
    - **Navigation** (`navigation/`)
-     - `NavigationRoute.kt` - 路由定义（密封接口）
+     - `NavigationRoute.kt` - 路由定义（密封接口，包含顶层与详情路由）
      - `NavigationAction.kt` - 基于栈的导航动作处理器
      - `NavigationWrapper.kt` - 自适应导航包装器
    - **Enums** (`enums/`)
@@ -337,25 +339,27 @@ desktop-client    wasm-client
 
 2. **Anime 模块** (`common-client/src/anime/`)
    - **API** (`api/`)
-     - `AnimeApi.kt` - 动漫 API 客户端
+     - `AnimeApi.kt` - 动漫 API 客户端（支持强制刷新缓存）
    - **Components** (`components/`)
-   - **Pages** (`pages/`) - 动漫列表、季度详情页（含集数列表）
+   - **Pages** (`pages/`) - 动漫列表、季度详情页（含集数列表、关联 Bangumi、同步 TMDB、文件重命名处理与季度删除）
    - **Service** (`service/`)
    - **Enums** (`enums/`)
 
 3. **Game 模块** (`common-client/src/game/`)
    - **API** (`api/`)
      - `GameApi.kt` - 游戏 API 客户端
-   - **Pages** (`pages/`) - 游戏列表、数据同步与封面图片上传管理页面
+   - **Pages** (`pages/`) - 游戏列表、游戏详情、数据同步与封面图片上传管理页面
 
 4. **Novel 模块** (`common-client/src/novel/`)
    - **API** (`api/`)
      - `NovelApi.kt` - 小说 API 客户端
-   - **Pages** (`pages/`) - 小说列表、Bangumi 导入对话框
+   - **Pages** (`pages/`) - 小说列表、小说详情页（卡片化卷列表、阅读状态选择器、封面展示与卷编辑/删除）、Bangumi 导入对话框
 
 5. **Common 模块** (`common-client/src/common/`)
    - **API** (`api/`)
      - `CommonApi.kt` - 通用 API 客户端
+   - **Pages** (`pages/`)
+     - `SettingsPage.kt` - 应用设置页面（支持按模块分组配置管理、敏感字段掩码、只读状态与多语言切换）
 
 **核心组件详解：**
 
@@ -374,15 +378,17 @@ desktop-client    wasm-client
     - `AcgnNavigationWrapper` 用于路由
     - `AppState` 数据类保存导航状态
 
-5. **API 客户端** (`common-client/src/base/api/SyAcgnApi.kt`)
+4. **API 客户端** (`common-client/src/base/api/SyAcgnApi.kt`)
     - 惰性初始化的 Ktor HTTP 客户端
     - 模块化 API 访问：`anime`、`game`、`novel`、`common`
+    - 基于原子计数器管理全局 `isLoading` 状态，通过 `HttpSend` 拦截支持 `X-Silent-Request` 标头跳过 Loading 遮罩
 
-6. **导航系统 (Navigation 3)** (`common-client/src/base/navigation/`)
+5. **导航系统 (Navigation 3)** (`common-client/src/base/navigation/`)
     - **NavigationRoute.kt** - 密封接口定义路由，包含：
         - `NavigationRoute` 密封接口（包含 `icon` 属性）
-        - `AnimeSeasonRoute` 等数据对象实现
-        - `TopLevelRouteEnum` 枚举定义顶层路由
+        - 顶层路由：`AnimeSeasonRoute`、`NovelRoute`、`GameRoute`、`SettingsRoute`
+        - 详情路由：`AnimeSeasonDetailRoute`、`NovelDetailRoute`、`GameDetailRoute`
+        - `TopLevelRouteEnum` 枚举定义顶层路由（`ANIME_SEASON`、`NOVEL`、`GAME`、`SETTINGS`）
     - **NavigationAction.kt** - 基于栈的导航动作处理器
         - 使用 `LinkedHashMap` 为每个顶层路由维护独立的导航栈
         - 支持 `addTopLevel()`、`add()`、`removeLast()` 操作
@@ -431,10 +437,16 @@ SY_BGM_USER_AGENT=        # Bangumi API User-Agent
 
 ## 关键模式
 
-### 响应处理
+### 响应处理与请求状态
 - `MessageException` 包装 `ErrorMessage` 用于类型化错误
 - 服务器捕获所有异常并返回 `Result<T>(failed=true, message=...)`
 - 客户端使用 `onSuccess()` / `onSuccessData()` 扩展函数
+- 客户端 `SyAcgnApi` 通过 `HttpSend` 拦截器监听请求生命周期，基于原子计数器维护全局 `isLoading` 遮罩层状态；支持在特定后台请求中携带 `X-Silent-Request` 标头以跳过 Loading 遮罩
+
+### 跨平台并发与锁抽象
+- 共享库提供跨平台 `PlatformLock` 接口，统一通过 `withLock` 保护共享状态临界区
+- JVM 平台基于 `java.util.concurrent.locks.ReentrantLock` 保证多线程并发安全
+- Wasm-JS 平台契合单线程事件循环模型无开销直通执行，保障两端统一的多平台代码编写体验
 
 ### 依赖注入
 - 使用 Ktor 内置 DI 插件（`io.ktor:ktor-server-di`）
@@ -579,29 +591,37 @@ Component (可复用 UI 组件)
 
 ### 2026-08 功能更新与重构
 
-1. **WebAssembly (Wasm-JS) 客户端支持与多平台改造**
+1. **应用设置页面（SettingsPage）与动态配置管理**
+   - 客户端新增应用设置页面（`SettingsRoute` / `SettingsPage.kt`），支持按功能模块分组展示与管理配置项
+   - 支持从数据库拉取与保存自定义配置，提供敏感信息密码掩码切换与只读配置项提示
+   - 完善服务端与客户端多语言本地化支持，修复配置键名中点号引起的 YAML 解析路径问题
+
+2. **架构精简与废弃模块移除**
+   - 彻底移除废弃的 RSS 订阅与 qBittorrent 相关模块（包括服务端 routes/tools、客户端 pages/api、共享库 DTO/config/enums 与测试用例），代码库精简逾 3000 行
+   - 精简 `.env.example` 与 `application.yaml` 配置，移除冗余的 qBittorrent 环境变量与配置项
+
+3. **页面交互体验与详情页全面重构**
+   - **PageTitle 顶部栏重构**：统一重构页面标题栏组件，新增导航返回图标插槽、长标题自适应跑马灯滚动（`basicMarquee`）及弹性操作项菜单布局
+   - **轻小说详情页交互升级**：优化卷列表卡片布局、封面样式与多行简介省略折叠；重构卷阅读状态选择器（采用 `FilterChip` 与下拉单选菜单），提升交互流畅度
+   - **动画季度页功能增强**：支持季度文件批量重命名与本地关联处理、删除季度、重新关联 Bangumi 与同步 TMDB 数据；新增 `forceRefresh` 参数支持强制刷新季度缓存
+   - **静默请求与全局 Loading 机制**：`SyAcgnApi` 通过 `HttpSend` 拦截器支持 `X-Silent-Request` 自定义标头，避免后台静默请求触发全局 Loading 遮罩层；服务端 CORS 同步扩展支持 `X-` 前缀标头
+
+4. **WebAssembly (Wasm-JS) 客户端支持与多平台改造**
    - 依据 Kotlin Toolchain 官方规范，添加 `wasm-client` 模块（产品类型 `wasm-js/app`），支持直接编译为 WebAssembly 并在现代浏览器中运行
    - 升级共享库 `lib` 与 UI 组件 `common-client` 为多平台库（同时支持 `jvm` 与 `wasmJs`）
    - 重构跨平台存储（`LocalSettings` 使用 `expect/actual` 分别对接桌面 Properties 与浏览器 LocalStorage）
-   - 适配跨平台图片解码（采用 Compose Resources `decodeToImageBitmap` 代替 ImageIO）与纯 Kotlin 缓存机制
-   - 采用多平台 `AtomicInt` 与 `PlatformLock` 抽象，确保线程与并发安全
+   - 适配跨平台图片解码（采用 Compose Resources `decodeToImageBitmap` 代替 ImageIO）与纯 Kotlin 内存缓存机制
+   - 重构跨平台并发锁 `PlatformLock`（统一提供 `withLock` 接口），JVM 实现基于 `ReentrantLock`，Wasm-JS 实现适配单线程事件循环；共享库统一导出 Ktor CIO 客户端模块
 
-2. **Game（游戏）功能模块全栈支持**
-   - 新增 Game 模块 API、数据库表定义、服务层及前端 UI 界面
-   - 支持新增与更新游戏，可选择从 Bangumi 或 Steam 来源同步游戏元数据
-   - 支持游戏封面图的上传、预览与本地存储管理
-   - 引入基于 Caffeine 的 `GameCacheTool` 优化列表查询性能
+5. **Game（游戏）与 Novel（小说）功能模块全栈支持**
+   - 新增 Game 模块 API、数据库表定义、服务层及前端 UI 界面，支持新增与更新游戏，可选择从 Bangumi 或 Steam 来源同步游戏元数据，支持封面图本地上传与管理
+   - 新增小说模块 Bangumi 导入对话框与条目检索功能；使用 Kotlin 协程并行化加载小说列表及卷列表，大幅提升并发吞吐
+   - 引入基于 Caffeine 的 `GameCacheTool` 与 `NovelCacheTool` 优化列表查询性能，减轻数据库负载
 
-2. **Novel（小说）功能模块与性能优化**
-   - 新增 Bangumi 导入对话框及小说搜索功能
-   - 使用 Kotlin 协程并行化优化小说列表及卷列表加载逻辑，提升并发吞吐
-   - 引入基于 Caffeine 的 `NovelCacheTool` 缓存机制，移除硬编码的分页限制
-
-3. **前端 Compose 体验与界面增强**
-   - 新增动画季度详情页，支持展示季度元数据与集数列表，优化季度导航逻辑
-   - 添加全局 Loading 状态和遮罩层，提升界面数据请求过程中的交互反馈
-   - 优化动画季度页面标签显示（使用 Compose `AssistChip` 规范化呈现）
-   - 统一整理客户端应用目录存储工具 `AppDirectories.kt`
+6. **核心依赖与构建工具链升级**
+   - 升级 Kotlin Toolchain 构建脚本与包装器至 `0.12.0`
+   - 升级 Exposed 数据库框架至 `1.5.0`
+   - 升级 Ktor 框架至 `3.5.2`
 
 ### 2026-02 新功能
 
