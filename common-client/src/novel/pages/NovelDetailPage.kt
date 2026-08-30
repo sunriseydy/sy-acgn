@@ -4,6 +4,7 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -15,7 +16,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
@@ -181,80 +184,122 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
                 } else {
                     items(novel.volumes) { volume ->
                         OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                val volPosterId = volume.posterId
-                                if (!volPosterId.isNullOrBlank()) {
-                                    AttachImage(
-                                        appState = appState,
-                                        attachId = volPosterId,
-                                        modifier = Modifier.padding(end = 12.dp).width(90.dp).height(120.dp),
-                                        contentScale = ContentScale.FillWidth
-                                    )
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = "V${volume.volumeNumber} - ${volume.name}",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    val isbn = volume.isbn
-                                    if (!isbn.isNullOrBlank()) {
-                                        Text("ISBN: $isbn", style = MaterialTheme.typography.bodySmall)
+                            Column(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.Top
+                                ) {
+                                    val volPosterId = volume.posterId
+                                    if (!volPosterId.isNullOrBlank()) {
+                                        AttachImage(
+                                            appState = appState,
+                                            attachId = volPosterId,
+                                            modifier = Modifier
+                                                .padding(end = 12.dp)
+                                                .width(72.dp)
+                                                .height(100.dp)
+                                                .clip(RoundedCornerShape(6.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
                                     }
-                                    if (volume.releaseDate != null) {
-                                        Text("${volume.releaseDate}", style = MaterialTheme.typography.bodySmall)
-                                    }
-                                    val volDesc = volume.description?.replace(Regex("(\\r?\\n)+"), "\n")?.trim()
-                                    if (!volDesc.isNullOrBlank()) {
-                                        Text(volDesc, style = MaterialTheme.typography.bodySmall, maxLines = 2)
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.width(8.dp))
-
-                                // Reading status selector
-                                var expanded by remember { mutableStateOf(false) }
-                                Box {
-                                    val readingStatusText = try {
-                                        ReadingStatusEnum.valueOf(volume.readingStatus).meaning
-                                    } catch (e: Exception) {
-                                        volume.readingStatus
-                                    }
-                                    FilterChip(
-                                        selected = true,
-                                        onClick = { expanded = true },
-                                        label = { Text(readingStatusText) }
-                                    )
-                                    DropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false }
+                                    Column(
+                                        modifier = Modifier.weight(1f),
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
-                                        ReadingStatusEnum.entries.forEach { status ->
-                                            DropdownMenuItem(
-                                                text = { Text(status.meaning) },
-                                                onClick = {
-                                                    expanded = false
-                                                    appState.scope.launch {
-                                                        appState.api.novel.updateVolumeReadingStatus(volume.id, status.name).onSuccessData(appState, onSuccess = {
-                                                            loadNovelDetail()
-                                                        })
-                                                    }
-                                                }
+                                        Text(
+                                            text = "V${volume.volumeNumber} - ${volume.name}",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.SemiBold,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        val metaList = listOfNotNull(
+                                            volume.releaseDate?.toString(),
+                                            volume.isbn?.takeIf { it.isNotBlank() }?.let { "ISBN: $it" }
+                                        )
+                                        if (metaList.isNotEmpty()) {
+                                            Text(
+                                                text = metaList.joinToString(" · "),
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                        val volDesc = volume.description?.replace(Regex("(\\r?\\n)+"), " ")?.trim()
+                                        if (!volDesc.isNullOrBlank()) {
+                                            Text(
+                                                text = volDesc,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                maxLines = 2,
+                                                overflow = TextOverflow.Ellipsis
                                             )
                                         }
                                     }
                                 }
 
-                                IconButton(onClick = { openVolumeDialog(volume) }) {
-                                    Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.update))
-                                }
-                                IconButton(onClick = {
-                                    selectedVolume.value = volume
-                                    deleteVolumeDialogVisible.value = true
-                                }) {
-                                    Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.delete))
+                                Spacer(modifier = Modifier.height(8.dp))
+                                HorizontalDivider(
+                                    thickness = 0.5.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    // Reading status selector
+                                    var expanded by remember { mutableStateOf(false) }
+                                    Box {
+                                        val readingStatusText = try {
+                                            ReadingStatusEnum.valueOf(volume.readingStatus).meaning
+                                        } catch (e: Exception) {
+                                            volume.readingStatus
+                                        }
+                                        FilterChip(
+                                            selected = true,
+                                            onClick = { expanded = true },
+                                            label = { Text(readingStatusText) }
+                                        )
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }
+                                        ) {
+                                            ReadingStatusEnum.entries.forEach { status ->
+                                                DropdownMenuItem(
+                                                    text = { Text(status.meaning) },
+                                                    onClick = {
+                                                        expanded = false
+                                                        appState.scope.launch {
+                                                            appState.api.novel.updateVolumeReadingStatus(volume.id, status.name).onSuccessData(appState, onSuccess = {
+                                                                loadNovelDetail()
+                                                            })
+                                                        }
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        IconButton(onClick = { openVolumeDialog(volume) }) {
+                                            Icon(Icons.Default.Edit, contentDescription = stringResource(Res.string.update))
+                                        }
+                                        IconButton(onClick = {
+                                            selectedVolume.value = volume
+                                            deleteVolumeDialogVisible.value = true
+                                        }) {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                contentDescription = stringResource(Res.string.delete),
+                                                tint = MaterialTheme.colorScheme.error
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
