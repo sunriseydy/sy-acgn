@@ -20,15 +20,6 @@
     <string name="delete">删除</string>
     <string name="search">搜索</string>
 
-    <!-- RssString -->
-    <string name="rss_title">订阅</string>
-    <string name="rss_item_title">订阅条目</string>
-    <string name="rss_read">已读</string>
-    <string name="rss_field_link">订阅链接</string>
-    <string name="rss_field_title">订阅标题</string>
-    <string name="is_only_unread">仅显示未读</string>
-    <string name="rss_item_field_publish_at">发布时间</string>
-
     <!-- AnimeString -->
     <string name="season_field_is_create_anime">是否创建动画系列</string>
     <string name="season_field_anime_name">动画名称</string>

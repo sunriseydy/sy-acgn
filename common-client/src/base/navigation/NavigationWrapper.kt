@@ -28,7 +28,6 @@ import androidx.navigation3.ui.NavDisplay
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.pages.AnimeSeason
 import dev.sunriseydy.acgn.client.anime.pages.AnimeSeasonDetailPage
-import dev.sunriseydy.acgn.client.anime.pages.Rss
 import dev.sunriseydy.acgn.client.base.api.SyAcgnApi
 import dev.sunriseydy.acgn.client.base.components.SnackbarHost
 import dev.sunriseydy.acgn.client.base.enums.AcgnContentType
@@ -80,7 +79,7 @@ fun AcgnNavigationWrapper() {
     }
 
     val navigationAction = remember {
-        NavigationAction(TopLevelRouteEnum.RSS.route)
+        NavigationAction(TopLevelRouteEnum.ANIME_SEASON.route)
     }
     val selectedDestination = navigationAction.topLevelKey
 
@@ -120,9 +119,6 @@ fun AcgnNavigationWrapper() {
                 backStack = navigationAction.backStack,
                 onBack = { navigationAction.removeLast() },
                 entryProvider = entryProvider {
-                    entry<RssRoute> {
-                        Rss(appState)
-                    }
                     entry<AnimeSeasonRoute> {
                         AnimeSeason(appState)
                     }

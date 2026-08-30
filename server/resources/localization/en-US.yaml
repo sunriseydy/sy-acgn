@@ -4,7 +4,6 @@ enum:
       SIMPLIFIED_CHINESE: "Chinese"
       ENGLISH: "English"
     TopLevelRouteEnum:
-      RSS: "RSS"
       ANIME_SEASON: "Anime Season"
       NOVEL: "Light Novels"
       GAME: "Games"
@@ -71,7 +70,7 @@ message:
       STEAM_IMPORT_FAILED: "Steam game import failed"
   ERROR:
     ANIME:
-      QB_REQUEST_FAILED: "qBitTorrent request failed"
+      TARGET_DIR_EXISTS: "Target directory already exists"
     NOVEL:
       NOVEL_NOT_FOUND: "Light novel not found"
       NOVEL_VOLUME_NOT_FOUND: "Light novel volume not found"
@@ -113,15 +112,6 @@ config:
     TmdbApiKey:
       meaning: "TMDB API Key"
       description: "TMDB API key"
-    QbApiBaseUrl:
-      meaning: "qBittorrent URL"
-      description: "qBittorrent API base URL"
-    QbUserName:
-      meaning: "qBittorrent Username"
-      description: "qBittorrent username"
-    QbPassword:
-      meaning: "qBittorrent Password"
-      description: "qBittorrent password"
     MediaTargetDirectory:
       meaning: "Media Target Directory"
       description: "Media file target directory"

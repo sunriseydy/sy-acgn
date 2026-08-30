@@ -12,7 +12,6 @@ import kotlinx.serialization.Serializable
  * 使用 Ktor Resources 插件实现类型安全路由。
  *
  * 路径结构:
- * - `/api/anime/qb` - qBittorrent 相关 API
  * - `/api/anime/anime` - 动画数据管理 API
  *
  * @author SunriseYDY
@@ -21,84 +20,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Resource("anime")
 class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
-
-    /** qBittorrent 相关 API: `/api/anime/qb` */
-    @Serializable
-    @Resource("qb")
-    class Qb(val parent: AnimeModuleResource = AnimeModuleResource()) {
-
-        /** Torrent 管理: `/api/anime/qb/torrent` */
-        @Serializable
-        @Resource("torrent")
-        class Torrent(val parent: Qb = Qb()) {
-            @Serializable
-            @Resource("{hash}")
-            class Hash(val parent: Torrent = Torrent(), val hash: String)
-        }
-
-        /** RSS 订阅管理: `/api/anime/qb/rss` */
-        @Serializable
-        @Resource("rss")
-        class Rss(val parent: Qb = Qb()) {
-            @Serializable
-            @Resource("list")
-            class List(val parent: Rss = Rss(), val withData: Boolean = false)
-
-            @Serializable
-            @Resource("articles")
-            class Articles(
-                val parent: Rss = Rss(),
-                val rssId: ULong? = null,
-                val isRead: Boolean? = null,
-                val page: Long = 1,
-                val size: Int = 50
-            )
-
-            @Serializable
-            @Resource("folder")
-            class Folder(val parent: Rss = Rss())
-
-            @Serializable
-            @Resource("feed")
-            class Feed(val parent: Rss = Rss())
-
-            @Serializable
-            @Resource("item")
-            class Item(val parent: Rss = Rss(), val withData: Boolean = false) {
-                @Serializable
-                @Resource("remove")
-                class Remove(val parent: Item = Item())
-
-                @Serializable
-                @Resource("move")
-                class Move(val parent: Item = Item())
-
-                @Serializable
-                @Resource("refresh")
-                class Refresh(val parent: Item = Item())
-            }
-
-            @Serializable
-            @Resource("mark-as-read")
-            class MarkAsRead(val parent: Rss = Rss())
-
-            @Serializable
-            @Resource("rule")
-            class Rule(val parent: Rss = Rss()) {
-                @Serializable
-                @Resource("rename")
-                class Rename(val parent: Rule = Rule())
-
-                @Serializable
-                @Resource("remove")
-                class Remove(val parent: Rule = Rule())
-
-                @Serializable
-                @Resource("matching-articles")
-                class MatchingArticles(val parent: Rule = Rule(), val ruleName: String)
-            }
-        }
-    }
 
     /** 动画数据管理: `/api/anime/anime` */
     @Serializable

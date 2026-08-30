@@ -28,7 +28,6 @@ dependencies:
   - $libs.exposed.migration.core
   - $libs.exposed.migration.jdbc
   - $libs.postgresql
-  - commons-io:commons-io:2.16.1
   # Caffeine cache
   - com.github.ben-manes.caffeine:caffeine:3.1.8
   # dotenv

@@ -1,7 +1,3 @@
-### rss xml
-# @no-log
-GET http://localhost:9390/resources/rss/rss.xml
-
 ### home
 # @no-log
 GET http://localhost:9390/api
@@ -25,41 +21,6 @@ Accept: application/json
 ### get config map
 # @no-log
 GET http://localhost:9390/api/common/config/map
-Accept: application/json
-
-### create rss
-# @no-log
-POST http://localhost:9390/api/anime/rss
-Accept: application/json
-Content-Type: application/json
-
-{
-  "link": "http://localhost:9390/resources/rss/rss.xml?9"
-}
-
-### get rss list
-# @no-log
-GET http://localhost:9390/api/anime/qb/rss/list?withData=true
-Accept: application/json
-
-### delete rss
-# @no-log
-DELETE http://localhost:9390/api/anime/rss/7
-Accept: application/json
-
-### fetch rss
-# @no-log
-PUT http://localhost:9390/api/anime/rss/fetch
-Accept: application/json
-
-### get rss items
-# @no-log
-GET http://localhost:9390/api/anime/qb/rss/articles?page=1&size=5&isRead=false
-Accept: application/json
-
-### mark rss item as read
-# @no-log
-PUT http://localhost:9390/api/anime/rss/item/read?rssId=1
 Accept: application/json
 
 # Anime
@@ -148,16 +109,3 @@ GET http://localhost:9390/api/anime/anime/bangumi/search-anime?query=辉夜大�
 ### bangumi get subject detail
 # @no-log
 GET http://localhost:9390/api/anime/anime/bangumi/subject-detail?id=381793
-
-### qb torrent properties
-# @no-log
-GET http://localhost:9390/api/anime/qb/torrent/e7b7655298462d527ac15b475c0e933b23654ed7
-
-### qb torrent add
-# @no-log
-POST http://localhost:9390/api/anime/qb/torrent
-Content-Type: application/json
-
-{
-  "url": "magnet:?xt=urn:btih:5EHUHOELUFTETIQLKVPLPX64PRMDMU3J"
-}

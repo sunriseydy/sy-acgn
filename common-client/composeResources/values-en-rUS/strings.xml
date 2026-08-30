@@ -20,15 +20,6 @@
     <string name="delete">Delete</string>
     <string name="search">Search</string>
 
-    <!-- RssString -->
-    <string name="rss_title">RSS</string>
-    <string name="rss_item_title">RSS item</string>
-    <string name="rss_read">Read</string>
-    <string name="rss_field_link">RSS link</string>
-    <string name="rss_field_title">RSS title</string>
-    <string name="is_only_unread">Only unread</string>
-    <string name="rss_item_field_publish_at">Publish time</string>
-
     <!-- AnimeString -->
     <string name="season_field_is_create_anime">Create anime series</string>
     <string name="season_field_anime_name">Anime name</string>

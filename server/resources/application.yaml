@@ -16,9 +16,6 @@ config:
       password: "$SY_POSTGRESQL_PASSWORD:sy_acgn"
   ANIME:
     TmdbApiKey: "$?SY_TMDB_API_KEY"
-    QbApiBaseUrl: "$?SY_QB_API_BASE_URL"
-    QbUserName: "$?SY_QB_USER_NAME"
-    QbPassword: "$?SY_QB_PASSWORD"
     BgmUserAgent: "$?SY_BGM_USER_AGENT"
     MediaTargetDirectory: "$?SY_MEDIA_TARGET_DIRECTORY"
   COMMON:

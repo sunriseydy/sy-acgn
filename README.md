@@ -190,11 +190,9 @@ desktop-client    wasm-client
      - `AnimeCacheTool.kt` - 基于 Caffeine 的动漫数据缓存（24小时过期）
      - `BangumiTool.kt` - Bangumi API 客户端（搜索动漫、获取条目详情）
      - `TmdbTool.kt` - TMDB API 客户端
-     - `QbTool.kt` - qBittorrent API 客户端
      - `FileTool.kt` - 文件管理工具（视频/字幕识别、媒体库目录生成）
      - `bangumi/model/` - Bangumi API 数据模型
      - `tmdb/` - TMDB API 完整客户端实现（API、模型、序列化等）
-     - `torrent/` - Torrent 解析工具
 
 3. **Game 模块** (`server/src/game/`)
    - `entity/` - 游戏数据表及对应 DAO
@@ -340,7 +338,6 @@ desktop-client    wasm-client
 2. **Anime 模块** (`common-client/src/anime/`)
    - **API** (`api/`)
      - `AnimeApi.kt` - 动漫 API 客户端
-     - `RssApi.kt` - RSS API 客户端
    - **Components** (`components/`)
    - **Pages** (`pages/`) - 动漫列表、季度详情页（含集数列表）
    - **Service** (`service/`)
@@ -379,12 +376,12 @@ desktop-client    wasm-client
 
 5. **API 客户端** (`common-client/src/base/api/SyAcgnApi.kt`)
     - 惰性初始化的 Ktor HTTP 客户端
-    - 模块化 API 访问：`rss`、`anime`、`game`、`novel`、`common`
+    - 模块化 API 访问：`anime`、`game`、`novel`、`common`
 
 6. **导航系统 (Navigation 3)** (`common-client/src/base/navigation/`)
     - **NavigationRoute.kt** - 密封接口定义路由，包含：
         - `NavigationRoute` 密封接口（包含 `icon` 属性）
-        - `RssRoute`、`AnimeSeasonRoute` 等数据对象实现
+        - `AnimeSeasonRoute` 等数据对象实现
         - `TopLevelRouteEnum` 枚举定义顶层路由
     - **NavigationAction.kt** - 基于栈的导航动作处理器
         - 使用 `LinkedHashMap` 为每个顶层路由维护独立的导航栈
@@ -414,9 +411,6 @@ SY_POSTGRESQL_PASSWORD=sy_acgn
 
 # 外部服务 API
 SY_TMDB_API_KEY=          # TMDB API 密钥
-SY_QB_API_BASE_URL=       # qBittorrent WebUI 基础 URL
-SY_QB_USER_NAME=          # qBittorrent 用户名
-SY_QB_PASSWORD=           # qBittorrent 密码
 SY_BGM_USER_AGENT=        # Bangumi API User-Agent
 ```
 
@@ -462,7 +456,6 @@ SY_BGM_USER_AGENT=        # Bangumi API User-Agent
 - **TMDB** - 搜索电视剧/电影，获取详情和季度信息
 - **Bangumi** - 搜索动漫/游戏/小说条目，获取详情并支持批量导入与数据同步
 - **Steam** - 获取游戏基本信息及图片数据并进行同步
-- **qBittorrent** - Torrent 下载管理和 RSS 订阅
 - **文件管理** - 媒体库目录结构生成、视频/字幕文件排序和重命名
 
 ## 测试
@@ -535,7 +528,7 @@ Component (可复用 UI 组件)
 2. **文件命名约定**
    - 接口：`XxxRepository.kt`、`XxxService.kt`
    - 实现：`XxxRepositoryImpl.kt`、`XxxServiceImpl.kt`
-   - DTO：使用业务名称（如 `Anime.kt`、`Rss.kt`）
+   - DTO：使用业务名称（如 `Anime.kt`、`Game.kt`）
    - 路由：`XxxRoute.kt`、`XxxModuleRoute.kt`
    - 工具类：`XxxTool.kt`
 

@@ -17,13 +17,6 @@ sealed interface NavigationRoute {
 }
 
 /**
- * RSS 页面路由
- */
-data object RssRoute : NavigationRoute {
-    override val icon: ImageVector? = null
-}
-
-/**
  * 动漫季度页面路由
  */
 data object AnimeSeasonRoute : NavigationRoute {
@@ -78,7 +71,6 @@ data object SettingsRoute : NavigationRoute {
  * 定义应用的顶层导航项，同时实现了 CommonModule 和 EnumKey 接口以支持本地化。
  */
 enum class TopLevelRouteEnum(val route: NavigationRoute) : CommonModule, EnumKey {
-    RSS(route = RssRoute),
     ANIME_SEASON(route = AnimeSeasonRoute),
     NOVEL(route = NovelRoute),
     GAME(route = GameRoute),

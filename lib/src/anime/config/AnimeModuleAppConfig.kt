@@ -18,15 +18,6 @@ object AnimeModuleAppConfig {
     /** TMDB API 密钥 */
     object TmdbApiKey : StringAppConfig, AnimeModule
 
-    /** qBittorrent API 基础 URL */
-    object QbApiBaseUrl : StringAppConfig, AnimeModule
-
-    /** qBittorrent 用户名 */
-    object QbUserName : StringAppConfig, AnimeModule
-
-    /** qBittorrent 密码 */
-    object QbPassword : StringAppConfig, AnimeModule
-
     /** 媒体目标目录 */
     object MediaTargetDirectory : StringAppConfig, AnimeModule
 

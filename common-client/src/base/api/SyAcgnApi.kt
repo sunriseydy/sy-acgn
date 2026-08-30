@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.api.AnimeApi
-import dev.sunriseydy.acgn.client.anime.api.RssApi
 import dev.sunriseydy.acgn.client.base.components.showError
 import dev.sunriseydy.acgn.client.base.utils.getLocalServerConfig
 import dev.sunriseydy.acgn.client.common.api.CommonApi
@@ -23,7 +22,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 /**
  * SY-ACGN 主 API 客户端
  *
- * 负责构建和管理 HTTP 客户端以及各个模块（Rss, Anime, Common）的 API 实例。
+ * 负责构建和管理 HTTP 客户端以及各个模块（Anime, Novel, Game, Common）的 API 实例。
  *
  * @author SunriseYDY
  * @date 2024-07-23 11:27
@@ -88,7 +87,6 @@ class SyAcgnApi {
     }
 
     // 各个模块的 API 实例，惰性加载
-    val rss by buildApi(::RssApi)
     val anime by buildApi(::AnimeApi)
     val common by buildApi(::CommonApi)
     val novel by buildApi(::NovelApi)
