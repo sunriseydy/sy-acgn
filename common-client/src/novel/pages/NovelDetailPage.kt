@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.client.novel.pages
 
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,13 +16,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
 import dev.sunriseydy.acgn.client.base.components.AttachImage
 import dev.sunriseydy.acgn.client.base.components.FormDialog
-import dev.sunriseydy.acgn.client.base.components.PageTitle
 import dev.sunriseydy.acgn.client.res.*
 import dev.sunriseydy.acgn.novel.dto.Novel
 import dev.sunriseydy.acgn.novel.dto.NovelVolume
@@ -31,6 +32,7 @@ import dev.sunriseydy.acgn.novel.enums.ReadingStatusEnum
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NovelDetailPage(appState: AppState, novelId: ULong) {
     val novelState = remember { mutableStateOf<Novel?>(null) }
@@ -71,20 +73,39 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
         createVolumeDialogVisible.value = true
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        PageTitle(novelState.value?.name ?: stringResource(Res.string.novel_detail_title)) {
-            IconButton(onClick = { appState.navigationAction.removeLast() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
-            IconButton(onClick = { loadNovelDetail() }) {
-                Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
-            }
-            IconButton(onClick = { openVolumeDialog() }) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.novel_add_volume))
-            }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = novelState.value?.name ?: stringResource(Res.string.novel_detail_title),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee()
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { appState.navigationAction.removeLast() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { loadNovelDetail() }) {
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
+                    }
+                    IconButton(onClick = { openVolumeDialog() }) {
+                        Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.novel_add_volume))
+                    }
+                }
+            )
         }
-
-        val novel = novelState.value
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            val novel = novelState.value
         if (loading.value || novel == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -242,6 +263,7 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
             }
         }
     }
+}
 
     // Add / Edit Volume Dialog
     FormDialog(

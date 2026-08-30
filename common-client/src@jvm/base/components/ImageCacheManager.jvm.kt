@@ -106,14 +106,19 @@ private class ImageDiskCache(private val cacheDir: File) {
     }
 }
 
-internal actual object ImageCacheManager {
+internal actual fun getImageFromMemory(key: String): ImageBitmap? = JvmImageCacheManager.getFromMemory(key)
+
+internal actual suspend fun loadImagePlatform(key: String, fetch: suspend () -> ByteArray): ImageBitmap? =
+    JvmImageCacheManager.loadImage(key, fetch)
+
+private object JvmImageCacheManager {
     private val cacheDir = File(AppDirectories.appCacheDir, "images")
     private val memoryCache = ImageMemoryCache()
     private val diskCache = ImageDiskCache(cacheDir)
 
-    actual fun getFromMemory(key: String): ImageBitmap? = memoryCache.get(key)
+    fun getFromMemory(key: String): ImageBitmap? = memoryCache.get(key)
 
-    actual suspend fun loadImage(key: String, fetch: suspend () -> ByteArray): ImageBitmap? {
+    suspend fun loadImage(key: String, fetch: suspend () -> ByteArray): ImageBitmap? {
         return withContext(Dispatchers.IO) {
             val diskBytes = diskCache.get(key)
             if (diskBytes != null) {
@@ -134,3 +139,4 @@ internal actual object ImageCacheManager {
         }
     }
 }
+

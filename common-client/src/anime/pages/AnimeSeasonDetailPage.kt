@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.client.anime.pages
 
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,8 +11,10 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -27,7 +30,6 @@ import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
 import dev.sunriseydy.acgn.client.base.components.AttachImage
 import dev.sunriseydy.acgn.client.base.components.FormDialog
-import dev.sunriseydy.acgn.client.base.components.PageTitle
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.res.*
@@ -38,6 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * 动画季度详情页：展示季度信息与集数列表。
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimeSeasonDetailPage(appState: AppState, seasonId: ULong) {
     val animeSeasonService = remember(appState) { AnimeSeasonService(appState) }
@@ -110,48 +113,107 @@ fun AnimeSeasonDetailPage(appState: AppState, seasonId: ULong) {
         fileErrorMessage.value = null
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        val season = seasonState.value
-        PageTitle(
-            title = season?.let { "${it.anime?.name ?: ""} - ${it.name}".trim().trimStart('-').trim() }
-                ?: "动画季度详情"
-        ) {
-            IconButton(onClick = { appState.navigationAction.removeLast() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
-            }
-            IconButton(onClick = { loadDetail() }) {
-                Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
-            }
-            if (season?.anime?.tmdbId != null) {
-                IconButton(onClick = {
-                    animeSeasonService.refreshTmdbData(
-                        season = season,
-                        onSuccess = {
-                            loadDetail()
-                            appState.scope.launch {
-                                appState.snackbarHostState.showSnackbar("已从 TMDB 同步季度与集数")
-                            }
-                        },
-                        onError = { errorMsg ->
-                            appState.scope.launch {
-                                appState.snackbarHostState.showSnackbar(errorMsg)
-                            }
-                        }
+    val season = seasonState.value
+    var moreMenuExpanded by remember { mutableStateOf(false) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = season?.let { "${it.anime?.name ?: ""} - ${it.name}".trim().trimStart('-').trim() }
+                            ?: "动画季度详情",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee()
                     )
-                }) {
-                    Icon(Icons.Default.Sync, contentDescription = "同步 TMDB")
+                },
+                navigationIcon = {
+                    IconButton(onClick = { appState.navigationAction.removeLast() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { loadDetail() }) {
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(Res.string.refresh))
+                    }
+                    Box {
+                        IconButton(onClick = { moreMenuExpanded = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "更多操作")
+                        }
+                        DropdownMenu(
+                            expanded = moreMenuExpanded,
+                            onDismissRequest = { moreMenuExpanded = false }
+                        ) {
+                            if (season?.anime?.tmdbId != null) {
+                                DropdownMenuItem(
+                                    text = { Text("同步 TMDB") },
+                                    leadingIcon = { Icon(Icons.Default.Sync, contentDescription = null) },
+                                    onClick = {
+                                        moreMenuExpanded = false
+                                        animeSeasonService.refreshTmdbData(
+                                            season = season,
+                                            onSuccess = {
+                                                loadDetail()
+                                                appState.scope.launch {
+                                                    appState.snackbarHostState.showSnackbar("已从 TMDB 同步季度与集数")
+                                                }
+                                            },
+                                            onError = { errorMsg ->
+                                                appState.scope.launch {
+                                                    appState.snackbarHostState.showSnackbar(errorMsg)
+                                                }
+                                            }
+                                        )
+                                    }
+                                )
+                            }
+                            DropdownMenuItem(
+                                text = { Text("关联 Bangumi") },
+                                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                                onClick = {
+                                    moreMenuExpanded = false
+                                    searchBgmDialogVisible.value = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("处理文件") },
+                                leadingIcon = { Icon(Icons.Default.DriveFolderUpload, contentDescription = null) },
+                                onClick = {
+                                    moreMenuExpanded = false
+                                    openHandleFileDialog()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        stringResource(Res.string.delete),
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Delete,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                },
+                                onClick = {
+                                    moreMenuExpanded = false
+                                    deleteDialogVisible.value = true
+                                }
+                            )
+                        }
+                    }
                 }
-            }
-            IconButton(onClick = { searchBgmDialogVisible.value = true }) {
-                Icon(Icons.Default.Search, contentDescription = "关联 Bangumi")
-            }
-            IconButton(onClick = { openHandleFileDialog() }) {
-                Icon(Icons.Default.DriveFolderUpload, contentDescription = "处理文件")
-            }
-            IconButton(onClick = { deleteDialogVisible.value = true }) {
-                Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.delete))
-            }
+            )
         }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
 
         if (loading.value && season == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -277,6 +339,7 @@ fun AnimeSeasonDetailPage(appState: AppState, seasonId: ULong) {
             }
         }
     }
+}
 
     AlertDialog(
         alertDialogVisible = deleteDialogVisible,

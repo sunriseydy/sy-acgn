@@ -31,15 +31,21 @@ private class ImageMemoryCache(private val maxSize: Int = 20) {
     }
 }
 
-internal actual object ImageCacheManager {
+internal actual fun getImageFromMemory(key: String): ImageBitmap? = WasmJsImageCacheManager.getFromMemory(key)
+
+internal actual suspend fun loadImagePlatform(key: String, fetch: suspend () -> ByteArray): ImageBitmap? =
+    WasmJsImageCacheManager.loadImage(key, fetch)
+
+private object WasmJsImageCacheManager {
     private val memoryCache = ImageMemoryCache()
 
-    actual fun getFromMemory(key: String): ImageBitmap? = memoryCache.get(key)
+    fun getFromMemory(key: String): ImageBitmap? = memoryCache.get(key)
 
-    actual suspend fun loadImage(key: String, fetch: suspend () -> ByteArray): ImageBitmap? {
+    suspend fun loadImage(key: String, fetch: suspend () -> ByteArray): ImageBitmap? {
         val bytes = fetch()
         val bitmap = bytes.decodeToImageBitmap()
         memoryCache.put(key, bitmap)
         return bitmap
     }
 }
+

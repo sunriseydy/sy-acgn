@@ -1,5 +1,6 @@
 package dev.sunriseydy.acgn.client.game.pages
 
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccess
@@ -96,7 +98,14 @@ fun GameDetailPage(appState: AppState, gameId: ULong) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(gameData?.name ?: "游戏详情") },
+                title = {
+                    Text(
+                        text = gameData?.name ?: "游戏详情",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee()
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { appState.navigationAction.removeLast() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")

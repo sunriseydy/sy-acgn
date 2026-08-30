@@ -4,12 +4,10 @@ import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.Tmdb4AccountApi
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.Tmdb4AuthenticationApi
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.Tmdb4ListApi
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.HttpClientFactory
-import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.TmdbDsl
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.interceptRequest
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-@TmdbDsl
 fun Tmdb4(block: TmdbClientConfig.() -> Unit): Tmdb4 {
     val config = TmdbClientConfig().apply(block)
     return Tmdb4(config)

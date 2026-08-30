@@ -25,12 +25,10 @@ import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.TmdbShowEpisodesApi
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.TmdbShowSeasonsApi
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.api.TmdbTrendingApi
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.HttpClientFactory
-import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.TmdbDsl
 import dev.sunriseydy.acgn.server.anime.tools.tmdb.core.interceptRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 
-@TmdbDsl
 fun Tmdb3(block: TmdbClientConfig.() -> Unit): Tmdb3 {
     val config = TmdbClientConfig().apply(block)
     return Tmdb3(config)

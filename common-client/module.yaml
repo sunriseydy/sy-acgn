@@ -32,3 +32,4 @@ settings:
   kotlin:
     optIns:
       - androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+    freeCompilerArgs: [ -Xexpect-actual-classes ]
