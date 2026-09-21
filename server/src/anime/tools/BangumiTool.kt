@@ -102,7 +102,7 @@ class BangumiTool {
             )
         }.body()
 
-        return response.data.filter { it.platform == "小说" }.map { it.toNovel() }
+        return response.data.filter { it.platform == "小说" && it.series }.map { it.toNovel() }
     }
 
     suspend fun getNovelSubject(id: Int): dev.sunriseydy.acgn.novel.dto.Novel {
