@@ -68,7 +68,7 @@ fun AnimeSeason(appState: AppState) {
         if (!loading.value) {
             loading.value = true
             animeSeasonService.loadData(
-                name = searchName.value,
+                name = if (fromDb) null else searchName.value.ifBlank { null },
                 fromDb = fromDb,
                 onSuccess = {
                     sectionMapState.value = it

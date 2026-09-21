@@ -42,7 +42,7 @@ fun GameListPage(appState: AppState) {
             isLoading = true
             appState.api.game.getGameList(
                 fromDb = fromDb,
-                name = searchKeyword.ifBlank { null },
+                name = if(fromDb) null else searchKeyword.ifBlank { null },
                 platform = selectedPlatform,
                 playStatus = selectedPlayStatus
             ).onSuccessData(
