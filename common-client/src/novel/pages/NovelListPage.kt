@@ -66,7 +66,7 @@ fun NovelListPage(appState: AppState) {
         appState.scope.launch {
             appState.api.novel.getNovelList(
                 fromDb = fromDb,
-                name = searchName.value.ifBlank { null },
+                name = if(fromDb) null else searchName.value.ifBlank { null },
                 status = selectedStatus.value,
             ).onSuccessData(appState, onSuccess = { list ->
                 novelList.value = list
