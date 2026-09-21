@@ -6,11 +6,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
-import dev.sunriseydy.acgn.server.anime.tools.bangumi.model.BangumiRelatedSubject
-import dev.sunriseydy.acgn.server.anime.tools.bangumi.model.BangumiSearchFilter
-import dev.sunriseydy.acgn.server.anime.tools.bangumi.model.BangumiSearchRequest
-import dev.sunriseydy.acgn.server.anime.tools.bangumi.model.BangumiSearchResponse
-import dev.sunriseydy.acgn.server.anime.tools.bangumi.model.BangumiSubject
+import dev.sunriseydy.acgn.server.anime.tools.bangumi.model.*
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -106,7 +102,7 @@ class BangumiTool {
             )
         }.body()
 
-        return response.data.map { it.toNovel() }
+        return response.data.filter { it.platform == "小说" }.map { it.toNovel() }
     }
 
     suspend fun getNovelSubject(id: Int): dev.sunriseydy.acgn.novel.dto.Novel {
