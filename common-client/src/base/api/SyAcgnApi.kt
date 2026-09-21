@@ -59,8 +59,8 @@ class SyAcgnApi {
         HttpClientFactory.buildHttpClient(logLevel = LogLevel.BODY) {
             install(Resources)
             install(HttpTimeout) {
-                requestTimeoutMillis = 30_000
-                socketTimeoutMillis = 30_000
+                requestTimeoutMillis = 60_000
+                socketTimeoutMillis = 60_000
             }
             defaultRequest {
                 url {
