@@ -11,13 +11,25 @@ import dev.sunriseydy.acgn.client.common.api.CommonApi
 import dev.sunriseydy.acgn.client.game.api.GameApi
 import dev.sunriseydy.acgn.client.novel.api.NovelApi
 import dev.sunriseydy.acgn.tools.HttpClientFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.network.sockets.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.plugins.resources.*
+import io.ktor.client.request.*
+import io.ktor.client.utils.*
 import io.ktor.http.*
+import io.ktor.util.date.*
+import io.ktor.utils.io.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.serialization.builtins.serializer
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+
+private val logger = KotlinLogging.logger { }
 
 /**
  * SY-ACGN 主 API 客户端
@@ -28,7 +40,10 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
  * @date 2024-07-23 11:27
  */
 @OptIn(ExperimentalAtomicApi::class)
-class SyAcgnApi {
+class SyAcgnApi(
+    private val requestTimeoutMillis: Long = 60_000,
+    private val socketTimeoutMillis: Long = 10_000,
+) {
     private val activeRequestCount = AtomicInt(0)
     private val _isLoading = mutableStateOf(false)
 
@@ -55,13 +70,15 @@ class SyAcgnApi {
      *
      * 配置了资源插件、默认请求 URL（从本地配置获取）和 JSON 内容类型。
      */
+    @OptIn(InternalAPI::class)
     private val httpClient by lazy {
         HttpClientFactory.buildHttpClient(logLevel = LogLevel.BODY) {
             install(Resources)
             install(HttpTimeout) {
-                requestTimeoutMillis = 60_000
-                socketTimeoutMillis = 60_000
+                this.requestTimeoutMillis = this@SyAcgnApi.requestTimeoutMillis
+                this.socketTimeoutMillis = this@SyAcgnApi.socketTimeoutMillis
             }
+
             defaultRequest {
                 url {
                     takeFrom(getLocalServerConfig())
@@ -77,6 +94,31 @@ class SyAcgnApi {
                 }
                 try {
                     execute(request)
+                } catch (e: Throwable) {
+                    val unwrapped = e.unwrapCancellationException()
+                    if (unwrapped is CancellationException) {
+                        throw e
+                    }
+                    logger.error(unwrapped) { "HTTP 请求超时或异常: ${request.url.buildString()}" }
+                    val errorMessage = when (unwrapped) {
+                        is HttpRequestTimeoutException -> "请求超时：服务器响应超时，请稍后重试"
+                        is ConnectTimeoutException -> "连接超时：无法连接到服务器，请检查网络或服务器状态"
+                        is SocketTimeoutException -> "网络超时：读取数据超时，请稍后重试"
+                        else -> "网络请求失败：${unwrapped.message ?: "未知网络错误"}"
+                    }
+                    val errorJson = HttpClientFactory.jsonConfig.encodeToString(
+                        Result.serializer(Unit.serializer()),
+                        Result<Unit>(failed = true, message = errorMessage, data = null)
+                    )
+                    val responseData = HttpResponseData(
+                        statusCode = HttpStatusCode.OK,
+                        requestTime = GMTDate(),
+                        headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+                        version = HttpProtocolVersion.HTTP_1_1,
+                        body = ByteReadChannel(errorJson),
+                        callContext = Job()
+                    )
+                    HttpClientCall(this@apply, request.build(), responseData)
                 } finally {
                     if (!isSilent) {
                         onRequestEnd()
@@ -85,6 +127,7 @@ class SyAcgnApi {
             }
         }
     }
+
 
     // 各个模块的 API 实例，惰性加载
     val anime by buildApi(::AnimeApi)
