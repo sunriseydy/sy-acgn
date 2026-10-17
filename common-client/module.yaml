@@ -10,24 +10,24 @@ apply:
 dependencies:
   - $compose.foundation: exported
   - # noinspection AmperCanConvertToCatalogVersion
-    org.jetbrains.compose.material3:material3:1.11.0-alpha07: exported
+    $libs.material3.material3: exported
   - $compose.components.resources: exported
   - $compose.animation: exported
   - $compose.ui: exported
   - $compose.preview: exported
-  - org.jetbrains.compose.material:material-icons-core:1.7.3: exported
-  - org.jetbrains.compose.material:material-icons-extended:1.7.3: exported
+  - $libs.material.icons.core: exported
+  - $libs.material.icons.extended: exported
   # https://github.com/JetBrains/compose-multiplatform
-  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0-beta01: exported
-  - org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3:2.11.0-beta01: exported
-  - org.jetbrains.androidx.navigation3:navigation3-ui:1.1.1: exported
-  - org.jetbrains.compose.material3.adaptive:adaptive:1.3.0-alpha07: exported
-  - org.jetbrains.compose.material3.adaptive:adaptive-layout:1.3.0-alpha07: exported
-  - org.jetbrains.compose.material3.adaptive:adaptive-navigation3:1.3.0-alpha07: exported
-  - org.jetbrains.compose.material3:material3-adaptive-navigation-suite:1.11.0-alpha07: exported
+  - $libs.lifecycle.viewmodel.compose: exported
+  - $libs.lifecycle.viewmodel.navigation3: exported
+  - $libs.navigation3.ui: exported
+  - $libs.material3.adaptive.adaptive: exported
+  - $libs.material3.adaptive.adaptive.layout: exported
+  - $libs.material3.adaptive.adaptive.navigation3: exported
+  - $libs.material3.material3.adaptive.navigation.suite: exported
   # https://github.com/russhwolf/multiplatform-settings
-  - com.russhwolf:multiplatform-settings:1.3.0: exported
-  - com.russhwolf:multiplatform-settings-no-arg:1.3.0: exported
+  - $libs.multiplatform.settings: exported
+  - $libs.multiplatform.settings.no.arg: exported
 settings:
   kotlin:
     optIns:
