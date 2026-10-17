@@ -9,7 +9,7 @@ apply:
 dependencies:
   - $kotlin.test: exported
   # https://github.com/Kotlin/kotlinx-datetime
-  - org.jetbrains.kotlinx:kotlinx-datetime:0.7.1: exported
+  - org.jetbrains.kotlinx:kotlinx-datetime:0.8.0: exported
   # https://github.com/ktorio/ktor
   - bom: $ktor.bom
   - $ktor.client.core: exported
