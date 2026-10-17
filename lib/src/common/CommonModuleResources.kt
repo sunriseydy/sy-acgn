@@ -38,4 +38,12 @@ class CommonModuleResource(val parent: ApiResource = ApiResource()) {
     @Serializable
     @Resource("attach/{id}")
     class AttachFile(val parent: CommonModuleResource = CommonModuleResource(), val id: String)
+
+    @Serializable
+    @Resource("openai")
+    class OpenAi(val parent: CommonModuleResource = CommonModuleResource()) {
+        @Serializable
+        @Resource("chat")
+        class Chat(val parent: OpenAi = OpenAi())
+    }
 }

@@ -58,6 +58,10 @@ message:
   error:
     COMMON:
       test: "Common module test error"
+      OPENAI_CONFIG_ENDPOINT_MISSING: "OpenAI endpoint is not configured"
+      OPENAI_CONFIG_API_KEY_MISSING: "OpenAI API key is not configured"
+      OPENAI_CONFIG_MODEL_MISSING: "Model name is not configured (Required)"
+      OPENAI_REQUEST_FAILED: "OpenAI API request failed"
     NOVEL:
       NOVEL_NOT_FOUND: "Light novel not found"
       NOVEL_VOLUME_NOT_FOUND: "Light novel volume not found"
@@ -69,6 +73,11 @@ message:
       BANGUMI_IMPORT_FAILED: "Bangumi game import failed"
       STEAM_IMPORT_FAILED: "Steam game import failed"
   ERROR:
+    COMMON:
+      OPENAI_CONFIG_ENDPOINT_MISSING: "OpenAI endpoint is not configured"
+      OPENAI_CONFIG_API_KEY_MISSING: "OpenAI API key is not configured"
+      OPENAI_CONFIG_MODEL_MISSING: "Model name is not configured (Required)"
+      OPENAI_REQUEST_FAILED: "OpenAI API request failed"
     ANIME:
       TARGET_DIR_EXISTS: "Target directory already exists"
     NOVEL:
@@ -108,6 +117,15 @@ config:
     S3Region:
       meaning: "Region"
       description: "S3 region"
+    OpenAiEndpoint:
+      meaning: "OpenAI Endpoint"
+      description: "OpenAI compatible endpoint URL (Required)"
+    OpenAiApiKey:
+      meaning: "OpenAI API Key"
+      description: "API access key (Required)"
+    OpenAiModel:
+      meaning: "Model Name"
+      description: "Model name to use, e.g. deepseek-chat, gpt-4o (Required)"
   ANIME:
     TmdbApiKey:
       meaning: "TMDB API Key"
@@ -133,6 +151,7 @@ config:
   group:
     COMMON: "General"
     COMMON_S3: "S3 Storage"
+    COMMON_OPENAI: "AI Model"
     ANIME: "Anime"
     db_postgresql: "Database"
     client_server: "Server"

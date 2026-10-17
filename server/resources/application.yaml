@@ -24,3 +24,6 @@ config:
     S3SecretKey: "$?SY_S3_SECRET_KEY"
     S3BucketName: "$?SY_S3_BUCKET_NAME"
     S3Region: "$?SY_S3_REGION"
+    OpenAiEndpoint: "$?SY_OPENAI_ENDPOINT"
+    OpenAiApiKey: "$?SY_OPENAI_API_KEY"
+    OpenAiModel: "$?SY_OPENAI_MODEL"

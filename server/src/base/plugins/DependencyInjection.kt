@@ -12,6 +12,9 @@ import dev.sunriseydy.acgn.server.common.service.AppConfigService
 import dev.sunriseydy.acgn.server.common.service.AppConfigServiceImpl
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoServiceImpl
+import dev.sunriseydy.acgn.server.common.service.OpenAiService
+import dev.sunriseydy.acgn.server.common.service.OpenAiServiceImpl
+import dev.sunriseydy.acgn.server.common.tools.OpenAiTool
 import dev.sunriseydy.acgn.server.novel.repository.NovelRepository
 import dev.sunriseydy.acgn.server.novel.repository.NovelRepositoryImpl
 import io.ktor.server.application.*
@@ -50,6 +53,9 @@ fun Application.configureDependencyInjection() {
                 resolve<S3Tool>()
             )
         }
+        provide<OpenAiService> {
+            OpenAiServiceImpl(resolve<OpenAiTool>())
+        }
         provide<AnimeService> {
             AnimeServiceImpl(
                 resolve<AnimeRepository>(),
@@ -80,5 +86,6 @@ fun Application.configureDependencyInjection() {
         provide<dev.sunriseydy.acgn.server.game.tools.SteamTool> { dev.sunriseydy.acgn.server.game.tools.SteamTool() }
         provide<TmdbTool> { TmdbTool() }
         provide<S3Tool> { S3Tool() }
+        provide<OpenAiTool> { OpenAiTool() }
     }
 }

@@ -220,7 +220,9 @@ private fun buildConfigGroups(
         val groupKey = extractGroupKey(key) ?: continue
         val displayName = getDisplayName(key)
         val isReadOnly = key.startsWith(DB_CONFIG_PREFIX)
-        val isSensitive = key.contains("password", ignoreCase = true) || key.contains("secret", ignoreCase = true)
+        val isSensitive = key.contains("password", ignoreCase = true)
+            || key.contains("secret", ignoreCase = true)
+            || key.contains("apikey", ignoreCase = true)
         val isLanguage = key.contains("language", ignoreCase = true)
 
         val item = ConfigItem(
@@ -250,7 +252,7 @@ private fun buildConfigGroups(
         )
     )
 
-    val groupOrder = listOf("COMMON", "client_server", "ANIME", "COMMON_S3", "db_postgresql")
+    val groupOrder = listOf("COMMON", "client_server", "ANIME", "COMMON_S3", "COMMON_OPENAI", "db_postgresql")
     return groups.entries.sortedBy { (key, _) ->
         val idx = groupOrder.indexOf(key)
         if (idx >= 0) idx else groupOrder.size
@@ -276,6 +278,7 @@ private fun extractGroupKey(configKey: String): String? {
             when {
                 module.isEmpty() || name.isEmpty() -> null
                 module == "COMMON" && name.startsWith("S3") -> "COMMON_S3"
+                module == "COMMON" && name.startsWith("OpenAi") -> "COMMON_OPENAI"
                 else -> module
             }
         }

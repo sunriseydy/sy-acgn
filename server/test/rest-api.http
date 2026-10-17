@@ -109,3 +109,18 @@ GET http://localhost:9390/api/anime/anime/bangumi/search-anime?query=辉夜大�
 ### bangumi get subject detail
 # @no-log
 GET http://localhost:9390/api/anime/anime/bangumi/subject-detail?id=381793
+
+### OpenAI compatible chat completion (SSE stream)
+# @no-log
+POST http://localhost:9390/api/common/openai/chat
+Content-Type: application/json
+Accept: text/event-stream
+
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "请用一句话介绍你自己"
+    }
+  ]
+}

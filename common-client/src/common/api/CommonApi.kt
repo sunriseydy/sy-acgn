@@ -8,10 +8,18 @@ import dev.sunriseydy.acgn.common.CommonModuleResource
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.common.dto.AppInfo
+import dev.sunriseydy.acgn.common.dto.OpenAiChatRequest
+import dev.sunriseydy.acgn.common.dto.OpenAiChatStreamChunk
+import dev.sunriseydy.acgn.tools.HttpClientFactory
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.utils.io.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 /**
  * @author SunriseYDY
@@ -67,4 +75,38 @@ class CommonApi internal constructor(private val httpClient: HttpClient) {
         httpClient.get(CommonModuleResource.AttachFile(id = id)) {
             header("X-Silent-Request", "true")
         }.body()
+
+    /**
+     * 发起 OpenAI 兼容流式对话并以 [Flow] 接收逐块输出
+     *
+     * 自动携带 `X-Silent-Request: true` 标头，跳过全局阻塞式全屏 Loading 遮罩。
+     */
+    fun chatStreamFlow(request: OpenAiChatRequest): Flow<OpenAiChatStreamChunk> = flow {
+        httpClient.preparePost(CommonModuleResource.OpenAi.Chat()) {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+            header("X-Silent-Request", "true")
+        }.execute { response ->
+            val channel = response.bodyAsChannel()
+            @Suppress("DEPRECATION")
+            while (!channel.isClosedForRead) {
+                val line = channel.readUTF8Line() ?: break
+                val trimmed = line.trim()
+                if (trimmed.isEmpty() || trimmed.startsWith(":")) {
+                    continue
+                }
+                if (trimmed.startsWith("data:")) {
+                    val data = trimmed.removePrefix("data:").trim()
+                    if (data == "[DONE]") {
+                        break
+                    }
+                    try {
+                        val chunk = HttpClientFactory.jsonConfig.decodeFromString<OpenAiChatStreamChunk>(data)
+                        emit(chunk)
+                    } catch (_: Exception) {
+                    }
+                }
+            }
+        }
+    }
 }

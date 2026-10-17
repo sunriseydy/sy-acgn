@@ -64,6 +64,10 @@ message:
   error:
     COMMON:
       TEST: "通用模块测试异常"
+      OPENAI_CONFIG_ENDPOINT_MISSING: "未配置 OpenAI 端点"
+      OPENAI_CONFIG_API_KEY_MISSING: "未配置 OpenAI API 密钥"
+      OPENAI_CONFIG_MODEL_MISSING: "未配置模型名称，该项为必填"
+      OPENAI_REQUEST_FAILED: "调用 OpenAI 兼容接口失败"
     NOVEL:
       NOVEL_NOT_FOUND: "未找到轻小说"
       NOVEL_VOLUME_NOT_FOUND: "未找到轻小说卷"
@@ -75,6 +79,11 @@ message:
       BANGUMI_IMPORT_FAILED: "Bangumi 游戏导入失败"
       STEAM_IMPORT_FAILED: "Steam 游戏导入失败"
   ERROR:
+    COMMON:
+      OPENAI_CONFIG_ENDPOINT_MISSING: "未配置 OpenAI 端点"
+      OPENAI_CONFIG_API_KEY_MISSING: "未配置 OpenAI API 密钥"
+      OPENAI_CONFIG_MODEL_MISSING: "未配置模型名称，该项为必填"
+      OPENAI_REQUEST_FAILED: "调用 OpenAI 兼容接口失败"
     ANIME:
       TARGET_DIR_EXISTS: "目标目录已存在"
     NOVEL:
@@ -118,6 +127,15 @@ config:
     S3Region:
       meaning: "Region"
       description: "S3 区域"
+    OpenAiEndpoint:
+      meaning: "OpenAI 端点"
+      description: "兼容 OpenAI 协议的端点 URL（必填）"
+    OpenAiApiKey:
+      meaning: "OpenAI 密钥"
+      description: "API 访问密钥（必填）"
+    OpenAiModel:
+      meaning: "模型名称"
+      description: "调用的模型名称，如 deepseek-chat, gpt-4o（必填）"
   ANIME:
     TmdbApiKey:
       meaning: "TMDB API 密钥"
@@ -143,6 +161,7 @@ config:
   group:
     COMMON: "通用设置"
     COMMON_S3: "S3 存储设置"
+    COMMON_OPENAI: "AI 模型设置"
     ANIME: "动画设置"
     db_postgresql: "数据库配置"
     client_server: "服务器设置"

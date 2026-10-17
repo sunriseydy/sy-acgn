@@ -9,4 +9,8 @@ import dev.sunriseydy.acgn.base.interfaces.ErrorMessage
  */
 enum class CommonModuleError : CommonModule, ErrorMessage {
     TEST,
+    OPENAI_CONFIG_ENDPOINT_MISSING,
+    OPENAI_CONFIG_API_KEY_MISSING,
+    OPENAI_CONFIG_MODEL_MISSING,
+    OPENAI_REQUEST_FAILED,
 }

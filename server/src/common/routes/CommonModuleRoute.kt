@@ -4,12 +4,15 @@ import dev.sunriseydy.acgn.base.Result
 import dev.sunriseydy.acgn.common.CommonModuleResource
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.common.dto.AppInfo
+import dev.sunriseydy.acgn.common.dto.OpenAiChatRequest
 import dev.sunriseydy.acgn.server.base.plugins.loadAppConfigFromDB
 import dev.sunriseydy.acgn.server.base.plugins.loadLocalizations
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.common.service.AppConfigService
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
+import dev.sunriseydy.acgn.server.common.service.OpenAiService
 import dev.sunriseydy.acgn.tools.AppConfigTool
+import dev.sunriseydy.acgn.tools.HttpClientFactory
 import dev.sunriseydy.acgn.tools.LocalizationTool
 import io.ktor.http.*
 import io.ktor.server.plugins.di.*
@@ -18,6 +21,7 @@ import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.encodeToString
 
 /**
  * @author SunriseYDY
@@ -27,6 +31,7 @@ fun Route.configureCommonModuleRoutes() {
     val appConfigService: AppConfigService by application.dependencies
     val additionalInfoRepository: AdditionalInfoRepository by application.dependencies
     val attachFileInfoService: AttachFileInfoService by application.dependencies
+    val openAiService: OpenAiService by application.dependencies
     get<CommonModuleResource.Info> { resource ->
         resource.language?.let {
             LocalizationTool.loadLocalizations(it)
@@ -88,6 +93,21 @@ fun Route.configureCommonModuleRoutes() {
         )
         call.respondOutputStream(ContentType.parse(fileInfo.contentType)) {
             stream.copyTo(this)
+        }
+    }
+    post<CommonModuleResource.OpenAi.Chat> {
+        val request = call.receive<OpenAiChatRequest>()
+        val streamFlow = openAiService.chatStream(request)
+        call.response.cacheControl(CacheControl.NoCache(null))
+        call.response.header(HttpHeaders.Connection, "keep-alive")
+        call.respondTextWriter(contentType = ContentType.Text.EventStream) {
+            streamFlow.collect { chunk ->
+                val json = HttpClientFactory.jsonConfig.encodeToString(chunk)
+                write("data: $json\n\n")
+                flush()
+            }
+            write("data: [DONE]\n\n")
+            flush()
         }
     }
 }
