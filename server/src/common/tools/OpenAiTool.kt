@@ -77,9 +77,8 @@ class OpenAiTool(
             }
 
             val channel: ByteReadChannel = response.bodyAsChannel()
-            @Suppress("DEPRECATION")
             while (!channel.isClosedForRead) {
-                val line = channel.readUTF8Line() ?: break
+                val line = channel.readLine() ?: break
                 val trimmed = line.trim()
 
                 // 忽略空行以及 SSE 心跳/注释（以冒号开头）

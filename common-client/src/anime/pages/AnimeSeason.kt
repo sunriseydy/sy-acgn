@@ -18,6 +18,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.anime.components.CreateAnimeSeason
+import dev.sunriseydy.acgn.client.anime.components.CreateAnimeSeasonFromFile
 import dev.sunriseydy.acgn.client.anime.components.SearchBgmAnimeSeason
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
@@ -50,6 +51,7 @@ fun AnimeSeason(appState: AppState) {
     val state: LazyStaggeredGridState = rememberLazyStaggeredGridState()
     val loading = remember { mutableStateOf(false) }
     val createDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val fileCreateDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val searchName = remember { mutableStateOf("") }
     val animeSeasonService = remember(appState) { AnimeSeasonService(appState) }
 
@@ -114,6 +116,11 @@ fun AnimeSeason(appState: AppState) {
                 loadData(fromDb = true)
             }) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
+            }
+            IconButton(onClick = {
+                fileCreateDialogVisible.value = true
+            }) {
+                Icon(Icons.Default.DriveFolderUpload, contentDescription = stringResource(Res.string.handle_file_from_dir_title), modifier = Modifier.size(48.dp))
             }
             IconButton(onClick = {
                 createDialogVisible.value = true
@@ -232,6 +239,8 @@ fun AnimeSeason(appState: AppState) {
     }
 
     CreateAnimeSeason(animeSeasonService, createDialogVisible, onSuccess = { loadData() })
+
+    CreateAnimeSeasonFromFile(animeSeasonService, fileCreateDialogVisible, onSuccess = { loadData() })
 
     AlertDialog(
         alertDialogVisible = deleteDialogVisible,

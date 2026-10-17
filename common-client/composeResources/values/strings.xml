@@ -31,6 +31,17 @@
     <string name="search_bangumi">Bangumi</string>
     <string name="episode_offset">集数偏移</string>
     <string name="episode_offset_supporting_text">默认为 0，如果在排序时需要修改集数则填写偏移量</string>
+    <string name="ai_extract_anime_name">AI 识别动画名</string>
+    <string name="ai_identifying">正在通过 AI 识别动画名…</string>
+    <string name="ai_extracted_name">识别出的动画名</string>
+    <string name="ai_extract_name_blank">未能识别出动画名称</string>
+    <string name="ai_extract_failed">AI 识别失败</string>
+    <string name="local_matched_seasons">匹配到的本地季度</string>
+    <string name="select_local_season">选择本地已有季度</string>
+    <string name="switch_to_create_season">未找到目标？去搜索 TMDB 创建新季度</string>
+    <string name="switch_to_matched_season">返回选择本地已有季度</string>
+    <string name="handle_file_from_dir_title">从目录识别并处理动画文件</string>
+    <string name="no_matched_season_tip">本地未匹配到该动画季度，请搜索 TMDB 创建并处理：</string>
 
     <!-- NovelString -->
     <string name="novel_title">轻小说</string>

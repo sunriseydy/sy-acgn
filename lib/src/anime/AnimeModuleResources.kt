@@ -48,6 +48,10 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             }
 
             @Serializable
+            @Resource("name")
+            class Name(val parent: Season = Season(), val name: String? = null)
+
+            @Serializable
             @Resource("section-map")
             class SectionMap(
                 val parent: Season = Season(),

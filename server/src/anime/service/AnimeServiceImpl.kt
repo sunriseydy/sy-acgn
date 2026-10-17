@@ -75,6 +75,30 @@ class AnimeServiceImpl(
         }
     }
 
+    /**
+     * 根据名称搜索动漫季度
+     *
+     * 优先使用缓存。如果缓存为空，则先刷新缓存。
+     * 同时匹配动漫系列名称和季度名称。
+     */
+    override suspend fun searchAnimeSeasonByName(name: String?): List<AnimeSeason> {
+        if (AnimeCacheTool.isSeasonEmpty()) {
+            this.refreshCache()
+        }
+        val seasons = AnimeCacheTool.getSeasons()
+        if (name.isNullOrBlank()) {
+            return seasons
+        }
+        return seasons.filter { season ->
+            season.name.contains(name, ignoreCase = true) ||
+                (season.anime?.name?.contains(name, ignoreCase = true) == true)
+        }.sortedWith(
+            compareByDescending<AnimeSeason> { it.year }
+                .thenByDescending { it.month }
+                .thenBy { it.season }
+        )
+    }
+
     suspend fun getAnimeById(id: ULong): Anime {
         return AnimeCacheTool.getAnimeById(id) ?: this.addAnimeCache(id)
     }

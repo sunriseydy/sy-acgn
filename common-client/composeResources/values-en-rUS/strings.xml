@@ -31,6 +31,17 @@
     <string name="search_bangumi">Bangumi</string>
     <string name="episode_offset">Episode Offset</string>
     <string name="episode_offset_supporting_text">Default is 0, enter offset if you need to modify the episode number during sorting</string>
+    <string name="ai_extract_anime_name">Identify Anime Name with AI</string>
+    <string name="ai_identifying">Identifying anime name with AI…</string>
+    <string name="ai_extracted_name">Identified Anime Name</string>
+    <string name="ai_extract_name_blank">Could not identify an anime name</string>
+    <string name="ai_extract_failed">AI identification failed</string>
+    <string name="local_matched_seasons">Matched Local Seasons</string>
+    <string name="select_local_season">Select Existing Local Season</string>
+    <string name="switch_to_create_season">Not found? Search TMDB to create a new season</string>
+    <string name="switch_to_matched_season">Back to Selecting an Existing Local Season</string>
+    <string name="handle_file_from_dir_title">Identify and Process Anime Files from a Directory</string>
+    <string name="no_matched_season_tip">No matching local season found. Search TMDB to create and process one:</string>
 
     <!-- NovelString -->
     <string name="novel_title">Light Novels</string>

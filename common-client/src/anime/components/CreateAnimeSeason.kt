@@ -19,12 +19,10 @@ import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
-import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.res.*
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -188,27 +186,21 @@ class CreateAnimeSeasonState(
 ) {
     val isCreateAnime: MutableState<Boolean> = mutableStateOf(false)
 
-    val animeSearchVisible: MutableState<Boolean> = mutableStateOf(false)
-    val animeNameSearch: MutableState<String> = mutableStateOf("")
-    val animeSearchResult: MutableState<List<Anime>> = mutableStateOf(emptyList())
+    private val searchState = AnimeSeasonSearchState(service)
 
-    val anime: MutableState<Anime?> = mutableStateOf(null)
+    val animeSearchVisible: MutableState<Boolean> get() = searchState.animeSearchVisible
+    val animeNameSearch: MutableState<String> get() = searchState.animeNameSearch
+    val animeSearchResult: MutableState<List<Anime>> get() = searchState.animeSearchResult
 
-    val animeSeason: MutableState<AnimeSeason?> = mutableStateOf(null)
+    val anime: MutableState<Anime?> get() = searchState.selectedAnime
 
-    val animeSeasonSearchVisible: MutableState<Boolean> = mutableStateOf(false)
-    val animeSeasonSearchResult: MutableState<List<AnimeSeason>> = mutableStateOf(emptyList())
+    val animeSeason: MutableState<AnimeSeason?> get() = searchState.selectedAnimeSeason
+
+    val animeSeasonSearchVisible: MutableState<Boolean> get() = searchState.animeSeasonSearchVisible
+    val animeSeasonSearchResult: MutableState<List<AnimeSeason>> get() = searchState.animeSeasonSearchResult
 
     fun resetField() {
-        animeSearchVisible.value = false
-        animeNameSearch.value = ""
-        animeSearchResult.value = emptyList()
-
-        anime.value = null
-        animeSeason.value = null
-
-        animeSeasonSearchVisible.value = false
-        animeSeasonSearchResult.value = emptyList()
+        searchState.reset()
     }
 
     fun reset() {
@@ -217,72 +209,19 @@ class CreateAnimeSeasonState(
     }
 
     fun searchAnime() {
-        if (animeNameSearch.value.isNotBlank()) {
-            if (isCreateAnime.value) {
-                service.searchAnimeFromTMDB(name = animeNameSearch.value, onSuccess = {
-                    animeSearchResult.value = it
-                    animeSearchVisible.value = true
-                })
-            } else {
-                service.searchAnime(name = animeNameSearch.value, onSuccess = {
-                    animeSearchResult.value = it
-                    animeSearchVisible.value = true
-                })
-            }
-        }
+        searchState.searchAnime(isCreateAnime.value)
     }
 
     fun selectAnime(selected: Anime) {
-        anime.value = selected
-        animeNameSearch.value = selected.name
-        animeSearchVisible.value = false
-        animeSearchResult.value = emptyList()
+        searchState.selectAnime(selected)
     }
 
     fun searchSeason() {
-        anime.value?.let { anime ->
-            if (isCreateAnime.value && anime.animeSeasons.isNotEmpty()) {
-                // 如果创建动画，则直接取tmdb动画搜索结果的季度
-                animeSeasonSearchResult.value = anime.animeSeasons
-                animeSeasonSearchVisible.value = true
-            } else {
-                anime.tmdbId?.let { tmdbId ->
-                    // 否则如果动画有tmdbId，则取tmdb动画季度
-                    service.getAnimeByTmdbId(tmdbId, onSuccess = { anime ->
-                        animeSeasonSearchResult.value = anime.animeSeasons
-                        animeSeasonSearchVisible.value = true
-                    })
-                }
-            }
-        }
+        searchState.searchSeason(isCreateAnime.value)
     }
 
     fun selectSeason(season: AnimeSeason) {
-        val selectedAnime = anime.value!!
-        val showId = selectedAnime.tmdbId?.toInt()
-        // 选中季度后，尽量拉取 TMDB 季度详情（含集数）
-        if (showId != null) {
-            service.appState.scope.launch {
-                service.appState.api.anime.getTmdbAnimeSeasonDetail(showId, season.season.toString())
-                    .onSuccessData(
-                        service.appState,
-                        onSuccess = { detail ->
-                            animeSeason.value = detail.copy(
-                                animeId = selectedAnime.id,
-                                anime = selectedAnime,
-                                bgmId = season.bgmId,
-                            )
-                        },
-                        onError = {
-                            animeSeason.value = season.copy(animeId = selectedAnime.id, anime = selectedAnime)
-                        }
-                    )
-            }
-        } else {
-            animeSeason.value = season.copy(animeId = selectedAnime.id, anime = selectedAnime)
-        }
-        animeSeasonSearchVisible.value = false
-        animeSeasonSearchResult.value = emptyList()
+        searchState.selectSeason(season)
     }
 
     fun save(
