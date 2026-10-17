@@ -619,9 +619,9 @@ Component (可复用 UI 组件)
    - 引入基于 Caffeine 的 `GameCacheTool` 与 `NovelCacheTool` 优化列表查询性能，减轻数据库负载
 
 6. **核心依赖与构建工具链升级**
-   - 升级 Kotlin Toolchain 构建脚本与包装器至 `0.12.0`
+   - 升级 Kotlin Toolchain 构建脚本与包装器至 `0.13.0`
    - 升级 Exposed 数据库框架至 `1.5.0`
-   - 升级 Ktor 框架至 `3.5.2`
+   - 升级 Ktor 框架至 `3.6.0`
 
 ### 2026-02 新功能
 
