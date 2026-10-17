@@ -13,10 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.base.enums.Language
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.showMessage
+import dev.sunriseydy.acgn.common.config.CommonModuleAppConfig
+import dev.sunriseydy.acgn.common.config.OpenAiAppConfig
+import dev.sunriseydy.acgn.common.config.S3AppConfig
 import dev.sunriseydy.acgn.common.dto.AppConfig
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.i
@@ -43,6 +47,22 @@ private data class ConfigGroup(
 private const val DB_CONFIG_PREFIX = "config.db."
 private const val STANDARD_CONFIG_PREFIX = "config."
 
+private val KNOWN_CONFIG_KEYS = listOf(
+    CommonModuleAppConfig.AppName.configKey,
+    CommonModuleAppConfig.AppLanguage.configKey,
+    AnimeModuleAppConfig.TmdbApiKey.configKey,
+    AnimeModuleAppConfig.MediaTargetDirectory.configKey,
+    AnimeModuleAppConfig.BgmUserAgent.configKey,
+    S3AppConfig.S3Endpoint.configKey,
+    S3AppConfig.S3AccessKey.configKey,
+    S3AppConfig.S3SecretKey.configKey,
+    S3AppConfig.S3BucketName.configKey,
+    S3AppConfig.S3Region.configKey,
+    OpenAiAppConfig.OpenAiEndpoint.configKey,
+    OpenAiAppConfig.OpenAiApiKey.configKey,
+    OpenAiAppConfig.OpenAiModel.configKey,
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPage(appState: AppState) {
@@ -50,6 +70,9 @@ fun SettingsPage(appState: AppState) {
 
     val loadConfigs: () -> Unit = {
         appState.scope.launch {
+            appState.api.common.getAppConfigs().onSuccessData(
+                onSuccess = { map -> AppConfigTool.putAll(map) }
+            )
             val allConfigs = AppConfigTool.getAppConfigs()
             val dbConfigsResult = appState.api.common.getAllAppConfigFromDB()
             val dbIdMap = mutableMapOf<String, ULong>()
@@ -212,9 +235,16 @@ private fun buildConfigGroups(
     allConfigs: Map<String, Pair<AppConfig?, String?>>,
     dbIdMap: Map<String, ULong>,
 ): List<ConfigGroup> {
+    val mergedConfigs = allConfigs.toMutableMap()
+    for (key in KNOWN_CONFIG_KEYS) {
+        if (!mergedConfigs.containsKey(key)) {
+            mergedConfigs[key] = Pair(null, null)
+        }
+    }
+
     val groups = mutableMapOf<String, MutableList<ConfigItem>>()
 
-    for ((key, pair) in allConfigs) {
+    for ((key, pair) in mergedConfigs) {
         val (dbConfig, fileValue) = pair
         val effectiveValue = dbConfig?.configValue ?: fileValue ?: ""
         val groupKey = extractGroupKey(key) ?: continue
@@ -257,9 +287,13 @@ private fun buildConfigGroups(
         val idx = groupOrder.indexOf(key)
         if (idx >= 0) idx else groupOrder.size
     }.map { (key, items) ->
+        val sortedItems = items.sortedBy { item ->
+            val idx = KNOWN_CONFIG_KEYS.indexOf(item.key)
+            if (idx >= 0) idx else KNOWN_CONFIG_KEYS.size
+        }
         ConfigGroup(
             displayName = i("config.group.$key", key),
-            items = items,
+            items = sortedItems,
         )
     }
 }

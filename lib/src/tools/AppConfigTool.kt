@@ -52,7 +52,7 @@ object AppConfigTool {
      * @param key 配置键
      * @param value 文件配置值
      */
-    fun putAppConfigFromFile(key: String, value: String) {
+    fun putAppConfigFromFile(key: String, value: String?) {
         lock.withLock {
             val current = appConfigs[key]
             val newPair = if (current != null) Pair(current.first, value) else Pair(null, value)

@@ -27,13 +27,14 @@ suspend fun AppConfigTool.loadAppConfigFromDB(appConfigService: AppConfigService
  *
  * 扫描所有以 "config" 前缀开头的配置项，写入 AppConfigTool 作为文件级默认值。
  */
-fun AppConfigTool.loadAppConfigFromFile(environment: ApplicationEnvironment) {
-    val yamlConfig = environment.config
-    yamlConfig.keys().forEach { key ->
+fun AppConfigTool.loadAppConfigFromFile(environment: ApplicationEnvironment) =
+    loadAppConfigFromFile(environment.config)
+
+fun AppConfigTool.loadAppConfigFromFile(config: ApplicationConfig) {
+    config.keys().forEach { key ->
         if (key.startsWith("config")) {
-            yamlConfig.propertyOrNull(key)?.let { property: ApplicationConfigValue ->
-                putAppConfigFromFile(key, property.getString())
-            }
+            val property = config.propertyOrNull(key)
+            putAppConfigFromFile(key, property?.getString())
         }
     }
 }

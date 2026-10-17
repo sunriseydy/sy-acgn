@@ -37,7 +37,7 @@ object FileTool {
         val subtitles = allSubtitles - deleteSubtitles.toSet()
         val others = fileNames - videos.toSet() - allSubtitles.toSet()
         // 获取媒体目录
-        val mediaTargetDirectory = AnimeModuleAppConfig.MediaTargetDirectory.configValue ?: path.parent.toString()
+        val mediaTargetDirectory = AnimeModuleAppConfig.MediaTargetDirectory.configValue?.takeIf { it.isNotBlank() } ?: path.parent.toString()
         requireNotNull(mediaTargetDirectory) { "${AnimeModuleAppConfig.MediaTargetDirectory.configKey}-媒体库目录不能为空" }
         // 生成目录名
         val animeDirectoryName = generateAnimeDirectoryName(animeSeason.anime!!)
