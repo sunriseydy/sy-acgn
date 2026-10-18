@@ -6,6 +6,8 @@ import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeMovie
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
+import dev.sunriseydy.acgn.anime.dto.BangumiSeasonalAnimeResult
+import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.base.Result
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -68,5 +70,23 @@ class AnimeApi internal constructor(private val httpClient: HttpClient) {
 
     suspend fun searchBgmAnime(query: String): Result<List<AnimeSeason>> =
         httpClient.get(AnimeModuleResource.Anime.Bangumi.SearchAnime(query = query)).body()
-    
+
+    suspend fun getBangumiSeasonalAnime(
+        year: Int,
+        monthType: AnimeMonthType,
+        query: String? = null,
+        sort: String = "heat",
+        limit: Int = 20,
+        offset: Int = 0
+    ): Result<BangumiSeasonalAnimeResult> =
+        httpClient.get(
+            AnimeModuleResource.Anime.Bangumi.SeasonalAnime(
+                year = year,
+                monthType = monthType,
+                query = query,
+                sort = sort,
+                limit = limit,
+                offset = offset
+            )
+        ).body()
 }

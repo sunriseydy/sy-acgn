@@ -40,6 +40,10 @@ class CommonModuleResource(val parent: ApiResource = ApiResource()) {
     class AttachFile(val parent: CommonModuleResource = CommonModuleResource(), val id: String)
 
     @Serializable
+    @Resource("proxy-image")
+    class ProxyImage(val parent: CommonModuleResource = CommonModuleResource(), val url: String)
+
+    @Serializable
     @Resource("openai")
     class OpenAi(val parent: CommonModuleResource = CommonModuleResource()) {
         @Serializable

@@ -3,8 +3,10 @@ package dev.sunriseydy.acgn.server.anime.tools
 import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
+import dev.sunriseydy.acgn.anime.dto.BangumiSeasonalAnimeResult
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.anime.enums.AnimeAssociatedType
+import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import dev.sunriseydy.acgn.server.anime.tools.bangumi.model.*
 import dev.sunriseydy.acgn.tools.HttpClientFactory
@@ -49,6 +51,48 @@ class BangumiTool {
         return subject.toAnimeSeason()
     }
 
+    suspend fun getSeasonalAnime(
+        year: Int,
+        monthType: AnimeMonthType,
+        query: String? = null,
+        sort: String = "heat",
+        limit: Int = 20,
+        offset: Int = 0
+    ): BangumiSeasonalAnimeResult {
+        val (startDate, endDate) = when (monthType) {
+            AnimeMonthType.WINTER -> "$year-01-01" to "$year-03-31"
+            AnimeMonthType.SPRING -> "$year-04-01" to "$year-06-30"
+            AnimeMonthType.SUMMER -> "$year-07-01" to "$year-09-30"
+            AnimeMonthType.FALL -> "$year-10-01" to "$year-12-31"
+        }
+
+        val requestSort = if (sort in listOf("heat", "rank", "score")) sort else "heat"
+        val rankFilter = if (requestSort == "rank") listOf(">0") else null
+
+        val response: BangumiSearchResponse = client.post("v0/search/subjects") {
+            parameter("limit", limit)
+            parameter("offset", offset)
+            setBody(
+                BangumiSearchRequest(
+                    keyword = query?.trim().orEmpty(),
+                    sort = requestSort,
+                    filter = BangumiSearchFilter(
+                        type = listOf(2), // 2 for Anime
+                        airDate = listOf(">=$startDate", "<=$endDate"),
+                        rank = rankFilter
+                    )
+                )
+            )
+        }.body()
+
+        return BangumiSeasonalAnimeResult(
+            total = response.total,
+            limit = response.limit,
+            offset = response.offset,
+            items = response.data.map { it.toAnimeSeason() }
+        )
+    }
+
     private fun BangumiSubject.toAnimeSeason(): AnimeSeason {
         val airDate = this.date?.let {
             try { LocalDate.parse(it) } catch (e: Exception) { null }
@@ -62,10 +106,18 @@ class BangumiTool {
                 Json.encodeToString(BangumiSubject.serializer(), this)
             )
         )
+        val title = this.nameCn.ifBlank { this.name }
+        val anime = Anime(
+            id = ULong.MIN_VALUE,
+            name = title,
+            description = this.summary,
+            firstAirDate = airDate,
+            bgmId = bgmIdULong,
+        )
         return AnimeSeason(
             id = ULong.MIN_VALUE,
             animeId = ULong.MIN_VALUE,
-            name = this.nameCn.ifBlank { this.name },
+            name = title,
             description = this.summary,
             season = 1, // Bangumi 条目通常视为独立季度，默认设为 1
             numberOfEpisodes = if (this.totalEpisodes > 0) this.totalEpisodes else this.eps,
@@ -73,6 +125,7 @@ class BangumiTool {
             month = airDate?.month?.number ?: 0,
             airDate = airDate,
             bgmId = bgmIdULong,
+            anime = anime,
             additions = additions
         )
     }

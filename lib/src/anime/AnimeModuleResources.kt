@@ -106,6 +106,18 @@ class AnimeModuleResource(val parent: ApiResource = ApiResource()) {
             @Serializable
             @Resource("subject-detail")
             class SubjectDetail(val parent: Bangumi = Bangumi(), val id: Int)
+
+            @Serializable
+            @Resource("seasonal-anime")
+            class SeasonalAnime(
+                val parent: Bangumi = Bangumi(),
+                val year: Int,
+                val monthType: AnimeMonthType,
+                val query: String? = null,
+                val sort: String = "heat",
+                val limit: Int = 20,
+                val offset: Int = 0
+            )
         }
 
         /** 文件管理: `/api/anime/anime/file` */

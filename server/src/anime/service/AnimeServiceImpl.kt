@@ -18,8 +18,7 @@ import dev.sunriseydy.acgn.server.anime.tools.tmdb.image.TmdbImageUrlBuilder
 import dev.sunriseydy.acgn.server.common.repository.AdditionalInfoRepository
 import dev.sunriseydy.acgn.server.common.service.AttachFileInfoService
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.*
 
 /**
  * 动漫服务实现类
@@ -181,21 +180,33 @@ class AnimeServiceImpl(
     }
 
     private suspend fun downloadAndSavePoster(seasonId: ULong, additions: List<AdditionalInfo>): AdditionalInfo? {
-        val tmdbJson = AnimeAdditionType.TmdbJson.valueOf(additions) ?: return null
-        val posterPath = tmdbJson["poster_path"]?.jsonPrimitive?.contentOrNull ?: return null
-        if (posterPath.isBlank()) return null
+        val tmdbJson = AnimeAdditionType.TmdbJson.valueOf(additions)
+        val posterPath = tmdbJson?.get("poster_path")?.jsonPrimitive?.contentOrNull
+        val bgmJson = AnimeAdditionType.BgmJson.valueOf(additions)
+        val bgmImage = bgmJson?.get("images")?.jsonObject?.let {
+            it["large"]?.jsonPrimitive?.contentOrNull
+                ?: it["common"]?.jsonPrimitive?.contentOrNull
+                ?: it["medium"]?.jsonPrimitive?.contentOrNull
+        }
 
         val existingPosterId = AnimeAdditionType.PosterId.valueOf(additions)
         if (!existingPosterId.isNullOrBlank()) {
             return null
         }
 
+        val (imageUrl, defaultFileName) = if (!posterPath.isNullOrBlank()) {
+            TmdbImageUrlBuilder.build(posterPath, TmdbImageSize.ORIGINAL) to (posterPath.substringAfterLast("/").ifBlank { "poster.jpg" })
+        } else if (!bgmImage.isNullOrBlank()) {
+            bgmImage to (bgmImage.substringAfterLast("/").ifBlank { "poster.jpg" })
+        } else {
+            return null
+        }
+
         try {
-            val imageUrl = TmdbImageUrlBuilder.build(posterPath, TmdbImageSize.ORIGINAL)
             val attachFileId = attachFileInfoService.saveFile(
                 downloadUrl = imageUrl,
                 defaultContentType = "image/jpeg",
-                defaultFileName = posterPath.substringAfterLast("/").ifBlank { "poster.jpg" }
+                defaultFileName = defaultFileName
             )
             return AdditionalInfo(
                 id = "",
@@ -259,35 +270,82 @@ class AnimeServiceImpl(
     /**
      * 保存动漫季度信息
      *
-     * 如果关联的动漫不存在（ID 为 MIN_VALUE），则先创建动漫。
-     * 如果季度 ID 为 MIN_VALUE，则创建季度，否则更新季度。
+     * 如果关联的动漫不存在（ID 为 MIN_VALUE），优先复用已存在的动漫系列（按 tmdbId、bgmId 或 name 匹配），否则创建动漫。
+     * 如果季度 ID 为 MIN_VALUE，优先复用已存在的动漫季度（按 tmdbId、bgmId 或 animeId+season 匹配），存在则直接使用，否则创建季度。
+     * 若季度 ID 不为 MIN_VALUE，则更新季度。
      * 最终返回包含完整信息的动漫季度对象。
      */
     override suspend fun saveAnimeSeason(season: AnimeSeason): AnimeSeason {
         val animeId =
             if (season.animeId == ULong.MIN_VALUE) {
-                // 新增动画系列
+                // 新增动画系列（优先复用已存在的动画系列）
                 val anime = season.anime
                 checkNotNull(anime) { "新增动画时的动画数据为空" }
-                this.createAnime(anime).id
+                if (AnimeCacheTool.isAnimeEmpty()) {
+                    this.refreshCache()
+                }
+                val findExistingAnime = {
+                    AnimeCacheTool.getAnimeList().firstOrNull {
+                        (anime.tmdbId != null && it.tmdbId == anime.tmdbId) ||
+                        (anime.bgmId != null && it.bgmId == anime.bgmId) ||
+                        it.name.equals(anime.name, ignoreCase = true)
+                    }
+                }
+                val existing = findExistingAnime() ?: run {
+                    refreshAnimeCache()
+                    findExistingAnime()
+                }
+                existing?.id ?: this.createAnime(anime).id
             } else {
                 // 动画系列已存在
                 season.animeId
             }
         return season.copy(
             animeId = animeId
-        ).let {
-            val saved = if (it.id == ULong.MIN_VALUE) {
-                this.createAnimeSeason(it)
+        ).let { preparedSeason ->
+            if (AnimeCacheTool.isSeasonEmpty()) {
+                this.refreshCache()
+            }
+            // 优先复用已存在的动画季度（按 tmdbId、bgmId 或 (animeId, season) 匹配）
+            val existingSeason = if (preparedSeason.id == ULong.MIN_VALUE) {
+                val findExistingSeason = {
+                    AnimeCacheTool.getSeasons().firstOrNull { s ->
+                        (preparedSeason.tmdbId != null && s.tmdbId == preparedSeason.tmdbId) ||
+                        (preparedSeason.bgmId != null && s.bgmId == preparedSeason.bgmId) ||
+                        (s.animeId == animeId && s.season == preparedSeason.season)
+                    }
+                }
+                findExistingSeason() ?: run {
+                    refreshSeasonCache()
+                    findExistingSeason()
+                }
             } else {
-                this.updateAnimeSeason(it)
+                null
+            }
+
+            val saved = if (existingSeason != null) {
+                // 直接使用已存在的季度数据，避免重复插入触发 tmdbId 唯一约束冲突
+                val seasonToUse = if (existingSeason.tmdbId == null && preparedSeason.tmdbId != null) {
+                    this.updateAnimeSeason(existingSeason.copy(tmdbId = preparedSeason.tmdbId))
+                } else {
+                    existingSeason
+                }
+                if (seasonToUse.anime == null) {
+                    seasonToUse.copy(anime = this.getAnimeById(seasonToUse.animeId))
+                } else {
+                    seasonToUse
+                }
+            } else if (preparedSeason.id == ULong.MIN_VALUE) {
+                this.createAnimeSeason(preparedSeason)
+            } else {
+                this.updateAnimeSeason(preparedSeason)
             }
             // 更新季度时若携带集数列表，则同步 upsert
-            if (it.id != ULong.MIN_VALUE && it.animeEpisodes.isNotEmpty()) {
+            if (preparedSeason.id != ULong.MIN_VALUE && preparedSeason.animeEpisodes.isNotEmpty()) {
                 upsertAnimeEpisodes(
                     animeId = saved.animeId,
                     seasonId = saved.id,
-                    episodes = it.animeEpisodes
+                    episodes = preparedSeason.animeEpisodes
                 )
                 return@let this.addAnimeSeasonCache(saved.id)
             }

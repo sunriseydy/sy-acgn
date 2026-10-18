@@ -17,6 +17,7 @@ import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
 import dev.sunriseydy.acgn.anime.enums.AnimeAdditionType
 import dev.sunriseydy.acgn.client.AppState
+import dev.sunriseydy.acgn.client.anime.components.BrowseSeasonalAnimeDialog
 import dev.sunriseydy.acgn.client.anime.components.CreateAnimeSeason
 import dev.sunriseydy.acgn.client.anime.components.CreateAnimeSeasonFromFile
 import dev.sunriseydy.acgn.client.anime.components.SearchBgmAnimeSeason
@@ -52,6 +53,7 @@ fun AnimeSeason(appState: AppState) {
     val loading = remember { mutableStateOf(false) }
     val createDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val fileCreateDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val browseSeasonalDialogVisible: MutableState<Boolean> = remember { mutableStateOf(false) }
     val searchName = remember { mutableStateOf("") }
     val animeSeasonService = remember(appState) { AnimeSeasonService(appState) }
 
@@ -116,6 +118,15 @@ fun AnimeSeason(appState: AppState) {
                 loadData(fromDb = true)
             }) {
                 Icon(Icons.Default.Refresh, null, modifier = Modifier.size(48.dp))
+            }
+            IconButton(onClick = {
+                browseSeasonalDialogVisible.value = true
+            }) {
+                Icon(
+                    Icons.Default.DateRange,
+                    contentDescription = stringResource(Res.string.browse_seasonal_anime),
+                    modifier = Modifier.size(48.dp)
+                )
             }
             IconButton(onClick = {
                 fileCreateDialogVisible.value = true
@@ -316,5 +327,19 @@ fun AnimeSeason(appState: AppState) {
         visible = searchBgmDialogVisible,
         currentSeason = actionSeason.value,
         onSuccess = { loadData() }
+    )
+
+    val allCurrentSeasons = remember(sectionMapState.value) {
+        sectionMapState.value.values.flatten()
+    }
+
+    BrowseSeasonalAnimeDialog(
+        appState = appState,
+        animeSeasonService = animeSeasonService,
+        visible = browseSeasonalDialogVisible,
+        existingSeasons = allCurrentSeasons,
+        onSeasonAdded = {
+            loadData(fromDb = true)
+        }
     )
 }

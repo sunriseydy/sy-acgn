@@ -27,17 +27,19 @@ import dev.sunriseydy.acgn.client.AppState
 @Composable
 fun AttachImage(
     appState: AppState,
-    attachId: String,
+    attachId: String = "",
+    imageUrl: String = "",
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
     contentDescription: String? = null
 ) {
-    val imageBitmap = remember(attachId) { mutableStateOf<ImageBitmap?>(null) }
-    val loading = remember(attachId) { mutableStateOf(true) }
-    val error = remember(attachId) { mutableStateOf(false) }
+    val key = attachId.ifBlank { imageUrl }
+    val imageBitmap = remember(key) { mutableStateOf<ImageBitmap?>(null) }
+    val loading = remember(key) { mutableStateOf(true) }
+    val error = remember(key) { mutableStateOf(false) }
 
-    LaunchedEffect(attachId) {
-        if (attachId.isBlank()) {
+    LaunchedEffect(key) {
+        if (key.isBlank()) {
             loading.value = false
             return@LaunchedEffect
         }
@@ -45,7 +47,7 @@ fun AttachImage(
         error.value = false
         try {
             // 1. Check Memory Cache
-            val memoryBitmap = ImageCacheManager.getFromMemory(attachId)
+            val memoryBitmap = ImageCacheManager.getFromMemory(key)
             if (memoryBitmap != null) {
                 imageBitmap.value = memoryBitmap
                 loading.value = false
@@ -53,8 +55,14 @@ fun AttachImage(
             }
 
             // 2. Load from cache or API
-            val bitmap = ImageCacheManager.loadImage(attachId) {
-                appState.api.common.getAttachFileBytes(attachId)
+            val bitmap = ImageCacheManager.loadImage(key) {
+                if (attachId.isNotBlank()) {
+                    appState.api.common.getAttachFileBytes(attachId)
+                } else if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+                    appState.api.common.getProxyImageBytes(imageUrl)
+                } else {
+                    appState.api.common.getAttachFileBytes(imageUrl)
+                }
             }
 
             if (bitmap != null) {

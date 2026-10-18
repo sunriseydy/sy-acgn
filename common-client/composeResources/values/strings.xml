@@ -71,4 +71,15 @@
     <string name="novel_bangumi_search_label">搜索 Bangumi 轻小说</string>
     <string name="novel_no_data">暂无轻小说数据，尝试从 Bangumi 导入或新建小说。</string>
     <string name="novel_no_volume_data">暂无单卷数据，点击顶部按钮添加卷。</string>
+    <string name="browse_seasonal_anime">浏览季度新番</string>
+    <string name="browse_seasonal_anime_title">季度新番排期浏览 (Bangumi)</string>
+    <string name="seasonal_sort_heat">按热度</string>
+    <string name="seasonal_sort_rank">按排名</string>
+    <string name="seasonal_sort_score">最高评分</string>
+    <string name="already_in_library">已入库</string>
+    <string name="add_to_library">入库</string>
+    <string name="season_create_success">已成功添加入库</string>
+    <string name="confirm_create_seasonal_anime">确认添加入库</string>
+    <string name="match_tmdb_title">关联 TMDB 影视条目</string>
+    <string name="skip_tmdb">暂不关联 TMDB</string>
 </resources>

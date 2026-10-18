@@ -75,6 +75,11 @@ class CommonApi internal constructor(private val httpClient: HttpClient) {
             header("X-Silent-Request", "true")
         }.body()
 
+    suspend fun getProxyImageBytes(url: String): ByteArray =
+        httpClient.get(CommonModuleResource.ProxyImage(url = url)) {
+            header("X-Silent-Request", "true")
+        }.body()
+
     /**
      * 发起 OpenAI 兼容流式对话并以 [Flow] 接收逐块输出
      *

@@ -31,6 +31,7 @@ object FileTool {
         check(fileNames.isNotEmpty()) { "路径 $path 下没有文件" }
         val videos = listVideos(fileNames)
         check(videos.isNotEmpty()) { "路径 $path 下没有视频文件" }
+        check(videos.size <= animeSeason.numberOfEpisodes) { "路径 $path 下视频文件数量 ${videos.size} 与动画季集数 ${animeSeason.numberOfEpisodes} 不匹配" }
         val allSubtitles = listSubtitles(fileNames)
         // 忽略非简体中文字幕文件
         val deleteSubtitles = listDeleteSubtitles(fileNames)

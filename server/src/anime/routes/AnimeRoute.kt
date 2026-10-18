@@ -80,6 +80,20 @@ fun Route.animeRoutes() {
     get<AnimeModuleResource.Anime.Bangumi.SubjectDetail> { resource ->
         call.respond(Result(data = bangumiTool.getSubject(resource.id)))
     }
+    get<AnimeModuleResource.Anime.Bangumi.SeasonalAnime> { resource ->
+        call.respond(
+            Result(
+                data = bangumiTool.getSeasonalAnime(
+                    year = resource.year,
+                    monthType = resource.monthType,
+                    query = resource.query,
+                    sort = resource.sort,
+                    limit = resource.limit,
+                    offset = resource.offset
+                )
+            )
+        )
+    }
 
     // --- File ---
     post<AnimeModuleResource.Anime.File.SeasonFile> {

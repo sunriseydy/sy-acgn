@@ -4,6 +4,8 @@ import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeEpisode
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
+import dev.sunriseydy.acgn.anime.dto.BangumiSeasonalAnimeResult
+import dev.sunriseydy.acgn.anime.enums.AnimeMonthType
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccess
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
@@ -191,6 +193,28 @@ class AnimeSeasonService(
     fun searchBgmAnime(query: String, onSuccess: (List<AnimeSeason>) -> Unit, onError: (String) -> Unit = { }) {
         appState.scope.launch {
             appState.api.anime.searchBgmAnime(query).onSuccessData(appState, onSuccess, onError)
+        }
+    }
+
+    fun getSeasonalAnime(
+        year: Int,
+        monthType: AnimeMonthType,
+        query: String? = null,
+        sort: String = "heat",
+        limit: Int = 20,
+        offset: Int = 0,
+        onSuccess: (BangumiSeasonalAnimeResult) -> Unit,
+        onError: (String) -> Unit = { }
+    ) {
+        appState.scope.launch {
+            appState.api.anime.getBangumiSeasonalAnime(
+                year = year,
+                monthType = monthType,
+                query = query,
+                sort = sort,
+                limit = limit,
+                offset = offset
+            ).onSuccessData(appState, onSuccess, onError)
         }
     }
 }

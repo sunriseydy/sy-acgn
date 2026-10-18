@@ -82,7 +82,7 @@ fun CreateAnimeSeasonFromFile(
         Column(
             modifier = Modifier
                 .width(fieldWidth)
-                .heightIn(max = 600.dp)
+                .heightIn(max = 700.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

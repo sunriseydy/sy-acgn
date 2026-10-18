@@ -6,7 +6,7 @@ import dev.sunriseydy.acgn.base.interfaces.AdditionInterface
 import dev.sunriseydy.acgn.common.dto.AdditionalInfo
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.*
 import kotlin.time.Instant
 
 /**
@@ -75,6 +75,14 @@ data class AnimeSeason(
     val fileStatus: String get() = AnimeAdditionType.FileStatus.valueOf(additions) ?: Status.UNPROCESS.key
     val watchStatus: String get() = AnimeAdditionType.WatchStatus.valueOf(additions) ?: Status.UNPROCESS.key
     val posterId: String? get() = AnimeAdditionType.PosterId.valueOf(additions)
+    val bgmOriginalName: String? get() = bgmJson?.get("name")?.jsonPrimitive?.contentOrNull
+    val bgmScore: Double? get() = bgmJson?.get("rating")?.jsonObject?.get("score")?.jsonPrimitive?.doubleOrNull
+    val bgmRank: Int? get() = bgmJson?.get("rating")?.jsonObject?.get("rank")?.jsonPrimitive?.intOrNull
+    val bgmCoverUrl: String? get() = bgmJson?.get("images")?.jsonObject?.let {
+        it["common"]?.jsonPrimitive?.contentOrNull
+            ?: it["large"]?.jsonPrimitive?.contentOrNull
+            ?: it["medium"]?.jsonPrimitive?.contentOrNull
+    }
 }
 
 /**
@@ -147,4 +155,20 @@ data class AnimeSeasonFile(
     val isDeleteSource: Boolean = false,
     val isDeleteTarget: Boolean = false,
     val episodeOffset: Int? = 0,
+)
+
+/**
+ * Bangumi 季度新番分页结果
+ *
+ * @property total 总条目数
+ * @property limit 每页大小
+ * @property offset 偏移量
+ * @property items 动画季度条目列表
+ */
+@Serializable
+data class BangumiSeasonalAnimeResult(
+    val total: Int = 0,
+    val limit: Int = 20,
+    val offset: Int = 0,
+    val items: List<AnimeSeason> = emptyList()
 )

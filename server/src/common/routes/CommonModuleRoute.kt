@@ -14,6 +14,8 @@ import dev.sunriseydy.acgn.server.common.service.OpenAiService
 import dev.sunriseydy.acgn.tools.AppConfigTool
 import dev.sunriseydy.acgn.tools.HttpClientFactory
 import dev.sunriseydy.acgn.tools.LocalizationTool
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.http.*
 import io.ktor.server.plugins.di.*
 import io.ktor.server.request.*
@@ -93,6 +95,19 @@ fun Route.configureCommonModuleRoutes() {
         )
         call.respondOutputStream(ContentType.parse(fileInfo.contentType)) {
             stream.copyTo(this)
+        }
+    }
+    get<CommonModuleResource.ProxyImage> { resource ->
+        val url = resource.url
+        try {
+            val client = HttpClientFactory.buildHttpClient()
+            val response = client.get(url)
+            val contentType = response.contentType() ?: ContentType.Image.JPEG
+            val bytes = response.body<ByteArray>()
+            call.response.cacheControl(CacheControl.MaxAge(maxAgeSeconds = 86400))
+            call.respondBytes(bytes, contentType)
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.NotFound, "Failed to proxy image: ${e.message}")
         }
     }
     post<CommonModuleResource.OpenAi.Chat> {

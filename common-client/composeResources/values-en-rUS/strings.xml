@@ -71,4 +71,15 @@
     <string name="novel_bangumi_search_label">Search Bangumi Light Novels</string>
     <string name="novel_no_data">No light novel data. Try importing from Bangumi or creating a new novel.</string>
     <string name="novel_no_volume_data">No volume data. Click the top button to add a volume.</string>
+    <string name="browse_seasonal_anime">Browse Seasonal Anime</string>
+    <string name="browse_seasonal_anime_title">Seasonal Anime Schedule (Bangumi)</string>
+    <string name="seasonal_sort_heat">Popularity</string>
+    <string name="seasonal_sort_rank">Ranking</string>
+    <string name="seasonal_sort_score">Highest Score</string>
+    <string name="already_in_library">In Library</string>
+    <string name="add_to_library">Add</string>
+    <string name="season_create_success">Successfully added to library</string>
+    <string name="confirm_create_seasonal_anime">Confirm Add to Library</string>
+    <string name="match_tmdb_title">Associate TMDB Show</string>
+    <string name="skip_tmdb">Skip TMDB for now</string>
 </resources>
