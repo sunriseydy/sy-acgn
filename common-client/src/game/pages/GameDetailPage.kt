@@ -20,12 +20,14 @@ import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccess
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AttachImage
+import dev.sunriseydy.acgn.client.base.components.BangumiLinkChip
+import dev.sunriseydy.acgn.client.base.components.SteamLinkChip
 import dev.sunriseydy.acgn.game.dto.*
 import dev.sunriseydy.acgn.game.enums.GamePlatformEnum
 import dev.sunriseydy.acgn.game.enums.GamePlayStatusEnum
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun GameDetailPage(appState: AppState, gameId: ULong) {
     var gameData by remember { mutableStateOf<Game?>(null) }
@@ -172,6 +174,26 @@ fun GameDetailPage(appState: AppState, gameId: ULong) {
 
                         current.releaseDate?.let { Text("首发日期: $it", style = MaterialTheme.typography.bodyMedium) }
                         current.rating?.let { Text("综合评分: $it", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary) }
+
+                        if (current.bgmId != null || current.steamId != null) {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                current.bgmId?.let { bgmId ->
+                                    BangumiLinkChip(
+                                        bgmId = bgmId,
+                                        appState = appState
+                                    )
+                                }
+                                current.steamId?.let { steamId ->
+                                    SteamLinkChip(
+                                        steamId = steamId,
+                                        appState = appState
+                                    )
+                                }
+                            }
+                        }
 
                         val desc = current.description
                         if (!desc.isNullOrBlank()) {

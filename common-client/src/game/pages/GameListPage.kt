@@ -20,13 +20,15 @@ import androidx.compose.ui.unit.dp
 import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AttachImage
+import dev.sunriseydy.acgn.client.base.components.BangumiLinkChip
+import dev.sunriseydy.acgn.client.base.components.SteamLinkChip
 import dev.sunriseydy.acgn.client.base.components.showMessage
 import dev.sunriseydy.acgn.client.base.navigation.GameDetailRoute
 import dev.sunriseydy.acgn.game.dto.Game
 import dev.sunriseydy.acgn.game.enums.GamePlayStatusEnum
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun GameListPage(appState: AppState) {
     var games by remember { mutableStateOf<List<Game>>(emptyList()) }
@@ -253,6 +255,7 @@ fun GameListPage(appState: AppState) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GameCard(
     appState: AppState,
@@ -324,6 +327,26 @@ fun GameCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1
                 )
+            }
+
+            if (game.bgmId != null || game.steamId != null) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    game.bgmId?.let { bgmId ->
+                        BangumiLinkChip(
+                            bgmId = bgmId,
+                            appState = appState
+                        )
+                    }
+                    game.steamId?.let { steamId ->
+                        SteamLinkChip(
+                            steamId = steamId,
+                            appState = appState
+                        )
+                    }
+                }
             }
 
             // 游玩记录

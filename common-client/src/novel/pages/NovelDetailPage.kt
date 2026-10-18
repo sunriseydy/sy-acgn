@@ -25,6 +25,7 @@ import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
 import dev.sunriseydy.acgn.client.base.components.AttachImage
+import dev.sunriseydy.acgn.client.base.components.BangumiLinkChip
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.res.*
 import dev.sunriseydy.acgn.novel.dto.Novel
@@ -35,7 +36,7 @@ import dev.sunriseydy.acgn.novel.enums.ReadingStatusEnum
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun NovelDetailPage(appState: AppState, novelId: ULong) {
     val novelState = remember { mutableStateOf<Novel?>(null) }
@@ -159,6 +160,14 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
                             val totalVolLabel = stringResource(Res.string.novel_total_volumes)
                             Text("$statusLabel: $statusText | $totalVolLabel: ${novel.volumes.size}")
 
+                            novel.bgmId?.let { bgmId ->
+                                Spacer(modifier = Modifier.height(6.dp))
+                                BangumiLinkChip(
+                                    bgmId = bgmId,
+                                    appState = appState
+                                )
+                            }
+
                             val desc = novel.description?.replace(Regex("(\\r?\\n){3,}"), "\n\n")?.trim()
                             if (!desc.isNullOrBlank()) {
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -249,36 +258,47 @@ fun NovelDetailPage(appState: AppState, novelId: ULong) {
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    // Reading status selector
-                                    var expanded by remember { mutableStateOf(false) }
-                                    Box {
-                                        val readingStatusText = try {
-                                            ReadingStatusEnum.valueOf(volume.readingStatus).meaning
-                                        } catch (e: Exception) {
-                                            volume.readingStatus
-                                        }
-                                        FilterChip(
-                                            selected = true,
-                                            onClick = { expanded = true },
-                                            label = { Text(readingStatusText) }
-                                        )
-                                        DropdownMenu(
-                                            expanded = expanded,
-                                            onDismissRequest = { expanded = false }
-                                        ) {
-                                            ReadingStatusEnum.entries.forEach { status ->
-                                                DropdownMenuItem(
-                                                    text = { Text(status.meaning) },
-                                                    onClick = {
-                                                        expanded = false
-                                                        appState.scope.launch {
-                                                            appState.api.novel.updateVolumeReadingStatus(volume.id, status.name).onSuccessData(appState, onSuccess = {
-                                                                loadNovelDetail()
-                                                            })
-                                                        }
-                                                    }
-                                                )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        // Reading status selector
+                                        var expanded by remember { mutableStateOf(false) }
+                                        Box {
+                                            val readingStatusText = try {
+                                                ReadingStatusEnum.valueOf(volume.readingStatus).meaning
+                                            } catch (e: Exception) {
+                                                volume.readingStatus
                                             }
+                                            FilterChip(
+                                                selected = true,
+                                                onClick = { expanded = true },
+                                                label = { Text(readingStatusText) }
+                                            )
+                                            DropdownMenu(
+                                                expanded = expanded,
+                                                onDismissRequest = { expanded = false }
+                                            ) {
+                                                ReadingStatusEnum.entries.forEach { status ->
+                                                    DropdownMenuItem(
+                                                        text = { Text(status.meaning) },
+                                                        onClick = {
+                                                            expanded = false
+                                                            appState.scope.launch {
+                                                                appState.api.novel.updateVolumeReadingStatus(volume.id, status.name).onSuccessData(appState, onSuccess = {
+                                                                    loadNovelDetail()
+                                                                })
+                                                            }
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        volume.bgmId?.let { bgmId ->
+                                            BangumiLinkChip(
+                                                bgmId = bgmId,
+                                                appState = appState
+                                            )
                                         }
                                     }
 

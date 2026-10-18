@@ -29,7 +29,9 @@ import dev.sunriseydy.acgn.client.anime.components.SearchBgmAnimeSeason
 import dev.sunriseydy.acgn.client.anime.service.AnimeSeasonService
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
 import dev.sunriseydy.acgn.client.base.components.AttachImage
+import dev.sunriseydy.acgn.client.base.components.BangumiLinkChip
 import dev.sunriseydy.acgn.client.base.components.FormDialog
+import dev.sunriseydy.acgn.client.base.components.TmdbLinkChip
 import dev.sunriseydy.acgn.client.base.utils.RequiredFieldLabel
 import dev.sunriseydy.acgn.client.base.utils.RequiredSupportingText
 import dev.sunriseydy.acgn.client.res.*
@@ -40,7 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * 动画季度详情页：展示季度信息与集数列表。
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AnimeSeasonDetailPage(appState: AppState, seasonId: ULong) {
     val animeSeasonService = remember(appState) { AnimeSeasonService(appState) }
@@ -254,7 +256,10 @@ fun AnimeSeasonDetailPage(appState: AppState, seasonId: ULong) {
                                 )
                             }
                             Spacer(modifier = Modifier.height(8.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
                                 AssistChip(
                                     onClick = {},
                                     label = { Text("第 ${season.season} 季") }
@@ -271,6 +276,19 @@ fun AnimeSeasonDetailPage(appState: AppState, seasonId: ULong) {
                                     AssistChip(
                                         onClick = {},
                                         label = { Text(i(it.additionalValue)) }
+                                    )
+                                }
+                                season.anime?.tmdbId?.let { tmdbId ->
+                                    TmdbLinkChip(
+                                        tmdbId = tmdbId,
+                                        seasonNumber = season.season,
+                                        appState = appState
+                                    )
+                                }
+                                (season.bgmId ?: season.anime?.bgmId)?.let { bgmId ->
+                                    BangumiLinkChip(
+                                        bgmId = bgmId,
+                                        appState = appState
                                     )
                                 }
                             }

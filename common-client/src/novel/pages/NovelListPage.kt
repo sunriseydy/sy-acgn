@@ -21,6 +21,7 @@ import dev.sunriseydy.acgn.client.AppState
 import dev.sunriseydy.acgn.client.base.api.onSuccessData
 import dev.sunriseydy.acgn.client.base.components.AlertDialog
 import dev.sunriseydy.acgn.client.base.components.AttachImage
+import dev.sunriseydy.acgn.client.base.components.BangumiLinkChip
 import dev.sunriseydy.acgn.client.base.components.FormDialog
 import dev.sunriseydy.acgn.client.base.components.PageTitle
 import dev.sunriseydy.acgn.client.base.navigation.NovelDetailRoute
@@ -32,6 +33,7 @@ import dev.sunriseydy.acgn.novel.enums.NovelStatusEnum
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NovelListPage(appState: AppState) {
     val novelList = remember { mutableStateOf<List<Novel>>(emptyList()) }
@@ -194,7 +196,10 @@ fun NovelListPage(appState: AppState) {
                                 )
                             }
                             Spacer(modifier = Modifier.height(4.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
                                 val statusText = try {
                                     NovelStatusEnum.valueOf(novel.status).meaning
                                 } catch (e: Exception) {
@@ -208,6 +213,12 @@ fun NovelListPage(appState: AppState) {
                                     AssistChip(
                                         onClick = {},
                                         label = { Text("${novel.totalVolumes} V") }
+                                    )
+                                }
+                                novel.bgmId?.let { bgmId ->
+                                    BangumiLinkChip(
+                                        bgmId = bgmId,
+                                        appState = appState
                                     )
                                 }
                             }
