@@ -65,7 +65,7 @@ fun AnimeSeason(appState: AppState) {
     val handleFileDialogVisible = remember { mutableStateOf(false) }
     val searchBgmDialogVisible = remember { mutableStateOf(false) }
     val filePath = remember { mutableStateOf("") }
-    val isDeleteSource = remember { mutableStateOf(false) }
+    val isDeleteSource = remember { mutableStateOf(true) }
     val isDeleteTarget = remember { mutableStateOf(false) }
     val episodeOffset = remember { mutableStateOf("") }
     val fileErrorMessage = remember { mutableStateOf<String?>(null) }
@@ -95,7 +95,7 @@ fun AnimeSeason(appState: AppState) {
         actionSeason.value = season
         handleFileDialogVisible.value = true
         filePath.value = ""
-        isDeleteSource.value = false
+        isDeleteSource.value = true
         isDeleteTarget.value = false
         episodeOffset.value = ""
         fileErrorMessage.value = null

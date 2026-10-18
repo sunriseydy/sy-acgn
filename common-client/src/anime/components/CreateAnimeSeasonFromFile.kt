@@ -363,7 +363,7 @@ class CreateAnimeSeasonFromFileState(
 ) {
     val filePath: MutableState<String> = mutableStateOf("")
     val episodeOffset: MutableState<String> = mutableStateOf("")
-    val isDeleteSource: MutableState<Boolean> = mutableStateOf(false)
+    val isDeleteSource: MutableState<Boolean> = mutableStateOf(true)
     val isDeleteTarget: MutableState<Boolean> = mutableStateOf(false)
 
     val isAiExtracting: MutableState<Boolean> = mutableStateOf(false)
@@ -401,7 +401,7 @@ class CreateAnimeSeasonFromFileState(
         aiExtractJob = null
         filePath.value = ""
         episodeOffset.value = ""
-        isDeleteSource.value = false
+        isDeleteSource.value = true
         isDeleteTarget.value = false
         isAiExtracting.value = false
         extractedAnimeName.value = ""
