@@ -4,11 +4,13 @@ import dev.sunriseydy.acgn.anime.config.AnimeModuleAppConfig
 import dev.sunriseydy.acgn.anime.dto.Anime
 import dev.sunriseydy.acgn.anime.dto.AnimeSeason
 import dev.sunriseydy.acgn.anime.dto.AnimeSeasonFile
-import dev.sunriseydy.acgn.anime.enums.AnimeModuleError
-import dev.sunriseydy.acgn.base.exception.MessageException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.nio.file.Path as NioPath
 
 private val logger = KotlinLogging.logger { }
 
@@ -51,12 +53,8 @@ object FileTool {
         } else emptyList()
         // 处理其他文件
         val newOtherPairs = generateOthers(others, animeSeasonDirectory)
-        if (exists(animeSeasonDirectory) && isDirectory(animeSeasonDirectory)) {
-            if (animeSeasonFile.isDeleteTarget) {
-                deleteFile(animeSeasonDirectory)
-            } else {
-                throw MessageException(AnimeModuleError.TARGET_DIR_EXISTS)
-            }
+        if (exists(animeSeasonDirectory) && isDirectory(animeSeasonDirectory) && animeSeasonFile.isDeleteTarget) {
+            deleteFile(animeSeasonDirectory)
         }
         // 创建目录
         createDirectories(animeSeasonDirectory)
@@ -81,7 +79,37 @@ object FileTool {
     fun exists(path: Path) = SystemFileSystem.exists(path)
     fun moveFile(from: Path, to: Path) {
         logger.info { "Moving file from: $from to: $to" }
-        SystemFileSystem.atomicMove(from, to)
+        val fromNio = NioPath.of(from.toString())
+        val toNio = NioPath.of(to.toString())
+        if (isDirectory(from)) {
+            if (exists(to) && !isDirectory(to)) {
+                deleteFile(to)
+            }
+            if (!exists(to)) {
+                try {
+                    Files.move(fromNio, toNio, StandardCopyOption.REPLACE_EXISTING)
+                    return
+                } catch (e: Exception) {
+                    logger.debug(e) { "Direct directory move failed from $from to $to, falling back to recursive move" }
+                }
+            }
+            createDirectories(to)
+            for (child in listFiles(from)) {
+                moveFile(child, Path(to, child.name))
+            }
+            deleteFile(from)
+        } else {
+            val parent = to.parent
+            if (parent != null && !exists(parent)) {
+                createDirectories(parent)
+            }
+            try {
+                Files.move(fromNio, toNio, StandardCopyOption.REPLACE_EXISTING)
+            } catch (e: Exception) {
+                logger.warn(e) { "Failed to move file using Files.move, trying atomicMove" }
+                SystemFileSystem.atomicMove(from, to)
+            }
+        }
     }
     fun createDirectories(path: Path) {
         logger.info { "Creating directories: $path" }
@@ -89,7 +117,14 @@ object FileTool {
     }
     fun deleteFile(path: Path) {
         logger.info { "Deleting file: $path" }
-        SystemFileSystem.delete(path)
+        val file = File(path.toString())
+        if (file.exists()) {
+            if (file.isDirectory) {
+                file.deleteRecursively()
+            } else {
+                file.delete()
+            }
+        }
     }
     fun listFiles(path: Path) = SystemFileSystem.list(path).sortedBy { it.name }
     fun listVideos(files: List<Path>) = files.filter { isVideo(it) }
